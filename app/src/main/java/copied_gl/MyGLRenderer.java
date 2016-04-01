@@ -23,10 +23,16 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import com.example.niklas.projectsonsofhesslow.MainActivity;
+import com.example.niklas.projectsonsofhesslow.R;
+import com.example.niklas.projectsonsofhesslow.SvgReader;
+
+import java.io.File;
+import java.io.IOException;
+
 import gl_own.FilledBeizierPath;
 import gl_own.Camera;
 import gl_own.Geometry.Vector2;
-import gl_own.sq;
 
 /**
  * Provides drawing instructions for a GLSurfaceView object. This class
@@ -40,8 +46,7 @@ import gl_own.sq;
 public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "MyGLRenderer";
-    private sq mSquare;
-    private FilledBeizierPath beizier;
+    public static FilledBeizierPath beizier;
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
@@ -62,7 +67,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                  0.5f,-0.5f,0f, // bottom right
                  0.5f, 0.5f,0f, // top right
         };
-        mSquare = new sq(verts);
         Vector2[] beizierPoints = new Vector2[]
                 {
                     new Vector2(0,0),
@@ -72,7 +76,22 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                     new Vector2(0.5f,1),
                     new Vector2(1,0.5f),
                 };
-        beizier = new FilledBeizierPath(beizierPoints);
+            System.out.println("........... 1");
+            File homedir = new File("/../");
+            System.out.println("........... 2");
+            System.out.println(homedir.getAbsolutePath());
+            System.out.println("........... 3");
+            //beizier= new FilledBeizierPath(beizierPoints,mMVPMatrix);
+
+            File fileToRead = new File(homedir, "raw/drawing.svg");
+            try
+            {
+                beizier=SvgReader.read(MainActivity.resources.openRawResource(R.raw.drawing),mMVPMatrix);
+            }catch (IOException ex)
+            {
+                throw new RuntimeException(ex.toString());
+            }
+
     }
 
 
@@ -86,30 +105,27 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         Camera cam = Camera.getInstance();
         // Set the camera position (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, cam.X(), cam.Y(), cam.Z(), 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        Matrix.setLookAtM(mViewMatrix, 0, cam.X(), cam.Y(), cam.Z(), cam.X(), cam.Y(), 0f, 0f, 1.0f, 0.0f);
 
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
-        beizier.draw(mMVPMatrix);
-        // Create a rotation for the triangle
-        // Use the following code to generate constant rotation.
-        // Leave this code out when using TouchEvents.
-        // long time = SystemClock.uptimeMillis() % 4000L;
-        // float angle = 0.090f * ((int) time);
+        beizier.m.matrix = mMVPMatrix;
+        beizier.draw();
 
         Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, 0, 1.0f);
-
-        // Combine the rotation matrix with the projection and camera view
-        // Note that the mMVPMatrix factor *must be first* in order
-        // for the matrix multiplication product to be correct.
         Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
 
-        // Draw triangle
     }
+
+    public static int width;
+    public static int height;
 
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
+        this.width = width;
+        this.height = height;
+
         // Adjust the viewport based on geometry changes,
         // such as screen rotation
         GLES20.glViewport(0, 0, width, height);
@@ -119,8 +135,18 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
         Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
-
     }
+
+    public static Vector2 ScreentoGLCoords(Vector2 vec)
+    {
+        float ratio = width/(float)height;
+        float x = (vec.x/(width/2)-1);
+        float y = -(vec.y/(height/2)-1);
+
+        //from  0,0,width,height to -ratio,-1,+ratio,+1 ??
+        return new Vector2(x,y);
+    }
+
 
     /**
      * Utility method for compiling a OpenGL shader.

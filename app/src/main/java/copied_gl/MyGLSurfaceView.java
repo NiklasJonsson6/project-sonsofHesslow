@@ -19,6 +19,9 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
 
+import gl_own.Camera;
+import gl_own.Geometry.Vector2;
+
 /**
  * A view container where OpenGL ES graphics can be drawn on screen.
  * This view can also be used to capture touch events, such as a user
@@ -56,25 +59,45 @@ public class MyGLSurfaceView extends GLSurfaceView {
         float y = e.getY();
 
         switch (e.getAction()) {
+            case MotionEvent.ACTION_POINTER_DOWN:
+                if(MyGLRenderer.beizier.m.isOnMesh2D(new Vector2(x,y)))
+                {
+                    float[] color = {0.7f,0.9f,0.2f,1f};
+                    MyGLRenderer.beizier.m.color = color;
+                }
+                else
+                {
+                    float[] color = {0.2f,0.9f,0.7f,1f};
+                    MyGLRenderer.beizier.m.color = color;
+                }
+                System.out.println("pointer down");
+                break;
             case MotionEvent.ACTION_MOVE:
 
                 float dx = x - mPreviousX;
                 float dy = y - mPreviousY;
+                dx/=1000;
+                dy/=1000;
+                Camera cam = Camera.getInstance();
+                float[] newPos={cam.X()+dx,cam.Y()+dy,cam.Z()};
 
-                // reverse direction of rotation above the mid-line
-                if (y > getHeight() / 2) {
-                    dx = dx * -1 ;
+                //cam.setPos(newPos);
+                Vector2 gl_cord = MyGLRenderer.ScreentoGLCoords(new Vector2(x,y));
+
+                System.out.println("x:"+gl_cord.x + ",y:" + gl_cord.y);
+
+                if(MyGLRenderer.beizier.m.isOnMesh2D(new Vector2(x,y)))
+                {
+                    float[] color = {0.7f,0.9f,0.2f,1f};
+                    MyGLRenderer.beizier.m.color = color;
                 }
-
-                // reverse direction of rotation to left of the mid-line
-                if (x < getWidth() / 2) {
-                    dy = dy * -1 ;
+                else
+                {
+                    float[] color = {0.2f,0.9f,0.7f,1f};
+                    MyGLRenderer.beizier.m.color = color;
                 }
-
-                mRenderer.setAngle(
-                        mRenderer.getAngle() +
-                        ((dx + dy) * TOUCH_SCALE_FACTOR));  // = 180.0f / 320
                 requestRender();
+                break;
         }
 
         mPreviousX = x;

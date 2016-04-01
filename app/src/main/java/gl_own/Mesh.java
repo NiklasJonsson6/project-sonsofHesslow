@@ -16,19 +16,25 @@
 package gl_own;
 
 import android.opengl.GLES20;
+import android.opengl.Matrix;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.Arrays;
+import java.util.Iterator;
 
 import copied_gl.MyGLRenderer;
+import copied_gl.MyGLSurfaceView;
+import gl_own.Geometry.Util;
 import gl_own.Geometry.Vector2;
 
 /**
  * A Mesh based on developer.android.com's Square.
  */
 public class Mesh {
+    public float[] matrix;
 
     private final String vertexShaderCode =
             // This matrix member variable provides a hook to manipulate
@@ -63,12 +69,116 @@ public class Mesh {
 
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex (coord right? //daniel)
 
-    float color[];
+    public float color[];
 
-    /**
-     * Sets up the drawing object data for use in an OpenGL ES context.
-     */
-    public Mesh(short[] triangles, Vector2[] vertices, float color[])
+    class Triangle
+    {
+        public Triangle(Vector2 a, Vector2 b, Vector2 c)
+        {
+            points = new Vector2[]{a,b,c};
+        }
+        Vector2[] points;
+
+        @Override
+        public String toString()
+        {
+            return "("+points[0].toString()+", "+points[1].toString()+", "+points[2].toString()+")";
+        }
+    }
+
+    class MeshIterator implements Iterator
+    {
+        Mesh mesh;
+        int currentTriangle;
+        public MeshIterator(Mesh mesh)
+        {
+            this.mesh = mesh;
+            this.currentTriangle = 0;
+        }
+        @Override
+        public boolean hasNext() {
+            return mesh.triangles.length-2> currentTriangle*3;
+        }
+
+        public Vector2 getVertexAt(int index)
+        {
+            int vertIndexStart = mesh.triangles[index];
+            return new Vector2(mesh.vertices[vertIndexStart],
+                      mesh.vertices[vertIndexStart+1]);
+        }
+
+        @Override
+        public Triangle next() {
+
+            Vector2 a = getVertexAt(currentTriangle*3+0);
+            Vector2 b = getVertexAt(currentTriangle*3+1);
+            Vector2 c = getVertexAt(currentTriangle*3+2);
+
+            ++currentTriangle;
+            return new Triangle(a,b,c);
+        }
+
+        @Override
+        public void remove() {
+            throw new RuntimeException("Meshes don't support removal of triangles at this moment");
+        }
+    }
+
+    public MeshIterator meshIterator()
+    {
+        return new MeshIterator(this);
+    }
+
+    //dude fix me yo..
+    //use ray-tracing maybe??
+    public boolean isOnMesh2D(Vector2 point)
+    {
+        point = MyGLRenderer.ScreentoGLCoords(point);
+
+        float[] tmp = new float[]{point.x,point.y,0,1};
+        float[] scratch = new float[16];
+
+        Matrix.invertM(scratch,0,matrix,0);
+
+        Matrix.multiplyMV(tmp,0,scratch,0,tmp,0);
+        point.x = tmp[0];
+        point.y = tmp[1];
+
+        System.out.println(point);
+
+        MeshIterator it = meshIterator();
+        int counter = 0;
+        while(it.hasNext())
+        {
+            Triangle triangle = it.next();
+            Vector2 p0 = triangle.points[0];
+            Vector2 p1 = triangle.points[1];
+            Vector2 p2 = triangle.points[2];
+
+            float s = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * point.x + (p0.x - p2.x) * point.y;
+            float t = p0.x * p1.y - p0.y * p1.x + (p0.x - p1.y) * point.x + (p1.x - p0.x) * point.y;
+
+            if ((s < 0) != (t < 0))
+                continue;
+
+            float A = -p1.y * p2.x + p0.y * (p2.x - p1.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y;
+            if (A < 0.0)
+            {
+                s = -s;
+                t = -t;
+                A = -A;
+            }
+            if((s > 0 && t > 0 && (s + t) <= A))
+            {
+               return true;
+            }
+
+        }
+
+        return false;
+    }
+
+    public Mesh(short[] triangles, Vector2[] vertices, float color[],float[] matrix)
     {
         float[] new_verts = new float[vertices.length*3];
         for(int i = 0; i<vertices.length;i++)
@@ -77,17 +187,17 @@ public class Mesh {
             new_verts[i*3+1] = vertices[i].y;
             new_verts[i*3+2] = 0;
         }
-        init(triangles, new_verts, color);
+        init(triangles, new_verts, color,matrix);
     }
 
-    public Mesh(short[] triangles, float[] vertices, float color[])
+    public Mesh(short[] triangles, float[] vertices, float color[], float[] matrix)
     {
-        init(triangles,vertices,color);
+        init(triangles,vertices,color,matrix);
     }
 
     // because java is stupid and constructors need to be called on the first line on other constructors.
     // here is the meat of the constructors.
-    private void init(short[] triangles, float[] vertices, float color[]) {
+    private void init(short[] triangles, float[] vertices, float color[],float[] matrix) {
 
         if(color.length != 4){
             throw new IllegalArgumentException("a color consists of 4 values, r g b a. not " + color.length);
@@ -95,11 +205,16 @@ public class Mesh {
         if(triangles.length%3 != 0){
             throw new IllegalArgumentException("A triangle array needs to be divisible by three");
         }
+        if(matrix.length != 16)
+        {
+            throw new IllegalArgumentException("A 4x4 matrix has 16 entries");
+        }
 
         //no uvs yet. do we care about texturing??
         this.triangles = triangles;
         this.vertices = vertices;
         this.color = color;
+        this.matrix = matrix;
 
         // initialize vertex byte buffer for shape coordinates
         ByteBuffer bb = ByteBuffer.allocateDirect(
@@ -134,13 +249,7 @@ public class Mesh {
     }
 
 
-    /**
-     * Encapsulates the OpenGL ES instructions for drawing this shape.
-     *
-     * @param mvpMatrix - The Model View Project matrix in which to draw
-     * this shape.
-     */
-    public void draw(float[] mvpMatrix) {
+    public void draw() {
         // Add program to OpenGL environment
         GLES20.glUseProgram(mProgram);
 
@@ -168,7 +277,7 @@ public class Mesh {
         MyGLRenderer.checkGlError("glGetUniformLocation");
 
         // Apply the projection and view transformation
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
+        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, matrix, 0);
         MyGLRenderer.checkGlError("glUniformMatrix4fv");
 
         // Draw the square
