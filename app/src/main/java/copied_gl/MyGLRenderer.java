@@ -59,7 +59,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
 
         // Set the background frame color
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        GLES20.glClearColor(1f, 1f, 1f, 1.0f);
 
         float[] verts = {
                 -0.5f, 0.5f,0f, // top left
@@ -91,7 +91,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             {
                 throw new RuntimeException(ex.toString());
             }
-
     }
 
 

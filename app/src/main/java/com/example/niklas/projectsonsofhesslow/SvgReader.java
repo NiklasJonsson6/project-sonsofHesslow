@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.sql.SQLOutput;
 import java.util.Arrays;
 import java.util.IllegalFormatException;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.Stack;
 import java.util.regex.Pattern;
@@ -18,102 +19,100 @@ import gl_own.Geometry.Vector2;
  * Created by daniel on 4/1/16.
  */
 public class SvgReader {
+    //todo support lineto maybe and handle bad formatting better.
     public static FilledBeizierPath read(InputStream svgStream,float[] matrix) throws IOException
     {
         Scanner s = new Scanner(svgStream);
+        s.useLocale(Locale.US);
+
         String currentToken = "";
-        while(s.hasNext() )
-        {
-            //just advance;
-            currentToken = s.next();
-            if(currentToken.equals("<path")) break;
-            System.out.println(currentToken);
-        }
+        advanceTo(s,"<path", false);
         // abc q"as4,52 -> [abc],[q],[as4],[,],[52]
         s.useDelimiter("(?<=,)|(?=,)|(\\s+)|(\")");
 
+        advanceTo(s, "d=", false);
+
         //parsing
         Vector2 pos = new Vector2(0,0);
-        boolean done = false;
-
         Stack<Vector2> points = new Stack<>();
-        //todo support lineto maybe and handle bad formatting better.
-
+        boolean done = false;
         while(!done)
         {
-            System.out.println(currentToken);
-            if("z".equals(currentToken) || "Z".equals(currentToken))
-                break;
-            while(s.hasNextFloat() && !done)
-            {
-                System.out.println("*");
-                switch (currentToken)
-                {
-                    case "M": {
-                        pos = nextVector2(s);
-                    } break;
-                    case "m":{
-                        pos = Util.Add(pos,nextVector2(s));
-                    } break;
-                    case "Z":
-                        System.out.println("end");
-                        done = true;
-                        break;
-                    case "z":
-                        System.out.println("end");
-                        done = true;
-                        break;
-                    case "C":
-                        System.out.println("C");
-                        if(points.empty())
-                            points.push(pos);
-                        points.push(nextVector2(s));
-                        points.push(nextVector2(s));
-                        points.push(nextVector2(s));
-                        break;
-                    case "c":
-                        System.out.println("c");
-                        if(points.empty())
-                            points.push(pos);
-                        points.push(Util.Add(pos, nextVector2(s)));
-                        points.push(Util.Add(pos, nextVector2(s)));
-                        points.push(Util.Add(pos, nextVector2(s)));
-                        break;
-                    default:
-                        System.out.println((Arrays.toString(points.toArray(new Vector2[points.size()]))));
-                        throw new RuntimeException("fuck your format :\'"+ currentToken+"\'");
-                }
-
-            }
             if(s.hasNext()){
                 currentToken = s.next();
-                System.out.println("new token");
+                System.out.println("new token: " + currentToken);
             }
             else {
-                System.out.println("trying to exit, how hard can it fucking be?");
-                done = true;
-                break;
+                throw  new RuntimeException("bad format");
+            }
+            boolean relative = true;
+            switch (currentToken)
+            {
+                case "M": {
+                    pos = nextVector2(s, Vector2.Zero());
+                } break;
+                case "m":{
+                    pos = nextVector2(s, pos);
+                } break;
+                case "Z":
+                case "z":
+                    done = true;
+                    break;
+                case "C":
+                    relative = false;
+                case "c":
+                    Vector2 rel = relative ? pos : Vector2.Zero();
+                    if(points.empty())
+                        points.push(pos);
+                    while(s.hasNextFloat())
+                    {
+                        points.push(nextVector2(s, rel));
+                        points.push(nextVector2(s, rel));
+                        points.push(nextVector2(s, rel));
+                    }
+                    pos = points.peek();
+                    break;
+                default:
+                    System.out.println((Arrays.toString(points.toArray(new Vector2[points.size()]))));
+                    throw new RuntimeException("fuck your format :\'"+ currentToken+"\'");
             }
         }
+
         points.pop();
 
         Vector2[] v = points.toArray(new Vector2[points.size()]);
         for(int i = 0; i<v.length;i++)
         {
-            v[i]=Util.Mul(v[i], 1f / 800f);
+            v[i]=Util.Mul(v[i], 1f / 1000f);
         }
         System.out.println(Arrays.toString(v));
         return new FilledBeizierPath(v,matrix);
     }
+    private static void advanceTo(Scanner s, String token, boolean print)
+    {
+        while(s.hasNext() )
+        {
+            //just advance;
+            String currentToken = s.next();
+            if(currentToken.equals(token)) break;
+            if(print) System.out.println(currentToken);
+        }
+    }
 
-    private static Vector2 nextVector2(Scanner s)
+    private static Vector2 nextVector2(Scanner s,Vector2 relativeTo)
     {
         System.out.println("next vector..");
-        float x = s.nextFloat();
-        String string = s.next();
-        if(!",".equals(string))throw new IllegalArgumentException("Expected two floats separated with a comma. Got:"+string);
-        float y = s.nextFloat();
+        if(!s.hasNextFloat())
+            throw new IllegalArgumentException("1: Expected a floats got: '" + s.next()+"'");
 
-        return new Vector2(x,y);
+        float x = s.nextFloat();
+
+        String string = s.next();
+        if(!",".equals(string))throw new IllegalArgumentException("2: Expected two floats separated with a comma. Got:"+string);
+        if(!s.hasNextFloat())
+            throw new IllegalArgumentException("3: Expected a floats got: '" + s.next()+"'");
+
+        float y =  s.nextFloat();
+        return Util.Add(new Vector2(x,y),relativeTo);
     }
 }

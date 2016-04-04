@@ -252,7 +252,6 @@ public class Mesh {
     public void draw() {
         // Add program to OpenGL environment
         GLES20.glUseProgram(mProgram);
-
         // get handle to vertex shader's vPosition member
         mPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
 
@@ -286,6 +285,7 @@ public class Mesh {
                 GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
 
         // Disable vertex array
+
         GLES20.glDisableVertexAttribArray(mPositionHandle);
     }
 }

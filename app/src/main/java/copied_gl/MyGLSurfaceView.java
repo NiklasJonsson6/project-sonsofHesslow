@@ -19,6 +19,10 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
 
+import javax.microedition.khronos.egl.EGL10;
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLDisplay;
+
 import gl_own.Camera;
 import gl_own.Geometry.Vector2;
 
@@ -31,12 +35,42 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
     private final MyGLRenderer mRenderer;
 
+    class MyConfigChooser implements GLSurfaceView.EGLConfigChooser {
+        @Override
+        public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
+            int attribs[] = {
+                    EGL10.EGL_LEVEL, 0,
+                    EGL10.EGL_RENDERABLE_TYPE, 4,  // EGL_OPENGL_ES2_BIT
+                    EGL10.EGL_COLOR_BUFFER_TYPE, EGL10.EGL_TRANSPARENT_RGB,
+                    EGL10.EGL_RED_SIZE, 8,
+                    EGL10.EGL_GREEN_SIZE, 8,
+                    EGL10.EGL_BLUE_SIZE, 8,
+                    EGL10.EGL_ALPHA_SIZE,8,
+                    EGL10.EGL_DEPTH_SIZE, 16,
+                    EGL10.EGL_SAMPLE_BUFFERS, 1,
+                    EGL10.EGL_SAMPLES, 4,
+                    EGL10.EGL_STENCIL_SIZE,2,
+            };
+            EGLConfig[] configs = new EGLConfig[1];
+            int[] configCounts = new int[1];
+            egl.eglChooseConfig(display, attribs, configs, 1, configCounts);
+
+            if (configCounts[0] == 0) {
+                // Failed! Error handling.
+                return null;
+            } else {
+                return configs[0];
+            }
+        }
+    }
+
     public MyGLSurfaceView(Context context) {
         super(context);
 
         // Create an OpenGL ES 2.0 context.
         setEGLContextClientVersion(2);
-
+        super.setEGLConfigChooser(new MyConfigChooser());
+        super.setEGLConfigChooser(8,8,8,8,16,0);
         // Set the Renderer for drawing on the GLSurfaceView
         mRenderer = new MyGLRenderer();
         setRenderer(mRenderer);
@@ -81,7 +115,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
                 Camera cam = Camera.getInstance();
                 float[] newPos={cam.X()+dx,cam.Y()+dy,cam.Z()};
 
-                //cam.setPos(newPos);
+                cam.setPos(newPos);
                 Vector2 gl_cord = MyGLRenderer.ScreentoGLCoords(new Vector2(x,y));
 
                 System.out.println("x:"+gl_cord.x + ",y:" + gl_cord.y);

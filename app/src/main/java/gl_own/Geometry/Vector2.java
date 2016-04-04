@@ -32,4 +32,8 @@ public class Vector2
     { //probably
         return Util.Mul(u,Util.dot(u,this) / (u.x * u.x+u.y*u.y));
     }
+    public static Vector2 Zero()
+    {
+        return new Vector2(0,0);
+    }
 }
