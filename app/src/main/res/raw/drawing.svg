@@ -54,14 +54,9 @@
      id="layer1">
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 302.85715,895.21935 C 24.288331,515.24028 74.285713,18.07649 34.285713,55.219347 45.927319,646.94519 305.98828,929.18227 302.85715,895.21935 Z"
+       d="M 157.14286,769.50506 C 202.85715,963.79077 396.09437,876.61512 428.57144,695.21935 470.00262,463.81171 245.71428,575.21935 74.285713,260.93363 -91.428573,186.64792 -45.714283,752.3622 157.14286,769.50506 Z"
        id="path3336"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccc" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 400,483.79078 297.14286,289.50506 c 0,0 285.71428,-160 277.14285,-37.14286 C 565.71429,375.21935 400,483.79078 400,483.79078 Z"
-       id="path3357"
-       inkscape:connector-curvature="0" />
+       sodipodi:nodetypes="cscc" />
   </g>
 </svg>

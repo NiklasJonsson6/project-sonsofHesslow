@@ -47,8 +47,11 @@ public class Util {
         {
             return true;
         }
-
-
         return false;
     }
+    public static float sideOf(Vector2 a, Vector2 b, Vector2 c)
+    {
+        return ((b.x - a.x)*(c.y - a.y) - (b.y - a.y)*(c.x - a.x));
+    }
+
 }
