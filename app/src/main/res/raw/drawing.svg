@@ -54,8 +54,14 @@
      id="layer1">
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 157.14286,769.50506 C 202.85715,963.79077 396.09437,876.61512 428.57144,695.21935 470.00262,463.81171 245.71428,575.21935 74.285713,260.93363 -91.428573,186.64792 -45.714283,752.3622 157.14286,769.50506 Z"
+       d="M 222.85715,672.3622 C -205.71427,826.64791 404.6658,816.61512 437.14287,635.21935 478.57405,403.81171 319.85441,462.57149 131.28298,165.42863 8.4258386,88.285772 94.285717,726.64791 222.85715,672.3622 Z"
        id="path3336"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cscc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 308.57143,55.219348 c -140,-14.285714 -245.172291,76.165692 -189.02638,191.779032 66.78885,137.52884 17.14617,187.76934 140.45496,285.36384 179.42419,142.00783 -25.7143,471.42858 11.42855,485.71428"
+       id="path3334"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cscc" />
   </g>

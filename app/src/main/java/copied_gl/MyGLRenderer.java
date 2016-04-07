@@ -46,7 +46,7 @@ import gl_own.Geometry.Vector2;
 public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "MyGLRenderer";
-    public static FilledBeizierPath beizier;
+    public static FilledBeizierPath[] beiziers;
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
@@ -86,7 +86,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             File fileToRead = new File(homedir, "raw/drawing.svg");
             try
             {
-                beizier=SvgReader.read(MainActivity.resources.openRawResource(R.raw.drawing),mMVPMatrix);
+                beiziers=SvgReader.read(MainActivity.resources.openRawResource(R.raw.drawing),mMVPMatrix);
             }catch (IOException ex)
             {
                 throw new RuntimeException(ex.toString());
@@ -109,8 +109,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
-        beizier.m.matrix = mMVPMatrix;
-        beizier.draw();
+        for(int i = 0; i<beiziers.length;i++)
+        {
+            beiziers[i].m.matrix = mMVPMatrix;
+            beiziers[i].draw();
+        }
 
         Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, 0, 1.0f);
         Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
@@ -133,7 +136,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
-        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
+        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 1, 7);
     }
 
     public static Vector2 ScreentoGLCoords(Vector2 vec)

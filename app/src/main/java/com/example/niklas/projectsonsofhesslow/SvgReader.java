@@ -1,17 +1,17 @@
 package com.example.niklas.projectsonsofhesslow;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLOutput;
 import java.util.Arrays;
-import java.util.IllegalFormatException;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.Stack;
-import java.util.regex.Pattern;
+import java.util.Vector;
 
 import gl_own.FilledBeizierPath;
+import gl_own.Geometry.Beizier;
+import gl_own.Geometry.BeizierPath;
+import gl_own.Geometry.BeizierPathBuilder;
 import gl_own.Geometry.Util;
 import gl_own.Geometry.Vector2;
 
@@ -20,18 +20,53 @@ import gl_own.Geometry.Vector2;
  */
 public class SvgReader {
     //todo support lineto maybe and handle bad formatting better.
-    public static FilledBeizierPath read(InputStream svgStream,float[] matrix) throws IOException
+    public static FilledBeizierPath[] read(InputStream svgStream,float[] matrix) throws IOException
     {
         Scanner s = new Scanner(svgStream);
         s.useLocale(Locale.US);
 
+        BeizierPath path = readPath(s);
+        BeizierPath line = readPath(s);
+
+        for(int i = 0; i<path.points.length;i++)
+        {
+            path.points[i]= Vector2.Mul(path.points[i],1 / -1000f);
+        }
+
+        for(int i = 0; i<line.points.length;i++)
+        {
+            line.points[i]= Vector2.Mul(line.points[i],1 / -1000f);
+        }
+
+        if(!path.isClosed())throw new RuntimeException("first should be closed");
+        if(line.isClosed())throw new RuntimeException("second shouldn't be closed");
+
+        System.out.println(Arrays.toString(path.points));
+        System.out.println(Arrays.toString(line.points));
+        BeizierPath[] paths = BeizierPath.splitBeizPath(path,line);
+
+        return  new FilledBeizierPath[]
+        {
+            new FilledBeizierPath(paths[0],matrix),
+            new FilledBeizierPath(paths[1],matrix),
+        };
+    }
+
+    private static BeizierPath readPath(Scanner s)
+    {
+        s.useDelimiter("(?<=,)|(?=,)|(\\s+)|(?<=\")|(?=\")");
+
         String currentToken = "";
-        advanceTo(s,"<path", false);
+        advanceTo(s,"<path", true);
         // abc q"as4,52 -> [abc],[q],[as4],[,],[52]
-        s.useDelimiter("(?<=,)|(?=,)|(\\s+)|(\")");
 
-        advanceTo(s, "d=", false);
+        advanceTo(s, "d=", true);
+        if(!s.next().equals("\""))
+        {
+            throw new RuntimeException("bad format dude");
+        }
 
+        BeizierPathBuilder b = new BeizierPathBuilder();
         //parsing
         Vector2 pos = new Vector2(0,0);
         Stack<Vector2> points = new Stack<>();
@@ -56,47 +91,52 @@ public class SvgReader {
                 } break;
                 case "Z":
                 case "z":
-                    done = true;
-                    break;
+                    return b.get(true);
                 case "C":
-                    relative = false;
-                case "c":
-                    Vector2 rel = relative ? pos : Vector2.Zero();
-                    if(points.empty())
-                        points.push(pos);
-                    while(s.hasNextFloat())
+                    Vector2 end = pos;
+                    do
                     {
-                        points.push(nextVector2(s, rel));
-                        points.push(nextVector2(s, rel));
-                        points.push(nextVector2(s, rel));
-                    }
-                    pos = points.peek();
+                        Vector2 start = end;
+                        Vector2 c1 =nextVector2(s, Vector2.Zero());
+                        Vector2 c2 =nextVector2(s, Vector2.Zero());
+                        end =nextVector2(s, Vector2.Zero());
+                        b.addBeiz(new Beizier(start,c1,c2,end));
+                    } while(s.hasNextFloat());
+                    pos = end;
+                    break;
+                case "c":
+                    do
+                    {
+                        Vector2 start = pos;
+                        Vector2 c1 =nextVector2(s,pos);
+                        Vector2 c2 =nextVector2(s, pos);
+                        pos = nextVector2(s,pos);
+                        b.addBeiz(new Beizier(start,c1,c2,pos));
+                    } while(s.hasNextFloat());
+                    break;
+                case "\"":
+                    done = true;
                     break;
                 default:
                     System.out.println((Arrays.toString(points.toArray(new Vector2[points.size()]))));
                     throw new RuntimeException("fuck your format :\'"+ currentToken+"\'");
             }
         }
+        return b.get(false);
 
-        points.pop();
-
-        Vector2[] v = points.toArray(new Vector2[points.size()]);
-        for(int i = 0; i<v.length;i++)
-        {
-            v[i]=Util.Mul(v[i], 1f / 1000f);
-        }
-        System.out.println(Arrays.toString(v));
-        return new FilledBeizierPath(v,matrix);
     }
+
     private static void advanceTo(Scanner s, String token, boolean print)
     {
+        String currentToken="";
         while(s.hasNext() )
         {
             //just advance;
-            String currentToken = s.next();
+            currentToken = s.next();
             if(currentToken.equals(token)) break;
             if(print) System.out.println(currentToken);
         }
+        if(print) System.out.println("found: "+ currentToken);
     }
 
     private static Vector2 nextVector2(Scanner s,Vector2 relativeTo)
@@ -113,6 +153,6 @@ public class SvgReader {
             throw new IllegalArgumentException("3: Expected a floats got: '" + s.next()+"'");
 
         float y =  s.nextFloat();
-        return Util.Add(new Vector2(x,y),relativeTo);
+        return Vector2.Add(new Vector2(x, y), relativeTo);
     }
 }

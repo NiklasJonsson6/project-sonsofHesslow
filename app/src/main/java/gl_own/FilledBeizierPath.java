@@ -1,9 +1,15 @@
 package gl_own;
 
+import android.widget.CalendarView;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
+import gl_own.Geometry.Beizier;
+import gl_own.Geometry.BeizierPath;
 import gl_own.Geometry.Util;
 import gl_own.Geometry.Vector2;
 
@@ -14,38 +20,38 @@ public class FilledBeizierPath {
 
     public Mesh m;
 
-    final float precision = 30;
+    final float precision = 0.01f; //lower is more detailed
+    final int naive_precision = 5; //higher is more detailed
 
-    //todo real precision
-    public FilledBeizierPath(Vector2[] points,float[] matrix) //alternating. start ctl ctl point ctl ctl point ctl ctl (start)
+    public FilledBeizierPath(BeizierPath path,float[] matrix) // start ctl ctl point ctl ctl point ctl ctl (start)
     {
-        if(points.length%3 != 0) throw new IllegalArgumentException("not a quadratic beizier curve");
+        //if(!path.isClosed()) throw new IllegalArgumentException("not a quadratic beizier curve");
 
-        Vector2[] verts = new Vector2[(int)precision*(points.length)/3];
-        for(int j = 0;j<points.length/3;j++)
+        //Vector2[] verts = approximateBeizierPath(points, precision);
+        Vector2[] verts = path.approximateBeizierPath_naive(naive_precision);
+        System.out.println(verts.length);
+
+        //finding out the most prominent winding order
+        float wind_ack = 0;
+        for(int i = 0; i<verts.length;i++)
         {
-            Vector2 start =     points[j*3];
-            Vector2 control_1 = points[j*3+1];
-            Vector2 control_2 = points[j*3+2];
-            Vector2 end =       points[(j*3+3) % points.length];
-            Vector2[] beizPoints = new Vector2[]{start,control_1,control_2,end};
-
-            for(int i = 0;i<precision;i++)
-            {
-                // why the fuck are we using 1 - (i/(precision)). It is right but why??
-                verts[j*(int)precision+i] = beiz(beizPoints, i / (precision));
-            }
+            Vector2 cur = verts[i];
+            Vector2 next = verts[(i+1) % verts.length];
+            wind_ack +=(next.x-cur.x)*(next.y+cur.y);
         }
+        float winding = Math.signum(wind_ack);
 
-        float[] color = {0.2f,0.7f,0.9f,1f};
+        //setup the remaining vertex indices
         short[] tris = new short[(verts.length-2)*3];
         int current_index = 0;
         List<Integer> remainingIndices = new LinkedList<>();
+        System.out.println("diff:");
         for(int i = 0; i<verts.length;i++)
         {
+            if(i!=0)
+                System.out.print(Vector2.Sub(verts[i],verts[i-1]));
             remainingIndices.add(i);
         }
-        System.out.println("verts = " +  Arrays.toString(verts));
 
         //triangulation by earclipping
         while(remainingIndices.size() >= 3)
@@ -61,11 +67,14 @@ public class FilledBeizierPath {
                 Vector2 b = verts[index_b];
                 Vector2 c = verts[index_c];
 
-                if(Util.sideOf(a, b, c)<=0)
+                //only add the tri if it's inside the polygon
+                if(Math.signum(Util.crossProduct(a, b, c))!=winding)
                 {
+                    //check if there is any other vertex inside our proposed triangle
                     boolean noneInside = true;
                     for(int j = 0; j<verts.length;j++)
                     {
+                        if(j == index_a || j == index_b || j == index_c)continue;
                         if (Util.isInsideTri(verts[j], a, b, c))
                         {
                             noneInside = false;
@@ -75,46 +84,32 @@ public class FilledBeizierPath {
 
                     if(noneInside)
                     {
+                        //add the triangle and remove the middle vertex from further consideration
                         tris[current_index++] = (short) index_a;
                         tris[current_index++] = (short) index_b;
                         tris[current_index++] = (short) index_c;
 
                         remainingIndices.remove((i+1) % remainingIndices.size());
                         removed = true;
-                        System.out.println(Arrays.toString(remainingIndices.toArray()));
                         if(remainingIndices.size() == 2) break;
                     }
                 }
             }
             if (!removed)
             {
-                System.out.println("not all tris was drawn.. is it drawn ccw?");
+                System.out.println("not all tris was drawn.. is it self intersecting or is the precision set very high?");
                 break;
             }
         }
 
+        float[] color = {(float)Math.random(),(float)Math.random(),(float)Math.random(),1f};
         m = new Mesh(tris, verts, color, matrix);
     }
 
-    public Vector2 beiz(Vector2[] vectors, float t)
-    {
-        Vector2[] next_vectors = new Vector2[vectors.length-1];
-        for(int i = 0; i<vectors.length-1;i++)
-        {
-            next_vectors[i] = interpolate(vectors[i],vectors[i+1],t);
-        }
-        if(next_vectors.length == 1) return next_vectors[0];
-        else return beiz(next_vectors,t);
-    }
 
-    public Vector2 interpolate(Vector2 start, Vector2 end, float t)
-    {
-        return Util.Add(Util.Mul(start, 1-t), Util.Mul(end, t));
-    }
 
     public void draw()
     {
         m.draw();
     }
-
 }

@@ -93,19 +93,6 @@ public class MyGLSurfaceView extends GLSurfaceView {
         float y = e.getY();
 
         switch (e.getAction()) {
-            case MotionEvent.ACTION_POINTER_DOWN:
-                if(MyGLRenderer.beizier.m.isOnMesh2D(new Vector2(x,y)))
-                {
-                    float[] color = {0.7f,0.9f,0.2f,1f};
-                    MyGLRenderer.beizier.m.color = color;
-                }
-                else
-                {
-                    float[] color = {0.2f,0.9f,0.7f,1f};
-                    MyGLRenderer.beizier.m.color = color;
-                }
-                System.out.println("pointer down");
-                break;
             case MotionEvent.ACTION_MOVE:
 
                 float dx = x - mPreviousX;
@@ -118,18 +105,8 @@ public class MyGLSurfaceView extends GLSurfaceView {
                 cam.setPos(newPos);
                 Vector2 gl_cord = MyGLRenderer.ScreentoGLCoords(new Vector2(x,y));
 
-                System.out.println("x:"+gl_cord.x + ",y:" + gl_cord.y);
+                //System.out.println("x:"+gl_cord.x + ",y:" + gl_cord.y);
 
-                if(MyGLRenderer.beizier.m.isOnMesh2D(new Vector2(x,y)))
-                {
-                    float[] color = {0.7f,0.9f,0.2f,1f};
-                    MyGLRenderer.beizier.m.color = color;
-                }
-                else
-                {
-                    float[] color = {0.2f,0.9f,0.7f,1f};
-                    MyGLRenderer.beizier.m.color = color;
-                }
                 requestRender();
                 break;
         }
