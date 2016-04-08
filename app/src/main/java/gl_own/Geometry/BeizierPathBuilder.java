@@ -14,7 +14,7 @@ public class BeizierPathBuilder
 
     public boolean addBeiz(Beizier beizier)
     {
-        if(beiziers.isEmpty() || Vector2.Sub(beizier.points[0],(beiziers.get(beiziers.size()-1).points[3])).magnitude()<0.01f)
+        if(beiziers.isEmpty() || Vector2.AlmostEqual(beizier.points[0], (beiziers.get(beiziers.size() - 1).points[3])))
         {
             beiziers.add(beizier);
             return true;
@@ -24,15 +24,59 @@ public class BeizierPathBuilder
             throw new RuntimeException(beizier.points[0] + " " + beiziers.get(beiziers.size()-1).points[3]);
         }
     }
-    public boolean addBeizPath(BeizierPath beizPath)
+    public void addBeizPath(BeizierPath beizPath)
     {
         for (Beizier b:beizPath)
         {
             if(!addBeiz(b))throw new RuntimeException("fuck me");
-            //probably backtrack as well or something...
         }
-        return true;
     }
+
+    public boolean fitAndAddBeizPath(BeizierPath addition)
+    {
+        if(addition.isClosed()) throw new RuntimeException("self intersecting beizierpaths is not supported");
+        Vector2 currentFirst = beiziers.get(0).points[0];
+        Vector2 currentLast = beiziers.get(beiziers.size()-1).points[3];
+        Vector2 addedFirst = addition.points[0];
+        Vector2 addedLast = addition.points[addition.points.length-1];
+
+        if(Vector2.AlmostEqual(currentLast,addedFirst))
+        {
+            addBeizPath(addition);
+            return true;
+        }
+
+        if(Vector2.AlmostEqual(currentLast,addedLast))
+        {
+            addBeizPath(addition.reverse());
+            return true;
+        }
+
+        if(Vector2.AlmostEqual(currentFirst,addedLast))
+        {
+            BeizierPath old = get(false);
+            clear();
+            addBeizPath(addition);
+            addBeizPath(old);
+            return true;
+        }
+
+        if(Vector2.AlmostEqual(currentFirst,addedFirst))
+        {
+            BeizierPath old = get(false);
+            clear();
+            addBeizPath(old.reverse());
+            addBeizPath(addition);
+            return true;
+        }
+        System.out.println("old "+Arrays.deepToString(get(false).points));
+        System.out.println("new "+Arrays.deepToString(addition.points));
+        System.out.println("appearently not equal: " +currentFirst + ", " + currentLast + ", " + addedFirst + ", "  + addedLast);
+        return false;
+    }
+
+
+
     public void clear()
     {
         beiziers.clear();
@@ -42,7 +86,7 @@ public class BeizierPathBuilder
     {
         if(close)
         {
-            if(Vector2.Sub(beiziers.get(0).points[0],(beiziers.get(beiziers.size()-1).points[3])).magnitude()>0.01f)
+            if(!Vector2.AlmostEqual(beiziers.get(0).points[0],(beiziers.get(beiziers.size()-1).points[3])))
             {
                 for(Beizier b: beiziers)
                 {

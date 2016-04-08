@@ -2,7 +2,9 @@ package com.example.niklas.projectsonsofhesslow;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.Stack;
@@ -25,31 +27,77 @@ public class SvgReader {
         Scanner s = new Scanner(svgStream);
         s.useLocale(Locale.US);
 
-        BeizierPath path = readPath(s);
-        BeizierPath line = readPath(s);
+        List<BeizierPath> paths = new ArrayList<>();
+        List<BeizierPath> splits = new ArrayList<>();
 
-        for(int i = 0; i<path.points.length;i++)
+        //parse all paths in the svg. add them into the appropriate category.
+        while(true)
         {
-            path.points[i]= Vector2.Mul(path.points[i],1 / -1000f);
+            BeizierPath new_read = readPath(s);
+            if(new_read != null)
+            {
+                for(int i = 0; i<new_read.points.length;i++)
+                {
+                    new_read.points[i]= Vector2.Mul(new_read.points[i],1 / -1000f);
+                }
+
+                if(new_read.isClosed())
+                {
+                    paths.add(new_read);
+                }
+                else
+                {
+                    splits.add(new_read);
+                }
+            }
+            else
+            {
+                break;
+            }
         }
 
-        for(int i = 0; i<line.points.length;i++)
+        while(splits.size()>0)
         {
-            line.points[i]= Vector2.Mul(line.points[i],1 / -1000f);
+            boolean removed = false;
+            for(int i = 0;i<splits.size();i++)
+            {
+                BeizierPath split = splits.get(i);
+                int pathLen = paths.size();
+                List<Integer> removeIndices = new ArrayList<>();
+                for(int j = 0;j<pathLen;j++)
+                {
+                    BeizierPath path = paths.get(j);
+                    BeizierPath[] new_paths = BeizierPath.splitBeizPath(path,split);
+                    if(new_paths != null)
+                    {
+                        paths.remove(j);
+                        --j;
+                        --pathLen;
+                        paths.add(new_paths[0]);
+                        paths.add(new_paths[1]);
+                        removed = true;
+                    }
+                }
+                if(removed)
+                {
+                    splits.remove(i);
+                    --i;
+                    break;
+                }
+            }
+            if(!removed)
+            {
+                System.out.println("none removed failed...");
+                break;
+            }
         }
 
-        if(!path.isClosed())throw new RuntimeException("first should be closed");
-        if(line.isClosed())throw new RuntimeException("second shouldn't be closed");
-
-        System.out.println(Arrays.toString(path.points));
-        System.out.println(Arrays.toString(line.points));
-        BeizierPath[] paths = BeizierPath.splitBeizPath(path,line);
-
-        return  new FilledBeizierPath[]
+        FilledBeizierPath[] ret = new FilledBeizierPath[paths.size()];
+        for(int i = 0; i< ret.length;i++)
         {
-            new FilledBeizierPath(paths[0],matrix),
-            new FilledBeizierPath(paths[1],matrix),
-        };
+            ret[i] = new FilledBeizierPath(paths.get(i),matrix);
+        }
+        return ret;
     }
 
     private static BeizierPath readPath(Scanner s)
@@ -57,14 +105,12 @@ public class SvgReader {
         s.useDelimiter("(?<=,)|(?=,)|(\\s+)|(?<=\")|(?=\")");
 
         String currentToken = "";
-        advanceTo(s,"<path", true);
+        advanceTo(s,"<path");
         // abc q"as4,52 -> [abc],[q],[as4],[,],[52]
 
-        advanceTo(s, "d=", true);
-        if(!s.next().equals("\""))
-        {
-            throw new RuntimeException("bad format dude");
-        }
+        advanceTo(s, "d=");
+        if(s.hasNext())
+            s.next(); // the " char after in d="
 
         BeizierPathBuilder b = new BeizierPathBuilder();
         //parsing
@@ -78,7 +124,7 @@ public class SvgReader {
                 System.out.println("new token: " + currentToken);
             }
             else {
-                throw  new RuntimeException("bad format");
+                return null;
             }
             boolean relative = true;
             switch (currentToken)
@@ -93,16 +139,15 @@ public class SvgReader {
                 case "z":
                     return b.get(true);
                 case "C":
-                    Vector2 end = pos;
                     do
                     {
-                        Vector2 start = end;
+                        Vector2 start = pos;
                         Vector2 c1 =nextVector2(s, Vector2.Zero());
                         Vector2 c2 =nextVector2(s, Vector2.Zero());
-                        end =nextVector2(s, Vector2.Zero());
-                        b.addBeiz(new Beizier(start,c1,c2,end));
+                        pos = nextVector2(s, Vector2.Zero());
+                        b.addBeiz(new Beizier(start,c1,c2,pos));
                     } while(s.hasNextFloat());
-                    pos = end;
+
                     break;
                 case "c":
                     do
@@ -123,20 +168,17 @@ public class SvgReader {
             }
         }
         return b.get(false);
-
     }
 
-    private static void advanceTo(Scanner s, String token, boolean print)
+    private static boolean advanceTo(Scanner s, String token)
     {
         String currentToken="";
         while(s.hasNext() )
         {
             //just advance;
-            currentToken = s.next();
-            if(currentToken.equals(token)) break;
-            if(print) System.out.println(currentToken);
+            if(s.next().equals(token)) return true;
         }
-        if(print) System.out.println("found: "+ currentToken);
+        return false;
     }
 
     private static Vector2 nextVector2(Scanner s,Vector2 relativeTo)

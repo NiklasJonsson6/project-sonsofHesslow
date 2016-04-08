@@ -55,6 +55,10 @@ public class Vector2
     {
         return new Vector2(vec.x*scalar,vec.y*scalar);
     }
+    public static boolean AlmostEqual(Vector2 a, Vector2 b)
+    {
+        return Vector2.Sub(a,b).magnitude()<0.01f;
+    }
 
     public String toString()
     {

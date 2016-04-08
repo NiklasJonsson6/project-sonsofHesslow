@@ -67,6 +67,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                  0.5f,-0.5f,0f, // bottom right
                  0.5f, 0.5f,0f, // top right
         };
+
         Vector2[] beizierPoints = new Vector2[]
                 {
                     new Vector2(0,0),

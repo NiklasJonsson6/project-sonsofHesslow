@@ -2,6 +2,8 @@ package gl_own.Geometry;
 
 import android.util.Pair;
 
+import com.example.niklas.projectsonsofhesslow.ArrayUitls;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -152,8 +154,10 @@ public class BeizierPath implements Iterable<Beizier> {
                 List<Pair<Float,Float>> intersectionPoints = new ArrayList<>();
                 if(Beizier.Intersect(lineBeiz,pathBeiz,0.00001f,intersectionPoints))
                 {
-                    // why is there three real differnet intersections??
-                    //if(intersectionPoints.size()>1)throw new IllegalArgumentException("one beiz may not intersect the path more than once currently...");
+                    // currently only one intersection per beizier is supported.
+                    // however intersection points may return multiple values that are all within the
+                    // tolerance of the one intersection point. Thats why we're not currently throwing any exceptions.
+                    //and instead just gets the first and ignores the rest.
                     line_splits.add(new Pair<Integer, Float>(i,intersectionPoints.get(0).first));
                     path_splits.add(new Pair<Integer, Float>(j,intersectionPoints.get(0).second));
                     System.out.println(intersectionPoints.size());
@@ -168,14 +172,16 @@ public class BeizierPath implements Iterable<Beizier> {
         }
         System.out.println("intersection points = "+line_splits.size() + ", " + path_splits.size());
 
+        if(line_splits.size() != 2 || path_splits.size() != 2)
+        {
+            return null;
+        }
+
         BeizierPath[] split_path = splitBeizPath(path,path_splits);
         BeizierPath[] split_line = splitBeizPath(line,line_splits);
         System.out.println(split_path.length );
         System.out.println(split_line.length );
 
-        BeizierPath[] ret = new BeizierPath[2];
-        ret[0]= new BeizierPath(concat(split_path[0].points,split_line[1].points,split_path[2].points));
-        ret[1]= new BeizierPath(concat(split_line[1].points,reverse(split_path[1].points)));
 
         for(int c = 0; c<split_line.length;c++)
         {
@@ -191,54 +197,32 @@ public class BeizierPath implements Iterable<Beizier> {
 
         BeizierPathBuilder b = new BeizierPathBuilder();
         b.addBeizPath(split_path[2]);
-        b.addBeizPath(split_path[0]);
-        b.addBeizPath(split_line[1].reverse());
+        if(!b.fitAndAddBeizPath(split_path[0]))
+        {
+            throw new RuntimeException("this isn't wokring right...");
+        }
+        if(!b.fitAndAddBeizPath(split_line[1]))
+        {
+            throw new RuntimeException("this isn't wokring right...");
+        }
 
+        BeizierPath[] ret = new BeizierPath[2];
         ret[0] = b.get(true);
         b.clear();
         b.addBeizPath(split_line[1]);
-        b.addBeizPath(split_path[1].reverse());
+        b.fitAndAddBeizPath(split_path[1]);
         ret[1] = b.get(true);
         System.out.println(ret[0].isClosed());
         System.out.println(ret[1].isClosed());
         return ret;
     }
 
-    public static <T> T[] concat(T[]... arrays)
-    {
-        int len_ack = 0;
-        for(int i = 0; i< arrays.length;i++)
-        {
-            len_ack+= arrays[i].length;
-        }
-
-        @SuppressWarnings("unchecked")
-        T[] ret = (T[]) Array.newInstance(arrays[0].getClass().getComponentType(), len_ack);
-
-        int elemenet_ack = 0;
-        for(int i = 0; i< arrays.length;i++)
-        {
-            System.arraycopy(arrays[i], 0, ret, elemenet_ack, arrays[i].length);
-            elemenet_ack += arrays[i].length;
-        }
-
-        return ret;
-    }
     public BeizierPath reverse()
     {
-        points = reverse(points);
+        points = ArrayUitls.reverse(points);
         return this;
     }
-    public static <T> T[] reverse(T[] arr)
-    {
-        @SuppressWarnings("unchecked")
-        T[] ret = (T[]) Array.newInstance(arr.getClass().getComponentType(), arr.length);
-        for(int i = 0;i<arr.length;i++)
-        {
-            ret[i] = arr[arr.length-i-1];
-        }
-        return ret;
-    }
+
     public static BeizierPath[] splitBeizPath(BeizierPath beizPath, List<Pair<Integer,Float>> poses)
     {
 
@@ -257,10 +241,8 @@ public class BeizierPath implements Iterable<Beizier> {
 
         for(Beizier currentBeiz : beizPath)
         {
-            if(current_index>poses.size())
-                break;
 
-            if(poses.get(current_index).first <= i)
+            if(current_index<poses.size()&&poses.get(current_index).first <= i)
             {
                 Beizier[] split = currentBeiz.split(poses.get(current_index).second);
                 builder.addBeiz(split[0]);
