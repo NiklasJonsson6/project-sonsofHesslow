@@ -22,7 +22,7 @@ import gl_own.Geometry.Vector2;
  */
 public class SvgReader {
     //todo support lineto maybe and handle bad formatting better.
-    public static FilledBeizierPath[] read(InputStream svgStream,float[] matrix) throws IOException
+    public static FilledBeizierPath[] read(InputStream svgStream) throws IOException
     {
         Scanner s = new Scanner(svgStream);
         s.useLocale(Locale.US);
@@ -38,7 +38,7 @@ public class SvgReader {
             {
                 for(int i = 0; i<new_read.points.length;i++)
                 {
-                    new_read.points[i]= Vector2.Mul(new_read.points[i],1 / -1000f);
+                    new_read.points[i]= Vector2.Mul(new_read.points[i],1 / -100f);
                 }
 
                 if(new_read.isClosed())
@@ -95,7 +95,7 @@ public class SvgReader {
         FilledBeizierPath[] ret = new FilledBeizierPath[paths.size()];
         for(int i = 0; i< ret.length;i++)
         {
-            ret[i] = new FilledBeizierPath(paths.get(i),matrix);
+            ret[i] = new FilledBeizierPath(paths.get(i));
         }
         return ret;
     }

@@ -19,35 +19,15 @@ public class Util {
 
 
 
-    // checks if the point p inside the triangle abc
-    public static boolean isInsideTri(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
+    public static boolean isInsideTri(Vector2 pt, Vector2 v1, Vector2 v2, Vector2 v3)
     {
-        float s = a.y * c.x - a.x * c.y + (c.y - a.y) * p.x + (a.x - c.x) * p.y;
-        float t = a.x * b.y - a.y * b.x + (a.x - b.y) * p.x + (b.x - a.x) * p.y;
+        boolean b1, b2, b3;
 
-        if ((s < 0) != (t < 0))
-            return false;
+        b1 = crossProduct(pt, v1, v2) < 0.0f;
+        b2 = crossProduct(pt, v2, v3) < 0.0f;
+        b3 = crossProduct(pt, v3, v1) < 0.0f;
 
-        float A = -b.y * c.x + a.y * (c.x - b.x) + a.x * (b.y - c.y) + b.x * c.y;
-        if (A < 0.0)
-        {
-            s = -s;
-            t = -t;
-            A = -A;
-        }
-        if((s > 0 && t > 0 && (s + t) <= A))
-        {
-            return true;
-        }
-        return false;
-    }
-    public static boolean isInsideTri_naive(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
-    {
-        Vector2 p_mid = Vector2.Mul(Vector2.Add(Vector2.Add(a, b), c), 1f / 3f);
-
-        return  (Math.signum(crossProduct(p_mid,a,b)) == Math.signum(crossProduct(p,a,b)) &&
-                (Math.signum(crossProduct(p_mid,a,c)) == Math.signum(crossProduct(p,a,c))) &&
-                (Math.signum(crossProduct(p_mid,b,c)) == Math.signum(crossProduct(p,b,c))));
+        return ((b1 == b2) && (b2 == b3) && crossProduct(v1,v2,v3)!=0);
     }
 
     //the cross product (With the z-component obviously set to 0) between the vectors rel-b and rel-c
@@ -60,5 +40,14 @@ public class Util {
     public static Vector2 interpolate(Vector2 start, Vector2 end, float t)
     {
         return Vector2.Add(Vector2.Mul(start, 1 - t), Vector2.Mul(end, t));
+    }
+    public static void printMesh(float[] matrix)
+    {
+        for(int y = 0; y<4;y++){
+            for(int x = 0; x<4;x++){
+                System.out.print(matrix[x+y*4]+" ");
+            }
+            System.out.print("\n");
+        }
     }
 }

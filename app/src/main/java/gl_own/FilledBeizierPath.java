@@ -1,14 +1,10 @@
 package gl_own;
 
-import android.widget.CalendarView;
+import android.opengl.Matrix;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
-import gl_own.Geometry.Beizier;
 import gl_own.Geometry.BeizierPath;
 import gl_own.Geometry.Util;
 import gl_own.Geometry.Vector2;
@@ -16,14 +12,14 @@ import gl_own.Geometry.Vector2;
 /**
  * Created by daniel on 3/31/16.
  */
-public class FilledBeizierPath {
+public class FilledBeizierPath extends GLObject{
 
-    public Mesh m;
+    public Mesh mesh;
 
     final float precision = 0.01f; //lower is more detailed
-    final int naive_precision = 5; //higher is more detailed
+    final int naive_precision = 30; //higher is more detailed
 
-    public FilledBeizierPath(BeizierPath path,float[] matrix) // start ctl ctl point ctl ctl point ctl ctl (start)
+    public FilledBeizierPath(BeizierPath path) // start ctl ctl point ctl ctl point ctl ctl (start)
     {
         //if(!path.isClosed()) throw new IllegalArgumentException("not a quadratic beizier curve");
 
@@ -103,13 +99,12 @@ public class FilledBeizierPath {
         }
 
         float[] color = {(float)Math.random(),(float)Math.random(),(float)Math.random(),1f};
-        m = new Mesh(tris, verts, color, matrix);
+        mesh = new Mesh(tris, verts, color);
     }
 
-
-
-    public void draw()
-    {
-        m.draw();
+    public void draw(float[] projectionMatrix){
+        float[] mvpMatrix = new float[16];
+        Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
+        mesh.draw(projectionMatrix);
     }
 }

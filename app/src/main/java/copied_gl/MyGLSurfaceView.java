@@ -24,7 +24,10 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 
 import gl_own.Camera;
+import gl_own.FilledBeizierPath;
 import gl_own.Geometry.Vector2;
+import gl_own.Geometry.Vector3;
+import gl_own.Square;
 
 /**
  * A view container where OpenGL ES graphics can be drawn on screen.
@@ -80,8 +83,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     }
 
     private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
-    private float mPreviousX;
-    private float mPreviousY;
+    private Vector2 prevPos;
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
@@ -91,29 +93,41 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
         float x = e.getX();
         float y = e.getY();
+        Vector2 pos = new Vector2(x,y);
+        Vector3 posWP = MyGLRenderer.ScreenToGl(pos);
+        Vector3 prevposWP=null;
+        if(prevPos!=null)
+            prevposWP = MyGLRenderer.ScreenToGl(prevPos);
 
-        switch (e.getAction()) {
-            case MotionEvent.ACTION_MOVE:
+        Vector2 checkPos = MyGLRenderer.ScreenToWorldCoords(pos,0.55555555555f).ToVector2();
 
-                float dx = x - mPreviousX;
-                float dy = y - mPreviousY;
-                dx/=1000;
-                dy/=1000;
-                Camera cam = Camera.getInstance();
-                float[] newPos={cam.X()+dx,cam.Y()+dy,cam.Z()};
+        if(prevposWP!=null && posWP!=null)
+        {
+            System.out.println("fucking pos = "+ checkPos);
+            switch (e.getAction()) {
+                case MotionEvent.ACTION_MOVE:
+                    Vector2 delta = Vector2.Sub(prevposWP.ToVector2(), posWP.ToVector2());
+                    Camera cam = Camera.getInstance();
+                    float[] newPos={cam.X()-delta.x,cam.Y()-delta.y,-3};
+                    cam.setPos(newPos);
 
-                cam.setPos(newPos);
-                Vector2 gl_cord = MyGLRenderer.ScreentoGLCoords(new Vector2(x,y));
+                    for(FilledBeizierPath path : MyGLRenderer.beiziers)
+                    {
+                        if(path.mesh.isOnMesh2D(checkPos))
+                        {
+                            float[] color = {(float)Math.random(),(float)Math.random(),(float)Math.random(),1f};
+                            path.mesh.color = color;
+                        }
+                    }
 
-                //System.out.println("x:"+gl_cord.x + ",y:" + gl_cord.y);
-
-                requestRender();
-                break;
+                    requestRender();
+                    break;
+            }
         }
 
-        mPreviousX = x;
-        mPreviousY = y;
+        prevPos = pos;
         return true;
     }
+
 
 }

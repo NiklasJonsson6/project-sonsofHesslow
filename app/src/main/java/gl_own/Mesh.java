@@ -22,11 +22,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-import java.util.Arrays;
+import java.sql.SQLOutput;
 import java.util.Iterator;
 
 import copied_gl.MyGLRenderer;
-import copied_gl.MyGLSurfaceView;
 import gl_own.Geometry.Util;
 import gl_own.Geometry.Vector2;
 
@@ -34,17 +33,11 @@ import gl_own.Geometry.Vector2;
  * A Mesh based on developer.android.com's Square.
  */
 public class Mesh {
-    public float[] matrix;
 
     private final String vertexShaderCode =
-            // This matrix member variable provides a hook to manipulate
-            // the coordinates of the objects that use this vertex shader
             "uniform mat4 uMVPMatrix;" +
             "attribute vec4 vPosition;" +
             "void main() {" +
-            // The matrix must be included as a modifier of gl_Position.
-            // Note that the uMVPMatrix factor *must be first* in order
-            // for the matrix multiplication product to be correct.
             "  gl_Position = uMVPMatrix * vPosition;" +
             "}";
 
@@ -65,7 +58,7 @@ public class Mesh {
     // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 3;
     short[] triangles;
-    float[] vertices;
+    Vector2[] vertices;
 
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex (coord right? //daniel)
 
@@ -97,22 +90,15 @@ public class Mesh {
         }
         @Override
         public boolean hasNext() {
-            return mesh.triangles.length-2> currentTriangle*3;
+            return mesh.triangles.length/3> currentTriangle;
         }
 
-        public Vector2 getVertexAt(int index)
-        {
-            int vertIndexStart = mesh.triangles[index];
-            return new Vector2(mesh.vertices[vertIndexStart],
-                      mesh.vertices[vertIndexStart+1]);
-        }
 
         @Override
         public Triangle next() {
-
-            Vector2 a = getVertexAt(currentTriangle*3+0);
-            Vector2 b = getVertexAt(currentTriangle*3+1);
-            Vector2 c = getVertexAt(currentTriangle*3+2);
+            Vector2 a = mesh.vertices[mesh.triangles[currentTriangle * 3 + 0]];
+            Vector2 b = mesh.vertices[mesh.triangles[currentTriangle*3+1]];
+            Vector2 c = mesh.vertices[mesh.triangles[currentTriangle*3+2]];
 
             ++currentTriangle;
             return new Triangle(a,b,c);
@@ -129,75 +115,53 @@ public class Mesh {
         return new MeshIterator(this);
     }
 
-    //dude fix me yo..
-    //use ray-tracing maybe??
     public boolean isOnMesh2D(Vector2 point)
     {
-        point = MyGLRenderer.ScreentoGLCoords(point);
-
-        float[] tmp = new float[]{point.x,point.y,0,1};
-        float[] scratch = new float[16];
-
-        Matrix.invertM(scratch,0,matrix,0);
-
-        Matrix.multiplyMV(tmp,0,scratch,0,tmp,0);
-        point.x = tmp[0];
-        point.y = tmp[1];
-
-        System.out.println(point);
 
         MeshIterator it = meshIterator();
-        int counter = 0;
         while(it.hasNext())
         {
             Triangle triangle = it.next();
             Vector2 p0 = triangle.points[0];
             Vector2 p1 = triangle.points[1];
             Vector2 p2 = triangle.points[2];
-
-            float s = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * point.x + (p0.x - p2.x) * point.y;
-            float t = p0.x * p1.y - p0.y * p1.x + (p0.x - p1.y) * point.x + (p1.x - p0.x) * point.y;
-
-            if ((s < 0) != (t < 0))
-                continue;
-
-            float A = -p1.y * p2.x + p0.y * (p2.x - p1.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y;
-            if (A < 0.0)
+            if(Util.isInsideTri(point, p0, p1, p2))
             {
-                s = -s;
-                t = -t;
-                A = -A;
+                /*
+                    float[] color_outside = new float[]{0.6f,0.2f,0.8f,1};
+                    float[] color_inside = new float[]{0.3f,0.9f,0.6f,1};
+                    MyGLRenderer.addSquare(point,color_inside);
+                    MyGLRenderer.addTri(p0, p1, p2, color_outside);
+                 */
+                return true;
             }
-            if((s > 0 && t > 0 && (s + t) <= A))
-            {
-               return true;
-            }
-
         }
+        System.out.println("none inside");
 
         return false;
     }
 
-    public Mesh(short[] triangles, Vector2[] vertices, float color[],float[] matrix)
+    public Mesh(short[] triangles, Vector2[] vertices, float color[])
     {
-        float[] new_verts = new float[vertices.length*3];
+        this.vertices = vertices;
+        this.triangles = triangles;
+        this.color = color;
+
+        float[] new_verts = new float[vertices.length*COORDS_PER_VERTEX];
         for(int i = 0; i<vertices.length;i++)
         {
-            new_verts[i*3]   = vertices[i].x;
-            new_verts[i*3+1] = vertices[i].y;
-            new_verts[i*3+2] = 0;
+            new_verts[i*COORDS_PER_VERTEX]   = vertices[i].x;
+            new_verts[i*COORDS_PER_VERTEX+1] = vertices[i].y;
+            new_verts[i*COORDS_PER_VERTEX+2] = 0;
         }
-        init(triangles, new_verts, color,matrix);
+        init(triangles, new_verts, color);
     }
 
-    public Mesh(short[] triangles, float[] vertices, float color[], float[] matrix)
-    {
-        init(triangles,vertices,color,matrix);
-    }
+
 
     // because java is stupid and constructors need to be called on the first line on other constructors.
     // here is the meat of the constructors.
-    private void init(short[] triangles, float[] vertices, float color[],float[] matrix) {
+    private void init(short[] triangles, float[] vertices, float color[]) {
 
         if(color.length != 4){
             throw new IllegalArgumentException("a color consists of 4 values, r g b a. not " + color.length);
@@ -205,18 +169,7 @@ public class Mesh {
         if(triangles.length%3 != 0){
             throw new IllegalArgumentException("A triangle array needs to be divisible by three");
         }
-        if(matrix.length != 16)
-        {
-            throw new IllegalArgumentException("A 4x4 matrix has 16 entries");
-        }
 
-        //no uvs yet. do we care about texturing??
-        this.triangles = triangles;
-        this.vertices = vertices;
-        this.color = color;
-        this.matrix = matrix;
-
-        // initialize vertex byte buffer for shape coordinates
         ByteBuffer bb = ByteBuffer.allocateDirect(
         // (# of coordinate values * 4 bytes per float)
                 vertices.length * 4);
@@ -235,12 +188,8 @@ public class Mesh {
         drawListBuffer.position(0);
 
         // prepare shaders and OpenGL program
-        int vertexShader = MyGLRenderer.loadShader(
-                GLES20.GL_VERTEX_SHADER,
-                vertexShaderCode);
-        int fragmentShader = MyGLRenderer.loadShader(
-                GLES20.GL_FRAGMENT_SHADER,
-                fragmentShaderCode);
+        int vertexShader    = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+        int fragmentShader  = MyGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
         mProgram = GLES20.glCreateProgram();             // create empty OpenGL Program
         GLES20.glAttachShader(mProgram, vertexShader);   // add the vertex shader to program
@@ -249,7 +198,7 @@ public class Mesh {
     }
 
 
-    public void draw() {
+    public void draw(float[] matrix) {
         // Add program to OpenGL environment
         GLES20.glUseProgram(mProgram);
         // get handle to vertex shader's vPosition member
