@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
+import android.view.View;
 
 import java.util.Calendar;
 import java.util.Timer;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
 
         graphicsView.addListener(this);
 
-        setContentView(graphicsView);
+        setContentView(R.layout.activity_main);
 
         //setContentView(R.layout.activity_main);
         resources = this.getResources();
@@ -70,4 +71,10 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         graphicsView.requestRender();
         prevPos = event.screenPosition;
     }
+
+    public void startGame(View v) {
+        //probably more stuff later
+        setContentView(graphicsView);
+    }
+
 }
