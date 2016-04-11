@@ -19,15 +19,14 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 
-import gl_own.Camera;
 import gl_own.FilledBeizierPath;
 import gl_own.Geometry.Vector2;
-import gl_own.Geometry.Vector3;
-import gl_own.Square;
 
 /**
  * A view container where OpenGL ES graphics can be drawn on screen.
@@ -85,49 +84,45 @@ public class MyGLSurfaceView extends GLSurfaceView {
     private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
     private Vector2 prevPos;
 
+
+    private ConcurrentLinkedQueue<GL_TouchListener> listeners = new ConcurrentLinkedQueue<>();
+    public void addListener(GL_TouchListener listener)
+    {
+        listeners.add(listener);
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent e) {
+
         // MotionEvent reports input details from the touch screen
         // and other input controls. In this case, you are only
         // interested in events where the touch position changed.
 
-        float x = e.getX();
-        float y = e.getY();
-        Vector2 pos = new Vector2(x,y);
-        Vector3 posWP = MyGLRenderer.ScreenToGl(pos);
-        Vector3 prevposWP=null;
-        if(prevPos!=null)
-            prevposWP = MyGLRenderer.ScreenToGl(prevPos);
+        Vector2 screen_pos = new Vector2(e.getX(),e.getY());
+        Vector2 world_pos = MyGLRenderer.ScreenToWorldCoords(screen_pos,0);
 
-        Vector2 checkPos = MyGLRenderer.ScreenToWorldCoords(pos,0.55555555555f).ToVector2();
-
-        if(prevposWP!=null && posWP!=null)
+        int index = 0;
+        boolean hasTouchedRegion = false;
+        for(FilledBeizierPath path : MyGLRenderer.beiziers)
         {
-            System.out.println("fucking pos = "+ checkPos);
-            switch (e.getAction()) {
-                case MotionEvent.ACTION_MOVE:
-                    Vector2 delta = Vector2.Sub(prevposWP.ToVector2(), posWP.ToVector2());
-                    Camera cam = Camera.getInstance();
-                    float[] newPos={cam.X()-delta.x,cam.Y()-delta.y,-3};
-                    cam.setPos(newPos);
-
-                    for(FilledBeizierPath path : MyGLRenderer.beiziers)
-                    {
-                        if(path.mesh.isOnMesh2D(checkPos))
-                        {
-                            float[] color = {(float)Math.random(),(float)Math.random(),(float)Math.random(),1f};
-                            path.mesh.color = color;
-                        }
-                    }
-
-                    requestRender();
-                    break;
+            if(path.mesh.isOnMesh2D(world_pos))
+            {
+                hasTouchedRegion = true;
+                break;
             }
+            ++index;
+        }
+        if(!hasTouchedRegion) index = -1;
+
+        GL_TouchEvent event = new GL_TouchEvent(e, hasTouchedRegion, index, world_pos, screen_pos);
+        for(GL_TouchListener listener:listeners)
+        {
+            listener.Handle(event);
         }
 
-        prevPos = pos;
         return true;
     }
 
 
 }
+

@@ -18,7 +18,6 @@ package copied_gl;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import android.graphics.Color;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -37,7 +36,7 @@ import java.util.List;
 import gl_own.FilledBeizierPath;
 import gl_own.Camera;
 import gl_own.GLObject;
-import gl_own.Geometry.Beizier;
+import gl_own.Geometry.Util;
 import gl_own.Geometry.Vector2;
 import gl_own.Geometry.Vector3;
 import gl_own.Square;
@@ -116,7 +115,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         Camera cam = Camera.getInstance();
         // Set the camera position (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, cam.X(), cam.Y(), cam.Z(), cam.X(), cam.Y()+3f, 0f, 0f, 1.0f, 0.0f);
+        Matrix.setLookAtM(mViewMatrix, 0, cam.pos.x, cam.pos.y, cam.pos.z, cam.pos.x, cam.pos.y+1, 0f, 0f, 1.0f, 0.0f);
 
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
@@ -151,7 +150,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         return new Vector3((point.x) * 2.0f / width, ((point.y) * 2.0f / height),0);
     }
 
-    public static Vector3 ScreenToWorldCoords(Vector2 point,float distance)
+    public static Vector2 ScreenToWorldCoords(Vector2 point,float z_out)
     {
         float[] transformMatrix = new float[16];
         Matrix.multiplyMM(transformMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
@@ -159,16 +158,23 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         float[] invTransformMatrix = new float[16];
         Matrix.invertM(invTransformMatrix, 0, transformMatrix, 0);
 
-        float[] pointInGL = new float[]{((point.x) * 2.0f / width - 1.0f), ((height-point.y) * 2.0f / height - 1.0f),distance,1};
+        if(invTransformMatrix[10] == 0) throw new RuntimeException("1: to world cords failed, div by zero");
+        float gl_x =((point.x) * 2.0f / width - 1.0f);
+        float gl_y = ((height-point.y) * 2.0f / height - 1.0f);
+        float gl_z = (invTransformMatrix[2]*gl_x + invTransformMatrix[6]*gl_y + invTransformMatrix[14] -z_out) / -invTransformMatrix[10];
+
+        System.out.println("gl_z" + gl_z);
+        float[] pointInGL = new float[]{gl_x,gl_y,gl_z,1};
         float[] ret = new float[4];
         Matrix.multiplyMV(ret, 0, invTransformMatrix, 0, pointInGL, 0);
+        System.out.println("ret z" + ret[2]);
 
         // avoid div with 0. Don't know if this is a problem
         if (ret[3] == 0.0)
-            throw new RuntimeException("to world cords failed...");
+            throw new RuntimeException("2: to world cords failed, div by zero");
 
         //div so w is one again.
-        return new Vector3(ret[0] / ret[3], ret[1] / ret[3],ret[2] / ret[3]);
+        return new Vector2(ret[0] / ret[3], ret[1] / ret[3]);
     }
 
     /**

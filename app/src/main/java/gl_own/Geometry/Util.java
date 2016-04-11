@@ -41,7 +41,7 @@ public class Util {
     {
         return Vector2.Add(Vector2.Mul(start, 1 - t), Vector2.Mul(end, t));
     }
-    public static void printMesh(float[] matrix)
+    public static void printMatrix(float[] matrix)
     {
         for(int y = 0; y<4;y++){
             for(int x = 0; x<4;x++){
