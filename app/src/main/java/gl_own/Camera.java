@@ -10,6 +10,10 @@ import gl_own.Geometry.Vector3;
  */
 public class Camera {
 
+    public Camera()
+    {
+        updateLookAt();
+    }
     private static Camera instance;
     public static Camera getInstance()
     {
@@ -18,12 +22,23 @@ public class Camera {
     }
 
     public Vector3 pos = new Vector3(-5,-5,-3); //-5-5 is about the current center..
+    public Vector3 lookAt;
+    public Vector3 up = new Vector3(0,1,0);
+
     public void setPos(Vector3 newPos)
     {
         pos = newPos;
+        updateLookAt();
     }
+
     public void setPosRel(Vector3 newPos)
     {
         pos = Vector3.Add(newPos,pos);
+        updateLookAt();
+    }
+
+    private void updateLookAt()
+    {
+        lookAt = new Vector3(pos.x,pos.y,0);
     }
 }

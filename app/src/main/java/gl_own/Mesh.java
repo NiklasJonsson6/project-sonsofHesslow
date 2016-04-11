@@ -131,7 +131,7 @@ public class Mesh {
                     float[] color_outside = new float[]{0.6f,0.2f,0.8f,1};
                     float[] color_inside = new float[]{0.3f,0.9f,0.6f,1};
                     MyGLRenderer.addSquare(point,color_inside);
-                    MyGLRenderer.addTri(p0, p1, p2, color_outside);
+                    MyGLRenderer.delayed_init(p0, p1, p2, color_outside);
                  */
                 return true;
             }
@@ -141,27 +141,24 @@ public class Mesh {
         return false;
     }
 
+    float[] new_verts;
     public Mesh(short[] triangles, Vector2[] vertices, float color[])
     {
         this.vertices = vertices;
         this.triangles = triangles;
         this.color = color;
 
-        float[] new_verts = new float[vertices.length*COORDS_PER_VERTEX];
+        new_verts = new float[vertices.length*COORDS_PER_VERTEX];
         for(int i = 0; i<vertices.length;i++)
         {
             new_verts[i*COORDS_PER_VERTEX]   = vertices[i].x;
             new_verts[i*COORDS_PER_VERTEX+1] = vertices[i].y;
             new_verts[i*COORDS_PER_VERTEX+2] = 0;
         }
-        init(triangles, new_verts, color);
     }
 
 
-
-    // because java is stupid and constructors need to be called on the first line on other constructors.
-    // here is the meat of the constructors.
-    private void init(short[] triangles, float[] vertices, float color[]) {
+    public void init() {
 
         if(color.length != 4){
             throw new IllegalArgumentException("a color consists of 4 values, r g b a. not " + color.length);
@@ -172,10 +169,10 @@ public class Mesh {
 
         ByteBuffer bb = ByteBuffer.allocateDirect(
         // (# of coordinate values * 4 bytes per float)
-                vertices.length * 4);
+                new_verts.length * 4);
         bb.order(ByteOrder.nativeOrder());
         vertexBuffer = bb.asFloatBuffer();
-        vertexBuffer.put(vertices);
+        vertexBuffer.put(new_verts);
         vertexBuffer.position(0);
 
         // initialize byte buffer for the draw list

@@ -22,4 +22,9 @@ public class Triangle extends GLObject {
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
         mesh.draw(mvpMatrix);
     }
+
+    @Override
+    public Mesh getMesh() {
+        return mesh;
+    }
 }

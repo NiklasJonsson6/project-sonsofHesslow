@@ -22,7 +22,6 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
-import android.util.Pair;
 
 import com.example.niklas.projectsonsofhesslow.MainActivity;
 import com.example.niklas.projectsonsofhesslow.R;
@@ -36,10 +35,9 @@ import java.util.List;
 import gl_own.FilledBeizierPath;
 import gl_own.Camera;
 import gl_own.GLObject;
-import gl_own.Geometry.Util;
 import gl_own.Geometry.Vector2;
 import gl_own.Geometry.Vector3;
-import gl_own.Square;
+import gl_own.Mesh;
 import gl_own.Triangle;
 
 import java.util.concurrent.*;
@@ -80,34 +78,24 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         {
             throw new RuntimeException(ex.toString());
         }
-        for (FilledBeizierPath b :beiziers) {
-            gameObjects.add(b);
-        }
-    }
-    static ConcurrentLinkedQueue<Pair<Vector2,float[]>> squaresToBeAdded = new ConcurrentLinkedQueue<>();
-    public static void addSquare(Vector2 pos,float[] color)
-    {
-        squaresToBeAdded.add(new Pair<>(pos,color));
+
     }
 
-    static ConcurrentLinkedQueue<Pair<Vector2[],float[]>> trisToBeAdded = new ConcurrentLinkedQueue<>();
-    public static void addTri(Vector2 a,Vector2 b,Vector2 c,float[] color)
+    static ConcurrentLinkedQueue<GLObject> objectsToBeAdded = new ConcurrentLinkedQueue<>();
+    public static void delayed_init(GLObject m)
     {
-        Vector2[] pos = new Vector2[]{a,b,c};
-        trisToBeAdded.add(new Pair<>(pos,color));
+        objectsToBeAdded.add(m);
     }
 
     @Override
     public void onDrawFrame(GL10 unused) {
-        for(Pair<Vector2,float[]> p : squaresToBeAdded)
-        {
-            gameObjects.add(new Square(p.first,0.2f,p.second));
-        }
 
-        for(Pair<Vector2[],float[]> p : trisToBeAdded)
+        for(GLObject go : objectsToBeAdded)
         {
-            gameObjects.add(new Triangle(p.first[0],p.first[1],p.first[2],p.second));
+            go.getMesh().init();
+            gameObjects.add(go);
         }
+        objectsToBeAdded.clear();
         float[] scratch = new float[16];
 
         // Draw background color
@@ -115,7 +103,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         Camera cam = Camera.getInstance();
         // Set the camera position (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, cam.pos.x, cam.pos.y, cam.pos.z, cam.pos.x, cam.pos.y+1, 0f, 0f, 1.0f, 0.0f);
+        Matrix.setLookAtM(mViewMatrix, 0, cam.pos.x, cam.pos.y, cam.pos.z, cam.lookAt.x, cam.lookAt.y, cam.lookAt.z, cam.up.x, cam.up.y, cam.up.z);
 
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);

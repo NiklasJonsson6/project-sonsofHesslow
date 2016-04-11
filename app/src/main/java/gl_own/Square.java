@@ -14,7 +14,12 @@ import gl_own.Geometry.Vector2;
 public class Square extends GLObject {
     public Mesh mesh;
 
-    public Square(Vector2 center, float side,float[] color)
+    @Override
+    public Mesh getMesh() {
+        return mesh;
+    }
+
+    public Square(Vector2 center, float side, float[] color)
     {
         float hside = side/2;
         Vector2 top_rigth =     Vector2.Add(center, new Vector2( hside,  hside));

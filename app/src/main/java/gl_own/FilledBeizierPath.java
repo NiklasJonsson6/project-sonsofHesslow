@@ -16,6 +16,11 @@ public class FilledBeizierPath extends GLObject{
 
     public Mesh mesh;
 
+    @Override
+    public Mesh getMesh() {
+        return mesh;
+    }
+
     final float precision = 0.01f; //lower is more detailed
     final int naive_precision = 30; //higher is more detailed
 

@@ -17,6 +17,8 @@ import copied_gl.MyGLSurfaceView;
 import gl_own.Camera;
 import gl_own.Geometry.Vector2;
 import gl_own.Geometry.Vector3;
+import gl_own.Square;
+import gl_own.Triangle;
 
 public class MainActivity extends AppCompatActivity implements GL_TouchListener {
 
@@ -39,6 +41,10 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
 
 
     Vector2 prevPos;
+
+    //for visual click debugging.
+    //Square sq = new Square(new Vector2(0,0), 0.2f, new float[]{0.1f,0.9f,0.3f,1f});
+
     @Override
     public void Handle(GL_TouchEvent event) {
 
@@ -50,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
 
         if(prevPos!=null)
         {
+            //sq.setPos(event.worldPosition);
             Vector2 delta = Vector2.Sub(MyGLRenderer.ScreenToWorldCoords(prevPos,0),event.worldPosition);
             System.out.println("delta:" + delta);
             switch (event.e.getAction()) {
