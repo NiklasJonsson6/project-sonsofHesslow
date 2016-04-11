@@ -7,6 +7,10 @@
 /build
 /captures
 
+### Hack n Ship scripts ###
+hack.sh
+ship.sh
+
 
 # Created by https://www.gitignore.io/api/android,intellij,java,osx,windows
 
