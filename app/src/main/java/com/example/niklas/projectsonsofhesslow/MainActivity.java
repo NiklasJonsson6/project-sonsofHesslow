@@ -49,16 +49,16 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
             float[] neighbor_color = {0.6f,0.9f,0.3f,1f};
             float[] region_color = {0.5f,0.9f,0.2f,1f};
             Integer[] in_continent = GraphicsManager.getContinentRegions(GraphicsManager.getContinetId(event.regionId));
-            Integer[] neigbors = GraphicsManager.getNeighbours(event.regionId);
+            Integer[] neighbours = GraphicsManager.getNeighbours(event.regionId);
 
             for(int i = 0; i<in_continent.length;i++)
             {
                 GraphicsManager.setColor(in_continent[i],region_color);
             }
 
-            for(int i = 0; i<neigbors.length;i++)
+            for(int i = 0; i< neighbours.length; i++)
             {
-                GraphicsManager.setColor(neigbors[i],neighbor_color);
+                GraphicsManager.setColor(neighbours[i],neighbor_color);
             }
 
             GraphicsManager.setColor(event.regionId, color);

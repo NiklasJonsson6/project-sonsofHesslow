@@ -6,7 +6,7 @@ public class Player {
     private int troopsToPlace;
     private boolean allowedToMove;
     //private Card[] cards;
-    //private Territory[] territoriesOwned;
+    private Territory[] territoriesOwned;
 
     public Player(String name) {
         this.name = name;
@@ -35,38 +35,21 @@ public class Player {
 
     public void setCards(Card[] cards) {
         this.cards = cards;
-    }/*
+    }*/
 
-    /*public Territory[] getTerritoriesOwned() {
+    public Territory[] getTerritoriesOwned() {
         return territoriesOwned;
     }
 
     public void setTerritoriesOwned(Territory[] territoriesOwned) {
         this.territoriesOwned = territoriesOwned;
-    }*/
+    }
 
     public void giveTroops(){
         int amountToGet = 5;
 
-        //to implement
-        /*if(Territory.isOwningAsia(territoriesOwned)){
-            amountToGet += 7;
-        }
-        if(Territory.isOwningNorthAmerica(territoriesOwned)){
-            amountToGet += 5;
-        }
-        if(Territory.isOwningEurope(territoriesOwned)){
-            amountToGet += 5;
-        }
-        if(Territory.isOwningAfrica(territoriesOwned)){
-            amountToGet += 3;
-        }
-        if(Territory.isOwningOceania(territoriesOwned)){
-            amountToGet += 2;
-        }
-        if(Territory.isOwningSouthAmerica(territoriesOwned)){
-            amountToGet += 2;
-        }*/
+        int extraTroops = Territory.getExtraTroopAmount(territoriesOwned);
+        amountToGet += extraTroops;
 
         troopsToPlace = amountToGet;
     }
