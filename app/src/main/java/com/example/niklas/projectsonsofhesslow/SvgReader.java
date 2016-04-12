@@ -58,11 +58,6 @@ public class SvgReader {
         }
 
         //split the paths with the splits.
-        //keep track of which split split what
-        List<Pair<BeizierPath, Integer[]>> paths_with_info = new ArrayList<>(paths.size());
-        for(BeizierPath b : paths)
-            paths_with_info.add(new Pair<>(b, new Integer[0]));
-
         int c = 0;
         while(splits.size()>0)
         {
@@ -70,19 +65,17 @@ public class SvgReader {
             for(int i = 0;i<splits.size();i++)
             {
                 BeizierPath split = splits.get(i);
-                int pathLen = paths_with_info.size();
+                int pathLen = paths.size();
                 for(int j = 0;j<pathLen;j++)
                 {
-                    Pair<BeizierPath,Integer[]> path_with_info = paths_with_info.get(j);
-                    BeizierPath[] new_paths = BeizierPath.splitBeizPath(path_with_info.first,split);
-                    Integer[] new_info = ArrayUtils.concat(path_with_info.second,new Integer[]{c});
+                    BeizierPath[] new_paths = BeizierPath.splitBeizPath(paths.get(j),split);
                     if(new_paths != null)
                     {
-                        paths_with_info.remove(j);
+                        paths.remove(j);
                         --j;
                         --pathLen;
-                        paths_with_info.add(new Pair<>(new_paths[0],new_info));
-                        paths_with_info.add(new Pair<>(new_paths[1],new_info));
+                        paths.add(new_paths[0]);
+                        paths.add(new_paths[1]);
                         removed = true;
                     }
                 }
@@ -101,21 +94,20 @@ public class SvgReader {
             }
         }
 
-        List<Pair<FilledBeizierPath,Integer[]>> ret = new ArrayList<>(paths_with_info.size());
-        for(int i = 0; i< paths_with_info.size();i++)
+        List<Pair<FilledBeizierPath,Integer[]>> ret = new ArrayList<>(paths.size());
+        for(int i = 0; i< paths.size();i++)
         {
             List<Integer> neigbours = new ArrayList<>();
-            for(int j = 0; j< paths_with_info.size();j++)
+            for(int j = 0; j< paths.size();j++)
             {
                 if(i == j)continue;
-                if(BeizierPath.isNeigbour(paths_with_info.get(i).first, paths_with_info.get(j).first)) {
+                if(BeizierPath.isNeigbour(paths.get(i), paths.get(j))) {
                     neigbours.add(j);
                 }
             }
-            Pair<BeizierPath,Integer[]> p = paths_with_info.get(i);
-
-            ret.add(new Pair<>(new FilledBeizierPath(p.first),neigbours.toArray(new Integer[neigbours.size()])));
+            ret.add(new Pair<>(new FilledBeizierPath(paths.get(i)),neigbours.toArray(new Integer[neigbours.size()])));
         }
+
         return ret;
     }
 
