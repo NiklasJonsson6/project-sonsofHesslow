@@ -22,7 +22,9 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
+import android.util.Pair;
 
+import com.example.niklas.projectsonsofhesslow.ArrayUtils;
 import com.example.niklas.projectsonsofhesslow.MainActivity;
 import com.example.niklas.projectsonsofhesslow.R;
 import com.example.niklas.projectsonsofhesslow.SvgReader;
@@ -30,15 +32,15 @@ import com.example.niklas.projectsonsofhesslow.SvgReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import gl_own.FilledBeizierPath;
 import gl_own.Camera;
 import gl_own.GLObject;
+import gl_own.Geometry.BeizierPath;
 import gl_own.Geometry.Vector2;
 import gl_own.Geometry.Vector3;
-import gl_own.Mesh;
-import gl_own.Triangle;
 
 import java.util.concurrent.*;
 
@@ -56,6 +58,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "MyGLRenderer";
     public static FilledBeizierPath[] beiziers;
+    public static Integer[][] beizNeighbors;
+
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     public static final float[] mMVPMatrix = new float[16];
     private static final float[] mProjectionMatrix = new float[16];
@@ -73,7 +77,18 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         File fileToRead = new File(homedir, "raw/drawing.svg");
         try
         {
-            beiziers=SvgReader.read(MainActivity.resources.openRawResource(R.raw.drawing));
+            List<Pair<FilledBeizierPath,Integer[]>> tmp = SvgReader.read(MainActivity.resources.openRawResource(R.raw.drawing));
+            beiziers = new FilledBeizierPath[tmp.size()];
+            beizNeighbors = new Integer[tmp.size()][];
+            int c = 0;
+            for(Pair<FilledBeizierPath,Integer[]> p : tmp)
+            {
+                beiziers[c] = p.first;
+                beizNeighbors[c] = p.second;
+                ++c;
+            }
+
+
         }catch (IOException ex)
         {
             throw new RuntimeException(ex.toString());

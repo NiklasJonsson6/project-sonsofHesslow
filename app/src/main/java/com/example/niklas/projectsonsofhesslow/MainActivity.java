@@ -51,8 +51,14 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
 
         if(event.touchedRegion)
         {
-            float[] color = {(float)Math.random(),(float)Math.random(),(float)Math.random(),1f};
+            float[] color = {0.3f,0.6f,0.9f,1f};
+            float[] neighbor_color = {0.6f,0.9f,0.3f,1f};
             GraphicsManager.setColor(event.regionIndex, color);
+            Integer[] neighbors = GraphicsManager.getNeighbours(event.regionIndex);
+            for(int i = 0; i<neighbors.length;i++)
+            {
+                GraphicsManager.setColor(neighbors[i],neighbor_color);
+            }
         }
 
         if(prevPos!=null)
