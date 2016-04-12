@@ -1,8 +1,8 @@
-package gl_own;
+package Graphics.GraphicsObjects;
 
 import android.opengl.Matrix;
 
-import gl_own.Geometry.Vector2;
+import Graphics.Geometry.Vector2;
 
 /**
  * Created by Daniel on 10/04/2016.
@@ -21,5 +21,10 @@ public class Triangle extends GLObject {
         float[] mvpMatrix = new float[16];
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
         mesh.draw(mvpMatrix);
+    }
+
+    @Override
+    public Mesh getMesh() {
+        return mesh;
     }
 }

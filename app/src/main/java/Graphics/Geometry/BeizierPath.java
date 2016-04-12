@@ -1,10 +1,9 @@
-package gl_own.Geometry;
+package Graphics.Geometry;
 
 import android.util.Pair;
 
-import com.example.niklas.projectsonsofhesslow.ArrayUitls;
+import com.example.niklas.projectsonsofhesslow.ArrayUtils;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -140,6 +139,19 @@ public class BeizierPath implements Iterable<Beizier> {
         return ret;
     }
 
+    public static boolean isNeigbour(BeizierPath a, BeizierPath b)
+    {
+        for(Beizier beizier_a : a)
+        {
+            for(Beizier beizier_b : b)
+            {
+                if(Beizier.IsPartOf(beizier_a,beizier_b,10))
+                    return true;
+            }
+        }
+        return false;
+    }
+
     public static BeizierPath[] splitBeizPath(BeizierPath path, BeizierPath line)
     {
         List<Pair<Integer,Float>> path_splits = new ArrayList<>();
@@ -219,7 +231,7 @@ public class BeizierPath implements Iterable<Beizier> {
 
     public BeizierPath reverse()
     {
-        points = ArrayUitls.reverse(points);
+        points = ArrayUtils.reverse(points);
         return this;
     }
 

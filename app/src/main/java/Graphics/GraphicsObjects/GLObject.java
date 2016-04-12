@@ -1,13 +1,17 @@
-package gl_own;
+package Graphics.GraphicsObjects;
 
-import gl_own.Geometry.Vector2;
-import gl_own.Geometry.Vector3;
+import Graphics.MyGLRenderer;
+import Graphics.Geometry.Vector2;
+import Graphics.Geometry.Vector3;
 
 
 public abstract class GLObject {
     public float[] modelMatrix = new float[16];
+    public boolean isActive = true;
+
     public GLObject()
     {
+
         modelMatrix = new float[]
         {
             1,0,0,0,
@@ -15,18 +19,22 @@ public abstract class GLObject {
             0,0,1,0,
             0,0,0,1,
         };
+        MyGLRenderer.delayed_init(this);
     }
+
 
     public void setPos(Vector3 vec)
     {
-        modelMatrix[3] = vec.x;
-        modelMatrix[7] = vec.y;
-        modelMatrix[11] = 0;
+        modelMatrix[12] = vec.x;
+        modelMatrix[13] = vec.y;
+        modelMatrix[14] = vec.z;
     }
+
 
     public void setPos(Vector2 vec)
     {
         setPos(new Vector3(vec));
     }
     public abstract void draw(float[] projectionMatrix);
+    public abstract Mesh getMesh();
 }

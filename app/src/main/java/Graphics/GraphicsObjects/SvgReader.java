@@ -1,4 +1,6 @@
-package com.example.niklas.projectsonsofhesslow;
+package Graphics.GraphicsObjects;
+
+import android.util.Pair;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,21 +10,32 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.Stack;
-import java.util.Vector;
 
-import gl_own.FilledBeizierPath;
-import gl_own.Geometry.Beizier;
-import gl_own.Geometry.BeizierPath;
-import gl_own.Geometry.BeizierPathBuilder;
-import gl_own.Geometry.Util;
-import gl_own.Geometry.Vector2;
+import Graphics.Geometry.Beizier;
+import Graphics.Geometry.BeizierPath;
+import Graphics.Geometry.BeizierPathBuilder;
+import Graphics.Geometry.Vector2;
 
 /**
  * Created by daniel on 4/1/16.
  */
 public class SvgReader {
+    public static class SVG_ReturnValue
+    {
+
+        public SVG_ReturnValue(FilledBeizierPath path, Integer continent_id, Integer[] neighbors) {
+            this.path = path;
+            this.continent_id = continent_id;
+            this.neighbors = neighbors;
+        }
+
+        public FilledBeizierPath path;
+        public Integer continent_id;
+        public Integer[] neighbors;
+    }
+
     //todo support lineto maybe and handle bad formatting better.
-    public static FilledBeizierPath[] read(InputStream svgStream) throws IOException
+    public static List<SVG_ReturnValue> read(InputStream svgStream) throws IOException
     {
         Scanner s = new Scanner(svgStream);
         s.useLocale(Locale.US);
@@ -56,25 +69,35 @@ public class SvgReader {
             }
         }
 
+        //split the paths with the splits.
+        //keep track of which split split what
+        List<Pair<BeizierPath, Integer>> paths_with_info = new ArrayList<>(paths.size());
+
+        int continentId = 0;
+        for(BeizierPath b : paths)
+        {
+            paths_with_info.add(new Pair<>(b, continentId++));
+        }
+
         while(splits.size()>0)
         {
             boolean removed = false;
             for(int i = 0;i<splits.size();i++)
             {
                 BeizierPath split = splits.get(i);
-                int pathLen = paths.size();
-                List<Integer> removeIndices = new ArrayList<>();
+                int pathLen = paths_with_info.size();
                 for(int j = 0;j<pathLen;j++)
                 {
-                    BeizierPath path = paths.get(j);
-                    BeizierPath[] new_paths = BeizierPath.splitBeizPath(path,split);
+                    Pair<BeizierPath,Integer> path_with_info = paths_with_info.get(j);
+                    BeizierPath[] new_paths = BeizierPath.splitBeizPath(path_with_info.first, split);
+                    Integer new_info = path_with_info.second;
                     if(new_paths != null)
                     {
-                        paths.remove(j);
+                        paths_with_info.remove(j);
                         --j;
                         --pathLen;
-                        paths.add(new_paths[0]);
-                        paths.add(new_paths[1]);
+                        paths_with_info.add(new Pair<>(new_paths[0],new_info));
+                        paths_with_info.add(new Pair<>(new_paths[1], new_info));
                         removed = true;
                     }
                 }
@@ -92,10 +115,20 @@ public class SvgReader {
             }
         }
 
-        FilledBeizierPath[] ret = new FilledBeizierPath[paths.size()];
-        for(int i = 0; i< ret.length;i++)
+        List<SVG_ReturnValue> ret = new ArrayList<>(paths_with_info.size());
+        for(int i = 0; i< paths_with_info.size();i++)
         {
-            ret[i] = new FilledBeizierPath(paths.get(i));
+            List<Integer> neigbours = new ArrayList<>();
+            for(int j = 0; j< paths_with_info.size();j++)
+            {
+                if(i == j)continue;
+                if(BeizierPath.isNeigbour(paths_with_info.get(i).first, paths_with_info.get(j).first)) {
+                    neigbours.add(j);
+                }
+            }
+            Pair<BeizierPath,Integer> p = paths_with_info.get(i);
+
+            ret.add(new SVG_ReturnValue(new FilledBeizierPath(p.first),p.second,neigbours.toArray(new Integer[neigbours.size()])));
         }
         return ret;
     }

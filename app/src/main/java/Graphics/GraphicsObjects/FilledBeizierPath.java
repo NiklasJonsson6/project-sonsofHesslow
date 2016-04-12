@@ -1,13 +1,13 @@
-package gl_own;
+package Graphics.GraphicsObjects;
 
 import android.opengl.Matrix;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import gl_own.Geometry.BeizierPath;
-import gl_own.Geometry.Util;
-import gl_own.Geometry.Vector2;
+import Graphics.Geometry.BeizierPath;
+import Graphics.Geometry.Util;
+import Graphics.Geometry.Vector2;
 
 /**
  * Created by daniel on 3/31/16.
@@ -16,12 +16,16 @@ public class FilledBeizierPath extends GLObject{
 
     public Mesh mesh;
 
-    final float precision = 0.01f; //lower is more detailed
+    @Override
+    public Mesh getMesh() {
+        return mesh;
+    }
+
     final int naive_precision = 30; //higher is more detailed
 
     public FilledBeizierPath(BeizierPath path) // start ctl ctl point ctl ctl point ctl ctl (start)
     {
-        //if(!path.isClosed()) throw new IllegalArgumentException("not a quadratic beizier curve");
+        if(!path.isClosed()) throw new IllegalArgumentException("the beizier path needs to be closed!");
 
         //Vector2[] verts = approximateBeizierPath(points, precision);
         Vector2[] verts = path.approximateBeizierPath_naive(naive_precision);

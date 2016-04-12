@@ -1,12 +1,8 @@
-package gl_own;
+package Graphics.GraphicsObjects;
 
 import android.opengl.Matrix;
 
-import java.sql.SQLOutput;
-import java.util.Arrays;
-
-import gl_own.Geometry.Util;
-import gl_own.Geometry.Vector2;
+import Graphics.Geometry.Vector2;
 
 /**
  * Created by Daniel on 10/04/2016.
@@ -14,7 +10,12 @@ import gl_own.Geometry.Vector2;
 public class Square extends GLObject {
     public Mesh mesh;
 
-    public Square(Vector2 center, float side,float[] color)
+    @Override
+    public Mesh getMesh() {
+        return mesh;
+    }
+
+    public Square(Vector2 center, float side, float[] color)
     {
         float hside = side/2;
         Vector2 top_rigth =     Vector2.Add(center, new Vector2( hside,  hside));

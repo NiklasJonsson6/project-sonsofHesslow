@@ -4,34 +4,31 @@ import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
+import android.view.View;
 
-import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import copied_gl.GL_TouchEvent;
-import copied_gl.GL_TouchListener;
-import copied_gl.GraphicsManager;
-import copied_gl.MyGLRenderer;
-import copied_gl.MyGLSurfaceView;
-import gl_own.Camera;
-import gl_own.Geometry.Vector2;
-import gl_own.Geometry.Vector3;
+import Graphics.GL_TouchEvent;
+import Graphics.GL_TouchListener;
+import Graphics.GraphicsManager;
+import Graphics.MyGLRenderer;
+import Graphics.GraphicsObjects.Camera;
+import Graphics.Geometry.Vector2;
+import Graphics.Geometry.Vector3;
+import Graphics.MyGLSurfaceView;
 
 public class MainActivity extends AppCompatActivity implements GL_TouchListener {
 
     long lastTimestamp;
     public static Resources resources;
-    copied_gl.MyGLSurfaceView graphicsView;
+    MyGLSurfaceView graphicsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        graphicsView = new copied_gl.MyGLSurfaceView(this);
+        graphicsView = new MyGLSurfaceView(this);
 
         graphicsView.addListener(this);
 
-        setContentView(graphicsView);
+        setContentView(R.layout.activity_main);
 
         //setContentView(R.layout.activity_main);
         resources = this.getResources();
@@ -39,17 +36,37 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
 
 
     Vector2 prevPos;
+
+    //for visual click debugging.
+    //Square sq = new Square(new Vector2(0,0), 0.2f, new float[]{0.1f,0.9f,0.3f,1f});
+
     @Override
     public void Handle(GL_TouchEvent event) {
 
         if(event.touchedRegion)
         {
-            float[] color = {(float)Math.random(),(float)Math.random(),(float)Math.random(),1f};
-            GraphicsManager.setColor(event.regionIndex, color);
+            float[] color = {0.7f,0.9f,0.4f,1f};
+            float[] neighbor_color = {0.6f,0.9f,0.3f,1f};
+            float[] region_color = {0.5f,0.9f,0.2f,1f};
+            Integer[] in_continent = GraphicsManager.getContinentRegions(GraphicsManager.getContinetId(event.regionId));
+            Integer[] neigbors = GraphicsManager.getNeighbours(event.regionId);
+
+            for(int i = 0; i<in_continent.length;i++)
+            {
+                GraphicsManager.setColor(in_continent[i],region_color);
+            }
+
+            for(int i = 0; i<neigbors.length;i++)
+            {
+                GraphicsManager.setColor(neigbors[i],neighbor_color);
+            }
+
+            GraphicsManager.setColor(event.regionId, color);
         }
 
         if(prevPos!=null)
         {
+            //sq.setPos(event.worldPosition);
             Vector2 delta = Vector2.Sub(MyGLRenderer.ScreenToWorldCoords(prevPos,0),event.worldPosition);
             System.out.println("delta:" + delta);
             switch (event.e.getAction()) {
@@ -63,4 +80,10 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         graphicsView.requestRender();
         prevPos = event.screenPosition;
     }
+
+    public void startGame(View v) {
+        //probably more stuff later
+        setContentView(graphicsView);
+    }
+
 }
