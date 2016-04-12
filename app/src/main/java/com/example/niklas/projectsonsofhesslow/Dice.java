@@ -6,6 +6,7 @@ public class Dice {
         Random random = new Random();
         int number = random.nextInt(6) + 1;
         playAnimation(number, xCordinate, yCordinate);
+        
         return number;
     }
 
