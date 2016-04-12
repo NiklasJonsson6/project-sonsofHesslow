@@ -1,4 +1,4 @@
-package gl_own.Geometry;
+package Graphics.Geometry;
 
 import java.util.ArrayList;
 import java.util.Arrays;

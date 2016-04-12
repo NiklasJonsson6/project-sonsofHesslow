@@ -6,31 +6,25 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import copied_gl.GL_TouchEvent;
-import copied_gl.GL_TouchListener;
-import copied_gl.GraphicsManager;
-import copied_gl.MyGLRenderer;
-import copied_gl.MyGLSurfaceView;
-import gl_own.Camera;
-import gl_own.Geometry.Vector2;
-import gl_own.Geometry.Vector3;
-import gl_own.Square;
-import gl_own.Triangle;
+import Graphics.GL_TouchEvent;
+import Graphics.GL_TouchListener;
+import Graphics.GraphicsManager;
+import Graphics.MyGLRenderer;
+import Graphics.GraphicsObjects.Camera;
+import Graphics.Geometry.Vector2;
+import Graphics.Geometry.Vector3;
+import Graphics.MyGLSurfaceView;
 
 public class MainActivity extends AppCompatActivity implements GL_TouchListener {
 
     long lastTimestamp;
     public static Resources resources;
-    copied_gl.MyGLSurfaceView graphicsView;
+    MyGLSurfaceView graphicsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        graphicsView = new copied_gl.MyGLSurfaceView(this);
+        graphicsView = new MyGLSurfaceView(this);
 
         graphicsView.addListener(this);
 
@@ -51,14 +45,23 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
 
         if(event.touchedRegion)
         {
-            float[] color = {0.3f,0.6f,0.9f,1f};
+            float[] color = {0.7f,0.9f,0.4f,1f};
             float[] neighbor_color = {0.6f,0.9f,0.3f,1f};
-            GraphicsManager.setColor(event.regionIndex, color);
-            Integer[] neighbors = GraphicsManager.getNeighbours(event.regionIndex);
-            for(int i = 0; i<neighbors.length;i++)
+            float[] region_color = {0.5f,0.9f,0.2f,1f};
+            Integer[] in_continent = GraphicsManager.getContinentRegions(GraphicsManager.getContinetId(event.regionId));
+            Integer[] neigbors = GraphicsManager.getNeighbours(event.regionId);
+
+            for(int i = 0; i<in_continent.length;i++)
             {
-                GraphicsManager.setColor(neighbors[i],neighbor_color);
+                GraphicsManager.setColor(in_continent[i],region_color);
             }
+
+            for(int i = 0; i<neigbors.length;i++)
+            {
+                GraphicsManager.setColor(neigbors[i],neighbor_color);
+            }
+
+            GraphicsManager.setColor(event.regionId, color);
         }
 
         if(prevPos!=null)

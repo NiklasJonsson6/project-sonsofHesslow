@@ -1,4 +1,4 @@
-package gl_own.Geometry;
+package Graphics.Geometry;
 
 /**
  * Created by daniel on 3/31/16.

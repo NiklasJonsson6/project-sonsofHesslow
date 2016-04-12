@@ -1,12 +1,13 @@
-package gl_own;
+package Graphics.GraphicsObjects;
 
-import copied_gl.MyGLRenderer;
-import gl_own.Geometry.Vector2;
-import gl_own.Geometry.Vector3;
+import Graphics.MyGLRenderer;
+import Graphics.Geometry.Vector2;
+import Graphics.Geometry.Vector3;
 
 
 public abstract class GLObject {
     public float[] modelMatrix = new float[16];
+    public boolean isActive = true;
 
     public GLObject()
     {

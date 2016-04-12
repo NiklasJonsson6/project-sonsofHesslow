@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package gl_own;
+package Graphics.GraphicsObjects;
 
 import android.opengl.GLES20;
-import android.opengl.Matrix;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-import java.sql.SQLOutput;
 import java.util.Iterator;
 
-import copied_gl.MyGLRenderer;
-import gl_own.Geometry.Util;
-import gl_own.Geometry.Vector2;
+import Graphics.MyGLRenderer;
+import Graphics.Geometry.Util;
+import Graphics.Geometry.Vector2;
 
 /**
  * A Mesh based on developer.android.com's Square.

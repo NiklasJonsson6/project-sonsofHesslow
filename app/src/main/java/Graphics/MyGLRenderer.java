@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package copied_gl;
+package Graphics;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -22,25 +22,20 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
-import android.util.Pair;
 
-import com.example.niklas.projectsonsofhesslow.ArrayUtils;
 import com.example.niklas.projectsonsofhesslow.MainActivity;
 import com.example.niklas.projectsonsofhesslow.R;
-import com.example.niklas.projectsonsofhesslow.SvgReader;
+import Graphics.GraphicsObjects.SvgReader;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import gl_own.FilledBeizierPath;
-import gl_own.Camera;
-import gl_own.GLObject;
-import gl_own.Geometry.BeizierPath;
-import gl_own.Geometry.Vector2;
-import gl_own.Geometry.Vector3;
+import Graphics.GraphicsObjects.FilledBeizierPath;
+import Graphics.GraphicsObjects.Camera;
+import Graphics.GraphicsObjects.GLObject;
+import Graphics.Geometry.Vector2;
+import Graphics.Geometry.Vector3;
 
 import java.util.concurrent.*;
 
@@ -57,8 +52,6 @@ import java.util.concurrent.*;
 public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "MyGLRenderer";
-    public static FilledBeizierPath[] beiziers;
-    public static Integer[][] beizNeighbors;
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     public static final float[] mMVPMatrix = new float[16];
@@ -72,28 +65,25 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // Set the background frame color
         GLES20.glClearColor(1f, 1f, 1f, 1.0f);
 
-        File homedir = new File("/../");
-        System.out.println(homedir.getAbsolutePath());
-        File fileToRead = new File(homedir, "raw/drawing.svg");
         try
         {
-            List<Pair<FilledBeizierPath,Integer[]>> tmp = SvgReader.read(MainActivity.resources.openRawResource(R.raw.drawing));
-            beiziers = new FilledBeizierPath[tmp.size()];
-            beizNeighbors = new Integer[tmp.size()][];
+            List<SvgReader.SVG_ReturnValue> tmp = SvgReader.read(MainActivity.resources.openRawResource(R.raw.drawing));
+            GraphicsManager.beiziers = new FilledBeizierPath[tmp.size()];
+            GraphicsManager.beizNeighbors = new Integer[tmp.size()][];
+            GraphicsManager.beizContinents = new Integer[tmp.size()];
             int c = 0;
-            for(Pair<FilledBeizierPath,Integer[]> p : tmp)
+            for(SvgReader.SVG_ReturnValue ret : tmp)
             {
-                beiziers[c] = p.first;
-                beizNeighbors[c] = p.second;
+                GraphicsManager.beiziers[c] = ret.path;
+                GraphicsManager.beizNeighbors[c] = ret.neighbors;
+                GraphicsManager.beizContinents[c] = ret.continent_id;
                 ++c;
             }
 
-
-        }catch (IOException ex)
+        } catch (IOException ex)
         {
             throw new RuntimeException(ex.toString());
         }
-
     }
 
     static ConcurrentLinkedQueue<GLObject> objectsToBeAdded = new ConcurrentLinkedQueue<>();
@@ -125,7 +115,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         for(GLObject go : gameObjects)
         {
-            go.draw(mMVPMatrix);
+            if(go.isActive)
+                go.draw(mMVPMatrix);
         }
     }
 

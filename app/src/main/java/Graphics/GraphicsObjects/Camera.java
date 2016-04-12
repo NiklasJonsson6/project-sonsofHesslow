@@ -1,9 +1,6 @@
-package gl_own;
+package Graphics.GraphicsObjects;
 
-import java.util.Arrays;
-
-import gl_own.Geometry.Vector2;
-import gl_own.Geometry.Vector3;
+import Graphics.Geometry.Vector3;
 
 /**
  * Created by daniel on 3/31/16.

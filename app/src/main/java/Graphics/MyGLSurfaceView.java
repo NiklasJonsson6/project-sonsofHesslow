@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package copied_gl;
+package Graphics;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
@@ -25,8 +25,8 @@ import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 
-import gl_own.FilledBeizierPath;
-import gl_own.Geometry.Vector2;
+import Graphics.GraphicsObjects.FilledBeizierPath;
+import Graphics.Geometry.Vector2;
 
 /**
  * A view container where OpenGL ES graphics can be drawn on screen.
@@ -103,7 +103,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
         int index = 0;
         boolean hasTouchedRegion = false;
-        for(FilledBeizierPath path : MyGLRenderer.beiziers)
+        for(FilledBeizierPath path : GraphicsManager.beiziers)
         {
             if(path.mesh.isOnMesh2D(world_pos))
             {

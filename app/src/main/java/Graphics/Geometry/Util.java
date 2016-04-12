@@ -1,16 +1,4 @@
-package gl_own.Geometry;
-
-import android.util.Pair;
-
-import java.security.cert.CertPathValidatorException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
-import java.util.Vector;
-
-import gl_own.FilledBeizierPath;
+package Graphics.Geometry;
 
 /**
  * Created by daniel on 3/31/16.

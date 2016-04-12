@@ -1,8 +1,6 @@
-package gl_own.Geometry;
+package Graphics.Geometry;
 
 import android.util.Pair;
-
-import com.example.niklas.projectsonsofhesslow.ArrayUtils;
 
 import java.util.Arrays;
 import java.util.List;
