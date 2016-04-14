@@ -1,7 +1,7 @@
 package com.example.niklas.projectsonsofhesslow;
 import java.util.Random;
 
-public class Dice {
+public class Die {
     public int roll(int xCordinate, int yCordinate){
         Random random = new Random();
         int number = random.nextInt(6) + 1;
