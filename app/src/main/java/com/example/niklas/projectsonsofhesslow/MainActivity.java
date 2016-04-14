@@ -3,8 +3,13 @@ package com.example.niklas.projectsonsofhesslow;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import Graphics.GL_TouchEvent;
 import Graphics.GL_TouchListener;
@@ -25,12 +30,8 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         graphicsView = new MyGLSurfaceView(this);
-
         graphicsView.addListener(this);
-
         setContentView(R.layout.activity_main);
-
-        //setContentView(R.layout.activity_main);
         resources = this.getResources();
     }
 
@@ -76,14 +77,19 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
                     break;
             }
         }
-
+        System.out.println("Screen grej" + event.screenPosition.y);
         graphicsView.requestRender();
         prevPos = event.screenPosition;
     }
 
     public void startGame(View v) {
-        //probably more stuff later
-        setContentView(graphicsView);
+        setContentView(R.layout.activity_overlay);
+        View C = findViewById(R.id.Test);
+        ViewGroup parent = (ViewGroup) C.getParent();
+        int index = parent.indexOfChild(C);
+        parent.removeView(C);
+        C = graphicsView;
+        parent.addView(C, index);
     }
 
 }
