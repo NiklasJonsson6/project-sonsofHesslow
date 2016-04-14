@@ -21,6 +21,22 @@ public class Territory {
     private static final int EXTRA_TROOPS_OCEANIA = 2;
     private static final int EXTRA_TROOPS_SOUTH_AMERICA = 2;
 
+    public int getArmyCount() {
+        return armyCount;
+    }
+
+    public void setArmyCount(int armyCount) {
+        this.armyCount = armyCount;
+    }
+
+    public Player getOccupier() {
+        return occupier;
+    }
+
+    public void setOccupier(Player occupier) {
+        this.occupier = occupier;
+    }
+
     public Territory(int armyCount, Player occupier, Continent continent){
         this.armyCount = armyCount;
         this.occupier = occupier;
@@ -89,5 +105,9 @@ public class Territory {
         }
         
         return extraTroops;
+    }
+
+    public void removeTroop(){
+        this.armyCount--;
     }
 }

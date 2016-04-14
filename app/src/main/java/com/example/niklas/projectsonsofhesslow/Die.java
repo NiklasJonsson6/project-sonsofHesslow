@@ -1,16 +1,74 @@
 package com.example.niklas.projectsonsofhesslow;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 public class Die {
-    public int roll(int xCordinate, int yCordinate){
+
+    public static int roll(){
+        return roll(6);
+    }
+
+    public static int roll(int sides){
         Random random = new Random();
-        int number = random.nextInt(6) + 1;
-        playAnimation(number, xCordinate, yCordinate);
-        
+        int number = random.nextInt(sides) + 1;
         return number;
     }
 
-    private void playAnimation(int number, int xCordinate, int yCordinate){
-        //code for animation at cordinates x, y
+    public static void test(){
+        ArrayList<Integer> attackDiceValues = new ArrayList<>();
+
+        attackDiceValues.add(7);
+        attackDiceValues.add(6);
+        attackDiceValues.add(4);
+        attackDiceValues.add(5);
+        attackDiceValues.add(1);
+        Collections.sort(attackDiceValues);
+
+        System.out.println(attackDiceValues.get(attackDiceValues.lastIndexOf(attackDiceValues)));
+    }
+
+    private static void fight(Territory attacker, Territory defender){
+        if(!attacker.getOccupier().equals(defender.getOccupier()) && attacker.getArmyCount() > 1 && defender.getArmyCount() > 0){
+            int diceAmountAttacker = Math.min(attacker.getArmyCount(), 3);
+            int diceAmountDefender = Math.min(defender.getArmyCount(), 2);
+
+            ArrayList<Integer> attackDiceValues = new ArrayList<>();
+            ArrayList<Integer> defendDiceValues = new ArrayList<>();
+
+            for(int i = 0; i < diceAmountAttacker; i++){
+                attackDiceValues.add(roll());
+            }
+            for(int i = 0; i < diceAmountDefender; i++){
+                defendDiceValues.add(roll());
+            }
+
+            Collections.sort(attackDiceValues);
+            Collections.sort(defendDiceValues);
+
+            if(attackDiceValues.get(diceAmountAttacker - 1) > defendDiceValues.get(diceAmountDefender - 1)){
+                defender.removeTroop();
+            }else {
+                attacker.removeTroop();
+            }
+
+            if(attacker.getArmyCount() > 1 && defender.getArmyCount() > 0){
+                if(attackDiceValues.get(diceAmountAttacker - 2) > defendDiceValues.get(diceAmountDefender - 2)){
+                    defender.removeTroop();
+                }else {
+                    attacker.removeTroop();
+                }
+            }
+
+            if(defender.getArmyCount() == 0){
+                defender.setOccupier(attacker.getOccupier());
+            }
+        }
+    }
+
+    private static void fightCompletely(Territory attacker, Territory defender){
+        while(!attacker.getOccupier().equals(defender.getOccupier()) && attacker.getArmyCount() > 1 && defender.getArmyCount() > 0){
+            fight(attacker, defender);
+        }
     }
 }
