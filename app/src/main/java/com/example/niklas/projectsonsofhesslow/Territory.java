@@ -4,7 +4,7 @@ public class Territory {
     private int armyCount;
     private Player occupier;
     public final Continent continent;
-
+    private int id;
 
     //change when done to correct amounts!!!
     private static final int TERRITORIES_IN_ASIA = 10;
@@ -109,5 +109,9 @@ public class Territory {
 
     public void removeTroop(){
         this.armyCount--;
+    }
+
+    public int getId() {
+        return id;
     }
 }

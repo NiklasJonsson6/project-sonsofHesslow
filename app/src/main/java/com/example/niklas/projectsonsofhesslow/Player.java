@@ -9,8 +9,8 @@ public class Player {
     ArrayList<Card> cards;
     private Territory[] territoriesOwned;
 
-    public Player(String name) {
-        this.name = name;
+    public Player() {
+        this.name = ""; //TODO get name input somehow
     }
 
     public String getName() {
