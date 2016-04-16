@@ -37,10 +37,11 @@ public class Territory {
         this.occupier = occupier;
     }
 
-    public Territory(int armyCount, Player occupier, Continent continent){
+    public Territory(int armyCount, Player occupier, Continent continent, int id){
         this.armyCount = armyCount;
         this.occupier = occupier;
         this.continent = continent;
+        this.id = id;
     }
 
     public void changeArmyCount(int change){
