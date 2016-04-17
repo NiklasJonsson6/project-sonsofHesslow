@@ -1,6 +1,5 @@
 package com.example.niklas.projectsonsofhesslow;
 
-import android.graphics.Color;
 import android.support.annotation.Nullable;
 
 import Graphics.GL_TouchEvent;
@@ -19,6 +18,7 @@ public class Risk implements GL_TouchListener {
     private Player currentPlayer;
     private int currentPlayerTracker = 0; //used to set next player
     private Territory[] territories = new Territory[42];
+    private Territory attackingTerritory;
     private int territoriesPicked = 0;
 
     public Risk (int playerCount) {
@@ -40,13 +40,14 @@ public class Risk implements GL_TouchListener {
 
         //place armies
         if (event.touchedRegion && gamePhase == GamePhase.PLACE_ARMIES) {
-
+            getTerritoryById(event.regionId).changeArmyCount(1);
         }
 
         //attack
-        if (event.touchedRegion && gamePhase == GamePhase.PICK_TERRITORIES) {
+        if (event.touchedRegion && gamePhase == GamePhase.CHOOSE_ATTACKER && getTerritoryById(event.regionId).getOccupier() == currentPlayer) {
             GraphicsManager.setColor(event.regionId, attackerColor);
-            //attacker =
+            attackingTerritory = getTerritoryById(event.regionId);
+            //...
         }
     }
 
