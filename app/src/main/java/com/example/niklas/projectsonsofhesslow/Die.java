@@ -28,7 +28,7 @@ public class Die {
         System.out.println(attackDiceValues.get(attackDiceValues.lastIndexOf(attackDiceValues)));
     }
 
-    private static void fight(Territory attacker, Territory defender){
+    public static void fight(Territory attacker, Territory defender){
         if(!attacker.getOccupier().equals(defender.getOccupier()) && attacker.getArmyCount() > 1 && defender.getArmyCount() > 0){
             int diceAmountAttacker = Math.min(attacker.getArmyCount(), 3);
             int diceAmountDefender = Math.min(defender.getArmyCount(), 2);
@@ -66,7 +66,7 @@ public class Die {
         }
     }
 
-    private static void fightCompletely(Territory attacker, Territory defender){
+    public static void fightCompletely(Territory attacker, Territory defender){
         while(!attacker.getOccupier().equals(defender.getOccupier()) && attacker.getArmyCount() > 1 && defender.getArmyCount() > 0){
             fight(attacker, defender);
         }

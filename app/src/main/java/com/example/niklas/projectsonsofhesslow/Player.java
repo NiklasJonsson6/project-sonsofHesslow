@@ -59,4 +59,8 @@ public class Player {
 
         troopsToPlace = amountToGet;
     }
+
+    public int getTroopsToPlace() {
+        return troopsToPlace;
+    }
 }
