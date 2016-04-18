@@ -15,19 +15,6 @@ public class Die {
         return number;
     }
 
-    public static void test(){
-        ArrayList<Integer> attackDiceValues = new ArrayList<>();
-
-        attackDiceValues.add(7);
-        attackDiceValues.add(6);
-        attackDiceValues.add(4);
-        attackDiceValues.add(5);
-        attackDiceValues.add(1);
-        Collections.sort(attackDiceValues);
-
-        System.out.println(attackDiceValues.get(attackDiceValues.lastIndexOf(attackDiceValues)));
-    }
-
     public static void fight(Territory attacker, Territory defender){
         if(!attacker.getOccupier().equals(defender.getOccupier()) && attacker.getArmyCount() > 1 && defender.getArmyCount() > 0){
             int diceAmountAttacker = Math.min(attacker.getArmyCount(), 3);
@@ -46,12 +33,14 @@ public class Die {
             Collections.sort(attackDiceValues);
             Collections.sort(defendDiceValues);
 
+            //roll first die
             if(attackDiceValues.get(diceAmountAttacker - 1) > defendDiceValues.get(diceAmountDefender - 1)){
                 defender.removeTroop();
             }else {
                 attacker.removeTroop();
             }
 
+            //roll second die
             if(attacker.getArmyCount() > 1 && defender.getArmyCount() > 0){
                 if(attackDiceValues.get(diceAmountAttacker - 2) > defendDiceValues.get(diceAmountDefender - 2)){
                     defender.removeTroop();
@@ -66,6 +55,7 @@ public class Die {
         }
     }
 
+    //fight until either attacker or defender runs out of troops
     public static void fightCompletely(Territory attacker, Territory defender){
         while(!attacker.getOccupier().equals(defender.getOccupier()) && attacker.getArmyCount() > 1 && defender.getArmyCount() > 0){
             fight(attacker, defender);

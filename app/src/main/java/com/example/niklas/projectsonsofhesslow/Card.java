@@ -77,7 +77,7 @@ public class Card {
     }
 
     public static boolean canHandInSet(ArrayList<Card> cards) {
-        //3 different cards
+        //3 different cards test
         if(cards.contains(INFANTRY_CARD) && cards.contains(CAVALRY_CARD) && cards.contains(ARTILLARY_CARD)){
             return true;
         } else {
@@ -86,7 +86,7 @@ public class Card {
             testCards.add(CAVALRY_CARD);
             testCards.add(ARTILLARY_CARD);
 
-            //loop to test if there are 3 of any of the cards
+            //3 identical cards test
             for(Card testCard: testCards) {
                 int identicalFound = 0;
 

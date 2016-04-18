@@ -7,9 +7,6 @@ import Graphics.GL_TouchEvent;
 import Graphics.GL_TouchListener;
 import Graphics.GraphicsManager;
 
-/**
- * Created by Niklas on 14/04/16.
- */
 public class Risk implements GL_TouchListener {
     private enum GamePhase {PICK_TERRITORIES, PLACE_ARMIES, CHOOSE_ATTACKER, CHOOSE_DEFENDER}
     private GamePhase gamePhase = GamePhase.PICK_TERRITORIES;

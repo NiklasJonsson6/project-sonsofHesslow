@@ -6,7 +6,7 @@ public class Territory {
     public final Continent continent;
     private int id;
 
-    //change when done to correct amounts!!!
+    //TODO change when done to correct amounts
     private static final int TERRITORIES_IN_ASIA = 10;
     private static final int TERRITORIES_IN_NORTH_AMERICA = 10;
     private static final int TERRITORIES_IN_EUROPE = 10;
@@ -52,6 +52,7 @@ public class Territory {
         occupier = player;
     }
 
+    //extra troops for owning continents
     public static int getExtraTroopAmount(Territory[] territories){
         int territoriesFoundAsia = 0;
         int territoriesFoundNorthAmerica = 0;

@@ -7,7 +7,7 @@ public class Player {
     private int troopsToPlace;
     private boolean allowedToMove;
     ArrayList<Card> cards;
-    private Territory[] territoriesOwned;
+    private Territory[] territoriesOwned; //TODO remove dependency in class
 
     public Player() {
         this.name = ""; //TODO get name input somehow
