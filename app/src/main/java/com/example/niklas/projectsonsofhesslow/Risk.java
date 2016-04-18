@@ -32,39 +32,45 @@ public class Risk implements GL_TouchListener {
     }
 
     public void Handle(GL_TouchEvent event) {
-        //pick territories
-        if(event.touchedRegion && gamePhase == GamePhase.PICK_TERRITORIES && getTerritoryById(event.regionId) == null) {
-            territories[territoriesPicked] = new Territory(1, currentPlayer, null, event.regionId);
-            nextPlayer();
-            territoriesPicked++;
+        if(event.touchedRegion) {
+            switch(gamePhase) {
+                case PICK_TERRITORIES:
+                    if(getTerritoryById(event.regionId) == null) {
+                        territories[territoriesPicked] = new Territory(1, currentPlayer, null, event.regionId);
+                        nextPlayer();
+                        territoriesPicked++;
 
-            if(territoriesPicked == 42) gamePhase = GamePhase.PLACE_ARMIES;
-        }
+                        if(territoriesPicked == 42) gamePhase = GamePhase.PLACE_ARMIES;
+                    }
+                    break;
 
-        //place armies
-        if(event.touchedRegion && gamePhase == GamePhase.PLACE_ARMIES) {
-            getTerritoryById(event.regionId).changeArmyCount(1);
+                case PLACE_ARMIES:
+                    getTerritoryById(event.regionId).changeArmyCount(1);
+                    if(currentPlayer.getTroopsToPlace() == 0) gamePhase = GamePhase.CHOOSE_ATTACKER;
+                    break;
 
-            if(currentPlayer.getTroopsToPlace() == 0) gamePhase = GamePhase.CHOOSE_ATTACKER;
-        }
+                case CHOOSE_ATTACKER:
+                    //also check if any neighboring territories are hostile
+                    if(getTerritoryById(event.regionId).getOccupier() == currentPlayer) {
+                        GraphicsManager.setColor(event.regionId, attackerColor);
+                        attackingTerritory = getTerritoryById(event.regionId);
 
-        //choose attacker
-        if(event.touchedRegion && gamePhase == GamePhase.CHOOSE_ATTACKER && getTerritoryById(event.regionId).getOccupier() == currentPlayer) {
-            GraphicsManager.setColor(event.regionId, attackerColor);
-            attackingTerritory = getTerritoryById(event.regionId);
+                        gamePhase = GamePhase.CHOOSE_DEFENDER;
+                    }
+                    break;
 
-            gamePhase = GamePhase.CHOOSE_DEFENDER;
-        }
-
-        //choose defender
-        if(event.touchedRegion && gamePhase == GamePhase.CHOOSE_DEFENDER && getTerritoryById(event.regionId).getOccupier() != currentPlayer) {
-            for(int i = 0; i < GraphicsManager.getNeighbours(event.regionId).length; i++) {
-                //does neighbors work this way? since the map is always the same, could it be much easier?
-                if(event.regionId == GraphicsManager.getNeighbours(event.regionId)[i]) {
-                    defendingTerritory = getTerritoryById(event.regionId);
-                }
+                case CHOOSE_DEFENDER:
+                    if(getTerritoryById(event.regionId).getOccupier() != currentPlayer) {
+                        for(int i = 0; i < GraphicsManager.getNeighbours(attackingTerritory.getId()).length; i++) {
+                            //does neighbors work this way? since the map is always the same, could it be much easier?
+                            if(event.regionId == GraphicsManager.getNeighbours(attackingTerritory.getId())[i]) {
+                                defendingTerritory = getTerritoryById(event.regionId);
+                            }
+                        }
+                        //now show the fight button
+                        break;
+                    }
             }
-            //now show the fight button
         }
     }
 
