@@ -25,6 +25,8 @@ import android.util.Log;
 
 import com.example.niklas.projectsonsofhesslow.MainActivity;
 import com.example.niklas.projectsonsofhesslow.R;
+
+import Graphics.GraphicsObjects.Mesh;
 import Graphics.GraphicsObjects.SvgReader;
 
 import java.io.IOException;
@@ -97,7 +99,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         for(GLObject go : objectsToBeAdded)
         {
-            go.getMesh().init();
+            for(Mesh m : go.getMeshes()) m.init();
             gameObjects.add(go);
         }
         objectsToBeAdded.clear();

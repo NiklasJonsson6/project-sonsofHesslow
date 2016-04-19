@@ -24,7 +24,7 @@ public class Triangle extends GLObject {
     }
 
     @Override
-    public Mesh getMesh() {
-        return mesh;
+    public Mesh[] getMeshes() {
+        return new Mesh[]{mesh};
     }
 }

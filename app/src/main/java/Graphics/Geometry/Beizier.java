@@ -42,7 +42,6 @@ public class Beizier
     {
         Beizier[] ret = new Beizier[ts.length];
 
-        System.out.println("ts: "+ Arrays.toString(ts));
         float t_left = 1;
         Beizier current = this;
         float prev = 0;
@@ -107,7 +106,6 @@ public class Beizier
             {
                 if(Beizier.Intersect(splits_a[i],splits_b[j], 0.01f))
                 {
-                    System.out.println("intersects @ "+i + " " + j);
                     return true;
                 }
             }

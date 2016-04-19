@@ -14,22 +14,49 @@ import Graphics.Geometry.Vector2;
  */
 public class FilledBeizierPath extends GLObject{
 
-    public Mesh mesh;
+    public Mesh fill_mesh;
+    public Mesh outline_mesh;
 
     @Override
-    public Mesh getMesh() {
-        return mesh;
+    public Mesh[] getMeshes() {
+        return new Mesh[]{fill_mesh,outline_mesh};
     }
 
     final int naive_precision = 30; //higher is more detailed
+
 
     public FilledBeizierPath(BeizierPath path) // start ctl ctl point ctl ctl point ctl ctl (start)
     {
         if(!path.isClosed()) throw new IllegalArgumentException("the beizier path needs to be closed!");
 
-        //Vector2[] verts = approximateBeizierPath(points, precision);
         Vector2[] verts = path.approximateBeizierPath_naive(naive_precision);
-        System.out.println(verts.length);
+        Vector2[] outline_verts = new Vector2[verts.length*2];
+
+        //while the triangles are not guaranteed to be non-overlapping constant winding.
+        // the way we render the triangles we just dont care.
+        short[] outline_tris = new short[6*outline_verts.length];
+        for(int i = 0;i<verts.length;i++)
+        {
+            Vector2 prev = verts[i];
+            Vector2 current = verts[(i+1)%verts.length];
+            Vector2 next = verts[(i+2)%verts.length];
+            Vector2 diff = Vector2.Sub(next,prev);
+            Vector2 orth = Vector2.Mul(new Vector2(-diff.y,diff.x).normalized(),0.01f); //think about this.
+
+            outline_verts[i*2+0] = Vector2.Add(current, orth);
+            outline_verts[i*2+1] = Vector2.Sub(current, orth);
+
+            outline_tris[i*6+0] =(short)(i*2+0);
+            outline_tris[i*6+1] =(short)(i*2+1);
+            outline_tris[i*6+2] =(short)((i*2+2)%outline_verts.length);
+
+            outline_tris[i*6+3] =(short)(i*2+1);
+            outline_tris[i*6+4] =(short)((i*2+2)%outline_verts.length);
+            outline_tris[i*6+5] =(short)((i*2+3)%outline_verts.length);
+        }
+
+        outline_mesh = new Mesh(outline_tris,outline_verts,new float[]{0,0,0,1});
+
 
         //finding out the most prominent winding order
         float wind_ack = 0;
@@ -45,11 +72,8 @@ public class FilledBeizierPath extends GLObject{
         short[] tris = new short[(verts.length-2)*3];
         int current_index = 0;
         List<Integer> remainingIndices = new LinkedList<>();
-        System.out.println("diff:");
         for(int i = 0; i<verts.length;i++)
         {
-            if(i!=0)
-                System.out.print(Vector2.Sub(verts[i],verts[i-1]));
             remainingIndices.add(i);
         }
 
@@ -103,12 +127,13 @@ public class FilledBeizierPath extends GLObject{
         }
 
         float[] color = {(float)Math.random(),(float)Math.random(),(float)Math.random(),1f};
-        mesh = new Mesh(tris, verts, color);
+        fill_mesh = new Mesh(tris, verts, color);
     }
 
     public void draw(float[] projectionMatrix){
         float[] mvpMatrix = new float[16];
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
-        mesh.draw(projectionMatrix);
+        fill_mesh.draw(projectionMatrix);
+        outline_mesh.draw(projectionMatrix);
     }
 }

@@ -1,5 +1,7 @@
 package Graphics;
 
+import android.graphics.Region;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class GraphicsManager {
 
     public static void setColor(int regionId, float[] Color)
     {
-        beiziers[regionId].mesh.color = Color;
+        beiziers[regionId].fill_mesh.color = Color;
     }
 
     public static void setTroops(int regionId, int numberOfTroups)
@@ -38,6 +40,7 @@ public class GraphicsManager {
     {
         List<Integer> regions_in_continent = new ArrayList<>();
         int c= 0;
+
         for(Integer i : beizContinents)
         {
             if(continentId == i) regions_in_continent.add(c);
@@ -46,3 +49,26 @@ public class GraphicsManager {
         return regions_in_continent.toArray(new Integer[regions_in_continent.size()]);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

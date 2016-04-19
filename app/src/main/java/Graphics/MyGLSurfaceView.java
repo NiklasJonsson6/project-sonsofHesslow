@@ -134,7 +134,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         boolean hasTouchedRegion = false;
         for(FilledBeizierPath path : GraphicsManager.beiziers)
         {
-            if(path.mesh.isOnMesh2D(world_pos))
+            if(path.fill_mesh.isOnMesh2D(world_pos))
             {
                 hasTouchedRegion = true;
                 break;

@@ -2,6 +2,8 @@ package Graphics.GraphicsObjects;
 
 import android.util.Pair;
 
+import com.example.niklas.projectsonsofhesslow.ArrayUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -9,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.ServiceConfigurationError;
 import java.util.Stack;
 
 import Graphics.Geometry.Beizier;
@@ -34,7 +37,7 @@ public class SvgReader {
         public Integer[] neighbors;
     }
 
-    //todo support lineto maybe and handle bad formatting better.
+    //todo support lineto maybe and handle bad formatting better. also clean me up a bunch
     public static List<SVG_ReturnValue> read(InputStream svgStream) throws IOException
     {
         Scanner s = new Scanner(svgStream);
@@ -42,25 +45,31 @@ public class SvgReader {
 
         List<BeizierPath> paths = new ArrayList<>();
         List<BeizierPath> splits = new ArrayList<>();
+        List<BeizierPath> connections = new ArrayList<>();
 
         //parse all paths in the svg. add them into the appropriate category.
         while(true)
         {
-            BeizierPath new_read = readPath(s);
+
+            ReadRet new_read = readPath(s);
             if(new_read != null)
             {
-                for(int i = 0; i<new_read.points.length;i++)
+                BeizierPath readBeiz = new_read.path;
+
+                for(int i = 0; i< readBeiz.points.length;i++)
                 {
-                    new_read.points[i]= Vector2.Mul(new_read.points[i],1 / -100f);
+                    readBeiz.points[i]= Vector2.Mul(readBeiz.points[i],1 / -100f);
                 }
 
-                if(new_read.isClosed())
+                if(readBeiz.isClosed())
                 {
-                    paths.add(new_read);
+                    paths.add(readBeiz);
                 }
                 else
                 {
-                    splits.add(new_read);
+                    if(!new_read.isDashed)
+                        splits.add(readBeiz);
+                    else connections.add(readBeiz);
                 }
             }
             else
@@ -68,6 +77,7 @@ public class SvgReader {
                 break;
             }
         }
+        System.out.println("number of connections: "+connections.size() );
 
         //split the paths with the splits.
         //keep track of which split split what
@@ -110,7 +120,6 @@ public class SvgReader {
             }
             if(!removed)
             {
-                System.out.println("none removed failed...");
                 break;
             }
         }
@@ -130,15 +139,60 @@ public class SvgReader {
 
             ret.add(new SVG_ReturnValue(new FilledBeizierPath(p.first),p.second,neigbours.toArray(new Integer[neigbours.size()])));
         }
+
+        for(BeizierPath conn:connections)
+        {
+            Vector2 start = conn.points[0];
+            Vector2 end = conn.points[conn.points.length-1];
+
+            new DashedBeizierLine(conn); //this should not be done from here. ONLY TEMP.
+            SVG_ReturnValue first_val = null;
+            int first_index = -1;
+
+            SVG_ReturnValue second_val = null;
+            int second_index = -1;
+
+            int i = 0;
+            for(SVG_ReturnValue val : ret)
+            {
+                if(val.path.fill_mesh.isOnMesh2D(start))
+                {
+                    first_val = val;
+                    first_index = i;
+                }
+
+                if(val.path.fill_mesh.isOnMesh2D(end))
+                {
+                    second_val = val;
+                    second_index = i;
+                }
+                ++i;
+            }
+            first_val.neighbors = ArrayUtils.concat( first_val.neighbors , new Integer[]{second_index});
+            second_val.neighbors = ArrayUtils.concat( second_val.neighbors , new Integer[]{first_index});
+        }
+        //check so that all neighbors are unique?
+
         return ret;
     }
 
-    private static BeizierPath readPath(Scanner s)
+    static class ReadRet
     {
-        s.useDelimiter("(?<=,)|(?=,)|(\\s+)|(?<=\")|(?=\")");
+        public ReadRet(BeizierPath path, boolean isDashed) {
+            this.path = path;
+            this.isDashed = isDashed;
+        }
 
+        BeizierPath path;
+        boolean isDashed;
+    }
+
+    private static ReadRet readPath(Scanner s)
+    {
+        s.useDelimiter("(?<=,)|(?=,)|(\\s+)|(?<=\")|(?=\")|(?<=;)|(?=;)"); //crashes on if we escape on : investigate...
         String currentToken = "";
-        advanceTo(s,"<path");
+        advanceTo(s, "<path");
+        boolean isDashed = attributeContains(s,"stroke-dasharray:6");
         // abc q"as4,52 -> [abc],[q],[as4],[,],[52]
 
         advanceTo(s, "d=");
@@ -154,7 +208,6 @@ public class SvgReader {
         {
             if(s.hasNext()){
                 currentToken = s.next();
-                System.out.println("new token: " + currentToken);
             }
             else {
                 return null;
@@ -170,7 +223,7 @@ public class SvgReader {
                 } break;
                 case "Z":
                 case "z":
-                    return b.get(true);
+                    return new ReadRet(b.get(true),false);
                 case "C":
                     do
                     {
@@ -200,12 +253,25 @@ public class SvgReader {
                     throw new RuntimeException("fuck your format :\'"+ currentToken+"\'");
             }
         }
-        return b.get(false);
+        return new ReadRet(b.get(false), isDashed);
+    }
+
+    private static boolean attributeContains(Scanner s, String token)
+    {
+        advanceTo(s,"\"");
+        String currentToken="";
+        while(s.hasNext() )
+        {
+            currentToken = s.next();
+            System.out.println("current token::"+currentToken);
+            if(currentToken.equals(token)) return true;
+            if(currentToken.equals("\"")) break;
+        }
+        return false;
     }
 
     private static boolean advanceTo(Scanner s, String token)
     {
-        String currentToken="";
         while(s.hasNext() )
         {
             //just advance;
@@ -216,7 +282,6 @@ public class SvgReader {
 
     private static Vector2 nextVector2(Scanner s,Vector2 relativeTo)
     {
-        System.out.println("next vector..");
         if(!s.hasNextFloat())
             throw new IllegalArgumentException("1: Expected a floats got: '" + s.next()+"'");
 

@@ -22,7 +22,6 @@ public abstract class GLObject {
         MyGLRenderer.delayed_init(this);
     }
 
-
     public void setPos(Vector3 vec)
     {
         modelMatrix[12] = vec.x;
@@ -30,11 +29,10 @@ public abstract class GLObject {
         modelMatrix[14] = vec.z;
     }
 
-
     public void setPos(Vector2 vec)
     {
         setPos(new Vector3(vec));
     }
     public abstract void draw(float[] projectionMatrix);
-    public abstract Mesh getMesh();
+    public abstract Mesh[] getMeshes();
 }
