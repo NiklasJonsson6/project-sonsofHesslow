@@ -7,6 +7,11 @@ public class Territory {
     private int id;
     private Territory[] neighbours;
 
+    public Territory(Continent continent, int id) {
+        this.continent = continent;
+        this.id = id;
+    }
+
     public int getArmyCount() {
         return armyCount;
     }
@@ -23,9 +28,6 @@ public class Territory {
         this.occupier = occupier;
     }
 
-    public Territory(Continent continent) {
-        this.continent = continent;
-    }
 
     public void changeArmyCount(int change){
         armyCount += change;

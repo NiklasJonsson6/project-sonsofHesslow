@@ -27,7 +27,7 @@ public class Risk implements GL_TouchListener {
         currentPlayer = players[0];
 
         for(int i = 0; i < 42; i++) {
-            territories[i] = new Territory(null);
+            territories[i] = new Territory(null, i);
         }
 
         for(int i = 0; i < 42; i++) {
@@ -47,7 +47,6 @@ public class Risk implements GL_TouchListener {
                 case PICK_TERRITORIES:
                     if(getTerritoryById(event.regionId) == null) {
                         territories[territoriesPicked].setOccupier(currentPlayer);
-                        territories[territoriesPicked].setId(event.regionId);
 
                         territoriesPicked++;
                         if(territoriesPicked == 42) gamePhase = GamePhase.PLACE_ARMIES;
