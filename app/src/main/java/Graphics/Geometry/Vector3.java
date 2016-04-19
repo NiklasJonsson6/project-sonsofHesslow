@@ -27,7 +27,7 @@ public class Vector3 {
 
     public static Vector3 Add(Vector3 a, Vector3 b)
     {
-        return new Vector3(a.x+b.x,a.y+b.y,a.z+b.z);
+        return new Vector3(a.x+b.x,a.y+b.y,a.z);
     }
 
     public static Vector3 Sub(Vector3 a, Vector3 b)

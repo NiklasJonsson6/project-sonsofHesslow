@@ -37,7 +37,7 @@ import Graphics.Geometry.Vector2;
  */
 public class MyGLSurfaceView extends GLSurfaceView {
     private ScaleGestureDetector SGD;
-    private float scale = 0;
+    private float scale = -3.0f;
     private final MyGLRenderer mRenderer;
 
     class MyConfigChooser implements GLSurfaceView.EGLConfigChooser {
@@ -160,8 +160,9 @@ public class MyGLSurfaceView extends GLSurfaceView {
             ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            scale *= detector.getScaleFactor();
-            scale = Math.max(0.1f, Math.min(scale, 5.0f));
+            scale += detector.getScaleFactor() - 1;
+            System.out.println(detector.getScaleFactor());
+            scale = Math.min(0.0f, Math.max(scale, -6.0f));
             System.out.println(scale + "kalle");
             //matrix.setScale(scale, scale);
             //this.setImageMatrix(matrix);
