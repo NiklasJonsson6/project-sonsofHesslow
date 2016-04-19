@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public class Player {
     private String name;
     private boolean isAlive;
-    private int troopsToPlace;
+    private int armiesToPlace;
     private boolean allowedToMove;
     ArrayList<Card> cards;
     private int territoriesOwned;
@@ -45,26 +45,15 @@ public class Player {
         territoriesOwned += change;
     }
 
-    public void giveTroops() {
-        int amountToGet = 5;
-
-        //user has to hand in cards if you have 5 or more cards
-        if(cards.size() > 4){
-            if(Card.canHandInSet(cards)){
-                Card.handInSet(cards);
-            }
-            amountToGet += Card.cardAmountToGet();
-        }
-        amountToGet = Territory.getExtraTroopAmount(territoriesOwned);
-
-        troopsToPlace = amountToGet;
+    public void giveArmies(int change) {
+        armiesToPlace += change;
     }
 
-    public int getTroopsToPlace() {
-        return troopsToPlace;
+    public int getArmiesToPlace() {
+        return armiesToPlace;
     }
 
-    public void decTroopsToPlace() {
-        troopsToPlace--;
+    public void decArmiesToPlace() {
+        armiesToPlace--;
     }
 }

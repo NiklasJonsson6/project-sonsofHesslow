@@ -1,6 +1,5 @@
 package com.example.niklas.projectsonsofhesslow;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
@@ -12,7 +11,6 @@ public class Risk implements GL_TouchListener {
     private enum GamePhase {PICK_TERRITORIES, PLACE_ARMIES, CHOOSE_ATTACKER, CHOOSE_DEFENDER}
     private GamePhase gamePhase = GamePhase.PICK_TERRITORIES;
 
-    private float[] attackerColor = {1, 0, 0};
     private Player[] players;
     private Player currentPlayer;
     private int currentPlayerTracker = 0; //used to set next player
@@ -51,19 +49,18 @@ public class Risk implements GL_TouchListener {
                         territories[territoriesPicked].setOccupier(currentPlayer);
                         territories[territoriesPicked].setId(event.regionId);
 
-                        nextPlayer();
                         territoriesPicked++;
-
                         if(territoriesPicked == 42) gamePhase = GamePhase.PLACE_ARMIES;
+                        nextPlayer();
                     }
                     break;
 
                 case PLACE_ARMIES:
                     if(getTerritoryById(event.regionId).getOccupier() == currentPlayer) {
                         getTerritoryById(event.regionId).changeArmyCount(1);
-                        currentPlayer.decTroopsToPlace();
+                        currentPlayer.decArmiesToPlace();
                     }
-                    if(currentPlayer.getTroopsToPlace() == 0) {
+                    if(currentPlayer.getArmiesToPlace() == 0) {
                         gamePhase = GamePhase.CHOOSE_ATTACKER;
                     }
                     break;
@@ -116,5 +113,67 @@ public class Risk implements GL_TouchListener {
         currentPlayerTracker++;
         if(currentPlayerTracker == players.length) currentPlayerTracker = 0;
         currentPlayer = players[currentPlayerTracker];
+
+        if(gamePhase == GamePhase.PICK_TERRITORIES) {
+            currentPlayer.giveArmies(1);
+        } else {
+            setArmiesToPlace();
+        }
+    }
+
+    public void setArmiesToPlace() {
+        int armies = currentPlayer.getTerritoriesOwned() / 3;
+
+        int territoriesFoundAsia = 0;
+        int territoriesFoundNorthAmerica = 0;
+        int territoriesFoundEurope = 0;
+        int territoriesFoundAfrica = 0;
+        int territoriesFoundOceania = 0;
+        int territoriesFoundSouthAmerica = 0;
+
+        for(Territory territory: territories) {
+            switch (territory.continent) {
+                case ASIA:
+                    if(territory.getOccupier() == currentPlayer) territoriesFoundAsia++;
+                    break;
+                case NORTH_AMERICA:
+                    if(territory.getOccupier() == currentPlayer) territoriesFoundNorthAmerica++;
+                    break;
+                case EUROPE:
+                    if(territory.getOccupier() == currentPlayer) territoriesFoundEurope++;
+                    break;
+                case AFRICA:
+                    if(territory.getOccupier() == currentPlayer) territoriesFoundAfrica++;
+                    break;
+                case OCEANIA:
+                    if(territory.getOccupier() == currentPlayer) territoriesFoundOceania++;
+                    break;
+                case SOUTH_AMERICA:
+                    if(territory.getOccupier() == currentPlayer) territoriesFoundSouthAmerica++;
+                    break;
+            }
+        }
+
+        //if owning a whole continent, add corresponding  armies amounts:
+        if(territoriesFoundAsia == 12) {
+            armies += 7;
+        }
+        if(territoriesFoundNorthAmerica == 9) {
+            armies += 5;
+        }
+        if(territoriesFoundEurope == 7) {
+            armies += 5;
+        }
+        if(territoriesFoundAfrica == 6) {
+            armies += 3;
+        }
+        if(territoriesFoundOceania == 4) {
+            armies += 2;
+        }
+        if(territoriesFoundSouthAmerica == 4) {
+            armies += 2;
+        }
+
+        currentPlayer.giveArmies(armies);
     }
 }

@@ -35,17 +35,17 @@ public class Die {
 
             //roll first die
             if(attackDiceValues.get(diceAmountAttacker - 1) > defendDiceValues.get(diceAmountDefender - 1)){
-                defender.removeTroop();
+                defender.changeArmyCount(-1);
             }else {
-                attacker.removeTroop();
+                attacker.changeArmyCount(-1);
             }
 
             //roll second die
             if(attacker.getArmyCount() > 1 && defender.getArmyCount() > 0){
                 if(attackDiceValues.get(diceAmountAttacker - 2) > defendDiceValues.get(diceAmountDefender - 2)){
-                    defender.removeTroop();
+                    defender.changeArmyCount(-1);
                 }else {
-                    attacker.removeTroop();
+                    attacker.changeArmyCount(-1);
                 }
             }
 
