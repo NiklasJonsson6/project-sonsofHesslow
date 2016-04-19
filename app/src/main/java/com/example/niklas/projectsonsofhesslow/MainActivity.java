@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
     long lastTimestamp;
     public static Resources resources;
     MyGLSurfaceView graphicsView;
+    FrameLayout p;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,15 +72,15 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         {
             //sq.setPos(event.worldPosition);
             Vector2 delta = Vector2.Sub(MyGLRenderer.ScreenToWorldCoords(prevPos,0),event.worldPosition);
-            System.out.println("delta:" + delta);
+            //System.out.println("delta:" + delta);
             switch (event.e.getAction()) {
                 case MotionEvent.ACTION_MOVE:
                     Camera cam = Camera.getInstance();
-                    cam.setPosRel(new Vector3(delta));
+                    cam.setPosRel(new Vector3(delta,event.scale));
                     break;
             }
         }
-        System.out.println("Screen grej" + event.screenPosition.y);
+        //System.out.println("Screen grej" + event.screenPosition.y);
         graphicsView.requestRender();
         prevPos = event.screenPosition;
     }
@@ -95,3 +96,6 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
     }
 
 }
+
+
+

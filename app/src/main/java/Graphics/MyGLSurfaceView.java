@@ -19,6 +19,7 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -35,7 +36,8 @@ import Graphics.Geometry.Vector2;
  * interacting with drawn objects.
  */
 public class MyGLSurfaceView extends GLSurfaceView {
-
+    private ScaleGestureDetector SGD;
+    private float scale = 0;
     private final MyGLRenderer mRenderer;
 
     class MyConfigChooser implements GLSurfaceView.EGLConfigChooser {
@@ -75,6 +77,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         // Set the Renderer for drawing on the GLSurfaceView
         mRenderer = new MyGLRenderer();
         setRenderer(mRenderer);
+        SGD = new ScaleGestureDetector(getContext(), new ScaleListener());
 
         // Render the view only when there is a change in the drawing data
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -89,6 +92,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         // Set the Renderer for drawing on the GLSurfaceView
         mRenderer = new MyGLRenderer();
         setRenderer(mRenderer);
+        SGD = new ScaleGestureDetector(getContext(), new ScaleListener());
 
         // Render the view only when there is a change in the drawing data
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -122,7 +126,8 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-
+        SGD.onTouchEvent(e);
+        System.out.println("hej");
         // MotionEvent reports input details from the touch screen
         // and other input controls. In this case, you are only
         // interested in events where the touch position changed.
@@ -143,7 +148,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         }
         if(!hasTouchedRegion) index = -1;
 
-        GL_TouchEvent event = new GL_TouchEvent(e, hasTouchedRegion, index, world_pos, screen_pos);
+        GL_TouchEvent event = new GL_TouchEvent(e, hasTouchedRegion, index, world_pos, screen_pos,scale);
         for(GL_TouchListener listener:listeners)
         {
             listener.Handle(event);
@@ -151,7 +156,21 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
         return true;
     }
+    private class ScaleListener extends
+            ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            scale *= detector.getScaleFactor();
+            scale = Math.max(0.1f, Math.min(scale, 5.0f));
+            System.out.println(scale + "kalle");
+            //matrix.setScale(scale, scale);
+            //this.setImageMatrix(matrix);
+            invalidate();
+            return true;
 
+        }
+
+    }
 
 }
 

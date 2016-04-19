@@ -18,7 +18,7 @@ public class Camera {
         return instance;
     }
 
-    public Vector3 pos = new Vector3(-5,-5,-3); //-5-5 is about the current center..
+    public Vector3 pos = new Vector3(-5,-5, -3); //-5-5 is about the current center..
     public Vector3 lookAt;
     public Vector3 up = new Vector3(0,1,0);
 

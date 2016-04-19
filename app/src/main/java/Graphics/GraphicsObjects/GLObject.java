@@ -31,7 +31,7 @@ public abstract class GLObject {
 
     public void setPos(Vector2 vec)
     {
-        setPos(new Vector3(vec));
+        setPos(new Vector3(vec,0));
     }
     public abstract void draw(float[] projectionMatrix);
     public abstract Mesh[] getMeshes();

@@ -159,11 +159,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         float gl_y = ((height-point.y) * 2.0f / height - 1.0f);
         float gl_z = (invTransformMatrix[2]*gl_x + invTransformMatrix[6]*gl_y + invTransformMatrix[14] -z_out) / -invTransformMatrix[10];
 
-        System.out.println("gl_z" + gl_z);
+        //System.out.println("gl_z" + gl_z);
         float[] pointInGL = new float[]{gl_x,gl_y,gl_z,1};
         float[] ret = new float[4];
         Matrix.multiplyMV(ret, 0, invTransformMatrix, 0, pointInGL, 0);
-        System.out.println("ret z" + ret[2]);
+        //System.out.println("ret z" + ret[2]);
 
         // avoid div with 0. Don't know if this is a problem
         if (ret[3] == 0.0)

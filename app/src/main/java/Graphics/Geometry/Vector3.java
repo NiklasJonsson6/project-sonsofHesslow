@@ -11,9 +11,9 @@ public class Vector3 {
         this.y = y;
         this.z = z;
     }
-    public Vector3(Vector2 vector2)
+    public Vector3(Vector2 vector2, float z)
     {
-        this(vector2.x,vector2.y,0);
+        this(vector2.x,vector2.y,z);
     }
 
     @Override

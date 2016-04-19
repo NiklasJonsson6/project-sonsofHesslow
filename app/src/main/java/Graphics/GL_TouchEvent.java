@@ -14,12 +14,14 @@ public class GL_TouchEvent
     public int regionId;
     public Vector2 worldPosition;
     public Vector2 screenPosition;
+    public float scale;
 
-    public GL_TouchEvent(MotionEvent e, boolean touchedRegion, int regionId, Vector2 worldPosition, Vector2 screenPosition) {
+    public GL_TouchEvent(MotionEvent e, boolean touchedRegion, int regionId, Vector2 worldPosition, Vector2 screenPosition, float scale) {
         this.e = e;
         this.touchedRegion = touchedRegion;
         this.regionId = regionId;
         this.worldPosition = worldPosition;
         this.screenPosition = screenPosition;
+        this.scale = scale;
     }
 }

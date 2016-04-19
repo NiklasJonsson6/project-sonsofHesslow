@@ -134,7 +134,7 @@ public class Mesh {
                 return true;
             }
         }
-        System.out.println("none inside");
+        //System.out.println("none inside");
 
         return false;
     }
