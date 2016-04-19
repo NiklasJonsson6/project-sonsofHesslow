@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         super.onCreate(savedInstanceState);
         graphicsView = new MyGLSurfaceView(this);
         graphicsView.addListener(this);
+        graphicsView.addListener(new Risk(2)); //choose player count somehow
         setContentView(R.layout.activity_main);
         resources = this.getResources();
     }
