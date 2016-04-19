@@ -7,7 +7,7 @@ public class Player {
     private int troopsToPlace;
     private boolean allowedToMove;
     ArrayList<Card> cards;
-    private Territory[] territoriesOwned; //TODO remove dependency in class
+    private int territoriesOwned;
 
     public Player() {
         this.name = ""; //TODO get name input somehow
@@ -37,15 +37,15 @@ public class Player {
         this.cards = cards;
     }
 
-    public Territory[] getTerritoriesOwned() {
+    public int getTerritoriesOwned() {
         return territoriesOwned;
     }
 
-    public void setTerritoriesOwned(Territory[] territoriesOwned) {
-        this.territoriesOwned = territoriesOwned;
+    public void setTerritoriesOwned(int change) {
+        territoriesOwned += change;
     }
 
-    public void giveTroops(){
+    public void giveTroops() {
         int amountToGet = 5;
 
         //user has to hand in cards if you have 5 or more cards
@@ -62,5 +62,9 @@ public class Player {
 
     public int getTroopsToPlace() {
         return troopsToPlace;
+    }
+
+    public void decTroopsToPlace() {
+        troopsToPlace--;
     }
 }

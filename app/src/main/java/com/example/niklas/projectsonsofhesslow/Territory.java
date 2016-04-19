@@ -1,10 +1,13 @@
 package com.example.niklas.projectsonsofhesslow;
 
+import Graphics.GraphicsManager;
+
 public class Territory {
-    private int armyCount;
+    private int armyCount = 0;
     private Player occupier;
     public final Continent continent;
     private int id;
+    private Territory[] neighbours;
 
     //TODO change when done to correct amounts
     private static final int TERRITORIES_IN_ASIA = 10;
@@ -37,11 +40,8 @@ public class Territory {
         this.occupier = occupier;
     }
 
-    public Territory(int armyCount, Player occupier, Continent continent, int id){
-        this.armyCount = armyCount;
-        this.occupier = occupier;
+    public Territory(Continent continent) {
         this.continent = continent;
-        this.id = id;
     }
 
     public void changeArmyCount(int change){
@@ -115,5 +115,19 @@ public class Territory {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    //public void
+
+    public Territory[] getNeighbours() {
+        return neighbours;
+    }
+
+    public void setNeighbours(Territory[] neighbours) {
+        this.neighbours = neighbours;
     }
 }

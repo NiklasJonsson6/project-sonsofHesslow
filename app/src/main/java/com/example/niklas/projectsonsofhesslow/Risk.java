@@ -1,5 +1,6 @@
 package com.example.niklas.projectsonsofhesslow;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
@@ -26,6 +27,20 @@ public class Risk implements GL_TouchListener {
             players[i] = new Player();
         }
         currentPlayer = players[0];
+
+        for(int i = 0; i < 42; i++) {
+            territories[i] = new Territory(null);
+        }
+
+        for(int i = 0; i < 42; i++) {
+            Integer[] ids = GraphicsManager.getNeighbours(territories[i].getId());
+            int number = ids.length;
+            Territory[] neighbours = new Territory[number];
+            for(int k = 0; k < number; k++) {
+                neighbours[k] = getTerritoryById(ids[k]);
+            }
+            territories[i].setNeighbours(neighbours);
+        }
     }
 
     public void Handle(GL_TouchEvent event) {
@@ -33,7 +48,9 @@ public class Risk implements GL_TouchListener {
             switch(gamePhase) {
                 case PICK_TERRITORIES:
                     if(getTerritoryById(event.regionId) == null) {
-                        territories[territoriesPicked] = new Territory(1, currentPlayer, null, event.regionId);
+                        territories[territoriesPicked].setOccupier(currentPlayer);
+                        territories[territoriesPicked].setId(event.regionId);
+
                         nextPlayer();
                         territoriesPicked++;
 
@@ -42,37 +59,49 @@ public class Risk implements GL_TouchListener {
                     break;
 
                 case PLACE_ARMIES:
-                    getTerritoryById(event.regionId).changeArmyCount(1);
-                    if(currentPlayer.getTroopsToPlace() == 0) gamePhase = GamePhase.CHOOSE_ATTACKER;
+                    if(getTerritoryById(event.regionId).getOccupier() == currentPlayer) {
+                        getTerritoryById(event.regionId).changeArmyCount(1);
+                        currentPlayer.decTroopsToPlace();
+                    }
+                    if(currentPlayer.getTroopsToPlace() == 0) {
+                        gamePhase = GamePhase.CHOOSE_ATTACKER;
+                    }
                     break;
 
                 case CHOOSE_ATTACKER:
-                    //also check if any neighboring territories are hostile
                     if(getTerritoryById(event.regionId).getOccupier() == currentPlayer) {
-                        GraphicsManager.setColor(event.regionId, attackerColor);
-                        attackingTerritory = getTerritoryById(event.regionId);
+                        //checks if any neighboring territory can be attacked
+                        for(int i = 0; i < getTerritoryById(event.regionId).getNeighbours().length; i++) {
+                            if(getTerritoryById(event.regionId).getNeighbours()[i].getOccupier() != currentPlayer) {
+                                attackingTerritory = getTerritoryById(event.regionId);
 
-                        gamePhase = GamePhase.CHOOSE_DEFENDER;
+                                gamePhase = GamePhase.CHOOSE_DEFENDER;
+                            }
+                        }
                     }
                     break;
 
                 case CHOOSE_DEFENDER:
                     if(getTerritoryById(event.regionId).getOccupier() != currentPlayer) {
-                        for(int i = 0; i < GraphicsManager.getNeighbours(attackingTerritory.getId()).length; i++) {
-                            //does neighbors work this way? since the map is always the same, could it be much easier?
-                            if(event.regionId == GraphicsManager.getNeighbours(attackingTerritory.getId())[i]) {
+                        for(int i = 0; i < attackingTerritory.getNeighbours().length; i++) {
+                            if(getTerritoryById(event.regionId) == attackingTerritory.getNeighbours()[i]) {
                                 defendingTerritory = getTerritoryById(event.regionId);
+                                //TODO now show attack button
                             }
                         }
-                        //now show the fight button
-                        break;
                     }
+                    break;
             }
         }
     }
 
     public void fightButtonPressed(View v) {
         Die.fight(attackingTerritory, defendingTerritory);
+    }
+
+    public void endTurnPressed(View v) {
+        nextPlayer();
+        gamePhase = GamePhase.PLACE_ARMIES;
     }
 
     @Nullable
