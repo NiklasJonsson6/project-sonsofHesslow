@@ -29,7 +29,7 @@ public class ArrayUtils {
     public static <T> boolean contains(T[] a, T[] b) {
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < b.length; j++) {
-                if (a[i] == b[j]) {
+                if (a[i].equals(b[j])) {
                     return true;
                 }
             }

@@ -5,7 +5,6 @@ import android.util.Pair;
 import com.example.niklas.projectsonsofhesslow.ArrayUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -152,7 +151,14 @@ public class BeizierPath implements Iterable<Beizier> {
         return false;
     }
 
-    public static BeizierPath[] splitBeizPath(BeizierPath path, BeizierPath line)
+    public static class splitReturn
+    {
+        public BeizierPath first;
+        public BeizierPath second;
+        public Vector2 firstSplitPoint;
+        public Vector2 secondSplitPoint;
+    }
+    public static splitReturn splitBeizPath(BeizierPath path, BeizierPath line)
     {
         List<Pair<Integer,Float>> path_splits = new ArrayList<>();
         List<Pair<Integer,Float>> line_splits= new ArrayList<>();
@@ -191,41 +197,24 @@ public class BeizierPath implements Iterable<Beizier> {
 
         BeizierPath[] split_path = splitBeizPath(path,path_splits);
         BeizierPath[] split_line = splitBeizPath(line,line_splits);
-        System.out.println(split_path.length );
-        System.out.println(split_line.length );
-
-
-        for(int c = 0; c<split_line.length;c++)
-        {
-            System.out.println("line split "+c+": "+Arrays.toString(split_line[c].points));
-
-        }
-
-        for(int c = 0; c<split_path.length;c++)
-        {
-            System.out.println("path split "+c+": "+Arrays.toString(split_path[c].points));
-        }
-
 
         BeizierPathBuilder b = new BeizierPathBuilder();
         b.addBeizPath(split_path[2]);
-        if(!b.fitAndAddBeizPath(split_path[0]))
-        {
-            throw new RuntimeException("this isn't wokring right...");
+        if(!b.fitAndAddBeizPath(split_path[0])) {
+            throw new RuntimeException("1: Bug in  split Beizier Path...");
         }
-        if(!b.fitAndAddBeizPath(split_line[1]))
-        {
-            throw new RuntimeException("this isn't wokring right...");
+        if(!b.fitAndAddBeizPath(split_line[1]))        {
+            throw new RuntimeException("2: Bug in  split Beizier Path...");
         }
 
-        BeizierPath[] ret = new BeizierPath[2];
-        ret[0] = b.get(true);
+        splitReturn ret = new splitReturn();
+        ret.first = b.get(true);
         b.clear();
         b.addBeizPath(split_line[1]);
         b.fitAndAddBeizPath(split_path[1]);
-        ret[1] = b.get(true);
-        System.out.println(ret[0].isClosed());
-        System.out.println(ret[1].isClosed());
+        ret.second = b.get(true);
+        ret.firstSplitPoint = split_line[1].points[0];
+        ret.secondSplitPoint = split_line[1].points[split_line[1].points.length-1];
         return ret;
     }
 

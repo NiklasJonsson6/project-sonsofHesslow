@@ -1,0 +1,269 @@
+package Graphics;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PushbackReader;
+
+import Graphics.Geometry.Beizier;
+import Graphics.Geometry.BeizierPath;
+import Graphics.Geometry.BeizierPathBuilder;
+import Graphics.Geometry.Vector2;
+
+/**
+ * Created by Daniel on 20/04/2016.
+ */
+public class SvgReader
+{
+    public SvgReader(InputStream inputStream)
+    {
+        r = new PushbackReader(new InputStreamReader(inputStream),100);
+    }
+    private Vector2 pos = Vector2.Zero();
+    private PushbackReader r;
+    private float readFloat() throws IOException {
+        char[] f = new char[20]; // we don't need any higher precision than that.
+        int i = 0;
+        for(;i<20;++i) {
+            int c = (char)r.read();
+            if(c == -1)break;
+            if(Character.isDigit(c) || c == '.' || c == '-') {
+                if(c == '.' && (i == 0 || f[i-1]=='-')) f[i++] = '0';
+                f[i] =(char) c;
+            } else{
+                r.unread(c);
+                break;
+            }
+        }
+        return Float.parseFloat(new String(f,0,i));
+    }
+
+    private void skipWhite() throws IOException {
+        for(;;) {
+            int c = r.read();
+            if(!Character.isWhitespace(c)|| c == -1) {
+                r.unread(c);
+                break;
+            }
+        }
+    }
+
+    private Vector2 readVector2(boolean relative) throws IOException {
+        skipWhite();
+        float x = readFloat();
+        skipWhite();
+        int comma = r.read();
+        if(comma != ',') throw new FileFormatException("file format mismatch");
+        skipWhite();
+        float y = readFloat();
+        if(relative)
+            return Vector2.Add(new Vector2(x,y),pos);
+        else return new Vector2(x,y);
+    }
+
+    private Beizier readBeiz(char mode) throws IOException{
+        switch (mode) {
+            case 'm':
+                if(pos.x != 0 || pos.y != 0) {return readBeiz('l');}
+                pos = readVector2(true);
+                return null;
+            case 'M':
+                if(pos.x != 0 || pos.y != 0) {return readBeiz('L');}
+                pos = readVector2(false);
+                return null;
+            case 'C': {
+                Vector2 start = pos;
+                Vector2 c1 = readVector2(false);
+                Vector2 c2 = readVector2(false);
+                pos = readVector2(false);
+                return new Beizier(start, c1, c2, pos);
+            }
+            case 'c':
+            {
+                Vector2 start = pos;
+                Vector2 c1 = readVector2(true);
+                Vector2 c2 = readVector2(true);
+                pos = readVector2(true);
+                return new Beizier(start, c1, c2, pos);
+            }
+            case 'L':
+            {
+                Vector2 start = pos;
+                pos = readVector2(false);
+                return new Beizier(start, start, pos, pos);
+            }
+            case 'l':
+            {
+                Vector2 start = pos;
+                pos = readVector2(true);
+                return new Beizier(start, start, pos, pos);
+            }
+            default:
+                throw new RuntimeException("unknown/unimplemented mode:\'" + mode + "\'");
+        }
+    }
+
+    class FileFormatException extends RuntimeException{
+        FileFormatException(String message) {
+            super(message);
+        }
+    }
+
+    class PathInfo
+    {
+        BeizierPath path;
+        String[] attribute_names;
+        String[] attribute_values;
+    }
+
+    public SvgImporter.ReadRet readPath() throws IOException
+    {
+        // parsing a path,
+        // [starts here] ...noise... <path  ...data... /> [ends here]
+        if(!advancePast("<path")) return null;
+        boolean isDashed=false;
+        for(;;)
+        {
+            skipWhite();
+            String s = readWord();
+            if(s.length()==0)return null;
+            advancePast('=');
+            advancePast('"');
+            if (s.equals("d")) {
+                pos = Vector2.Zero();
+                BeizierPathBuilder b = new BeizierPathBuilder();
+                BeizierPath ret = null;
+                for(;;)
+                {
+                    skipWhite();
+                    int c = (char)r.read();
+
+                    if(c==-1) break;
+                    if(c == '\"'){
+                        ret= b.get(false);
+                        break;
+                    }
+                    if(c == 'z'||c=='Z') {
+                        ret = b.get(true);
+                        break;
+                    }
+                    while (isNextFloat())
+                    {
+                        Beizier beiz = readBeiz((char) c);
+                        if(beiz != null)
+                            b.addBeiz(beiz);
+                    }
+                }
+                if(ret == null) {
+                    throw new FileFormatException("no data in the path->d tag");
+                }
+                advancePast("/>");
+                return new SvgImporter.ReadRet(ret,isDashed);
+            }
+            else if(s.equals("id"))
+            {
+                //System.out.println("id: "+ readWord());
+            }
+            else if(s.equals("style"))
+            {
+                for(;;)
+                {
+                    skipWhite();
+                    String attr = readWord(":\"");
+                    if(attr.equals("stroke-dasharray"))
+                    {
+                        r.read();//reads the :
+                        skipWhite();
+                        if(isNextFloat())
+                        {
+                            isDashed = true;
+                            System.out.println("DASHED!!");
+                        }
+                        break;
+                    }
+                    skipWhite();
+                    readWord(";\"");
+                    int p = peek();
+                    if(p == -1 || p == '\"')break;
+                    r.read(); // reads the ;
+                }
+            }
+            advancePast('"');
+        }
+    }
+
+    private int peek() throws IOException
+    {
+        int c = r.read();
+        if(c!=-1)
+            r.unread((char)c);
+        return c;
+    }
+
+    private boolean isNextFloat() throws IOException
+    {
+        skipWhite();
+        char c = (char) peek();
+        return Character.isDigit(c)||c == '-'||c=='.';
+    }
+    private boolean advancePast(String string) throws IOException
+    {
+        //could be waaaay faster. optimize if needed.
+        int current_char=0;
+        char[] s = string.toCharArray();
+        for(;;)
+        {
+            int c = r.read();
+            if(c == s[current_char]) {
+                if(++current_char==s.length) return true;
+            }
+            else{
+                current_char = 0;
+            }
+            if(c ==-1) return false;
+        }
+    }
+
+    private boolean advancePast(char s) throws IOException {
+        for(;;)
+        {
+            int c = r.read();
+            if(c==-1)return false;
+            if((char )c== s)return true;
+        }
+    }
+
+    private String readWord() throws IOException
+    {
+        char[] s = new char[20]; // we don't need any higher precision than that.
+        int i = 0;
+        for(;i<20;++i) {
+            int c = (char)r.read();
+            if(c == -1)break;
+            if(Character.isLetter(c)) {
+                s[i] =(char) c;
+            } else{
+                r.unread(c);
+                break;
+            }
+        }
+        return new String(s,0,i);
+    }
+
+    private String readWord(String delimiter) throws IOException
+    {
+        char[] s = new char[20]; // we don't need any higher precision than that.
+        int i = 0;
+        for(;i<20;++i) {
+            int c = (char)r.read();
+            if(c == -1)break;
+            if(delimiter.indexOf(c)==-1) {
+                s[i] =(char) c;
+            } else{
+                r.unread(c);
+                break;
+            }
+        }
+        return new String(s,0,i);
+    }
+}

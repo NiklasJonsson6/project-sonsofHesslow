@@ -5,6 +5,7 @@ import android.opengl.Matrix;
 import java.util.LinkedList;
 import java.util.List;
 
+import Graphics.Geometry.Beizier;
 import Graphics.Geometry.BeizierPath;
 import Graphics.Geometry.Util;
 import Graphics.Geometry.Vector2;
@@ -22,12 +23,13 @@ public class FilledBeizierPath extends GLObject{
         return new Mesh[]{fill_mesh,outline_mesh};
     }
 
-    final int naive_precision = 30; //higher is more detailed
+    final int naive_precision = 3; //higher is more detailed
 
-
+    public BeizierPath path;
     public FilledBeizierPath(BeizierPath path) // start ctl ctl point ctl ctl point ctl ctl (start)
     {
         if(!path.isClosed()) throw new IllegalArgumentException("the beizier path needs to be closed!");
+        this.path = path;
 
         Vector2[] verts = path.approximateBeizierPath_naive(naive_precision);
         Vector2[] outline_verts = new Vector2[verts.length*2];
@@ -77,10 +79,11 @@ public class FilledBeizierPath extends GLObject{
             remainingIndices.add(i);
         }
 
-        //triangulation by earclipping
+        //triangulation by earclipping not perfect....
         while(remainingIndices.size() >= 3)
         {
             boolean removed = false;
+            float acceptable_concavity = 0;
             for(int i = 0;i<remainingIndices.size();i++)
             {
                 int index_a = remainingIndices.get(i);
@@ -92,7 +95,8 @@ public class FilledBeizierPath extends GLObject{
                 Vector2 c = verts[index_c];
 
                 //only add the tri if it's inside the polygon
-                if(Math.signum(Util.crossProduct(a, b, c))!=winding)
+                float concavity =Util.crossProduct(a, b, c);
+                if (Math.signum(concavity)!=winding||Math.abs(concavity)<=acceptable_concavity)
                 {
                     //check if there is any other vertex inside our proposed triangle
                     boolean noneInside = true;
@@ -126,6 +130,7 @@ public class FilledBeizierPath extends GLObject{
             }
         }
 
+        System.out.println("tris:"+tris.length/3);
         float[] color = {(float)Math.random(),(float)Math.random(),(float)Math.random(),1f};
         fill_mesh = new Mesh(tris, verts, color);
     }

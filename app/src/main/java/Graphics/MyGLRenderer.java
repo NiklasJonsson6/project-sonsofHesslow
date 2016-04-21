@@ -27,7 +27,6 @@ import com.example.niklas.projectsonsofhesslow.MainActivity;
 import com.example.niklas.projectsonsofhesslow.R;
 
 import Graphics.GraphicsObjects.Mesh;
-import Graphics.GraphicsObjects.SvgReader;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,21 +68,22 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         try
         {
-            List<SvgReader.SVG_ReturnValue> tmp = SvgReader.read(MainActivity.resources.openRawResource(R.raw.drawing));
+            List<SvgImporter.SVG_ReturnValue> tmp = SvgImporter.read(MainActivity.resources.openRawResource(R.raw.new_world));
             GraphicsManager.beiziers = new FilledBeizierPath[tmp.size()];
             GraphicsManager.beizNeighbors = new Integer[tmp.size()][];
             GraphicsManager.beizContinents = new Integer[tmp.size()];
             int c = 0;
-            for(SvgReader.SVG_ReturnValue ret : tmp)
+            for(SvgImporter.SVG_ReturnValue ret : tmp)
             {
                 GraphicsManager.beiziers[c] = ret.path;
-                GraphicsManager.beizNeighbors[c] = ret.neighbors;
+                GraphicsManager.beizNeighbors[c] = ret.neighbors.toArray(new Integer[ret.neighbors.size()]);
                 GraphicsManager.beizContinents[c] = ret.continent_id;
                 ++c;
             }
 
         } catch (IOException ex)
         {
+            ex.printStackTrace();
             throw new RuntimeException(ex.toString());
         }
     }

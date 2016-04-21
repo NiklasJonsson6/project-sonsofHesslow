@@ -127,7 +127,6 @@ public class MyGLSurfaceView extends GLSurfaceView {
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         SGD.onTouchEvent(e);
-        System.out.println("hej");
         // MotionEvent reports input details from the touch screen
         // and other input controls. In this case, you are only
         // interested in events where the touch position changed.
@@ -160,10 +159,12 @@ public class MyGLSurfaceView extends GLSurfaceView {
             ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
+
             scale += detector.getScaleFactor() - 1;
             System.out.println(detector.getScaleFactor());
             scale = Math.min(0.0f, Math.max(scale, -6.0f));
             System.out.println(scale + "kalle");
+
             //matrix.setScale(scale, scale);
             //this.setImageMatrix(matrix);
             invalidate();
