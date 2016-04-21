@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         graphicsView = new MyGLSurfaceView(this);
         graphicsView.addListener(this);
         //Needs 42 territories
-        //graphicsView.addListener(new Risk(2));
+        //graphicsView.addListener(new Controller());
         setContentView(R.layout.activity_main);
         resources = this.getResources();
     }
