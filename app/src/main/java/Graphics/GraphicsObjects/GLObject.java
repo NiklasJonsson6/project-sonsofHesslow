@@ -22,6 +22,11 @@ public abstract class GLObject {
         MyGLRenderer.delayed_init(this);
     }
 
+    public void Remove()
+    {
+        MyGLRenderer.Remove(this);
+    }
+
     public void setPos(Vector3 vec)
     {
         modelMatrix[12] = vec.x;

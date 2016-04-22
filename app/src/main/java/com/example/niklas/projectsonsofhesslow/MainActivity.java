@@ -55,13 +55,11 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
             Integer[] in_continent = GraphicsManager.getContinentRegions(GraphicsManager.getContinetId(event.regionId));
             Integer[] neighbours = GraphicsManager.getNeighbours(event.regionId);
 
-            for(int i = 0; i<in_continent.length;i++)
-            {
+            for(int i = 0; i<in_continent.length;i++) {
                 GraphicsManager.setColor(in_continent[i],region_color);
             }
 
-            for(int i = 0; i< neighbours.length; i++)
-            {
+            for(int i = 0; i< neighbours.length; i++) {
                 GraphicsManager.setColor(neighbours[i],neighbor_color);
             }
 

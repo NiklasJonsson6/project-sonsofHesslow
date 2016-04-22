@@ -60,7 +60,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private static final float[] mViewMatrix = new float[16];
     private float mAngle;
 
-    static List<GLObject> gameObjects = new ArrayList<>();
+    static ConcurrentLinkedQueue<GLObject> gameObjects = new ConcurrentLinkedQueue<>();
+
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         // Set the background frame color
@@ -92,6 +93,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public static void delayed_init(GLObject m)
     {
         objectsToBeAdded.add(m);
+    }
+
+    public static void Remove(GLObject object)
+    {
+        objectsToBeAdded.remove(object);
+        gameObjects.remove(object);
     }
 
     @Override

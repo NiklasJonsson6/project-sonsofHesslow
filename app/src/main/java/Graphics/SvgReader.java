@@ -1,5 +1,7 @@
 package Graphics;
 
+import android.telephony.CellSignalStrengthGsm;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -116,34 +118,44 @@ public class SvgReader
         String[] attribute_values;
     }
 
+    //todo attributes may come in any order.
+    //don't assuse that d is last.... it's not.
+
     public SvgImporter.ReadRet readPath() throws IOException
     {
         // parsing a path,
         // [starts here] ...noise... <path  ...data... /> [ends here]
         if(!advancePast("<path")) return null;
         boolean isDashed=false;
+        boolean isCont=false;
+        boolean isReg =false;
+
+        BeizierPath ret = null;
         for(;;)
         {
             skipWhite();
             String s = readWord();
+            System.out.println("s: " + s);
             if(s.length()==0)return null;
             advancePast('=');
             advancePast('"');
             if (s.equals("d")) {
                 pos = Vector2.Zero();
                 BeizierPathBuilder b = new BeizierPathBuilder();
-                BeizierPath ret = null;
+
                 for(;;)
                 {
                     skipWhite();
                     int c = (char)r.read();
-
                     if(c==-1) break;
-                    if(c == '\"'){
+                    if(c == '\"')
+                    {
                         ret= b.get(false);
+                        r.unread('\"'); //we'll advance past later on. need to keep our return state consitant.
                         break;
                     }
-                    if(c == 'z'||c=='Z') {
+                    if(c == 'z' || c=='Z')
+                    {
                         ret = b.get(true);
                         break;
                     }
@@ -157,27 +169,23 @@ public class SvgReader
                 if(ret == null) {
                     throw new FileFormatException("no data in the path->d tag");
                 }
-                advancePast("/>");
-                return new SvgImporter.ReadRet(ret,isDashed);
             }
-            else if(s.equals("id"))
-            {
-                //System.out.println("id: "+ readWord());
+            else if(s.equals("id")) {
+                String id = readWord();
+                if(id.equals("cont"))isCont=true;
+                if(id.equals("reg"))isReg=true;
+                System.out.println("id: "+ readWord("\""));
             }
-            else if(s.equals("style"))
-            {
-                for(;;)
-                {
+            else if(s.equals("style")) {
+                for(;;){
                     skipWhite();
                     String attr = readWord(":\"");
                     if(attr.equals("stroke-dasharray"))
                     {
                         r.read();//reads the :
                         skipWhite();
-                        if(isNextFloat())
-                        {
+                        if(isNextFloat()){
                             isDashed = true;
-                            System.out.println("DASHED!!");
                         }
                         break;
                     }
@@ -189,15 +197,29 @@ public class SvgReader
                 }
             }
             advancePast('"');
+            skipWhite();
+            System.out.println("peeked:"+peek(2));
+            if(peek(2).equals("/>"))break;
+            if(peek()==-1)break;
         }
+        advancePast("/>");
+        return new SvgImporter.ReadRet(ret,isDashed,isReg,isCont);
     }
 
-    private int peek() throws IOException
-    {
+    private int peek() throws IOException{
         int c = r.read();
         if(c!=-1)
             r.unread((char)c);
         return c;
+    }
+
+    private String peek(int length) throws IOException{
+        char buffer[] = new char[length];
+        for(int i = 0; i<length;i++) {
+            buffer[i] = (char) r.read();
+        }
+        r.unread(buffer);
+        return new String(buffer,0,length);
     }
 
     private boolean isNextFloat() throws IOException
@@ -206,6 +228,7 @@ public class SvgReader
         char c = (char) peek();
         return Character.isDigit(c)||c == '-'||c=='.';
     }
+
     private boolean advancePast(String string) throws IOException
     {
         //could be waaaay faster. optimize if needed.

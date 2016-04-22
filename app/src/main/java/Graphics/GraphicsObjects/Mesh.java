@@ -17,6 +17,8 @@ package Graphics.GraphicsObjects;
 
 import android.opengl.GLES20;
 
+import com.example.niklas.projectsonsofhesslow.ArrayUtils;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -95,8 +97,8 @@ public class Mesh {
         @Override
         public Triangle next() {
             Vector2 a = mesh.vertices[mesh.triangles[currentTriangle * 3 + 0]];
-            Vector2 b = mesh.vertices[mesh.triangles[currentTriangle*3+1]];
-            Vector2 c = mesh.vertices[mesh.triangles[currentTriangle*3+2]];
+            Vector2 b = mesh.vertices[mesh.triangles[currentTriangle * 3 + 1]];
+            Vector2 c = mesh.vertices[mesh.triangles[currentTriangle * 3 + 2]];
 
             ++currentTriangle;
             return new Triangle(a,b,c);
@@ -135,7 +137,6 @@ public class Mesh {
             }
         }
         //System.out.println("none inside");
-
         return false;
     }
 
@@ -192,6 +193,22 @@ public class Mesh {
         GLES20.glLinkProgram(mProgram);                  // create OpenGL program executables
     }
 
+    public static Mesh Add(Mesh a, Mesh b)
+    {
+
+        Vector2[] new_verts = ArrayUtils.concat(a.vertices,b.vertices);
+        int at_len = a.triangles.length;
+        int bt_len = b.triangles.length;
+
+        short[] new_tris = new short[at_len + bt_len];
+        for(int i = 0;i<at_len;i++) {
+            new_tris[i] = a.triangles[i];
+        }
+        for(int i = 0;i<bt_len;i++) {
+            new_tris[at_len+i] = (short)(b.triangles[i]+a.vertices.length);
+        }
+        return new Mesh(new_tris, new_verts, a.color);
+    }
 
     public void draw(float[] matrix) {
         // Add program to OpenGL environment
