@@ -19,7 +19,7 @@ public class Card {
     public Card() {
         //random card type
         Random random = new Random();
-        int randNum = random.nextInt(2);
+        int randNum = random.nextInt(3);
         switch(randNum){
             case 0:
                 cardType = CardType.INFANTRY;
@@ -45,9 +45,9 @@ public class Card {
     public static void handInSet(ArrayList<Card> cards) {
         //3 different cards
         if(cards.contains(INFANTRY_CARD) && cards.contains(CAVALRY_CARD) && cards.contains(ARTILLARY_CARD)){
-            cards.remove(cards.indexOf(INFANTRY_CARD));
-            cards.remove(cards.indexOf(CAVALRY_CARD));
-            cards.remove(cards.indexOf(ARTILLARY_CARD));
+            cards.remove(INFANTRY_CARD);
+            cards.remove(CAVALRY_CARD);
+            cards.remove(ARTILLARY_CARD);
             setsHandedIn++;
         } else {
             ArrayList<Card> testCards = new ArrayList<>();
@@ -66,13 +66,14 @@ public class Card {
                 }
 
                 if (identicalFound == 3) {
-                    for (int i = 0; i > 3; i++) {
-                        cards.remove(cards.indexOf(testCard));
+                    for (int i = 0; i < 3; i++) {
+                        cards.remove(testCard);
                         setsHandedIn++;
                     }
                 }
             }
         }
+        //cards.trimToSize();
     }
 
     public static boolean canHandInSet(ArrayList<Card> cards) {
@@ -114,12 +115,26 @@ public class Card {
     }
 
     @Override
+    public String toString() {
+        return "Card{" + "cardType: " + cardType + '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Card)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Card)) {
+            return false;
+        }
 
         Card card = (Card) o;
 
         return cardType == card.cardType;
+    }
+
+    @Override
+    public int hashCode() {
+        return cardType.hashCode();
     }
 }

@@ -18,4 +18,12 @@ public class PlayerTest {
         assertNotNull(player.getCards());
         assertEquals(1, player.getCards().size());
     }
+
+    @Test
+    public void giveTroops() throws Exception {
+        Player player = new Player();
+        player.giveArmies(4);
+        player.decArmiesToPlace();
+        assertEquals(3, player.getArmiesToPlace());
+    }
 }
