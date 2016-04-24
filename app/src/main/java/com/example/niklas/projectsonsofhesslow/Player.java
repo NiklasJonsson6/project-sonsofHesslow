@@ -45,8 +45,12 @@ public class Player {
         return territoriesOwned;
     }
 
-    public void setTerritoriesOwned(int change) {
+    public void changeTerritoriesOwned(int change) {
         territoriesOwned += change;
+    }
+
+    public void setTerritoriesOwned(int amount){
+        territoriesOwned = amount;
     }
 
     public void giveArmies(int change) {

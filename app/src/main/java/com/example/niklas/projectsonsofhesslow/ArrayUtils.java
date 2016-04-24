@@ -3,9 +3,6 @@ package com.example.niklas.projectsonsofhesslow;
 import java.lang.reflect.Array;
 import java.util.List;
 
-/**
- * Created by Daniel on 08/04/2016.
- */
 public class ArrayUtils {
 
     public static <T> T[] concat(T[]... arrays) {

@@ -41,8 +41,6 @@ public class Territory {
         this.id = id;
     }
 
-    //public void
-
     public Territory[] getNeighbours() {
         return neighbours;
     }

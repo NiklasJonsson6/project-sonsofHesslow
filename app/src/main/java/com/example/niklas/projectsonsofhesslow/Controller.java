@@ -7,9 +7,6 @@ import Graphics.GL_TouchEvent;
 import Graphics.GL_TouchListener;
 import Graphics.GraphicsManager;
 
-/**
- * Created by Niklas on 2016-04-21.
- */
 public class Controller implements GL_TouchListener {
     private Risk riskModel;
 

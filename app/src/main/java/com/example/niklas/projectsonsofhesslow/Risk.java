@@ -1,8 +1,5 @@
 package com.example.niklas.projectsonsofhesslow;
 
-import Graphics.GL_TouchListener;
-import Graphics.GraphicsManager;
-
 public class Risk {
 
     private Player[] players;
