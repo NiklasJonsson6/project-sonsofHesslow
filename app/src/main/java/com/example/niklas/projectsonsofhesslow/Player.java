@@ -6,7 +6,7 @@ public class Player {
     private boolean isAlive;
     private int armiesToPlace;
     private boolean allowedToMove;
-    ArrayList<Card> cards;
+    ArrayList<Card> cards = new ArrayList<>();
     private int territoriesOwned;
 
     public Player() {
@@ -35,6 +35,10 @@ public class Player {
 
     public void setCards(ArrayList<Card> cards) {
         this.cards = cards;
+    }
+
+    public void giveOneCard(){
+        cards.add(Card.getRandomCard());
     }
 
     public int getTerritoriesOwned() {

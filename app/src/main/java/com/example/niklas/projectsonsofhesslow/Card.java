@@ -14,7 +14,6 @@ public class Card {
         INFANTRY, CAVALRY, ARTILLARY
     }
 
-
     private CardType cardType;
 
     public Card() {
@@ -32,7 +31,6 @@ public class Card {
                 cardType = CardType.CAVALRY;
                 break;
         }
-
     }
 
     public Card(CardType cardType) {
@@ -40,7 +38,8 @@ public class Card {
     }
 
     public static Card getRandomCard(){
-        return new Card();
+        Card randomCard = new Card();
+        return randomCard;
     }
 
     public static void handInSet(ArrayList<Card> cards) {
