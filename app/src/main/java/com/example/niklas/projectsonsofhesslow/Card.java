@@ -103,7 +103,6 @@ public class Card {
         return false;
     }
 
-
     public static int cardAmountToGet(){
         int amountToGet = 0;
         if(setsHandedIn < 6){
