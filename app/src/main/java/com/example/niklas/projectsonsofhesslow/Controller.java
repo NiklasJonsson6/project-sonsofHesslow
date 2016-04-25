@@ -22,15 +22,15 @@ public class Controller implements GL_TouchListener {
 
         riskModel.setCurrentPlayer(riskModel.getPlayers()[0]);
 
+        //set neighbours
         for(int i = 0; i < 42; i++) {
-            Integer[] ids = GraphicsManager.getNeighbours(riskModel.getTerritories()[i].getId());
-            int number = ids.length;
+            Integer[] ids = GraphicsManager.getNeighbours(i);
+            int number = ids.length; //number of neighbours
             Territory[] neighbours = new Territory[number];
 
             for(int k = 0; k < number; k++) {
                 neighbours[k] = getTerritoryById(ids[k]);
             }
-
             riskModel.getTerritories()[i].setNeighbours(neighbours);
         }
     }
@@ -40,8 +40,8 @@ public class Controller implements GL_TouchListener {
             Territory touchedTerritory = getTerritoryById(event.regionId);
             switch(gamePhase) {
                 case PICK_TERRITORIES:
-                    if(touchedTerritory == null && touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
-                        riskModel.getTerritories()[territoriesPicked].setOccupier(riskModel.getCurrentPlayer());
+                    if(touchedTerritory.getOccupier() == null) {
+                        touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
 
                         territoriesPicked++;
                         nextPlayer();

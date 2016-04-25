@@ -1,5 +1,4 @@
 package com.example.niklas.projectsonsofhesslow;
-
 public class Risk {
 
     private Player[] players;
@@ -14,8 +13,9 @@ public class Risk {
             players[i] = new Player();
         }
 
+        //create territory objects
         for(int i = 0; i < 42; i++) {
-            territories[i] = new Territory(null, i);
+            territories[i] = new Territory(null, i); //TODO continent
         }
     }
 
