@@ -39,9 +39,10 @@ public class BeizierPath implements Iterable<Beizier> {
     {
         BeizierPath path;
         public int index = 0;
-
+        Beizier b;
         public BeizIterator(BeizierPath path)
         {
+            b = new Beizier(new Vector2[4]);
             this.path = path;
         }
 
@@ -52,6 +53,10 @@ public class BeizierPath implements Iterable<Beizier> {
 
         @Override
         public Beizier next() {
+            // initializing all these beziers takes a whole bunch of time..
+            // come up with a way not to? passing around arrays isn't exactly oop.
+            // but it would speed things a bunch...
+
             Beizier ret = new Beizier(path.points[index*3],path.points[index*3+1],
                     path.points[index*3+2],path.points[(index*3+3)%path.points.length]);
             ++index;
@@ -120,7 +125,6 @@ public class BeizierPath implements Iterable<Beizier> {
 
     private Vector2[] subdivide(Vector2[] path)
     {
-        System.out.println(path.length);
         Vector2[] ret = new Vector2[path.length*2];
         int i = 0;
         for(Beizier beizier: this)
@@ -138,7 +142,7 @@ public class BeizierPath implements Iterable<Beizier> {
         return ret;
     }
 
-    public static boolean isNeigbour(BeizierPath a, BeizierPath b)
+    public static boolean isNeighbour(BeizierPath a, BeizierPath b)
     {
         for(Beizier beizier_a : a)
         {
@@ -163,32 +167,28 @@ public class BeizierPath implements Iterable<Beizier> {
         List<Pair<Integer,Float>> path_splits = new ArrayList<>();
         List<Pair<Integer,Float>> line_splits= new ArrayList<>();
 
+        List<Pair<Float,Float>> intersectionPoints = new ArrayList<>();
+
         int i = 0;
         for(Beizier lineBeiz:line)
         {
             int j = 0;
             for(Beizier pathBeiz:path)
             {
-                List<Pair<Float,Float>> intersectionPoints = new ArrayList<>();
-                if(Beizier.Intersect(lineBeiz,pathBeiz,0.00001f,intersectionPoints))
+                if(Beizier.Intersect(lineBeiz,pathBeiz,0.001f,intersectionPoints))
                 {
                     // currently only one intersection per beizier is supported.
                     // however intersection points may return multiple values that are all within the
                     // tolerance of the one intersection point. Thats why we're not currently throwing any exceptions.
                     //and instead just gets the first and ignores the rest.
                     line_splits.add(new Pair<Integer, Float>(i,intersectionPoints.get(0).first));
-                    path_splits.add(new Pair<Integer, Float>(j,intersectionPoints.get(0).second));
-                    System.out.println(intersectionPoints.size());
-                    for(int q = 0; q < intersectionPoints.size(); q++)
-                    {
-                        System.out.println("line inedex:"+i+ " curve index:"+j+"  should be equal isch: ta" +intersectionPoints.get(q).first + " tb" + intersectionPoints.get(q).second + " "  +lineBeiz.getValue(intersectionPoints.get(q).first) + "" + pathBeiz.getValue(intersectionPoints.get(q).second));
-                    }
+                    path_splits.add(new Pair<Integer, Float>(j, intersectionPoints.get(0).second));
                 }
+                intersectionPoints.clear();
                 ++j;
             }
             ++i;
         }
-        System.out.println("intersection points = "+line_splits.size() + ", " + path_splits.size());
 
         if(line_splits.size() != 2 || path_splits.size() != 2)
         {

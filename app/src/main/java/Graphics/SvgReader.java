@@ -1,7 +1,6 @@
 package Graphics;
 
-import android.telephony.CellSignalStrengthGsm;
-
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,31 +20,62 @@ public class SvgReader
     // probably using the raw input stream and byte arrays. Pretending this is c here I come!
     public SvgReader(InputStream inputStream)
     {
-        r = new PushbackReader(new InputStreamReader(inputStream),100);
+        r = new PushbackReader(new BufferedReader(new InputStreamReader(inputStream)),100);
     }
     private Vector2 pos = Vector2.Zero();
     private PushbackReader r;
+
+
+
     private float readFloat() throws IOException {
-        char[] f = new char[20]; // we don't need any higher precision than that.
-        int i = 0;
-        for(;i<20;++i) {
+        //fast minimal float stream parsing.
+        float ret=0;
+        final float[] table = {0.1f,0.01f,0.001f,0.0001f,0.00001f};
+        int decimal = -1;
+        boolean negative= false;
+        for(int i=0;i<20;++i) {
             int c = (char)r.read();
             if(c == -1)break;
-            if(Character.isDigit(c) || c == '.' || c == '-') {
-                if(c == '.' && (i == 0 || f[i-1]=='-')) f[i++] = '0';
-                f[i] =(char) c;
+            if(c == '.'){decimal = 0; continue;}
+            if(c == '-'){negative = true; continue;}
+            int num = c-48;
+            if(num>=0&&num<10) { //is digit
+                if(decimal>=0)
+                {
+                    ret += num*table[decimal];
+                    ++decimal;
+                    if(decimal>=table.length)break;
+                }
+                else
+                {
+                    ret = ret * 10 + num;
+                }
             } else{
                 r.unread(c);
                 break;
             }
         }
-        return Float.parseFloat(new String(f,0,i));
+        skipDigit();
+        return negative ? -ret : ret;
     }
+
+
 
     private void skipWhite() throws IOException {
         for(;;) {
             int c = r.read();
             if(!Character.isWhitespace(c)|| c == -1) {
+                r.unread(c);
+                break;
+            }
+        }
+    }
+
+
+    private void skipDigit() throws IOException {
+        for(;;) {
+            int c = r.read();
+            if(!Character.isDigit(c)|| c == -1) {
                 r.unread(c);
                 break;
             }
@@ -137,7 +167,6 @@ public class SvgReader
         {
             skipWhite();
             String s = readWord();
-            System.out.println("s: " + s);
             if(s.length()==0)return null;
             advancePast('=');
             advancePast('"');
@@ -176,7 +205,6 @@ public class SvgReader
                 String id = readWord();
                 if(id.equals("cont"))isCont=true;
                 if(id.equals("reg"))isReg=true;
-                System.out.println("id: "+ readWord("\""));
             }
             else if(s.equals("style")) {
                 for(;;){
@@ -200,7 +228,6 @@ public class SvgReader
             }
             advancePast('"');
             skipWhite();
-            System.out.println("peeked:"+peek(2));
             if(peek(2).equals("/>"))break;
             if(peek()==-1)break;
         }

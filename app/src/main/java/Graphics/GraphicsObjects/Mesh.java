@@ -79,52 +79,15 @@ public class Mesh {
         }
     }
 
-    class MeshIterator implements Iterator
-    {
-        Mesh mesh;
-        int currentTriangle;
-        public MeshIterator(Mesh mesh)
-        {
-            this.mesh = mesh;
-            this.currentTriangle = 0;
-        }
-        @Override
-        public boolean hasNext() {
-            return mesh.triangles.length/3> currentTriangle;
-        }
-
-
-        @Override
-        public Triangle next() {
-            Vector2 a = mesh.vertices[mesh.triangles[currentTriangle * 3 + 0]];
-            Vector2 b = mesh.vertices[mesh.triangles[currentTriangle * 3 + 1]];
-            Vector2 c = mesh.vertices[mesh.triangles[currentTriangle * 3 + 2]];
-
-            ++currentTriangle;
-            return new Triangle(a,b,c);
-        }
-
-        @Override
-        public void remove() {
-            throw new RuntimeException("Meshes don't support removal of triangles at this moment");
-        }
-    }
-
-    public MeshIterator meshIterator()
-    {
-        return new MeshIterator(this);
-    }
-
     public boolean isOnMesh2D(Vector2 point)
     {
-
-        MeshIterator it = meshIterator();
-        while(it.hasNext())
+        int currentTri = 0;
+        while(triangles.length/3> currentTri)
         {
-            Triangle triangle = it.next();
-            Vector2 p0 = triangle.points[0];
-            Vector2 p1 = triangle.points[1];
-            Vector2 p2 = triangle.points[2];
+            Vector2 p0  = vertices[triangles[currentTri * 3 + 0]];
+            Vector2 p1  = vertices[triangles[currentTri * 3 + 1]];
+            Vector2 p2 = vertices[triangles[currentTri * 3 + 2]];
+            ++currentTri;
             if(Util.isInsideTri(point, p0, p1, p2))
             {
                 /*

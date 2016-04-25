@@ -130,7 +130,6 @@ public class FilledBeizierPath extends GLObject{
             }
         }
 
-        System.out.println("tris:"+tris.length/3);
         float[] color = {(float)Math.random(),(float)Math.random(),(float)Math.random(),1f};
         fill_mesh = new Mesh(tris, verts, color);
     }
