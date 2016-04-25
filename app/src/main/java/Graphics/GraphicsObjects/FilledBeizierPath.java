@@ -138,7 +138,7 @@ public class FilledBeizierPath extends GLObject{
     public void draw(float[] projectionMatrix){
         float[] mvpMatrix = new float[16];
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
-        fill_mesh.draw(projectionMatrix);
-        outline_mesh.draw(projectionMatrix);
+        fill_mesh.draw(mvpMatrix);
+        outline_mesh.draw(mvpMatrix);
     }
 }

@@ -22,16 +22,24 @@ public abstract class GLObject {
         MyGLRenderer.delayed_init(this);
     }
 
+    public float drawOrder=0;
+    public Vector3 pos = Vector3.Zero();
     public void Remove()
     {
         MyGLRenderer.Remove(this);
     }
 
+    public Vector3 getPos()
+    {
+        return new Vector3(pos); // the return value cannot modify our state.
+    }
     public void setPos(Vector3 vec)
     {
+        pos = vec;
         modelMatrix[12] = vec.x;
         modelMatrix[13] = vec.y;
         modelMatrix[14] = vec.z;
+        drawOrder = -vec.z;
     }
 
     public void setPos(Vector2 vec)

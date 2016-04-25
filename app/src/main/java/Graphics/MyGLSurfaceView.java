@@ -133,13 +133,21 @@ public class MyGLSurfaceView extends GLSurfaceView {
         // interested in events where the touch position changed.
 
         Vector2 screen_pos = new Vector2(e.getX(),e.getY());
+
         Vector2 world_pos = MyGLRenderer.ScreenToWorldCoords(screen_pos,0);
 
         int index = 0;
         boolean hasTouchedRegion = false;
         for(FilledBeizierPath path : GraphicsManager.beiziers)
         {
-            if(path.fill_mesh.isOnMesh2D(world_pos))
+            float z = path.getPos().z;
+            Vector2 adjusted_worldPos;
+            if(z== 0) // the normal case, lets not recaculate it.
+                adjusted_worldPos = world_pos;
+            else    // memoization is probably a bit more expensive than recalculation. it's quite uncommon after all.
+                adjusted_worldPos = MyGLRenderer.ScreenToWorldCoords(screen_pos,z);
+
+            if(path.fill_mesh.isOnMesh2D(adjusted_worldPos))
             {
                 hasTouchedRegion = true;
                 break;

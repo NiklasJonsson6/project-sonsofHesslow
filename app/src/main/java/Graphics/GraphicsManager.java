@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import Graphics.Geometry.Vector3;
 import Graphics.GraphicsObjects.FilledBeizierPath;
+import Graphics.GraphicsObjects.GLObject;
 
 /**
  * Created by Daniel on 11/04/2016.
@@ -43,9 +45,19 @@ public class GraphicsManager {
             throw new RuntimeException(ex.toString());
         }
     }
+
+    public static void setHeight(int regionId, float height)
+    {
+        beiziers[regionId].setPos(new Vector3(0,0,-height));
+    }
     public static void setColor(int regionId, float[] Color)
     {
         beiziers[regionId].fill_mesh.color = Color;
+    }
+
+    public static void setOutlineColor(int regionId, float[] Color)
+    {
+        beiziers[regionId].outline_mesh.color = Color;
     }
 
     public static void setTroops(int regionId, int numberOfTroups)

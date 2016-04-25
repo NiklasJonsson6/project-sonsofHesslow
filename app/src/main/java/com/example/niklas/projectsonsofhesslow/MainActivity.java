@@ -55,12 +55,13 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
 
             for(int i = 0; i<in_continent.length;i++) {
                 GraphicsManager.setColor(in_continent[i],region_color);
+                GraphicsManager.setHeight(in_continent[i], 0);
             }
 
             for(int i = 0; i< neighbours.length; i++) {
                 GraphicsManager.setColor(neighbours[i],neighbor_color);
             }
-
+            GraphicsManager.setHeight(event.regionId,0.2f);
             GraphicsManager.setColor(event.regionId, color);
         }
 

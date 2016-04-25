@@ -22,22 +22,15 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
-
-import com.example.niklas.projectsonsofhesslow.MainActivity;
-import com.example.niklas.projectsonsofhesslow.R;
-
 import Graphics.GraphicsObjects.Mesh;
-
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-
-import Graphics.GraphicsObjects.FilledBeizierPath;
 import Graphics.GraphicsObjects.Camera;
 import Graphics.GraphicsObjects.GLObject;
 import Graphics.Geometry.Vector2;
 import Graphics.Geometry.Vector3;
-
 import java.util.concurrent.*;
 
 /**
@@ -59,8 +52,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private static final float[] mProjectionMatrix = new float[16];
     private static final float[] mViewMatrix = new float[16];
     private float mAngle;
-
-    static ConcurrentLinkedQueue<GLObject> gameObjects = new ConcurrentLinkedQueue<>();
+    private static List<GLObject> gameObjects = new ArrayList<>();
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
@@ -69,6 +61,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     }
 
     static ConcurrentLinkedQueue<GLObject> objectsToBeAdded = new ConcurrentLinkedQueue<>();
+    static ConcurrentLinkedQueue<GLObject> objectsToBeRemoved = new ConcurrentLinkedQueue<>();
     public static void delayed_init(GLObject m)
     {
         objectsToBeAdded.add(m);
@@ -76,13 +69,17 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     public static void Remove(GLObject object)
     {
-        objectsToBeAdded.remove(object);
-        gameObjects.remove(object);
+        objectsToBeRemoved.add(object);
     }
 
     @Override
     public void onDrawFrame(GL10 unused) {
-
+        for(GLObject go : objectsToBeRemoved)
+        {
+            objectsToBeAdded.remove(go);
+            gameObjects.remove(go);
+        }
+        objectsToBeRemoved.clear();
         for(GLObject go : objectsToBeAdded)
         {
             for(Mesh m : go.getMeshes()) m.init();
@@ -100,7 +97,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
-
+        Collections.sort(gameObjects, new Comparator<GLObject>() {
+            @Override
+            public int compare(GLObject lhs, GLObject rhs) {
+                return Float.compare(lhs.drawOrder,rhs.drawOrder);
+            }
+        });
         for(GLObject go : gameObjects)
         {
             if(go.isActive)

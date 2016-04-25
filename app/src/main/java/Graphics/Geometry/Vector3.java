@@ -11,6 +11,10 @@ public class Vector3 {
         this.y = y;
         this.z = z;
     }
+    public Vector3(Vector3 v)
+    {
+        this(v.x,v.y,v.z);
+    }
     public Vector3(Vector2 vector2, float z)
     {
         this(vector2.x,vector2.y,z);
@@ -38,6 +42,10 @@ public class Vector3 {
     public static Vector3 Mul(Vector3 vec, float scalar)
     {
         return new Vector3(vec.x*scalar,vec.y*scalar,vec.z*scalar);
+    }
+    public static Vector3 Zero()
+    {
+        return new Vector3(0,0,0);
     }
     public Vector2 ToVector2()
     {
