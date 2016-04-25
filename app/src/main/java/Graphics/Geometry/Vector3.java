@@ -15,6 +15,7 @@ public class Vector3 {
     {
         this(v.x,v.y,v.z);
     }
+
     public Vector3(Vector2 vector2, float z)
     {
         this(vector2.x,vector2.y,z);

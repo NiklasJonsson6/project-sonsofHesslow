@@ -90,16 +90,9 @@ public class Mesh {
             ++currentTri;
             if(Util.isInsideTri(point, p0, p1, p2))
             {
-                /*
-                    float[] color_outside = new float[]{0.6f,0.2f,0.8f,1};
-                    float[] color_inside = new float[]{0.3f,0.9f,0.6f,1};
-                    MyGLRenderer.addSquare(point,color_inside);
-                    MyGLRenderer.delayed_init(p0, p1, p2, color_outside);
-                 */
                 return true;
             }
         }
-        //System.out.println("none inside");
         return false;
     }
 

@@ -25,8 +25,6 @@ public class SvgReader
     private Vector2 pos = Vector2.Zero();
     private PushbackReader r;
 
-
-
     private float readFloat() throws IOException {
         //fast minimal float stream parsing.
         float ret=0;

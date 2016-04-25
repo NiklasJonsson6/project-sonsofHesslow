@@ -142,7 +142,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         float[] invTransformMatrix = new float[16];
         Matrix.invertM(invTransformMatrix, 0, transformMatrix, 0);
 
-        if(invTransformMatrix[10] == 0) throw new RuntimeException("1: to world cords failed, div by zero");
+        if(invTransformMatrix[10] == 0)
+        {
+            //this only happens if opengl hasn't finished to initialize stuff yet.
+            return point; // this is probably the best we can do.
+            //throw new RuntimeException("1: to world cords failed, div by zero");
+        }
         float gl_x =((point.x) * 2.0f / width - 1.0f);
         float gl_y = ((height-point.y) * 2.0f / height - 1.0f);
         float gl_z = (invTransformMatrix[2]*gl_x + invTransformMatrix[6]*gl_y + invTransformMatrix[14] -z_out) / -invTransformMatrix[10];
