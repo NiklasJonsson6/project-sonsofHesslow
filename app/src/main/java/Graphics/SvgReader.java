@@ -17,6 +17,8 @@ import Graphics.Geometry.Vector2;
  */
 public class SvgReader
 {
+    // we need to seriously speed this up.
+    // probably using the raw input stream and byte arrays. Pretending this is c here I come!
     public SvgReader(InputStream inputStream)
     {
         r = new PushbackReader(new InputStreamReader(inputStream),100);

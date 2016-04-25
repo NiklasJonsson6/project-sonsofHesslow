@@ -2,6 +2,10 @@ package Graphics;
 
 import android.graphics.Region;
 
+import com.example.niklas.projectsonsofhesslow.MainActivity;
+import com.example.niklas.projectsonsofhesslow.R;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +20,29 @@ public class GraphicsManager {
     public static Integer[][] beizNeighbors;
     public static Integer[] beizContinents;
 
+    public static void init()
+    {
+        try
+        {
+            List<SvgImporter.SVG_ReturnValue> tmp = SvgImporter.read(MainActivity.resources.openRawResource(R.raw.new_world));
+            GraphicsManager.beiziers = new FilledBeizierPath[tmp.size()];
+            GraphicsManager.beizNeighbors = new Integer[tmp.size()][];
+            GraphicsManager.beizContinents = new Integer[tmp.size()];
+            int c = 0;
+            for(SvgImporter.SVG_ReturnValue ret : tmp)
+            {
+                GraphicsManager.beiziers[c] = ret.path;
+                GraphicsManager.beizNeighbors[c] = ret.neighbors.toArray(new Integer[ret.neighbors.size()]);
+                GraphicsManager.beizContinents[c] = ret.continent_id;
+                ++c;
+            }
+
+        } catch (IOException ex)
+        {
+            ex.printStackTrace();
+            throw new RuntimeException(ex.toString());
+        }
+    }
     public static void setColor(int regionId, float[] Color)
     {
         beiziers[regionId].fill_mesh.color = Color;

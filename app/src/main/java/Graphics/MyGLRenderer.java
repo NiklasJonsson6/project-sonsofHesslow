@@ -66,27 +66,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         // Set the background frame color
         GLES20.glClearColor(1f, 1f, 1f, 1.0f);
-
-        try
-        {
-            List<SvgImporter.SVG_ReturnValue> tmp = SvgImporter.read(MainActivity.resources.openRawResource(R.raw.new_world));
-            GraphicsManager.beiziers = new FilledBeizierPath[tmp.size()];
-            GraphicsManager.beizNeighbors = new Integer[tmp.size()][];
-            GraphicsManager.beizContinents = new Integer[tmp.size()];
-            int c = 0;
-            for(SvgImporter.SVG_ReturnValue ret : tmp)
-            {
-                GraphicsManager.beiziers[c] = ret.path;
-                GraphicsManager.beizNeighbors[c] = ret.neighbors.toArray(new Integer[ret.neighbors.size()]);
-                GraphicsManager.beizContinents[c] = ret.continent_id;
-                ++c;
-            }
-
-        } catch (IOException ex)
-        {
-            ex.printStackTrace();
-            throw new RuntimeException(ex.toString());
-        }
     }
 
     static ConcurrentLinkedQueue<GLObject> objectsToBeAdded = new ConcurrentLinkedQueue<>();

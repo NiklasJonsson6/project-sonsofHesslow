@@ -30,11 +30,10 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        resources = this.getResources();
         graphicsView = new MyGLSurfaceView(this);
         graphicsView.addListener(this);
         setContentView(R.layout.activity_main);
-        resources = this.getResources();
-
     }
 
 

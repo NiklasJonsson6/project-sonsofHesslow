@@ -70,6 +70,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     }
     public MyGLSurfaceView(Context context) {
         super(context);
+        GraphicsManager.init();
         // Create an OpenGL ES 2.0 context.
         setEGLContextClientVersion(2);
         super.setEGLConfigChooser(new MyConfigChooser());
