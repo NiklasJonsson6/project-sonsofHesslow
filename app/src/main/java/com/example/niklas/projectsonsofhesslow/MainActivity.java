@@ -68,7 +68,12 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         if(prevPos!=null)
         {
             //sq.setPos(event.worldPosition);
-            Vector2 delta = Vector2.Sub(MyGLRenderer.ScreenToWorldCoords(prevPos,0),event.worldPosition);
+            Vector2 delta;
+            if(!event.isZooming) {
+                delta = Vector2.Sub(MyGLRenderer.ScreenToWorldCoords(prevPos, 0), event.worldPosition);
+            } else {
+                delta = new Vector2(0,0);
+            }
             //System.out.println("delta:" + delta);
             switch (event.e.getAction()) {
                 case MotionEvent.ACTION_MOVE:

@@ -39,6 +39,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     private ScaleGestureDetector SGD;
     private float scale = -3.0f;
     private final MyGLRenderer mRenderer;
+    private boolean isZooming = false;
 
     class MyConfigChooser implements GLSurfaceView.EGLConfigChooser {
         @Override
@@ -155,8 +156,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
             ++index;
         }
         if(!hasTouchedRegion) index = -1;
-
-        GL_TouchEvent event = new GL_TouchEvent(e, hasTouchedRegion, index, world_pos, screen_pos,scale);
+        GL_TouchEvent event = new GL_TouchEvent(e, hasTouchedRegion, isZooming, index, world_pos, screen_pos, scale);
         for(GL_TouchListener listener:listeners)
         {
             listener.Handle(event);
@@ -168,10 +168,9 @@ public class MyGLSurfaceView extends GLSurfaceView {
             ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-
-            scale += detector.getScaleFactor() - 1;
+            scale *= 1 + (1-detector.getScaleFactor());
             System.out.println(detector.getScaleFactor());
-            scale = Math.min(0.0f, Math.max(scale, -6.0f));
+            scale = Math.min(-1.1f, Math.max(scale, -6.0f));
             System.out.println(scale + "kalle");
 
             //matrix.setScale(scale, scale);
@@ -181,6 +180,16 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
         }
 
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            isZooming = true;
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            isZooming = false;
+        }
     }
 
 }
