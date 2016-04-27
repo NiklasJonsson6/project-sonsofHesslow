@@ -5,14 +5,15 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Card {
+    private enum CardType {
+        INFANTRY, CAVALRY, ARTILLARY
+    }
+
     private static int setsHandedIn = 0;
     private static final Card INFANTRY_CARD = new Card(CardType.INFANTRY);
     private static final Card CAVALRY_CARD = new Card(CardType.CAVALRY);
     private static final Card ARTILLARY_CARD = new Card(CardType.ARTILLARY);
 
-    private enum CardType{
-        INFANTRY, CAVALRY, ARTILLARY
-    }
 
     private CardType cardType;
 

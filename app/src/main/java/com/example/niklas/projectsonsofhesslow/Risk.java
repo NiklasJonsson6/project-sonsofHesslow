@@ -3,18 +3,20 @@ public class Risk {
 
     private Player[] players;
     private Player currentPlayer;
-    private Territory[] territories = new Territory[42];
+    private Territory[] territories;
     private Territory attackingTerritory;
     private Territory defendingTerritory;
 
-    public Risk (int playerCount) {
+    public Risk (int playerCount, int territoryCount) {
+        territories = new Territory[territoryCount];
+
         players = new Player[playerCount];
         for(int i = 0; i < playerCount; i++) {
             players[i] = new Player();
         }
 
         //create territory objects
-        for(int i = 0; i < 42; i++) {
+        for(int i = 0; i < territoryCount; i++) {
             territories[i] = new Territory(null, i); //TODO continent
         }
     }

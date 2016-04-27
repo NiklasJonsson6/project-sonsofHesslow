@@ -17,13 +17,15 @@ public class Controller implements GL_TouchListener {
     private int territoriesPicked = 0;
 
     public Controller() {
-        riskModel = new Risk(2); //somehow set number of players (2)
+        int territoryCount = GraphicsManager.getNumberOfTerritories();
+
+        riskModel = new Risk(2, territoryCount); //somehow set number of players (2)
         //view observer thing?
 
         riskModel.setCurrentPlayer(riskModel.getPlayers()[0]);
 
         //set neighbours
-        for(int i = 0; i < 42; i++) {
+        for(int i = 0; i < territoryCount; i++) {
             Integer[] ids = GraphicsManager.getNeighbours(i);
             int number = ids.length; //number of neighbours
             Territory[] neighbours = new Territory[number];
@@ -94,6 +96,10 @@ public class Controller implements GL_TouchListener {
     public void nextTurn() {
         nextPlayer();
         gamePhase = GamePhase.PLACE_ARMIES;
+    }
+
+    public void showCards() {
+        //TODO jobbigt, do later
     }
 
     private void nextPlayer() {

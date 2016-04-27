@@ -108,4 +108,8 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         controller.nextTurn();
     }
 
+    public void showCardsPressed(View v) {
+        controller.showCards();
+    }
+
 }

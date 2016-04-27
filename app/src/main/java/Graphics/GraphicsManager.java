@@ -87,6 +87,10 @@ public class GraphicsManager {
         }
         return regions_in_continent.toArray(new Integer[regions_in_continent.size()]);
     }
+
+    public static int getNumberOfTerritories() {
+        return beiziers.length;
+    }
 }
 
 
