@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
     public void nextTurnPressed(View v) {
         //controller has always been init since nextTurn button
         //is not visible before startGame has been pressed
+        //TODO give territories continents, setArmiesToPlace gives nullpointerexception when pressed
         controller.nextTurn();
     }
 
