@@ -9,18 +9,13 @@ import static org.junit.Assert.*;
 
 public class TerritoryTest {
     @Test
-    public void testNeighbourSymmetry() throws Exception {
-        Risk risk = new Risk(4);
-        ArrayList<Territory> territories = new ArrayList<>(Arrays.asList(risk.getTerritories()));
+    public void testNeighbour() throws Exception {
+        Territory territory1 = new Territory(Continent.AFRICA, 12);
+        Territory territory2 = new Territory(Continent.AFRICA, 13);
+        Territory[] territory1Neighbours = new Territory[1];
+        territory1Neighbours[0] = territory2;
+        territory1.setNeighbours(territory1Neighbours);
 
-        //null check should be removed, when risk constructor is done
-        for(Territory territory: territories){
-            if(territory.getNeighbours() != null) { //remove
-                for (Territory neighbour : territory.getNeighbours()) {
-                    ArrayList<Territory> neighboursList = new ArrayList<Territory>(Arrays.asList(neighbour.getNeighbours()));
-                    assertTrue(neighboursList.contains(territory));
-                }
-            }
-        }
+        assertTrue(territory1.isNeighbour(territory2));
     }
 }
