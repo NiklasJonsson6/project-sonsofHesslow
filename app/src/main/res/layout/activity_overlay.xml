@@ -11,7 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:gravity="center_horizontal"
-        android:background="#c2300f"
+        android:background="#00ffffff"
         android:layout_gravity="bottom"
         android:baselineAligned="false"
         android:clickable="false">
@@ -23,6 +23,8 @@
         android:layout_height="wrap_content" />
 
         <Button android:text="Next Turn" android:id="@+id/button2" android:layout_width="104dp" android:layout_height="wrap_content"
-            android:layout_gravity="left"></Button>
+            android:layout_gravity="left"
+            android:enabled="true"
+            android:onClick="nextTurnPressed"></Button>
     </LinearLayout>
 </FrameLayout>

@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
     public static Resources resources;
     MyGLSurfaceView graphicsView;
     FrameLayout p;
+    Controller controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,10 +97,14 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         C = graphicsView;
         parent.addView(C, index);
 
-        graphicsView.addListener(new Controller());
+        controller = new Controller();
+        graphicsView.addListener(controller);
+    }
+
+    public void nextTurnPressed(View v) {
+        //controller has always been init since nextTurn button
+        //is not visible before startGame has been pressed
+        controller.nextTurn();
     }
 
 }
-
-
-

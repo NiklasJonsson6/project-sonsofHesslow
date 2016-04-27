@@ -91,7 +91,7 @@ public class Controller implements GL_TouchListener {
         Die.fight(riskModel.getAttackingTerritory(), riskModel.getDefendingTerritory());
     }
 
-    public void endTurnPressed(View v) {
+    public void nextTurn() {
         nextPlayer();
         gamePhase = GamePhase.PLACE_ARMIES;
     }
