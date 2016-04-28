@@ -132,31 +132,37 @@ public class MyGLSurfaceView extends GLSurfaceView {
         // MotionEvent reports input details from the touch screen
         // and other input controls. In this case, you are only
         // interested in events where the touch position changed.
-
+        GL_TouchEvent event;
         Vector2 screen_pos = new Vector2(e.getX(),e.getY());
-
         Vector2 world_pos = MyGLRenderer.ScreenToWorldCoords(screen_pos,0);
-
-        int index = 0;
-        boolean hasTouchedRegion = false;
-        for(FilledBeizierPath path : GraphicsManager.beiziers)
+        if(e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_POINTER_UP)
         {
-            float z = path.getPos().z;
-            Vector2 adjusted_worldPos;
-            if(z== 0) // the normal case, lets not recaculate it.
-                adjusted_worldPos = world_pos;
-            else    // memoization is probably a bit more expensive than recalculation. it's quite uncommon after all.
-                adjusted_worldPos = MyGLRenderer.ScreenToWorldCoords(screen_pos,z);
 
-            if(path.fill_mesh.isOnMesh2D(adjusted_worldPos))
+            int index = 0;
+            boolean hasTouchedRegion = false;
+            for(FilledBeizierPath path : GraphicsManager.beiziers)
             {
-                hasTouchedRegion = true;
-                break;
+                float z = path.getPos().z;
+                Vector2 adjusted_worldPos;
+                if(z== 0)
+                    adjusted_worldPos = world_pos;
+                else    // memoization is probably a bit more expensive than recalculation. it's quite uncommon after all.
+                    adjusted_worldPos = MyGLRenderer.ScreenToWorldCoords(screen_pos,z);
+
+                if(path.fill_mesh.isOnMesh2D(adjusted_worldPos))
+                {
+                    hasTouchedRegion = true;
+                    break;
+                }
+                ++index;
             }
-            ++index;
+            if(!hasTouchedRegion) index = -1;
+            event = new GL_TouchEvent(e, hasTouchedRegion, isZooming, index, world_pos, screen_pos, scale);
         }
-        if(!hasTouchedRegion) index = -1;
-        GL_TouchEvent event = new GL_TouchEvent(e, hasTouchedRegion, isZooming, index, world_pos, screen_pos, scale);
+        else
+        {
+            event = new GL_TouchEvent(e, false, isZooming, -1,world_pos, screen_pos, scale);
+        }
         for(GL_TouchListener listener:listeners)
         {
             listener.Handle(event);

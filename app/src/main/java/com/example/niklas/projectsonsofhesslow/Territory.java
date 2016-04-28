@@ -1,5 +1,9 @@
 package com.example.niklas.projectsonsofhesslow;
 
+import java.security.acl.Owner;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Territory {
     private int armyCount = 0;
     private Player occupier;
@@ -9,14 +13,18 @@ public class Territory {
 
     public Territory(int id) {
         this.id = id;
+        setArmyCount(1);
     }
+
 
     public int getArmyCount() {
         return armyCount;
     }
 
     public void setArmyCount(int armyCount) {
+        TroupChangeEvent event = new TroupChangeEvent(this,this.armyCount,armyCount);
         this.armyCount = armyCount;
+        for(TroupChangeListener listener : troupListeners) listener.handle(event);
     }
 
     public Player getOccupier() {
@@ -24,12 +32,16 @@ public class Territory {
     }
 
     public void setOccupier(Player occupier) {
+        if(occupier != this.occupier)
+        {
+            OwnerChangeEvent event = new OwnerChangeEvent(this,this.occupier,occupier);
+            for(OwnerChangeListener listener : ownerListeners) listener.handle(event);
+        }
         this.occupier = occupier;
     }
 
-
     public void changeArmyCount(int change){
-        armyCount += change;
+        setArmyCount(armyCount+change);
     }
 
     public int getId() {
@@ -54,34 +66,37 @@ public class Territory {
     }
 
     public void setContinent(int continentId) {
-        switch(continentId) {
-            case 0:
-                continent = Continent.EUROPE;
-                break;
-
-            case 1:
-                continent = Continent.OCEANIA;
-                break;
-
-            case 2:
-                continent = Continent.SOUTH_AMERICA;
-                break;
-
-            case 3:
-                continent = Continent.AFRICA;
-                break;
-
-            case 4:
-                continent = Continent.NORTH_AMERICA;
-                break;
-
-            case 5:
-                continent = Continent.ASIA;
-                break;
-        }
+        continent = Continent.values()[continentId];
     }
 
     public Continent getContinent() {
         return continent;
     }
+
+    //listeners  boilerplate
+    class TroupChangeEvent{Territory territory;int oldValue;int newValue;
+
+        public TroupChangeEvent(Territory territory, int oldValue, int newValue) {
+            this.territory = territory;
+            this.oldValue = oldValue;
+            this.newValue = newValue;
+        }
+    }
+    interface TroupChangeListener{void handle(TroupChangeEvent troupChangeEvent);}
+    List<TroupChangeListener> troupListeners = new ArrayList<>();
+    void addTroupListeners(TroupChangeListener listener){troupListeners.add(listener);}
+    class OwnerChangeEvent{
+        Territory territory;
+        Player oldValue;
+        Player newValue;
+
+        public OwnerChangeEvent(Territory territory, Player oldValue, Player newValue) {
+            this.territory = territory;
+            this.oldValue = oldValue;
+            this.newValue = newValue;
+        }
+    }
+    interface OwnerChangeListener{void handle(OwnerChangeEvent ownerChangeEvent);}
+    List<OwnerChangeListener> ownerListeners = new ArrayList<>();
+    void addOwnerListeners(OwnerChangeListener listener){ownerListeners.add(listener);}
 }

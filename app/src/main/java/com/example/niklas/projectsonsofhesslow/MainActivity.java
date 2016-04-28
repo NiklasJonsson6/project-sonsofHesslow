@@ -46,26 +46,6 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
     @Override
     public void Handle(GL_TouchEvent event) {
 
-        if(event.touchedRegion)
-        {
-            float[] color = {0.4f,0.3f,0.4f,1f};
-            float[] neighbor_color = {0.8f,0.9f,0.7f,1f};
-            float[] region_color = {0.2f,0.9f,0.2f,1f};
-            Integer[] in_continent = GraphicsManager.getContinentRegions(GraphicsManager.getContinetId(event.regionId));
-            Integer[] neighbours = GraphicsManager.getNeighbours(event.regionId);
-
-            for(int i = 0; i<in_continent.length;i++) {
-                GraphicsManager.setColor(in_continent[i],region_color);
-                GraphicsManager.setHeight(in_continent[i], 0);
-            }
-
-            for(int i = 0; i< neighbours.length; i++) {
-                GraphicsManager.setColor(neighbours[i],neighbor_color);
-            }
-            GraphicsManager.setHeight(event.regionId,0.2f);
-            GraphicsManager.setColor(event.regionId, color);
-        }
-
         if(prevPos!=null)
         {
             //sq.setPos(event.worldPosition);

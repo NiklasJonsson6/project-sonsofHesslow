@@ -1,6 +1,8 @@
 package Graphics;
 
+import android.graphics.Bitmap;
 import android.graphics.Region;
+import android.opengl.GLUtils;
 
 import com.example.niklas.projectsonsofhesslow.MainActivity;
 import com.example.niklas.projectsonsofhesslow.R;
@@ -10,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Graphics.Geometry.Vector3;
-import Graphics.GraphicsObjects.FilledBeizierPath;
-import Graphics.GraphicsObjects.GLObject;
+import Graphics.GraphicsObjects.*;
+import Graphics.GraphicsObjects.Number;
 
 /**
  * Created by Daniel on 11/04/2016.
@@ -21,7 +23,7 @@ public class GraphicsManager {
     public static FilledBeizierPath[] beiziers;
     public static Integer[][] beizNeighbors;
     public static Integer[] beizContinents;
-
+    public static Graphics.GraphicsObjects.Number[] numbers;
     public static void init()
     {
         try
@@ -39,6 +41,11 @@ public class GraphicsManager {
                 ++c;
             }
 
+            numbers = new Number[tmp.size()];
+            for(int i = 0; i<numbers.length;i++)
+            {
+                numbers[i] = new Number(0,beiziers[i].getCenter());
+            }
         } catch (IOException ex)
         {
             ex.printStackTrace();
@@ -62,7 +69,7 @@ public class GraphicsManager {
 
     public static void setTroops(int regionId, int numberOfTroups)
     {
-        throw new RuntimeException("not yet implemented");
+        numbers[regionId].setValue(numberOfTroups);
     }
 
     public static Integer[] getNeighbours(int regionId)
@@ -74,6 +81,7 @@ public class GraphicsManager {
     {
         return beizContinents[regionId];
     }
+
 
     public static Integer[] getContinentRegions(int continentId)
     {

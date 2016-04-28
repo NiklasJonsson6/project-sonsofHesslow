@@ -11,7 +11,6 @@ public abstract class GLObject {
 
     public GLObject()
     {
-
         modelMatrix = new float[]
         {
             1,0,0,0,

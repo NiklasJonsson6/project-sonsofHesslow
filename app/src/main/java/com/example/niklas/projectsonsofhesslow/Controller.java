@@ -48,7 +48,7 @@ public class Controller implements GL_TouchListener {
                 case PICK_TERRITORIES:
                     if(touchedTerritory.getOccupier() == null) {
                         touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
-
+                        touchedTerritory.setArmyCount(1);
                         territoriesPicked++;
                         nextPlayer();
                         if(territoriesPicked == 42) {
@@ -67,14 +67,12 @@ public class Controller implements GL_TouchListener {
                         gamePhase = GamePhase.CHOOSE_ATTACKER;
                     }
                     break;
-
                 case CHOOSE_ATTACKER:
-                    if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
+                    if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer() && touchedTerritory.getArmyCount() >= 2) {
                         //checks if any neighboring territory can be attacked
                         for(int i = 0; i < touchedTerritory.getNeighbours().length; i++) {
                             if(touchedTerritory.getNeighbours()[i].getOccupier() != riskModel.getCurrentPlayer()) {
                                 riskModel.setAttackingTerritory(touchedTerritory);
-
                                 gamePhase = GamePhase.CHOOSE_DEFENDER;
                             }
                         }
@@ -88,7 +86,17 @@ public class Controller implements GL_TouchListener {
                             //TODO now show attack button
                         }
                     }
-                    break;
+                    else if(touchedTerritory.getArmyCount()>1) //@Note(Daniel): tmp copy pasta, please @fixme
+                    {
+
+                        for (int i = 0; i < touchedTerritory.getNeighbours().length; i++) {
+                            if (touchedTerritory.getNeighbours()[i].getOccupier() != riskModel.getCurrentPlayer()) {
+                                riskModel.setAttackingTerritory(touchedTerritory);
+                                riskModel.setDefendingTerritory(null);
+                            }
+                        }
+                    }
+                break;
             }
         }
     }

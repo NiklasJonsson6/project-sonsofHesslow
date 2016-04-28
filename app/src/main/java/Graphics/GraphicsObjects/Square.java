@@ -27,6 +27,7 @@ public class Square extends GLObject {
         mesh = new Mesh(tris,verts,color);
     }
 
+
     public void draw(float[] projectionMatrix){
         float[] mvpMatrix = new float[16];
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);

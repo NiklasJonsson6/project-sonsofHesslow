@@ -9,6 +9,7 @@ import Graphics.Geometry.Beizier;
 import Graphics.Geometry.BeizierPath;
 import Graphics.Geometry.Util;
 import Graphics.Geometry.Vector2;
+import Graphics.Geometry.Vector3;
 
 /**
  * Created by daniel on 3/31/16.
@@ -26,6 +27,11 @@ public class FilledBeizierPath extends GLObject{
     final int naive_precision = 3; //higher is more detailed
 
     public BeizierPath path;
+    Vector2 center;
+    public Vector2 getCenter()
+    {
+        return  this.center;
+    }
     public FilledBeizierPath(BeizierPath path) // start ctl ctl point ctl ctl point ctl ctl (start)
     {
         if(!path.isClosed()) throw new IllegalArgumentException("the beizier path needs to be closed!");
@@ -130,8 +136,22 @@ public class FilledBeizierPath extends GLObject{
             }
         }
 
-        float[] color = {(float)Math.random(),(float)Math.random(),(float)Math.random(),1f};
+        float[] color = {0.7f,0.7f,0.7f,1f};
         fill_mesh = new Mesh(tris, verts, color);
+
+        //find center.
+        float minX = verts[0].x;
+        float maxX = verts[0].x;
+        float minY = verts[0].y;
+        float maxY = verts[0].y;
+        for(int i = 1; i< verts.length;i++)
+        {
+            minX = Math.min(minX,verts[i].x);
+            minY = Math.min(minY,verts[i].y);
+            maxX = Math.max(maxX,verts[i].x);
+            maxY = Math.max(maxY,verts[i].y);
+        }
+        center = new Vector2((minX+maxX)/2,(minY+maxY)/2);
     }
 
     public void draw(float[] projectionMatrix){
@@ -139,5 +159,6 @@ public class FilledBeizierPath extends GLObject{
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
         fill_mesh.draw(mvpMatrix);
         outline_mesh.draw(mvpMatrix);
+
     }
 }
