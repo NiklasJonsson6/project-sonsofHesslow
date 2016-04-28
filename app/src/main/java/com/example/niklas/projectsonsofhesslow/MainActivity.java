@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
     }
 
     public void showCardsPressed(View v) {
-        controller.showCards();
+        //TODO show new layout with cards and trade in button
     }
 
 }

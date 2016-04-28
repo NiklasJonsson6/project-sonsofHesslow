@@ -3,12 +3,11 @@ package com.example.niklas.projectsonsofhesslow;
 public class Territory {
     private int armyCount = 0;
     private Player occupier;
-    public final Continent continent;
+    private Continent continent;
     private int id;
     private Territory[] neighbours;
 
-    public Territory(Continent continent, int id) {
-        this.continent = continent;
+    public Territory(int id) {
         this.id = id;
     }
 
@@ -52,5 +51,37 @@ public class Territory {
     }
     public void setNeighbours(Territory[] neighbours) {
         this.neighbours = neighbours;
+    }
+
+    public void setContinent(int continentId) {
+        switch(continentId) {
+            case 0:
+                continent = Continent.EUROPE;
+                break;
+
+            case 1:
+                continent = Continent.OCEANIA;
+                break;
+
+            case 2:
+                continent = Continent.SOUTH_AMERICA;
+                break;
+
+            case 3:
+                continent = Continent.AFRICA;
+                break;
+
+            case 4:
+                continent = Continent.NORTH_AMERICA;
+                break;
+
+            case 5:
+                continent = Continent.ASIA;
+                break;
+        }
+    }
+
+    public Continent getContinent() {
+        return continent;
     }
 }

@@ -24,16 +24,20 @@ public class Controller implements GL_TouchListener {
 
         riskModel.setCurrentPlayer(riskModel.getPlayers()[0]);
 
-        //set neighbours
+        //set neighbours and continent
         for(int i = 0; i < territoryCount; i++) {
             Integer[] ids = GraphicsManager.getNeighbours(i);
             int number = ids.length; //number of neighbours
             Territory[] neighbours = new Territory[number];
 
+            //set neighbours
             for(int k = 0; k < number; k++) {
                 neighbours[k] = getTerritoryById(ids[k]);
             }
             riskModel.getTerritories()[i].setNeighbours(neighbours);
+
+            //set continent
+            riskModel.getTerritories()[i].setContinent(GraphicsManager.getContinetId(i));
         }
     }
 
@@ -98,10 +102,6 @@ public class Controller implements GL_TouchListener {
         gamePhase = GamePhase.PLACE_ARMIES;
     }
 
-    public void showCards() {
-        //TODO jobbigt, do later
-    }
-
     private void nextPlayer() {
         currentPlayerTracker++;
         if(currentPlayerTracker == riskModel.getPlayers().length) currentPlayerTracker = 0;
@@ -135,7 +135,7 @@ public class Controller implements GL_TouchListener {
         int territoriesFoundSouthAmerica = 0;
 
         for(Territory territory: riskModel.getTerritories()) {
-            switch (territory.continent) {
+            switch (territory.getContinent()) {
                 case ASIA:
                     if(territory.getOccupier() == riskModel.getCurrentPlayer()) territoriesFoundAsia++;
                     break;

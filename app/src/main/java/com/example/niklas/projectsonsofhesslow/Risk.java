@@ -17,7 +17,7 @@ public class Risk {
 
         //create territory objects
         for(int i = 0; i < territoryCount; i++) {
-            territories[i] = new Territory(null, i); //TODO continent
+            territories[i] = new Territory(i); //TODO continent
         }
     }
 
