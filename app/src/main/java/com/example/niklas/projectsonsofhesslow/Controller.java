@@ -10,7 +10,7 @@ import Graphics.GraphicsManager;
 public class Controller implements GL_TouchListener {
     private Risk riskModel;
 
-    private enum GamePhase {PICK_TERRITORIES, PLACE_ARMIES, FIGHT, CHOOSE_ATTACKER, CHOOSE_DEFENDER}
+    private enum GamePhase {PICK_TERRITORIES, PLACE_ARMIES, FIGHT}
     private GamePhase gamePhase = GamePhase.PICK_TERRITORIES;
 
     private int currentPlayerTracker = 0; //used to set next player
@@ -93,10 +93,12 @@ public class Controller implements GL_TouchListener {
     }
 
     public void nextTurn() {
-        riskModel.setAttackingTerritory(null);
-        riskModel.setDefendingTerritory(null);
-        nextPlayer();
-        gamePhase = GamePhase.PLACE_ARMIES;
+        if(gamePhase == GamePhase.FIGHT) {
+            riskModel.setAttackingTerritory(null);
+            riskModel.setDefendingTerritory(null);
+            nextPlayer();
+            gamePhase = GamePhase.PLACE_ARMIES;
+        }
     }
 
     private void nextPlayer() {
@@ -174,6 +176,7 @@ public class Controller implements GL_TouchListener {
             armies += 2;
         }
 
-       riskModel.getCurrentPlayer().giveArmies(armies);
+        riskModel.getCurrentPlayer().giveArmies(armies);
+        System.out.println(armies);
     }
 }

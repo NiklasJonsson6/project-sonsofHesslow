@@ -37,6 +37,10 @@ public class Territory {
             OwnerChangeEvent event = new OwnerChangeEvent(this,this.occupier,occupier);
             for(OwnerChangeListener listener : ownerListeners) listener.handle(event);
         }
+        if(this.occupier != null) {
+            this.occupier.changeTerritoriesOwned(-1);
+        }
+        occupier.changeTerritoriesOwned(1);
         this.occupier = occupier;
     }
 

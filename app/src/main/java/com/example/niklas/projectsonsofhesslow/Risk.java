@@ -10,7 +10,7 @@ public class Risk {
     private Territory[] territories;
     private Territory attackingTerritory;
     private Territory defendingTerritory;
-    private ArrayList<Territory> defenders = new ArrayList<>();
+    private ArrayList<Territory> defenders = new ArrayList<>(); //for view to show, maybe yellow outline?
 
     public Risk (int playerCount, int territoryCount) {
         territories = new Territory[territoryCount];
