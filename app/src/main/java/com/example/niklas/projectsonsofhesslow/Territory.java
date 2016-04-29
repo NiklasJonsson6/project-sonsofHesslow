@@ -55,6 +55,7 @@ public class Territory {
     public Territory[] getNeighbours() {
         return neighbours;
     }
+
     public boolean isNeighbour(Territory territory) {
         for(Territory neighbour: this.getNeighbours()) {
             if(neighbour == territory) return true;

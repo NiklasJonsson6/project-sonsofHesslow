@@ -10,7 +10,7 @@ import Graphics.GraphicsManager;
 public class Controller implements GL_TouchListener {
     private Risk riskModel;
 
-    private enum GamePhase {PICK_TERRITORIES, PLACE_ARMIES, CHOOSE_ATTACKER, CHOOSE_DEFENDER}
+    private enum GamePhase {PICK_TERRITORIES, PLACE_ARMIES, FIGHT, CHOOSE_ATTACKER, CHOOSE_DEFENDER}
     private GamePhase gamePhase = GamePhase.PICK_TERRITORIES;
 
     private int currentPlayerTracker = 0; //used to set next player
@@ -64,39 +64,26 @@ public class Controller implements GL_TouchListener {
                         riskModel.getCurrentPlayer().decArmiesToPlace();
                     }
                     if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
-                        gamePhase = GamePhase.CHOOSE_ATTACKER;
+                        gamePhase = GamePhase.FIGHT;
                     }
                     break;
-                case CHOOSE_ATTACKER:
-                    if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer() && touchedTerritory.getArmyCount() >= 2) {
+
+                case FIGHT:
+                    if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer() && touchedTerritory.getArmyCount() > 1) {
+                        //clear old possible defenders
+                        riskModel.getDefenders().clear();
                         //checks if any neighboring territory can be attacked
-                        for(int i = 0; i < touchedTerritory.getNeighbours().length; i++) {
-                            if(touchedTerritory.getNeighbours()[i].getOccupier() != riskModel.getCurrentPlayer()) {
-                                riskModel.setAttackingTerritory(touchedTerritory);
-                                gamePhase = GamePhase.CHOOSE_DEFENDER;
-                            }
-                        }
-                    }
-                    break;
-
-                case CHOOSE_DEFENDER:
-                    if(touchedTerritory.getOccupier() != riskModel.getCurrentPlayer()) {
-                        if(touchedTerritory.isNeighbour(riskModel.getAttackingTerritory())) {
-                            riskModel.setDefendingTerritory(touchedTerritory);
-                            //TODO now show attack button
-                        }
-                    }
-                    else if(touchedTerritory.getArmyCount()>1) //@Note(Daniel): tmp copy pasta, please @fixme
-                    {
-
-                        for (int i = 0; i < touchedTerritory.getNeighbours().length; i++) {
-                            if (touchedTerritory.getNeighbours()[i].getOccupier() != riskModel.getCurrentPlayer()) {
+                        for(Territory neighbour: touchedTerritory.getNeighbours()) {
+                            if(neighbour.getOccupier() != riskModel.getCurrentPlayer()) {
+                                riskModel.getDefenders().add(neighbour); //for view to show, maybe outline yellow or something?
                                 riskModel.setAttackingTerritory(touchedTerritory);
                                 riskModel.setDefendingTerritory(null);
                             }
                         }
+                    } else if (riskModel.getDefenders().contains(touchedTerritory)) {
+                        riskModel.setDefendingTerritory(touchedTerritory);
+                        //TODO show attack button
                     }
-                break;
             }
         }
     }
@@ -106,6 +93,8 @@ public class Controller implements GL_TouchListener {
     }
 
     public void nextTurn() {
+        riskModel.setAttackingTerritory(null);
+        riskModel.setDefendingTerritory(null);
         nextPlayer();
         gamePhase = GamePhase.PLACE_ARMIES;
     }

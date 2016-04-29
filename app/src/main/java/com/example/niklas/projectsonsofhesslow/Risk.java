@@ -2,9 +2,6 @@ package com.example.niklas.projectsonsofhesslow;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-
-import Graphics.GraphicsManager;
 
 public class Risk {
 
@@ -13,6 +10,7 @@ public class Risk {
     private Territory[] territories;
     private Territory attackingTerritory;
     private Territory defendingTerritory;
+    private ArrayList<Territory> defenders = new ArrayList<>();
 
     public Risk (int playerCount, int territoryCount) {
         territories = new Territory[territoryCount];
@@ -97,5 +95,9 @@ public class Risk {
 
     public Player[] getPlayers() {
         return players;
+    }
+
+    public ArrayList getDefenders() {
+        return defenders;
     }
 }
