@@ -66,6 +66,7 @@ public class Territory {
         }
         return false;
     }
+
     public void setNeighbours(Territory[] neighbours) {
         this.neighbours = neighbours;
     }

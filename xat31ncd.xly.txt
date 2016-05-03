@@ -1,0 +1,22 @@
+﻿
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# rebase in progress; onto 66566ed
+# You are currently rebasing branch 'working' on '66566ed'.
+#
+# Changes to be committed:
+#	modified:   app/src/main/java/Graphics/GraphicsManager.java
+#	modified:   app/src/main/java/Graphics/GraphicsObjects/FilledBeizierPath.java
+#	modified:   app/src/main/java/Graphics/GraphicsObjects/GLObject.java
+#	new file:   app/src/main/java/Graphics/GraphicsObjects/Number.java
+#	modified:   app/src/main/java/Graphics/GraphicsObjects/Square.java
+#	modified:   app/src/main/java/Graphics/MyGLSurfaceView.java
+#	modified:   app/src/main/java/com/example/niklas/projectsonsofhesslow/Controller.java
+#	modified:   app/src/main/java/com/example/niklas/projectsonsofhesslow/MainActivity.java
+#	modified:   app/src/main/java/com/example/niklas/projectsonsofhesslow/Risk.java
+#	modified:   app/src/main/java/com/example/niklas/projectsonsofhesslow/Territory.java
+#	new file:   app/src/main/java/com/example/niklas/projectsonsofhesslow/View.java
+#	deleted:    app/src/main/res/raw/drawing.svg
+#	deleted:    app/src/main/res/raw/new_world.svg~
+#
+

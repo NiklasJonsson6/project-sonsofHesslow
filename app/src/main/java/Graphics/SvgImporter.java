@@ -6,10 +6,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import Graphics.Geometry.Beizier;
 import Graphics.Geometry.BeizierPath;
 import Graphics.Geometry.Vector2;
 import Graphics.GraphicsObjects.DashedBeizierLine;
@@ -109,8 +111,8 @@ public class SvgImporter {
                         paths_with_info.add(new Pair<>(new_paths.first, path_with_info.second));
                         paths_with_info.add(new Pair<>(new_paths.second, path_with_info.second));
                         removed = true;
-                        splitPoints.add(new_paths.firstSplitPoint);
                         splitPoints.add(new_paths.secondSplitPoint);
+                        splitPoints.add(new_paths.firstSplitPoint);
                     }
                 }
                 if(removed)
@@ -137,11 +139,14 @@ public class SvgImporter {
         for(Vector2 point : splitPoints) {
             List<Integer> neighbors = new ArrayList<>();
             int i = 0;
-            for(SVG_ReturnValue val : ret) {
-                for(Vector2 q : val.path.path.points) {
-                    if(Vector2.AlmostEqual(point,q))
+            for(SVG_ReturnValue val : ret)
+            {
+                for(Beizier b : val.path.path)
+                {
+                    if(b.isOnCurve(point,0.1f))
                     {
                         neighbors.add(i);
+                        break;
                     }
                 }
                 ++i;

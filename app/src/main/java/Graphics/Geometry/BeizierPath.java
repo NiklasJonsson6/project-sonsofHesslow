@@ -148,7 +148,7 @@ public class BeizierPath implements Iterable<Beizier> {
         {
             for(Beizier beizier_b : b)
             {
-                if(Beizier.IsPartOf(beizier_a,beizier_b,10))
+                if(Beizier.IsPartOf(beizier_a, beizier_b, 10))
                     return true;
             }
         }
@@ -214,7 +214,7 @@ public class BeizierPath implements Iterable<Beizier> {
         b.fitAndAddBeizPath(split_path[1]);
         ret.second = b.get(true);
         ret.firstSplitPoint = split_line[1].points[0];
-        ret.secondSplitPoint = split_line[1].points[split_line[1].points.length-1];
+        ret.secondSplitPoint= split_line[1].points[split_line[1].points.length-1];
         return ret;
     }
 

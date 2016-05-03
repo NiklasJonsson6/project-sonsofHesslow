@@ -190,6 +190,23 @@ public class Beizier
         return intersect_11 || intersect_12 || intersect_21 || intersect_22;
     }
 
+    public boolean isOnCurve(Vector2 p, float precision)
+    {
+
+        float dist = Math.min(Vector2.Sub(p, points[0]).magnitude(),Vector2.Sub(p, points[3]).magnitude());
+
+        if(dist < precision)return true;
+        //the control points are a bounding box of the curve.
+        if(!Util.isInsideTri(p,points[0],points[1],points[2])||
+                !Util.isInsideTri(p,points[0],points[1],points[2]))
+        {
+            return false;
+        }
+
+        Beizier[] r = split(0.5f);
+        return r[0].isOnCurve(p,precision) || r[1].isOnCurve(p, precision);
+    }
+
     private static boolean Intersect(Beizier beizier_a, Beizier beizier_b, float tolerance,
                                      float ta_low, float ta_high,float tb_low, float tb_high)
     {
