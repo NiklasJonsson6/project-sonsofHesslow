@@ -22,13 +22,14 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
+
+import Graphics.GraphicsObjects.GLObject;
 import Graphics.GraphicsObjects.Mesh;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import Graphics.GraphicsObjects.Camera;
-import Graphics.GraphicsObjects.GLObject;
 import Graphics.Geometry.Vector2;
 import Graphics.Geometry.Vector3;
 import java.util.concurrent.*;
@@ -58,6 +59,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         // Set the background frame color
         GLES20.glClearColor(1f, 1f, 1f, 1.0f);
+        GLES20.glEnable(GLES20.GL_BLEND);
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     static ConcurrentLinkedQueue<GLObject> objectsToBeAdded = new ConcurrentLinkedQueue<>();
@@ -82,7 +85,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         objectsToBeRemoved.clear();
         for(GLObject go : objectsToBeAdded)
         {
-            for(Mesh m : go.getMeshes()) m.init();
+            go.gl_init();
             gameObjects.add(go);
         }
         objectsToBeAdded.clear();
@@ -100,7 +103,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         Collections.sort(gameObjects, new Comparator<GLObject>() {
             @Override
             public int compare(GLObject lhs, GLObject rhs) {
-                return Float.compare(lhs.drawOrder,rhs.drawOrder);
+                return Float.compare(lhs.drawOrder, rhs.drawOrder);
             }
         });
         for(GLObject go : gameObjects)

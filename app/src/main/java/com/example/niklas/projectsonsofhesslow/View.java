@@ -27,7 +27,7 @@ public class View {
                 public void handle(Territory.OwnerChangeEvent ownerChangeEvent) {
                     if(!playerColors.containsKey(ownerChangeEvent.newValue))
                     {
-                        float[] rndColor = {(float)Math.random(),(float)Math.random(),(float)Math.random(),0};
+                        float[] rndColor = {(float)Math.random(),(float)Math.random(),(float)Math.random(),1};
                         playerColors.put(ownerChangeEvent.newValue,rndColor);
                     }
                     GraphicsManager.setColor(ownerChangeEvent.territory.getId(),playerColors.get(ownerChangeEvent.newValue));

@@ -46,5 +46,5 @@ public abstract class GLObject {
         setPos(new Vector3(vec,0));
     }
     public abstract void draw(float[] projectionMatrix);
-    public abstract Mesh[] getMeshes();
+    public abstract void gl_init();
 }

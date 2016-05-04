@@ -16,6 +16,7 @@
 package Graphics;
 
 import android.content.Context;
+import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -137,7 +138,6 @@ public class MyGLSurfaceView extends GLSurfaceView {
         Vector2 world_pos = MyGLRenderer.ScreenToWorldCoords(screen_pos,0);
         if(e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_POINTER_UP)
         {
-
             int index = 0;
             boolean hasTouchedRegion = false;
             for(FilledBeizierPath path : GraphicsManager.beiziers)

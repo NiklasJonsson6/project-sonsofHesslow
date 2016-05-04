@@ -11,8 +11,8 @@ public class Square extends GLObject {
     public Mesh mesh;
 
     @Override
-    public Mesh[] getMeshes() {
-        return new Mesh[]{mesh};
+    public void gl_init() {
+        mesh.init();
     }
 
     public Square(Vector2 center, float side, float[] color)

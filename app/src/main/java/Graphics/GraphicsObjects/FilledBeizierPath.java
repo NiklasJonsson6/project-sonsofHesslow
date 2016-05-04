@@ -20,9 +20,12 @@ public class FilledBeizierPath extends GLObject{
     public Mesh outline_mesh;
 
     @Override
-    public Mesh[] getMeshes() {
-        return new Mesh[]{fill_mesh,outline_mesh};
+    public void gl_init() {
+        fill_mesh.init();
+        outline_mesh.init();
     }
+
+
 
     final int naive_precision = 3; //higher is more detailed
 

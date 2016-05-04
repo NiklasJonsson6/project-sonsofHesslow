@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import Graphics.Geometry.Vector2;
 import Graphics.Geometry.Vector3;
 import Graphics.GraphicsObjects.*;
 import Graphics.GraphicsObjects.Number;
@@ -23,7 +24,7 @@ public class GraphicsManager {
     public static FilledBeizierPath[] beiziers;
     public static Integer[][] beizNeighbors;
     public static Integer[] beizContinents;
-    public static Graphics.GraphicsObjects.Number[] numbers;
+    public static Graphics.GraphicsObjects.Text[] numbers;
     public static void init()
     {
         try
@@ -41,10 +42,12 @@ public class GraphicsManager {
                 ++c;
             }
 
-            numbers = new Number[tmp.size()];
+            numbers = new Text[tmp.size()];
             for(int i = 0; i<numbers.length;i++)
             {
-                numbers[i] = new Number(0,beiziers[i].getCenter());
+                numbers[i] = new Text(-1);
+                numbers[i].setPos(Vector2.Sub(beiziers[i].getCenter(), new Vector2(0.5f,0.5f)));
+                numbers[i].drawOrder = 1000;
             }
         } catch (IOException ex)
         {

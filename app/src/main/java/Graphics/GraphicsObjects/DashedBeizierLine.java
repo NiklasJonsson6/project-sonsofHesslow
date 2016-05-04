@@ -7,8 +7,8 @@ public class DashedBeizierLine extends GLObject{
     public Mesh mesh;
 
     @Override
-    public Mesh[] getMeshes() {
-        return new Mesh[]{mesh};
+    public void gl_init() {
+        mesh.init();
     }
 
     final int naive_precision = 30; //higher is more detailed

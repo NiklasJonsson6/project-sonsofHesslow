@@ -181,7 +181,6 @@ public class Mesh {
                 GLES20.GL_FLOAT, false,
                 vertexStride, vertexBuffer);
 
-
         // get handle to fragment shader's vColor member
         mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
 
