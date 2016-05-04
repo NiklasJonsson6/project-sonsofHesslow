@@ -3,6 +3,7 @@ package com.example.niklas.projectsonsofhesslow;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,8 +26,10 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
     long lastTimestamp;
     public static Resources resources;
     MyGLSurfaceView graphicsView;
-    FrameLayout p;
+    FrameLayout frameLayout;
     Controller controller;
+    OverlayController overlayController;
+    LayoutInflater factory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +37,12 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         resources = this.getResources();
         graphicsView = new MyGLSurfaceView(this);
         graphicsView.addListener(this);
+        frameLayout = new FrameLayout(this);
+        frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT,Gravity.BOTTOM));
+        overlayController = new OverlayController(frameLayout);
         setContentView(R.layout.activity_main);
+        factory = getLayoutInflater();
+
     }
 
 
@@ -69,16 +77,19 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
     }
 
     public void startGame(View v) {
-        setContentView(R.layout.activity_overlay);
+        /*setContentView(R.layout.activity_overlay);
         View C = findViewById(R.id.Test);
         ViewGroup parent = (ViewGroup) C.getParent();
         int index = parent.indexOfChild(C);
         parent.removeView(C);
         C = graphicsView;
-        parent.addView(C, index);
-
+        parent.addView(C, index);*/
+        overlayController.addView(graphicsView);
+        View overlay = factory.inflate(R.layout.activity_nextturn, null);
+        overlayController.addView(overlay);
         controller = new Controller();
         graphicsView.addListener(controller);
+        setContentView(frameLayout);
     }
 
     public void nextTurnPressed(View v) {

@@ -18,4 +18,5 @@ public class TerritoryTest {
 
         assertTrue(territory1.isNeighbour(territory2));
     }
+
 }
