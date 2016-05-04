@@ -1,24 +1,17 @@
 package Graphics.GraphicsObjects;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.opengl.GLES20;
-import android.opengl.GLES30;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.text.TextPaint;
-
-import com.example.niklas.projectsonsofhesslow.MainActivity;
-import com.example.niklas.projectsonsofhesslow.R;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-
-import javax.microedition.khronos.opengles.GL10;
 
 import Graphics.Geometry.Vector2;
 import Graphics.MyGLRenderer;
@@ -47,9 +40,10 @@ public class Text extends GLObject{
 
             "precision mediump float;" +
                     "uniform sampler2D u_Texture;"+
+                    "uniform vec4 u_Color;"+
                     "varying vec2 u_tc;"+
                     "void main() {" +
-                    "  gl_FragColor = texture2D(u_Texture, u_tc);"+
+                    "  gl_FragColor = u_Color * texture2D(u_Texture, u_tc);"+
                     "}";
 
     private FloatBuffer vertexBuffer;
@@ -62,8 +56,7 @@ public class Text extends GLObject{
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex (coord right? //daniel)
 
     float[] new_verts;
-    public void setValue(int value)
-    {
+    public void setValue(int value) {
         num = value;
     }
     public Text(int value) {
@@ -76,8 +69,6 @@ public class Text extends GLObject{
             }
         }
         {
-            Vector2 center = new Vector2(0,0);
-
             Vector2 top_rigth =     new Vector2(1,1);
             Vector2 top_left =      new Vector2(1,0);
             Vector2 bottom_left =   new Vector2(0,0);
@@ -99,36 +90,33 @@ public class Text extends GLObject{
         num= value;
     }
 
+    // called back from the gl thread by the renderer for init
     public void gl_init()
     {
         if(tris.length%3 != 0){
             throw new IllegalArgumentException("A triangle array needs to be divisible by three");
         }
         ByteBuffer bb = ByteBuffer.allocateDirect(
-                // (# of coordinate values * 4 bytes per float)
-                new_verts.length * 4);
+                new_verts.length * 4); // float 4 bytes
         bb.order(ByteOrder.nativeOrder());
         vertexBuffer = bb.asFloatBuffer();
         vertexBuffer.put(new_verts);
         vertexBuffer.position(0);
 
-        // initialize byte buffer for the draw list
         ByteBuffer dlb = ByteBuffer.allocateDirect(
-                // (# of coordinate values * 2 bytes per short)
-                tris.length * 2);
-        dlb.order(ByteOrder.nativeOrder());
+                tris.length * 2); //short 2 bytes
+        dlb.order(ByteOrder.nativeOrder());//convert to the correct winding order
         drawListBuffer = dlb.asShortBuffer();
         drawListBuffer.put(tris);
         drawListBuffer.position(0);
 
-        // prepare shaders and OpenGL program
         int vertexShader    = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
         int fragmentShader  = MyGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
-        mProgram = GLES20.glCreateProgram();             // create empty OpenGL Program
-        GLES20.glAttachShader(mProgram, vertexShader);   // add the vertex shader to program
-        GLES20.glAttachShader(mProgram, fragmentShader); // add the fragment shader to program
-        GLES20.glLinkProgram(mProgram);                  // create OpenGL program executables
+        mProgram = GLES20.glCreateProgram();
+        GLES20.glAttachShader(mProgram, vertexShader);
+        GLES20.glAttachShader(mProgram, fragmentShader);
+        GLES20.glLinkProgram(mProgram);
     }
 
     public void draw(float[] projectionMatrix) {
@@ -139,49 +127,38 @@ public class Text extends GLObject{
         if(textures[num]==-1) {
             textures[num] = genTexture(Integer.toString(num));
         }
-
-        // Add program to OpenGL environment
         GLES20.glUseProgram(mProgram);
-        // get handle to vertex shader's vPosition member
         mPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
-
-
         int texHandle = GLES20.glGetUniformLocation(mProgram, "u_Texture");
-
-        // Set the active texture unit to texture unit 0.
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-
-        // Bind the texture to this unit.
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[num]);
-
-        // Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
         GLES20.glUniform1i(texHandle, 0);
-
-        // Enable a handle to the triangle vertices
         GLES20.glEnableVertexAttribArray(mPositionHandle);
-
-        // Prepare the triangle coordinate data
         GLES20.glVertexAttribPointer(
                 mPositionHandle, COORDS_PER_VERTEX,
                 GLES20.GL_FLOAT, false,
                 vertexStride, vertexBuffer);
 
-        // get handle to shape's transformation matrix
         mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
         MyGLRenderer.checkGlError("glGetUniformLocation");
 
-        // Apply the projection and view transformation
+
+        mColorHandle = GLES20.glGetUniformLocation(mProgram, "u_Color");
+        GLES20.glUniform4fv(mColorHandle, 1, color, 0);
+
         GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, matrix, 0);
         MyGLRenderer.checkGlError("glUniformMatrix4fv");
 
-        // Draw the square
         GLES20.glDrawElements(
                 GLES20.GL_TRIANGLES, tris.length,
                 GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
 
-        // Disable vertex array
         GLES20.glDisableVertexAttribArray(mPositionHandle);
         GLES20.glDisableVertexAttribArray(mPositionHandle);
+    }
+    private float[] color= new float[]{0.3f,0.5f,0.5f,1f};
+    public void setColor(float[] color) {
+        this.color = color;
     }
     public static int genTexture(String s)
     {
@@ -206,17 +183,16 @@ public class Text extends GLObject{
 
             textPaint.setStyle(Paint.Style.STROKE);
             textPaint.setStrokeWidth(10);
-            textPaint.setColor(0x33ffffff);
+            textPaint.setColor(0x33000000);
             canvas.drawText(s, xPos, yPos, textPaint);
-
 
             textPaint.setStyle(Paint.Style.STROKE);
             textPaint.setStrokeWidth(7);
-            textPaint.setColor(0xffffffff);
+            textPaint.setColor(0xff000000);
             canvas.drawText(s, xPos, yPos, textPaint);
 
             textPaint.setStyle(Paint.Style.FILL);
-            textPaint.setColor(0xff000000);
+            textPaint.setColor(0xffffffff);
             canvas.drawText(s, xPos, yPos, textPaint);
 
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0]);
@@ -227,8 +203,7 @@ public class Text extends GLObject{
             bitmap.recycle();
         }
 
-        if (textureHandle[0] == 0)
-        {
+        if (textureHandle[0] == 0) {
             throw new RuntimeException("Error loading texture.");
         }
 

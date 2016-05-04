@@ -85,6 +85,9 @@ public class GraphicsManager {
         return beizContinents[regionId];
     }
 
+    public static void setTroupColor(int regionId, float[] color) {
+        numbers[regionId].setColor(color);
+    }
 
     public static Integer[] getContinentRegions(int continentId)
     {
