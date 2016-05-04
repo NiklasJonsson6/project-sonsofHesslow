@@ -192,12 +192,8 @@ public class Text extends GLObject{
         if (textureHandle[0] != 0)
         {
             final int FONT_SIZE = 200;
-            System.out.println("trying to do stuff atleast...");
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inScaled = false;   // No pre-scaling
-            options.inMutable = true;
             // Read in the resource
-            final Bitmap bitmap = BitmapFactory.decodeResource(MainActivity.resources, R.drawable.background, options);
+            final Bitmap bitmap = Bitmap.createBitmap(512,512,Bitmap.Config.ARGB_8888);
             bitmap.eraseColor(0x00ffffff);
             Canvas canvas = new Canvas(bitmap);
             TextPaint textPaint = new TextPaint();
