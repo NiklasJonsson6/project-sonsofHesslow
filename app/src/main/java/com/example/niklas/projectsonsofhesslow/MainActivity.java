@@ -85,8 +85,9 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         parent.addView(C, index);*/
         overlayController.addView(graphicsView);
         //View overlay = factory.inflate(R.layout.activity_nextturn, null);
+        overlayController.addView(R.layout.activity_playerturn);
         overlayController.addView(R.layout.activity_nextturn);
-        controller = new Controller(overlayController);
+        controller = new Controller(overlayController,graphicsView);
         graphicsView.addListener(controller);
         setContentView(frameLayout);
     }
@@ -100,5 +101,8 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
 
     public void showCardsPressed(View v) {
         //TODO show new layout with cards and trade in button
+    }
+    public void fightPressed(View v){
+        controller.fightButtonPressed();
     }
 }

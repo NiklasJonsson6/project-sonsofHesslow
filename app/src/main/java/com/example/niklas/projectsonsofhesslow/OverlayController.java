@@ -3,6 +3,7 @@ package com.example.niklas.projectsonsofhesslow;
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
+import android.widget.TextView;
 
 /**
  * Created by fredr on 2016-05-04.
@@ -40,5 +41,15 @@ public class OverlayController {
         parent.removeViewAt(index);
         parent.addView(factory.inflate(value,null), index);
     }
+    public void replaceText(int value, String prefText){
+        ((TextView)parent.findViewById(value)).setText(prefText);
+    }
+    public void changeTextColour(int value, int c){
+        ((TextView)parent.findViewById(value)).setTextColor(c);
+    }
+    public void replaceTextBackgroundColour(int value, String prefText){
+        ((TextView)parent.findViewById(value)).setText(prefText);
+    }
+
 
 }

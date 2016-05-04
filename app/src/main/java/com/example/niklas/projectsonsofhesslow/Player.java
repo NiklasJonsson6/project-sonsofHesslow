@@ -1,5 +1,6 @@
 package com.example.niklas.projectsonsofhesslow;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Player {
     private String name;
@@ -10,7 +11,10 @@ public class Player {
     private int territoriesOwned;
 
     public Player() {
-        this.name = ""; //TODO get name input somehow
+        Random rand = new Random();
+        String[] name = {"Bilbo Baggins","Filibert Bolger","Fredegar Bolger","Mrs. Bracegirdle","Melilot Brandybuck","Rosie Cotton","Elanor Gamgee","Frodo Gamgee","Hamfast Gamgee","Farmer Maggot","Old Noakes","Mrs. Proudfoot","Odo Proudfoot","Otho Sackville-Baggins","Lobelia Sackville-Baggins","Ted Sandyman", "Diamond Took"};
+        int n = rand.nextInt(name.length);
+        this.name = name[n]; //TODO get name input somehow
     }
 
     public String getName() {

@@ -6,6 +6,7 @@ import android.view.View;
 import Graphics.GL_TouchEvent;
 import Graphics.GL_TouchListener;
 import Graphics.GraphicsManager;
+import Graphics.MyGLSurfaceView;
 
 public class Controller implements GL_TouchListener {
     private Risk riskModel;
@@ -16,10 +17,12 @@ public class Controller implements GL_TouchListener {
     private int currentPlayerTracker = 0; //used to set next player
     private int territoriesPicked = 0;
     private OverlayController overlayController;
+    private MyGLSurfaceView graphicsView;
 
-    public Controller(OverlayController overlayController) {
+    public Controller(OverlayController overlayController, MyGLSurfaceView graphicsView) {
         int territoryCount = GraphicsManager.getNumberOfTerritories();
         this.overlayController = overlayController;
+        this.graphicsView = graphicsView;
         riskModel = new Risk(2, territoryCount); //somehow set number of players (2)
         //view observer thing?
 
@@ -40,6 +43,7 @@ public class Controller implements GL_TouchListener {
             //set continent
             riskModel.getTerritories()[i].setContinent(GraphicsManager.getContinetId(i));
         }
+        overlayController.replaceText(R.id.playerTurn,"Player: " + riskModel.getCurrentPlayer().getName());
     }
 
     public void Handle(GL_TouchEvent event) {
@@ -91,8 +95,12 @@ public class Controller implements GL_TouchListener {
         }
     }
 
-    public void fightButtonPressed(View v) {
+    public void fightButtonPressed() {
         Die.fight(riskModel.getAttackingTerritory(), riskModel.getDefendingTerritory());
+        if(riskModel.getDefendingTerritory().getOccupier() == riskModel.getCurrentPlayer()) {
+            overlayController.addViewChange(R.layout.activity_nextturn);
+        }
+        graphicsView.requestRender();
     }
 
     public void nextTurn() {
@@ -106,6 +114,7 @@ public class Controller implements GL_TouchListener {
 
     private void nextPlayer() {
         currentPlayerTracker++;
+        overlayController.replaceText(R.id.playerTurn,"Player: " + riskModel.getCurrentPlayer().getName());
         if(currentPlayerTracker == riskModel.getPlayers().length) currentPlayerTracker = 0;
         riskModel.setCurrentPlayer(riskModel.getPlayers()[currentPlayerTracker]);
 
