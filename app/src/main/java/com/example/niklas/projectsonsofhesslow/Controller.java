@@ -15,10 +15,11 @@ public class Controller implements GL_TouchListener {
 
     private int currentPlayerTracker = 0; //used to set next player
     private int territoriesPicked = 0;
+    private OverlayController overlayController;
 
-    public Controller() {
+    public Controller(OverlayController overlayController) {
         int territoryCount = GraphicsManager.getNumberOfTerritories();
-
+        this.overlayController = overlayController;
         riskModel = new Risk(2, territoryCount); //somehow set number of players (2)
         //view observer thing?
 
@@ -78,10 +79,12 @@ public class Controller implements GL_TouchListener {
                                 riskModel.getDefenders().add(neighbour); //for view to show, maybe outline yellow or something?
                                 riskModel.setAttackingTerritory(touchedTerritory);
                                 riskModel.setDefendingTerritory(null);
+                                overlayController.addViewChange(R.layout.activity_nextturn);
                             }
                         }
                     } else if (riskModel.getDefenders().contains(touchedTerritory)) {
                         riskModel.setDefendingTerritory(touchedTerritory);
+                        overlayController.addViewChange(R.layout.activity_fightbutton);
                         //TODO show attack button
                     }
             }

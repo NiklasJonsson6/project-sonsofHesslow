@@ -1,5 +1,6 @@
 package com.example.niklas.projectsonsofhesslow;
 
+import android.app.Activity;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
     FrameLayout frameLayout;
     Controller controller;
     OverlayController overlayController;
-    LayoutInflater factory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +39,8 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         graphicsView.addListener(this);
         frameLayout = new FrameLayout(this);
         frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT,Gravity.BOTTOM));
-        overlayController = new OverlayController(frameLayout);
+        overlayController = new OverlayController(frameLayout, getLayoutInflater());
         setContentView(R.layout.activity_main);
-        factory = getLayoutInflater();
 
     }
 
@@ -85,9 +84,9 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         C = graphicsView;
         parent.addView(C, index);*/
         overlayController.addView(graphicsView);
-        View overlay = factory.inflate(R.layout.activity_nextturn, null);
-        overlayController.addView(overlay);
-        controller = new Controller();
+        //View overlay = factory.inflate(R.layout.activity_nextturn, null);
+        overlayController.addView(R.layout.activity_nextturn);
+        controller = new Controller(overlayController);
         graphicsView.addListener(controller);
         setContentView(frameLayout);
     }
