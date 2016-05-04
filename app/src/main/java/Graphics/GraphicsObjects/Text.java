@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.text.TextPaint;
@@ -135,12 +136,9 @@ public class Text extends GLObject{
         Matrix.multiplyMM(matrix, 0, projectionMatrix, 0, modelMatrix, 0);
 
         if(num==-1)return;
-        if(textures[num]==-1)
-        {
+        if(textures[num]==-1) {
             textures[num] = genTexture(Integer.toString(num));
         }
-        //making sure we don't flicker. @Speed do we need to do this on every draw?
-        GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
 
         // Add program to OpenGL environment
         GLES20.glUseProgram(mProgram);
@@ -226,10 +224,10 @@ public class Text extends GLObject{
             canvas.drawText(s, xPos, yPos, textPaint);
 
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0]);
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR_MIPMAP_LINEAR);
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
             GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-
+            GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
             bitmap.recycle();
         }
 
