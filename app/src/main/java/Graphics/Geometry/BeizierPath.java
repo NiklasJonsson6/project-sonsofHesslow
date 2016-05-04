@@ -180,9 +180,10 @@ public class BeizierPath implements Iterable<Beizier> {
                     // currently only one intersection per beizier is supported.
                     // however intersection points may return multiple values that are all within the
                     // tolerance of the one intersection point. Thats why we're not currently throwing any exceptions.
-                    //and instead just gets the first and ignores the rest.
-                    line_splits.add(new Pair<Integer, Float>(i,intersectionPoints.get(0).first));
-                    path_splits.add(new Pair<Integer, Float>(j, intersectionPoints.get(0).second));
+                    //and instead just gets the middle-most and ignores the rest.
+
+                    line_splits.add(new Pair<Integer, Float>(i, intersectionPoints.get(intersectionPoints.size()/2).first));
+                    path_splits.add(new Pair<Integer, Float>(j, intersectionPoints.get(intersectionPoints.size()/2).second));
                 }
                 intersectionPoints.clear();
                 ++j;

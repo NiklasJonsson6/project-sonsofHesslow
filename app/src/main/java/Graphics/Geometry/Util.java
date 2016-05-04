@@ -14,10 +14,8 @@ public class Util {
         b1 = crossProduct(pt, v1, v2) < 0.0f;
         b2 = crossProduct(pt, v2, v3) < 0.0f;
         b3 = crossProduct(pt, v3, v1) < 0.0f;
-
         return ((b1 == b2) && (b2 == b3) && crossProduct(v1,v2,v3)!=0);
     }
-
     //the cross product (With the z-component obviously set to 0) between the vectors rel-b and rel-c
     public static float crossProduct(Vector2 rel, Vector2 b, Vector2 c)
     {

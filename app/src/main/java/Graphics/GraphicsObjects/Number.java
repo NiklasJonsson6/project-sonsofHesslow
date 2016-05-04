@@ -14,18 +14,21 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import Graphics.Geometry.Vector2;
+import Graphics.Geometry.Vector3;
 import Graphics.MyGLRenderer;
 
 /**
  * Created by Daniel on 04/05/2016.
  */
 
+
+// renders numbers onto textures and then displays them as textured quads.
+// textures are cashed and reused.
 public class Number extends GLObject{
     static int[] textures = null;
 
     short[] tris;
     Vector2[] verts;
-
     private int num=-1;
 
     private final String vertexShaderCode =
@@ -161,6 +164,7 @@ public class Number extends GLObject{
     public void setColor(float[] color) {
         this.color = color;
     }
+
     public static int genTexture(String s)
     {
         final int[] textureHandle = new int[1];
@@ -175,8 +179,7 @@ public class Number extends GLObject{
             bitmap.eraseColor(0x00ffffff);
             Canvas canvas = new Canvas(bitmap);
             TextPaint textPaint = new TextPaint();
-            textPaint.setTextSize(FONT_SIZE );
-            textPaint.setSubpixelText(true);
+            textPaint.setTextSize(FONT_SIZE);
             textPaint.setAntiAlias(true);
             textPaint.setTextAlign(Paint.Align.CENTER);
             int xPos = (canvas.getWidth() / 2);
@@ -209,6 +212,12 @@ public class Number extends GLObject{
         }
 
         return textureHandle[0];
+    }
+
+    @Override
+    public void setPos(Vector3 pos)
+    {
+        super.setPos(Vector3.Sub(pos,new Vector3(0.5f,0.5f,0)));
     }
 }
 
