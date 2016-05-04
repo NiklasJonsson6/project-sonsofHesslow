@@ -223,7 +223,7 @@ public class SvgImporter {
 
                 //notify that the modified shape needs to be drawn (and initialized);
                 MyGLRenderer.delayed_init(first_val.path);
-
+                first_val.path.recalcCenter();
                 //handle the removed neigbor ids
                 for(SVG_ReturnValue val : ret)
                 {

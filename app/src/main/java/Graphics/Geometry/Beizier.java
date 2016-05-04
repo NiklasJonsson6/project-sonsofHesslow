@@ -165,12 +165,8 @@ public class Beizier
             return false;
         }
 
-        //ignoring the div by two since tolerance is arbitrary anyway.
-        float a_area = Math.abs((max_ax-min_ax)* (max_ay-min_ay));
-        float b_area = Math.abs((max_bx-min_bx)* (max_by-min_by));
-
         if(ta_high-ta_low < tolerance){
-            _out_tab.add(new Pair<Float, Float>(ta_mid, tb_mid));
+            _out_tab.add(new Pair<>(ta_mid, tb_mid));
             return true;
         }
 
@@ -184,8 +180,8 @@ public class Beizier
 
         boolean intersect_11 = Intersect(a_1, b_1, tolerance, _out_tab, ta_low, ta_mid, tb_low, tb_mid);
         boolean intersect_12 = Intersect(a_1, b_2, tolerance, _out_tab, ta_low, ta_mid, tb_mid, tb_high);
-        boolean intersect_21 = Intersect(a_2,b_1,tolerance,_out_tab, ta_mid,ta_high,tb_low,tb_mid);
-        boolean intersect_22 = Intersect(a_2,b_2,tolerance,_out_tab, ta_mid,ta_high,tb_mid,tb_high);
+        boolean intersect_21 = Intersect(a_2, b_1, tolerance, _out_tab, ta_mid, ta_high, tb_low, tb_mid);
+        boolean intersect_22 = Intersect(a_2, b_2, tolerance, _out_tab, ta_mid, ta_high, tb_mid, tb_high);
 
         return intersect_11 || intersect_12 || intersect_21 || intersect_22;
     }
@@ -194,11 +190,10 @@ public class Beizier
     {
 
         float dist = Math.min(Vector2.Sub(p, points[0]).magnitude(),Vector2.Sub(p, points[3]).magnitude());
-
         if(dist < precision)return true;
         //the control points are a bounding box of the curve.
-        if(!Util.isInsideTri(p,points[0],points[1],points[2])||
-                !Util.isInsideTri(p,points[0],points[1],points[2]))
+        if(!Util.isInsideTri(p,points[0],points[1],points[2])&&
+                !Util.isInsideTri(p,points[3],points[1],points[2]))
         {
             return false;
         }

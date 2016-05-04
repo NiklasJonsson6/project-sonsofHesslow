@@ -26,7 +26,6 @@ public class FilledBeizierPath extends GLObject{
     }
 
 
-
     final int naive_precision = 3; //higher is more detailed
 
     public BeizierPath path;
@@ -141,7 +140,11 @@ public class FilledBeizierPath extends GLObject{
 
         float[] color = {0.7f,0.7f,0.7f,1f};
         fill_mesh = new Mesh(tris, verts, color);
-
+        recalcCenter();
+    }
+    public void recalcCenter()
+    {
+        Vector2[] verts = fill_mesh.vertices;
         //find center.
         float minX = verts[0].x;
         float maxX = verts[0].x;

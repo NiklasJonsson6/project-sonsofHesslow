@@ -42,7 +42,7 @@ public class GraphicsManager {
             for(int i = 0; i<numbers.length;i++)
             {
                 numbers[i] = new Number(-1);
-                numbers[i].setPos(Vector2.Sub(beiziers[i].getCenter(), new Vector2(0.5f,0.5f)));
+                numbers[i].setPos(beiziers[i].getCenter());
                 numbers[i].drawOrder = 1000;
             }
         } catch (IOException ex)
