@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 
 import Graphics.GL_TouchEvent;
 import Graphics.GL_TouchListener;
@@ -41,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT,Gravity.BOTTOM));
         overlayController = new OverlayController(frameLayout, getLayoutInflater());
         setContentView(R.layout.activity_main);
-
     }
 
 
@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         controller = new Controller(overlayController,graphicsView);
         graphicsView.addListener(controller);
         setContentView(frameLayout);
+
     }
 
     public void nextTurnPressed(View v) {
@@ -104,5 +105,9 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
     }
     public void fightPressed(View v){
         controller.fightButtonPressed();
+    }
+    public void placePressed(View v){
+        controller.placeButtonPressed();
+        System.out.println("Place button pressed");
     }
 }

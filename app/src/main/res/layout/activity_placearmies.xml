@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="bottom">
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBar"
+        android:layout_row="0"
+        android:layout_column="16"
+        android:layout_gravity="bottom"
+        android:background="#444444"
+        android:splitTrack="false"
+        android:indeterminate="false" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#b1b1b1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="10"
+            android:id="@+id/troopsLeft"
+            android:layout_row="0"
+            android:layout_column="17"
+            android:textColor="#4e0000"
+            android:textStyle="bold"
+            android:paddingLeft="20dp"
+            android:textSize="25dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="10"
+            android:id="@+id/troopsSelected"
+            android:textColor="#053c00"
+            android:textStyle="bold"
+            android:textSize="25dp"
+            android:layout_alignTop="@+id/troopsLeft"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:layout_width="110dp"
+            android:layout_height="match_parent"
+            android:text="Place"
+            android:id="@+id/placeButton"
+            android:layout_row="1"
+            android:layout_column="17"
+            android:textSize="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:background="#5b9a54"
+            android:onClick="placePressed"
+            android:nestedScrollingEnabled="false" />
+
+    </RelativeLayout>
+
+</LinearLayout>

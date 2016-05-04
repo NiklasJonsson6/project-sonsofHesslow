@@ -68,4 +68,7 @@ public class Player {
     public void decArmiesToPlace() {
         armiesToPlace--;
     }
+    public void decArmiesToPlace(int amount) {
+        armiesToPlace-=amount;
+    }
 }

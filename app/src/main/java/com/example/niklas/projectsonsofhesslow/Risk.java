@@ -10,6 +10,7 @@ public class Risk {
     private Territory[] territories;
     private Territory attackingTerritory;
     private Territory defendingTerritory;
+    private Territory selectedTerritory;
     private ArrayList<Territory> defenders = new ArrayList<>(); //for view to show, maybe yellow outline?
 
     public Risk (int playerCount, int territoryCount) {
@@ -36,8 +37,14 @@ public class Risk {
         deffenceListeners.add(riskEventListener);
     }
 
+    void addSelectedListeners(RiskEventListener riskEventListener)
+    {
+        selectedListeners.add(riskEventListener);
+    }
+
     List<RiskEventListener> attackListeners = new ArrayList<>();
     List<RiskEventListener> deffenceListeners = new ArrayList<>();
+    List<RiskEventListener> selectedListeners = new ArrayList<>();
 
     static class RiskChangeEvent
     {
@@ -99,5 +106,12 @@ public class Risk {
 
     public ArrayList getDefenders() {
         return defenders;
+    }
+    public Territory getSelectedTerritory(){return selectedTerritory;}
+    public void setSelectedTerritory(Territory touchedTerritory){
+        RiskChangeEvent riskChangeEvent = new RiskChangeEvent(this,touchedTerritory,this.selectedTerritory);
+        for(RiskEventListener rl : selectedListeners) rl.changeEvent(riskChangeEvent);
+        selectedTerritory = touchedTerritory;
+
     }
 }

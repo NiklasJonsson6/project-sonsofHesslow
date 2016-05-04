@@ -3,6 +3,7 @@ package com.example.niklas.projectsonsofhesslow;
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 /**
@@ -11,9 +12,29 @@ import android.widget.TextView;
 public class OverlayController {
     ViewGroup parent;
     LayoutInflater factory;
+    SeekBar bar;
     OverlayController(android.view.ViewGroup viewGroup, LayoutInflater factory){
         this.parent = viewGroup;
         this.factory = factory;
+        this.bar = ((SeekBar)factory.inflate(R.layout.activity_placearmies,null).findViewById(R.id.seekBar));
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                replaceText(R.id.troopsSelected,"" + progress);
+                replaceText(R.id.troopsLeft,"" + (seekBar.getMax()-progress));
+                System.out.println("Hej du ändra mig");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
     public void addView(int value){
         parent.addView(factory.inflate(value,null));
@@ -50,6 +71,13 @@ public class OverlayController {
     public void replaceTextBackgroundColour(int value, String prefText){
         ((TextView)parent.findViewById(value)).setText(prefText);
     }
+    public int getBarValue(int value){
+        return ((SeekBar)parent.findViewById(value)).getProgress();
+    }
+    public void setBarMaxValue(int value, int max){
+        ((SeekBar)parent.findViewById(value)).setMax(max);
+    }
+
 
 
 }

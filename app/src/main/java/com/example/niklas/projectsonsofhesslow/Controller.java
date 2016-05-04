@@ -64,10 +64,17 @@ public class Controller implements GL_TouchListener {
                     break;
 
                 case PLACE_ARMIES:
-                    if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
+                    if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()){
+                        overlayController.addViewChange(R.layout.activity_placearmies);
+                        overlayController.setBarMaxValue(R.id.seekBar,riskModel.getCurrentPlayer().getArmiesToPlace());
+                        overlayController.replaceText(R.id.troopsSelected,"0");
+                        overlayController.replaceText(R.id.troopsLeft,""+riskModel.getCurrentPlayer().getArmiesToPlace());
+                        riskModel.setSelectedTerritory(touchedTerritory);
+                    }
+                    /*if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
                         touchedTerritory.changeArmyCount(1);
                         riskModel.getCurrentPlayer().decArmiesToPlace();
-                    }
+                    }*/
                     if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
                         gamePhase = GamePhase.FIGHT;
                     }
@@ -190,5 +197,15 @@ public class Controller implements GL_TouchListener {
 
         riskModel.getCurrentPlayer().giveArmies(armies);
         System.out.println(armies);
+    }
+    public void placeButtonPressed(){
+        Territory territory = riskModel.getSelectedTerritory();
+        territory.setArmyCount(territory.getArmyCount() + overlayController.getBarValue(R.id.seekBar));
+        riskModel.getCurrentPlayer().decArmiesToPlace(overlayController.getBarValue(R.id.seekBar));
+        System.out.println("Amount: " + overlayController.getBarValue(R.id.seekBar));
+        overlayController.setBarMaxValue(R.id.seekBar,riskModel.getCurrentPlayer().getArmiesToPlace());
+        overlayController.replaceText(R.id.troopsLeft,""+riskModel.getCurrentPlayer().getArmiesToPlace());
+        graphicsView.requestRender();
+        gamePhase = GamePhase.FIGHT;
     }
 }

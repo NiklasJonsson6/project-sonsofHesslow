@@ -13,6 +13,7 @@ public class View {
     final float[] red = {1,0,0,1};
     final float[] black = {0,0,0,1};
     final float[] green = {0,1,0,1};
+    final float[] blue = {0,0,1,1};
 
 
     Risk risk;
@@ -66,6 +67,19 @@ public class View {
                 }
                 if (riskChangeEvent.newTerritory != null) {
                     GraphicsManager.setOutlineColor(riskChangeEvent.newTerritory.getId(), green);
+                    GraphicsManager.setHeight(riskChangeEvent.newTerritory.getId(), 0.04f);
+                }
+            }
+        });
+        risk.addSelectedListeners(new Risk.RiskEventListener() {
+            @Override
+            public void changeEvent(Risk.RiskChangeEvent riskChangeEvent) {
+                if (riskChangeEvent.oldTerritory != null) {
+                    GraphicsManager.setOutlineColor(riskChangeEvent.oldTerritory.getId(), black);
+                    GraphicsManager.setHeight(riskChangeEvent.oldTerritory.getId(), 0);
+                }
+                if (riskChangeEvent.newTerritory != null) {
+                    GraphicsManager.setOutlineColor(riskChangeEvent.newTerritory.getId(), blue);
                     GraphicsManager.setHeight(riskChangeEvent.newTerritory.getId(), 0.04f);
                 }
             }
