@@ -11,7 +11,9 @@ public class Risk {
     private Territory attackingTerritory;
     private Territory defendingTerritory;
     private Territory selectedTerritory;
+    private Territory secondSelectedTerritory;
     private ArrayList<Territory> defenders = new ArrayList<>(); //for view to show, maybe yellow outline?
+    private ArrayList<Territory> neighbors = new ArrayList<>();
 
     public Risk (int playerCount, int territoryCount) {
         territories = new Territory[territoryCount];
@@ -41,10 +43,15 @@ public class Risk {
     {
         selectedListeners.add(riskEventListener);
     }
+    void addSecondSelectedListeners(RiskEventListener riskEventListener)
+    {
+        secondSelectedListeners.add(riskEventListener);
+    }
 
     List<RiskEventListener> attackListeners = new ArrayList<>();
     List<RiskEventListener> deffenceListeners = new ArrayList<>();
     List<RiskEventListener> selectedListeners = new ArrayList<>();
+    List<RiskEventListener> secondSelectedListeners = new ArrayList<>();
 
     static class RiskChangeEvent
     {
@@ -104,6 +111,9 @@ public class Risk {
         return players;
     }
 
+    public ArrayList getNeighbors() {
+        return neighbors;
+    }
     public ArrayList getDefenders() {
         return defenders;
     }
@@ -114,4 +124,11 @@ public class Risk {
         selectedTerritory = touchedTerritory;
 
     }
+    public void setSecondSelectedTerritory(Territory touchedTerritory){
+        RiskChangeEvent riskChangeEvent = new RiskChangeEvent(this,touchedTerritory,this.secondSelectedTerritory);
+        for(RiskEventListener rl : secondSelectedListeners) rl.changeEvent(riskChangeEvent);
+        secondSelectedTerritory = touchedTerritory;
+
+    }
+    public Territory getSecondSelectedTerritory(){return secondSelectedTerritory;}
 }

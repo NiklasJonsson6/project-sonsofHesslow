@@ -31,11 +31,11 @@
             android:layout_column="17"
             android:textColor="#4e0000"
             android:textStyle="bold"
-            android:paddingLeft="20dp"
             android:textSize="25dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:paddingRight="10dp"
+            android:layout_alignTop="@+id/troopsSelected"
+            android:layout_toLeftOf="@+id/space"
+            android:layout_toStartOf="@+id/space" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -46,8 +46,9 @@
             android:textColor="#053c00"
             android:textStyle="bold"
             android:textSize="25dp"
-            android:layout_alignTop="@+id/troopsLeft"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/space"
+            android:layout_toEndOf="@+id/space" />
 
         <Button
             android:layout_width="110dp"
@@ -63,6 +64,29 @@
             android:background="#5b9a54"
             android:onClick="placePressed"
             android:nestedScrollingEnabled="false" />
+
+        <Button
+            android:layout_width="110dp"
+            android:layout_height="match_parent"
+            android:text="Done"
+            android:id="@+id/doneButton"
+            android:layout_row="1"
+            android:layout_column="17"
+            android:textSize="20dp"
+            android:background="#969696"
+            android:onClick="donePressed"
+            android:nestedScrollingEnabled="false"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Space
+            android:layout_width="20px"
+            android:layout_height="20px"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/space" />
 
     </RelativeLayout>
 

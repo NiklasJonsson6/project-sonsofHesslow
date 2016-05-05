@@ -110,4 +110,8 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         controller.placeButtonPressed();
         System.out.println("Place button pressed");
     }
+    public void donePressed(View v){
+        controller.doneButtonPressed();
+        System.out.println("Done button pressed");
+    }
 }

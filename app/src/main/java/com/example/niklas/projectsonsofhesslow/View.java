@@ -51,7 +51,7 @@ public class View {
                     GraphicsManager.setHeight(riskChangeEvent.oldTerritory.getId(), 0);
                 }
                 if (riskChangeEvent.newTerritory != null) {
-                    GraphicsManager.setOutlineColor(riskChangeEvent.newTerritory.getId(), red);
+                    GraphicsManager.setOutlineColor(riskChangeEvent.newTerritory.getId(), blue);
                     GraphicsManager.setHeight(riskChangeEvent.newTerritory.getId(), 0.04f);
                 }
 
@@ -66,7 +66,7 @@ public class View {
                     GraphicsManager.setHeight(riskChangeEvent.oldTerritory.getId(), 0);
                 }
                 if (riskChangeEvent.newTerritory != null) {
-                    GraphicsManager.setOutlineColor(riskChangeEvent.newTerritory.getId(), green);
+                    GraphicsManager.setOutlineColor(riskChangeEvent.newTerritory.getId(), red);
                     GraphicsManager.setHeight(riskChangeEvent.newTerritory.getId(), 0.04f);
                 }
             }
@@ -80,6 +80,19 @@ public class View {
                 }
                 if (riskChangeEvent.newTerritory != null) {
                     GraphicsManager.setOutlineColor(riskChangeEvent.newTerritory.getId(), blue);
+                    GraphicsManager.setHeight(riskChangeEvent.newTerritory.getId(), 0.04f);
+                }
+            }
+        });
+        risk.addSecondSelectedListeners(new Risk.RiskEventListener() {
+            @Override
+            public void changeEvent(Risk.RiskChangeEvent riskChangeEvent) {
+                if (riskChangeEvent.oldTerritory != null) {
+                    GraphicsManager.setOutlineColor(riskChangeEvent.oldTerritory.getId(), black);
+                    GraphicsManager.setHeight(riskChangeEvent.oldTerritory.getId(), 0);
+                }
+                if (riskChangeEvent.newTerritory != null) {
+                    GraphicsManager.setOutlineColor(riskChangeEvent.newTerritory.getId(), green);
                     GraphicsManager.setHeight(riskChangeEvent.newTerritory.getId(), 0.04f);
                 }
             }

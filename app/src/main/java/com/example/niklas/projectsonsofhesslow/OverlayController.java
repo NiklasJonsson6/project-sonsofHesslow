@@ -3,6 +3,7 @@ package com.example.niklas.projectsonsofhesslow;
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -16,7 +17,7 @@ public class OverlayController {
     OverlayController(android.view.ViewGroup viewGroup, LayoutInflater factory){
         this.parent = viewGroup;
         this.factory = factory;
-        this.bar = ((SeekBar)factory.inflate(R.layout.activity_placearmies,null).findViewById(R.id.seekBar));
+        bar = ((SeekBar)factory.inflate(R.layout.activity_placearmies, null).findViewById(R.id.seekBar));
         bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -32,7 +33,7 @@ public class OverlayController {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                System.out.println("Hej du ändra mig");
             }
         });
     }
@@ -63,13 +64,25 @@ public class OverlayController {
         parent.addView(factory.inflate(value,null), index);
     }
     public void replaceText(int value, String prefText){
-        ((TextView)parent.findViewById(value)).setText(prefText);
+        if(parent.findViewById(value) instanceof  TextView) {
+            ((TextView) parent.findViewById(value)).setText(prefText);
+        } else if(parent.findViewById(value) instanceof Button) {
+            ((Button) parent.findViewById(value)).setText(prefText);
+        }
     }
     public void changeTextColour(int value, int c){
-        ((TextView)parent.findViewById(value)).setTextColor(c);
+        if(parent.findViewById(value) instanceof  TextView) {
+            ((TextView) parent.findViewById(value)).setTextColor(c);
+        } else if(parent.findViewById(value) instanceof Button) {
+            ((Button) parent.findViewById(value)).setTextColor(c);
+        }
     }
-    public void replaceTextBackgroundColour(int value, String prefText){
-        ((TextView)parent.findViewById(value)).setText(prefText);
+    public void setBackgroundColour(int value, int c){
+        if(parent.findViewById(value) instanceof  TextView) {
+            ((TextView) parent.findViewById(value)).setBackgroundColor(c);
+        } else if(parent.findViewById(value) instanceof Button) {
+            ((Button) parent.findViewById(value)).setBackgroundColor(c);
+        }
     }
     public int getBarValue(int value){
         return ((SeekBar)parent.findViewById(value)).getProgress();

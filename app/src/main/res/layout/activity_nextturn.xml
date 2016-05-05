@@ -15,7 +15,7 @@
             android:layout_width="104dp"
             android:layout_height="wrap_content" />
 
-        <Button android:text="Next Turn" android:id="@+id/button2" android:layout_width="104dp" android:layout_height="wrap_content"
+        <Button android:text="Next Phase" android:id="@+id/nextTurnButton" android:layout_width="104dp" android:layout_height="wrap_content"
             android:enabled="true"
             android:onClick="nextTurnPressed"></Button>
 </LinearLayout>
