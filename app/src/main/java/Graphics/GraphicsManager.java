@@ -1,11 +1,16 @@
 package Graphics;
 
+import android.opengl.GLSurfaceView;
+import android.os.Handler;
+import android.os.SystemClock;
+
 import com.example.niklas.projectsonsofhesslow.MainActivity;
 import com.example.niklas.projectsonsofhesslow.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import Graphics.Geometry.Vector2;
 import Graphics.Geometry.Vector3;
@@ -21,8 +26,32 @@ public class GraphicsManager {
     public static Integer[][] beizNeighbors;
     public static Integer[] beizContinents;
     public static Number[] numbers;
+
+    public interface Updatable
+    {
+        boolean update(float dt);
+    }
+
+    static ConcurrentLinkedQueue<Updatable> updatables = new ConcurrentLinkedQueue<>();
     public static void init()
     {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            long last;
+            @Override
+            public void run() {
+                long current = SystemClock.elapsedRealtime();
+                float dt = current-last;
+                boolean reqRender=false;
+                for(Updatable updatable : updatables) {
+                    if(updatable.update(dt)) reqRender = true;
+                }
+                if(reqRender) MyGLSurfaceView.ref.requestRender();
+                handler.postDelayed(this, 16);
+                last = current;
+            }
+        },16);
+
         try
         {
             List<SvgImporter.SVG_ReturnValue> tmp = SvgImporter.read(MainActivity.resources.openRawResource(R.raw.new_world));
@@ -35,6 +64,7 @@ public class GraphicsManager {
                 GraphicsManager.beiziers[c] = ret.path;
                 GraphicsManager.beizNeighbors[c] = ret.neighbors.toArray(new Integer[ret.neighbors.size()]);
                 GraphicsManager.beizContinents[c] = ret.continent_id;
+                updatables.add(ret.path);
                 ++c;
             }
 
@@ -54,16 +84,21 @@ public class GraphicsManager {
 
     public static void setHeight(int regionId, float height)
     {
-        beiziers[regionId].setPos(new Vector3(0,0,-height));
+        beiziers[regionId].setPos(new Vector3(0, 0, -height));
     }
     public static void setColor(int regionId, float[] Color)
     {
-        beiziers[regionId].fill_mesh.color = Color;
+        beiziers[regionId].setColor(Color);
+    }
+
+    public static void setColor(int regionId, float[] Color, int originId)
+    {
+        beiziers[regionId].setColor(Color,beiziers[originId].getCenter());
     }
 
     public static void setOutlineColor(int regionId, float[] Color)
     {
-        beiziers[regionId].outline_mesh.color = Color;
+        beiziers[regionId].setColorOutline(Color);
     }
 
     public static void setTroops(int regionId, int numberOfTroups)

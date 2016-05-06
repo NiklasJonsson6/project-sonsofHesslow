@@ -41,7 +41,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     private float scale = -3.0f;
     private final MyGLRenderer mRenderer;
     private boolean isZooming = false;
-
+    static  MyGLSurfaceView ref;
     class MyConfigChooser implements GLSurfaceView.EGLConfigChooser {
         @Override
         public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
@@ -72,6 +72,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     }
     public MyGLSurfaceView(Context context) {
         super(context);
+        ref = this;
         GraphicsManager.init();
         // Create an OpenGL ES 2.0 context.
         setEGLContextClientVersion(2);

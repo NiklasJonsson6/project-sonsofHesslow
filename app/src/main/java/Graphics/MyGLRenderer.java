@@ -47,7 +47,6 @@ import java.util.concurrent.*;
 public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "MyGLRenderer";
-
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     public static final float[] mMVPMatrix = new float[16];
     private static final float[] mProjectionMatrix = new float[16];

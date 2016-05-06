@@ -16,11 +16,12 @@ public class View {
     final float[] blue = {0,0,1,1};
 
 
-    Risk risk;
+    final Risk risk;
     Map<Player,float[]> playerColors = new HashMap<>();
 
-    public View(Risk risk)
+    public View(final Risk risk)
     {
+        this.risk = risk;
         for(Territory t : risk.getTerritories())
         {
             t.addOwnerListeners(new Territory.OwnerChangeListener() {
@@ -31,7 +32,14 @@ public class View {
                         float[] rndColor = {(float)Math.random(),(float)Math.random(),(float)Math.random(),1};
                         playerColors.put(ownerChangeEvent.newValue,rndColor);
                     }
-                    GraphicsManager.setColor(ownerChangeEvent.territory.getId(),playerColors.get(ownerChangeEvent.newValue));
+                    if(risk.getAttackingTerritory()!=null)
+                    {
+                        GraphicsManager.setColor(ownerChangeEvent.territory.getId(),playerColors.get(ownerChangeEvent.newValue),risk.getAttackingTerritory().getId());
+                    }
+                    else
+                    {
+                        GraphicsManager.setColor(ownerChangeEvent.territory.getId(),playerColors.get(ownerChangeEvent.newValue));
+                    }
                 }
             });
 

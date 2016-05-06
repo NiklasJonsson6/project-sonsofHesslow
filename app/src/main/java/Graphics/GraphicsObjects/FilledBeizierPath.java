@@ -10,17 +10,20 @@ import Graphics.Geometry.BeizierPath;
 import Graphics.Geometry.Util;
 import Graphics.Geometry.Vector2;
 import Graphics.Geometry.Vector3;
+import Graphics.GraphicsManager;
 
 /**
  * Created by daniel on 3/31/16.
  */
-public class FilledBeizierPath extends GLObject{
+public class FilledBeizierPath extends GLObject implements GraphicsManager.Updatable{
+
 
     public Mesh fill_mesh;
     public Mesh outline_mesh;
-
+    FlowShader flowShader;
     @Override
     public void gl_init() {
+        flowShader = new FlowShader();
         fill_mesh.init();
         outline_mesh.init();
     }
@@ -141,11 +144,46 @@ public class FilledBeizierPath extends GLObject{
         float[] color = {0.7f,0.7f,0.7f,1f};
         fill_mesh = new Mesh(tris, verts, color);
         recalcCenter();
+        origin = new Vector3(center,0);
     }
+    public void setColorOutline(float[] color)
+    {
+        outline_mesh.color = color;
+    }
+
+    float[] fromColor=new float[4];
+    float[] toColor=new float[4];
+    float max_len=20;
+    float len=20;
+    Vector3 origin;
+    public void setColor(float[] color, Vector2 origin)
+    {
+        this.origin = new Vector3(origin,0);
+        max_len = 20;
+        len = 0;
+        fromColor = fill_mesh.color;
+        toColor = color;
+        fill_mesh.color = color;
+    }
+
+    public void setColor(float[] color)
+    {
+        setColor(color,center);
+    }
+
+    @Override
+    public boolean update(float dt) {
+        if(max_len!=len)
+        {
+            len += (max_len-len)/200;
+            return true;
+        }
+        return false;
+    }
+
     public void recalcCenter()
     {
         Vector2[] verts = fill_mesh.vertices;
-        //find center.
         float minX = verts[0].x;
         float maxX = verts[0].x;
         float minY = verts[0].y;
@@ -164,6 +202,7 @@ public class FilledBeizierPath extends GLObject{
         float[] mvpMatrix = new float[16];
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
         fill_mesh.draw(mvpMatrix);
+        flowShader.use(fill_mesh,mvpMatrix,origin,len,toColor,fromColor);
         outline_mesh.draw(mvpMatrix);
 
     }

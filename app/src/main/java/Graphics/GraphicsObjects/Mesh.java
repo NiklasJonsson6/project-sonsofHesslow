@@ -15,17 +15,13 @@
  */
 package Graphics.GraphicsObjects;
 
-import android.opengl.GLES20;
-
 import com.example.niklas.projectsonsofhesslow.ArrayUtils;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-import java.util.Iterator;
 
-import Graphics.MyGLRenderer;
 import Graphics.Geometry.Util;
 import Graphics.Geometry.Vector2;
 
@@ -34,50 +30,16 @@ import Graphics.Geometry.Vector2;
  */
 public class Mesh {
 
-    private final String vertexShaderCode =
-            "uniform mat4 uMVPMatrix;" +
-            "attribute vec4 vPosition;" +
-            "void main() {" +
-            "  gl_Position = uMVPMatrix * vPosition;" +
-            "}";
-
-    private final String fragmentShaderCode =
-            "precision mediump float;" +
-            "uniform vec4 vColor;" +
-            "void main() {" +
-            "  gl_FragColor = vColor;" +
-            "}";
-
-    private FloatBuffer vertexBuffer;
-    private ShortBuffer drawListBuffer;
-    private int mProgram;
-    private int mPositionHandle;
-    private int mColorHandle;
-    private int mMVPMatrixHandle;
+    FloatBuffer vertexBuffer;
+    ShortBuffer drawListBuffer;
+    DefaultShader defaultShader;
 
     // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 3;
     short[] triangles;
     Vector2[] vertices;
-
-    private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex (coord right? //daniel)
-
+    final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex (coord right? //daniel)
     public float color[];
-
-    class Triangle
-    {
-        public Triangle(Vector2 a, Vector2 b, Vector2 c)
-        {
-            points = new Vector2[]{a,b,c};
-        }
-        Vector2[] points;
-
-        @Override
-        public String toString()
-        {
-            return "("+points[0].toString()+", "+points[1].toString()+", "+points[2].toString()+")";
-        }
-    }
 
     public boolean isOnMesh2D(Vector2 point)
     {
@@ -138,20 +100,11 @@ public class Mesh {
         drawListBuffer = dlb.asShortBuffer();
         drawListBuffer.put(triangles);
         drawListBuffer.position(0);
-
-        // prepare shaders and OpenGL program
-        int vertexShader    = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-        int fragmentShader  = MyGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
-
-        mProgram = GLES20.glCreateProgram();             // create empty OpenGL Program
-        GLES20.glAttachShader(mProgram, vertexShader);   // add the vertex shader to program
-        GLES20.glAttachShader(mProgram, fragmentShader); // add the fragment shader to program
-        GLES20.glLinkProgram(mProgram);                  // create OpenGL program executables
+        defaultShader = new DefaultShader();
     }
 
     public static Mesh Add(Mesh a, Mesh b)
     {
-
         Vector2[] new_verts = ArrayUtils.concat(a.vertices,b.vertices);
         int at_len = a.triangles.length;
         int bt_len = b.triangles.length;
@@ -166,39 +119,7 @@ public class Mesh {
         return new Mesh(new_tris, new_verts, a.color);
     }
 
-    public void draw(float[] matrix) {
-        // Add program to OpenGL environment
-        GLES20.glUseProgram(mProgram);
-        // get handle to vertex shader's vPosition member
-        mPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
-
-        // Enable a handle to the triangle vertices
-        GLES20.glEnableVertexAttribArray(mPositionHandle);
-
-        // Prepare the triangle coordinate data
-        GLES20.glVertexAttribPointer(
-                mPositionHandle, COORDS_PER_VERTEX,
-                GLES20.GL_FLOAT, false,
-                vertexStride, vertexBuffer);
-
-        mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
-        GLES20.glUniform4fv(mColorHandle, 1, color, 0);
-
-        // get handle to shape's transformation matrix
-        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
-        MyGLRenderer.checkGlError("glGetUniformLocation");
-
-        // Apply the projection and view transformation
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, matrix, 0);
-        MyGLRenderer.checkGlError("glUniformMatrix4fv");
-
-        // Draw the square
-        GLES20.glDrawElements(
-                GLES20.GL_TRIANGLES, triangles.length,
-                GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
-
-        // Disable vertex array
-
-        GLES20.glDisableVertexAttribArray(mPositionHandle);
+    public void draw(float[] matrix) { // provides a default simple way of displaying the mesh.
+        defaultShader.use(this,matrix,color);
     }
 }
