@@ -57,9 +57,14 @@ public class Controller implements GL_TouchListener {
                         territoriesPicked++;
                         nextPlayer();
                         if(territoriesPicked == 42) {
-                            gamePhase = GamePhase.PLACE_ARMIES;
                             setArmiesToPlace();
                         }
+                    } else if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer() && territoriesPicked == 42){
+                        overlayController.addViewChange(R.layout.activity_placearmies);
+                        overlayController.setBarMaxValue(R.id.seekBar,riskModel.getCurrentPlayer().getArmiesToPlace());
+                        overlayController.replaceText(R.id.troopsSelected,"0");
+                        overlayController.replaceText(R.id.troopsLeft,""+riskModel.getCurrentPlayer().getArmiesToPlace());
+                        riskModel.setSelectedTerritory(touchedTerritory);
                     }
                     break;
 
@@ -129,6 +134,10 @@ public class Controller implements GL_TouchListener {
     public void fightButtonPressed() {
         Die.fight(riskModel.getAttackingTerritory(), riskModel.getDefendingTerritory());
         if(riskModel.getDefendingTerritory().getOccupier() == riskModel.getCurrentPlayer()) {
+            overlayController.addViewChange(R.layout.activity_nextturn);
+            riskModel.getAttackingTerritory().changeArmyCount(-1);
+            riskModel.getDefendingTerritory().changeArmyCount(+1);
+        } else if(riskModel.getAttackingTerritory().getArmyCount() < 2){
             overlayController.addViewChange(R.layout.activity_nextturn);
         }
         graphicsView.requestRender();
@@ -231,17 +240,28 @@ public class Controller implements GL_TouchListener {
         System.out.println(armies);
     }
     public void placeButtonPressed(){
-        if(gamePhase == GamePhase.PLACE_ARMIES) {
+        if(gamePhase == GamePhase.PLACE_ARMIES || gamePhase == GamePhase.PICK_TERRITORIES) {
             Territory territory = riskModel.getSelectedTerritory();
             territory.setArmyCount(territory.getArmyCount() + overlayController.getBarValue(R.id.seekBar));
             riskModel.getCurrentPlayer().decArmiesToPlace(overlayController.getBarValue(R.id.seekBar));
             System.out.println("Amount: " + overlayController.getBarValue(R.id.seekBar));
             overlayController.setBarMaxValue(R.id.seekBar, riskModel.getCurrentPlayer().getArmiesToPlace());
             overlayController.replaceText(R.id.troopsLeft, "" + riskModel.getCurrentPlayer().getArmiesToPlace());
-            if (riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
+            if (riskModel.getCurrentPlayer().getArmiesToPlace() == 0 && gamePhase == GamePhase.PLACE_ARMIES) {
                 gamePhase = GamePhase.FIGHT;
                 overlayController.addViewChange(R.layout.activity_nextturn);
                 riskModel.setSelectedTerritory(null);
+            } else if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0 && gamePhase == GamePhase.PICK_TERRITORIES){
+                for(Player p : riskModel.getPlayers()){
+                    if(p.getArmiesToPlace() != 0){
+                        nextPlayer();
+                        break;
+                    }
+                }
+                if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
+                    nextPlayer();
+                    gamePhase = GamePhase.PLACE_ARMIES;
+                }
             }
         } else if (gamePhase == GamePhase.MOVEMENT) {
             Territory from = riskModel.getSelectedTerritory();
