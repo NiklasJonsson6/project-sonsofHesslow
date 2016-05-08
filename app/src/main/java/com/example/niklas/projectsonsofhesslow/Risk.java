@@ -7,6 +7,7 @@ public class Risk {
 
     private Player[] players;
     private Player currentPlayer;
+    private static GamePhase gamePhase;
     private Territory[] territories;
     private Territory attackingTerritory;
     private Territory defendingTerritory;
@@ -14,6 +15,8 @@ public class Risk {
     private Territory secondSelectedTerritory;
     private ArrayList<Territory> defenders = new ArrayList<>(); //for view to show, maybe yellow outline?
     private ArrayList<Territory> neighbors = new ArrayList<>();
+
+    enum GamePhase {PICK_TERRITORIES, PLACE_STARTING_ARMIES, PLACE_ARMIES, FIGHT, MOVEMENT}
 
     public Risk (int playerCount, int territoryCount) {
         territories = new Territory[territoryCount];
@@ -27,6 +30,7 @@ public class Risk {
             territories[i] = new Territory(i); //TODO continent
         }
         new View(this);
+        gamePhase = GamePhase.PICK_TERRITORIES;
     }
 
     void addAttackListener(RiskEventListener riskEventListener)
@@ -48,10 +52,15 @@ public class Risk {
         secondSelectedListeners.add(riskEventListener);
     }
 
+    void addOverlayListener(OverlayChangeListener overlayChangeListener){
+        this.overlayChangeListener = overlayChangeListener;
+    }
+    OverlayChangeListener overlayChangeListener;
     List<RiskEventListener> attackListeners = new ArrayList<>();
     List<RiskEventListener> deffenceListeners = new ArrayList<>();
     List<RiskEventListener> selectedListeners = new ArrayList<>();
     List<RiskEventListener> secondSelectedListeners = new ArrayList<>();
+
 
     static class RiskChangeEvent
     {
@@ -71,8 +80,6 @@ public class Risk {
         void changeEvent(RiskChangeEvent riskChangeEvent);
     }
 
-
-    //setters getters
     public void setAttackingTerritory(Territory territory)
     {
         System.out.println("attacking contry set");
@@ -98,6 +105,7 @@ public class Risk {
 
     public void setCurrentPlayer (Player player) {
         currentPlayer = player;
+        overlayChangeListener.playerChangeEvent(new OverlayChangeEvent(this));
     }
     public Player getCurrentPlayer() {
         return currentPlayer;
@@ -131,4 +139,16 @@ public class Risk {
 
     }
     public Territory getSecondSelectedTerritory(){return secondSelectedTerritory;}
+
+    public GamePhase getGamePhase(){
+        return gamePhase;
+    }
+    public void setGamePhase(GamePhase phase){
+        System.out.println("Hej");
+        overlayChangeListener.phaseEvent(new OverlayChangeEvent(this));
+        this.gamePhase = phase;
+    }
+    public void placeEvent(){
+        overlayChangeListener.placeEvent(new OverlayChangeEvent(this));
+    }
 }

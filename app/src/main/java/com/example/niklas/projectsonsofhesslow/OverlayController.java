@@ -1,9 +1,11 @@
 package com.example.niklas.projectsonsofhesslow;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -14,9 +16,11 @@ public class OverlayController {
     ViewGroup parent;
     LayoutInflater factory;
     SeekBar bar;
-    OverlayController(android.view.ViewGroup viewGroup, LayoutInflater factory){
-        this.parent = viewGroup;
-        this.factory = factory;
+    OverlayController(Context context){
+        FrameLayout frameLayout = new FrameLayout(context);
+        frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT,Gravity.BOTTOM));
+        parent = frameLayout;
+        this.factory = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         bar = ((SeekBar)factory.inflate(R.layout.activity_placearmies, null).findViewById(R.id.seekBar));
         bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -90,7 +94,8 @@ public class OverlayController {
     public void setBarMaxValue(int value, int max){
         ((SeekBar)parent.findViewById(value)).setMax(max);
     }
-
-
+    public ViewGroup getOverlay(){
+        return parent;
+    }
 
 }

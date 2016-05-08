@@ -1,6 +1,7 @@
 package com.example.niklas.projectsonsofhesslow;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,20 +28,20 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
 
     long lastTimestamp;
     public static Resources resources;
+    public static Context context;
+    static OverlayController overlayController;
     MyGLSurfaceView graphicsView;
-    FrameLayout frameLayout;
     Controller controller;
-    OverlayController overlayController;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         resources = this.getResources();
+        context = this;
+        overlayController = new OverlayController(this);
         graphicsView = new MyGLSurfaceView(this);
         graphicsView.addListener(this);
-        frameLayout = new FrameLayout(this);
-        frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT,Gravity.BOTTOM));
-        overlayController = new OverlayController(frameLayout, getLayoutInflater());
         setContentView(R.layout.activity_main);
     }
 
@@ -87,9 +88,9 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         //View overlay = factory.inflate(R.layout.activity_nextturn, null);
         overlayController.addView(R.layout.activity_playerturn);
         overlayController.addView(R.layout.activity_nextturn);
-        controller = new Controller(overlayController,graphicsView);
+        controller = new Controller();
         graphicsView.addListener(controller);
-        setContentView(frameLayout);
+        setContentView(overlayController.getOverlay());
 
     }
 
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         controller.fightButtonPressed();
     }
     public void placePressed(View v){
-        controller.placeButtonPressed();
+        controller.placeButtonPressed(overlayController.getBarValue(R.id.seekBar));
         System.out.println("Place button pressed");
     }
     public void donePressed(View v){

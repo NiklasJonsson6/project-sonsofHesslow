@@ -18,10 +18,12 @@ public class View {
 
     final Risk risk;
     Map<Player,float[]> playerColors = new HashMap<>();
+    OverlayController overlayController;
 
     public View(final Risk risk)
     {
         this.risk = risk;
+        overlayController = MainActivity.overlayController;
         for(Territory t : risk.getTerritories())
         {
             t.addOwnerListeners(new Territory.OwnerChangeListener() {
@@ -62,6 +64,10 @@ public class View {
                     GraphicsManager.setOutlineColor(riskChangeEvent.newTerritory.getId(), blue);
                     GraphicsManager.setHeight(riskChangeEvent.newTerritory.getId(), 0.04f);
                 }
+                if(riskChangeEvent.newTerritory == null){
+                    overlayController.addViewChange(R.layout.activity_nextturn);
+                    overlayController.replaceText(R.id.nextTurnButton,"Next Phase");
+                }
 
             }
         });
@@ -76,6 +82,10 @@ public class View {
                 if (riskChangeEvent.newTerritory != null) {
                     GraphicsManager.setOutlineColor(riskChangeEvent.newTerritory.getId(), red);
                     GraphicsManager.setHeight(riskChangeEvent.newTerritory.getId(), 0.04f);
+                    overlayController.addViewChange(R.layout.activity_fightbutton);
+                }
+                if(riskChangeEvent.newTerritory == null){
+                    overlayController.addViewChange(R.layout.activity_nextturn);
                 }
             }
         });
@@ -90,6 +100,10 @@ public class View {
                     GraphicsManager.setOutlineColor(riskChangeEvent.newTerritory.getId(), blue);
                     GraphicsManager.setHeight(riskChangeEvent.newTerritory.getId(), 0.04f);
                 }
+                if(riskChangeEvent.newTerritory == null){
+                    overlayController.addViewChange(R.layout.activity_nextturn);
+                    overlayController.replaceText(R.id.nextTurnButton,"Next Turn");
+                }
             }
         });
         risk.addSecondSelectedListeners(new Risk.RiskEventListener() {
@@ -102,8 +116,57 @@ public class View {
                 if (riskChangeEvent.newTerritory != null) {
                     GraphicsManager.setOutlineColor(riskChangeEvent.newTerritory.getId(), green);
                     GraphicsManager.setHeight(riskChangeEvent.newTerritory.getId(), 0.04f);
+                    overlayController.addViewChange(R.layout.activity_placearmies);
+                }
+                if(riskChangeEvent.newTerritory == null){
+                    overlayController.addViewChange(R.layout.activity_nextturn);
                 }
             }
         });
+        risk.addOverlayListener(new OverlayChangeListener(){
+            @Override
+            public void phaseEvent(OverlayChangeEvent overlayChangeEvent){
+                System.out.println("Niggah");
+                System.out.println(overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
+                if(overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PICK_TERRITORIES){
+                    overlayController.addViewChange(R.layout.activity_placearmies);
+                    overlayController.setBarMaxValue(R.id.seekBar, overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
+                    overlayController.replaceText(R.id.troopsSelected,"0");
+                    overlayController.replaceText(R.id.troopsLeft,""+ overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
+                } else if(overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PLACE_STARTING_ARMIES || overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES){
+                    overlayController.addViewChange(R.layout.activity_placearmies);
+                    overlayController.setBarMaxValue(R.id.seekBar, overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
+                    overlayController.replaceText(R.id.troopsSelected,"0");
+                    overlayController.replaceText(R.id.troopsLeft,""+ overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
+                }  if(overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.FIGHT){
+
+                } else if(overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.MOVEMENT){
+
+                }
+            }
+            @Override
+            public void placeEvent(OverlayChangeEvent overlayChangeEvent){
+                if(overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES || overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PLACE_STARTING_ARMIES){
+                    overlayController.setBarMaxValue(R.id.seekBar, overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
+                    overlayController.replaceText(R.id.troopsLeft, "" + overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
+                } else if(overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.MOVEMENT && overlayChangeEvent.risk.getSecondSelectedTerritory() != null){
+                    overlayController.setBarMaxValue(R.id.seekBar, overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
+                    overlayController.replaceText(R.id.troopsLeft, "" + overlayChangeEvent.risk.getSelectedTerritory());
+                } else {
+                    overlayController.setBarMaxValue(R.id.seekBar, 0);
+                    overlayController.replaceText(R.id.troopsLeft, "0");
+                }
+            }
+            @Override
+            public void playerChangeEvent(OverlayChangeEvent overlayChangeEvent){
+                overlayController.replaceText(R.id.playerTurn,"Player: " + overlayChangeEvent.risk.getCurrentPlayer().getName());
+                if(playerColors.get(overlayChangeEvent.risk.getCurrentPlayer()) != null) {
+                    overlayController.setBackgroundColour(R.id.playerTurn, Util.getIntFromColor(playerColors.get(overlayChangeEvent.risk.getCurrentPlayer())));
+                }
+            }
+        });
+    }
+    public float[] getColor (Player p){
+        return playerColors.get(p);
     }
 }

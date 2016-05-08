@@ -1,7 +1,6 @@
 package com.example.niklas.projectsonsofhesslow;
 
 import android.support.annotation.Nullable;
-import android.view.View;
 
 import Graphics.GL_TouchEvent;
 import Graphics.GL_TouchListener;
@@ -11,18 +10,11 @@ import Graphics.MyGLSurfaceView;
 public class Controller implements GL_TouchListener {
     private Risk riskModel;
 
-    private enum GamePhase {PICK_TERRITORIES, PLACE_ARMIES, FIGHT, MOVEMENT}
-    private GamePhase gamePhase = GamePhase.PICK_TERRITORIES;
-
     private int currentPlayerTracker = 0; //used to set next player
     private int territoriesPicked = 0;
-    private OverlayController overlayController;
-    private MyGLSurfaceView graphicsView;
 
-    public Controller(OverlayController overlayController, MyGLSurfaceView graphicsView) {
+    public Controller() {
         int territoryCount = GraphicsManager.getNumberOfTerritories();
-        this.overlayController = overlayController;
-        this.graphicsView = graphicsView;
         riskModel = new Risk(2, territoryCount); //somehow set number of players (2)
         //view observer thing?
 
@@ -43,13 +35,12 @@ public class Controller implements GL_TouchListener {
             //set continent
             riskModel.getTerritories()[i].setContinent(GraphicsManager.getContinetId(i));
         }
-        overlayController.replaceText(R.id.playerTurn,"Player: " + riskModel.getCurrentPlayer().getName());
     }
 
     public void Handle(GL_TouchEvent event) {
         if(event.touchedRegion) {
             Territory touchedTerritory = getTerritoryById(event.regionId);
-            switch(gamePhase) {
+            switch(riskModel.getGamePhase()) {
                 case PICK_TERRITORIES:
                     if(touchedTerritory.getOccupier() == null) {
                         touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
@@ -58,22 +49,16 @@ public class Controller implements GL_TouchListener {
                         nextPlayer();
                         if(territoriesPicked == 42) {
                             setArmiesToPlace();
+                            riskModel.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
                         }
-                    } else if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer() && territoriesPicked == 42){
-                        overlayController.addViewChange(R.layout.activity_placearmies);
-                        overlayController.setBarMaxValue(R.id.seekBar,riskModel.getCurrentPlayer().getArmiesToPlace());
-                        overlayController.replaceText(R.id.troopsSelected,"0");
-                        overlayController.replaceText(R.id.troopsLeft,""+riskModel.getCurrentPlayer().getArmiesToPlace());
-                        riskModel.setSelectedTerritory(touchedTerritory);
                     }
                     break;
-
+                case PLACE_STARTING_ARMIES:
+                    if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer() && territoriesPicked == 42){
+                        riskModel.setSelectedTerritory(touchedTerritory);
+                    }
                 case PLACE_ARMIES:
                     if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()){
-                        overlayController.addViewChange(R.layout.activity_placearmies);
-                        overlayController.setBarMaxValue(R.id.seekBar,riskModel.getCurrentPlayer().getArmiesToPlace());
-                        overlayController.replaceText(R.id.troopsSelected,"0");
-                        overlayController.replaceText(R.id.troopsLeft,""+riskModel.getCurrentPlayer().getArmiesToPlace());
                         riskModel.setSelectedTerritory(touchedTerritory);
                     }
                     /*if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
@@ -96,15 +81,12 @@ public class Controller implements GL_TouchListener {
                                 riskModel.getDefenders().add(neighbour); //for view to show, maybe outline yellow or something?
                                 riskModel.setAttackingTerritory(touchedTerritory);
                                 riskModel.setDefendingTerritory(null);
-                                overlayController.addViewChange(R.layout.activity_nextturn);
                             }
                         }
                     } else if (riskModel.getDefenders().contains(touchedTerritory)) {
                         riskModel.setDefendingTerritory(touchedTerritory);
-                        overlayController.addViewChange(R.layout.activity_fightbutton);
                         //TODO show attack button
                     }
-                    graphicsView.requestRender();
                     break;
                 case MOVEMENT:
                     if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer() && touchedTerritory.getArmyCount() > 1 && riskModel.getSelectedTerritory() == null) {
@@ -116,17 +98,12 @@ public class Controller implements GL_TouchListener {
                             if(neighbour.getOccupier() == riskModel.getCurrentPlayer()) {
                                 riskModel.getNeighbors().add(neighbour); //for view to show, maybe outline yellow or something?
                                 riskModel.setSecondSelectedTerritory(null);
-                                overlayController.addViewChange(R.layout.activity_nextturn);
                             }
                         }
                     } else if (riskModel.getNeighbors().contains(touchedTerritory) && riskModel.getSelectedTerritory() != null) {
                         riskModel.setSecondSelectedTerritory(touchedTerritory);
-                        overlayController.addViewChange(R.layout.activity_placearmies);
-                        overlayController.setBarMaxValue(R.id.seekBar, riskModel.getSelectedTerritory().getArmyCount() - 1);
-                        overlayController.replaceText(R.id.troopsLeft, "" + (riskModel.getSelectedTerritory().getArmyCount() - 1));
                         //TODO show attack button
                     }
-                    graphicsView.requestRender();
             }
         }
     }
@@ -134,39 +111,35 @@ public class Controller implements GL_TouchListener {
     public void fightButtonPressed() {
         Die.fight(riskModel.getAttackingTerritory(), riskModel.getDefendingTerritory());
         if(riskModel.getDefendingTerritory().getOccupier() == riskModel.getCurrentPlayer()) {
-            overlayController.addViewChange(R.layout.activity_nextturn);
             riskModel.getAttackingTerritory().changeArmyCount(-1);
             riskModel.getDefendingTerritory().changeArmyCount(+1);
         } else if(riskModel.getAttackingTerritory().getArmyCount() < 2){
-            overlayController.addViewChange(R.layout.activity_nextturn);
+            riskModel.setAttackingTerritory(null);
+            riskModel.setDefendingTerritory(null);
         }
-        graphicsView.requestRender();
     }
 
     public void nextTurn() {
-        if(gamePhase == GamePhase.MOVEMENT) {
+        if(riskModel.getGamePhase() == Risk.GamePhase.MOVEMENT) {
             riskModel.setSelectedTerritory(null);
             riskModel.setSecondSelectedTerritory(null);
             nextPlayer();
-            overlayController.replaceText(R.id.nextTurnButton,"Next Phase");
-            gamePhase = GamePhase.PLACE_ARMIES;
+            riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
         }
-        if(gamePhase == GamePhase.FIGHT) {
+        if(riskModel.getGamePhase() == Risk.GamePhase.FIGHT) {
             riskModel.setAttackingTerritory(null);
             riskModel.setDefendingTerritory(null);
-            overlayController.replaceText(R.id.nextTurnButton,"Next Turn");
             riskModel.setSelectedTerritory(null);
-            gamePhase = GamePhase.MOVEMENT;
+            riskModel.setGamePhase(Risk.GamePhase.MOVEMENT);
         }
     }
 
     private void nextPlayer() {
         currentPlayerTracker++;
-        overlayController.replaceText(R.id.playerTurn,"Player: " + riskModel.getCurrentPlayer().getName());
         if(currentPlayerTracker == riskModel.getPlayers().length) currentPlayerTracker = 0;
         riskModel.setCurrentPlayer(riskModel.getPlayers()[currentPlayerTracker]);
 
-        if(gamePhase == GamePhase.PICK_TERRITORIES) {
+        if(riskModel.getGamePhase() == Risk.GamePhase.PICK_TERRITORIES) {
             riskModel.getCurrentPlayer().giveArmies(1);
         } else {
             setArmiesToPlace();
@@ -239,44 +212,41 @@ public class Controller implements GL_TouchListener {
         riskModel.getCurrentPlayer().giveArmies(armies);
         System.out.println(armies);
     }
-    public void placeButtonPressed(){
-        if(gamePhase == GamePhase.PLACE_ARMIES || gamePhase == GamePhase.PICK_TERRITORIES) {
+    public void placeButtonPressed(int seekBarValue){
+        if(riskModel.getGamePhase() == Risk.GamePhase.PLACE_ARMIES || riskModel.getGamePhase() == Risk.GamePhase.PLACE_STARTING_ARMIES && riskModel.getSelectedTerritory() != null) {
+            //riskModel.placeEvent();
             Territory territory = riskModel.getSelectedTerritory();
-            territory.setArmyCount(territory.getArmyCount() + overlayController.getBarValue(R.id.seekBar));
-            riskModel.getCurrentPlayer().decArmiesToPlace(overlayController.getBarValue(R.id.seekBar));
-            System.out.println("Amount: " + overlayController.getBarValue(R.id.seekBar));
-            overlayController.setBarMaxValue(R.id.seekBar, riskModel.getCurrentPlayer().getArmiesToPlace());
-            overlayController.replaceText(R.id.troopsLeft, "" + riskModel.getCurrentPlayer().getArmiesToPlace());
-            if (riskModel.getCurrentPlayer().getArmiesToPlace() == 0 && gamePhase == GamePhase.PLACE_ARMIES) {
-                gamePhase = GamePhase.FIGHT;
-                overlayController.addViewChange(R.layout.activity_nextturn);
+            territory.changeArmyCount(seekBarValue);
+            riskModel.getCurrentPlayer().decArmiesToPlace(seekBarValue);
+            riskModel.placeEvent();
+            if (riskModel.getCurrentPlayer().getArmiesToPlace() == 0 && riskModel.getGamePhase() == Risk.GamePhase.PLACE_ARMIES) {
+                System.out.println("In fight");
+                riskModel.setGamePhase(Risk.GamePhase.FIGHT);
                 riskModel.setSelectedTerritory(null);
-            } else if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0 && gamePhase == GamePhase.PICK_TERRITORIES){
+            } else if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0 && riskModel.getGamePhase() == Risk.GamePhase.PLACE_STARTING_ARMIES){
                 for(Player p : riskModel.getPlayers()){
                     if(p.getArmiesToPlace() != 0){
                         nextPlayer();
+                        riskModel.placeEvent();
                         break;
                     }
                 }
                 if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
                     nextPlayer();
-                    gamePhase = GamePhase.PLACE_ARMIES;
+                    riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
                 }
             }
-        } else if (gamePhase == GamePhase.MOVEMENT) {
+        } else if (riskModel.getGamePhase() == Risk.GamePhase.MOVEMENT && riskModel.getSelectedTerritory() != null && riskModel.getSecondSelectedTerritory() != null) {
             Territory from = riskModel.getSelectedTerritory();
             Territory to = riskModel.getSecondSelectedTerritory();
-            to.setArmyCount(to.getArmyCount() + overlayController.getBarValue(R.id.seekBar));
-            from.setArmyCount(from.getArmyCount() - overlayController.getBarValue(R.id.seekBar));
-            overlayController.setBarMaxValue(R.id.seekBar,from.getArmyCount() - 1);
+            to.changeArmyCount(seekBarValue);
+            from.changeArmyCount(-seekBarValue);
+            riskModel.placeEvent();
         }
-        graphicsView.requestRender();
 
     }
     public void doneButtonPressed(){
         riskModel.setSelectedTerritory(null);
         riskModel.setSecondSelectedTerritory(null);
-        overlayController.addViewChange(R.layout.activity_nextturn);
-        overlayController.replaceText(R.id.nextTurnButton,"Next Turn");
     }
 }
