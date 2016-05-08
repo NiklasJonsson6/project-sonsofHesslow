@@ -77,9 +77,13 @@ public class Vector2
         float magnitude = this.magnitude();
         return new Vector2(this.x/magnitude(),this.y/magnitude());
     }
+    public float projectFactor(Vector2 u)
+    { //probably
+        return dot(u, this) / (dot(u,u));
+    }
     public Vector2 projectOnto(Vector2 u)
     { //probably
-        return Mul(u, dot(u, this) / (u.x * u.x + u.y * u.y));
+        return Mul(u, dot(u, this) / (dot(u,u)));
     }
     public static Vector2 Zero()
     {

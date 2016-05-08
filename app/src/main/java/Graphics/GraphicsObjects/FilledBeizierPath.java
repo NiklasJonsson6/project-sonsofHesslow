@@ -53,8 +53,11 @@ public class FilledBeizierPath extends GLObject implements GraphicsManager.Updat
             Vector2 prev = verts[i];
             Vector2 current = verts[(i+1)%verts.length];
             Vector2 next = verts[(i+2)%verts.length];
-            Vector2 diff = Vector2.Sub(next,prev);
-            Vector2 orth = Vector2.Mul(new Vector2(-diff.y,diff.x).normalized(),0.01f); //think about this.
+            Vector2 diffa = Vector2.Sub(next,current).normalized();
+            Vector2 diffb = Vector2.Sub(current,prev).normalized();
+            Vector2 diff = Vector2.Add(diffa,diffb).normalized();
+            float scaleFactor = Math.max(Math.abs(Vector2.dot(diff,diffa)),0.8f);
+            Vector2 orth = Vector2.Mul(new Vector2(-diff.y,diff.x),1/scaleFactor*0.01f);
 
             outline_verts[i*2+0] = Vector2.Add(current, orth);
             outline_verts[i*2+1] = Vector2.Sub(current, orth);
