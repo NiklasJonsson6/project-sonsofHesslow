@@ -32,14 +32,12 @@ public class Mesh {
 
     FloatBuffer vertexBuffer;
     ShortBuffer drawListBuffer;
-    DefaultShader defaultShader;
 
     // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 3;
     short[] triangles;
     Vector2[] vertices;
     final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex (coord right? //daniel)
-    public float color[];
 
     public boolean isOnMesh2D(Vector2 point)
     {
@@ -59,12 +57,10 @@ public class Mesh {
     }
 
     float[] new_verts;
-    public Mesh(short[] triangles, Vector2[] vertices, float color[])
+    public Mesh(short[] triangles, Vector2[] vertices)
     {
         this.vertices = vertices;
         this.triangles = triangles;
-        this.color = color;
-
         new_verts = new float[vertices.length*COORDS_PER_VERTEX];
         for(int i = 0; i<vertices.length;i++)
         {
@@ -72,37 +68,45 @@ public class Mesh {
             new_verts[i*COORDS_PER_VERTEX+1] = vertices[i].y;
             new_verts[i*COORDS_PER_VERTEX+2] = 0;
         }
+        calculateMetrics();
     }
 
 
     public void init() {
 
-        if(color.length != 4){
-            throw new IllegalArgumentException("a color consists of 4 values, r g b a. not " + color.length);
-        }
         if(triangles.length%3 != 0){
             throw new IllegalArgumentException("A triangle array needs to be divisible by three");
         }
 
-        ByteBuffer bb = ByteBuffer.allocateDirect(
-        // (# of coordinate values * 4 bytes per float)
-                new_verts.length * 4);
+        ByteBuffer bb = ByteBuffer.allocateDirect(new_verts.length * 4);
         bb.order(ByteOrder.nativeOrder());
         vertexBuffer = bb.asFloatBuffer();
         vertexBuffer.put(new_verts);
         vertexBuffer.position(0);
 
-        // initialize byte buffer for the draw list
-        ByteBuffer dlb = ByteBuffer.allocateDirect(
-                // (# of coordinate values * 2 bytes per short)
-                triangles.length * 2);
+        ByteBuffer dlb = ByteBuffer.allocateDirect(triangles.length * 2);
         dlb.order(ByteOrder.nativeOrder());
         drawListBuffer = dlb.asShortBuffer();
         drawListBuffer.put(triangles);
         drawListBuffer.position(0);
-        defaultShader = new DefaultShader();
     }
-
+    Vector2 center;
+    public void calculateMetrics()
+    {
+        Vector2[] verts = vertices;
+        float minX = verts[0].x;
+        float maxX = verts[0].x;
+        float minY = verts[0].y;
+        float maxY = verts[0].y;
+        for(int i = 1; i< verts.length;i++)
+        {
+            minX = Math.min(minX,verts[i].x);
+            minY = Math.min(minY,verts[i].y);
+            maxX = Math.max(maxX,verts[i].x);
+            maxY = Math.max(maxY,verts[i].y);
+        }
+        center = new Vector2((minX+maxX)/2,(minY+maxY)/2);
+    }
     public static Mesh Add(Mesh a, Mesh b)
     {
         Vector2[] new_verts = ArrayUtils.concat(a.vertices,b.vertices);
@@ -116,10 +120,6 @@ public class Mesh {
         for(int i = 0;i<bt_len;i++) {
             new_tris[at_len+i] = (short)(b.triangles[i]+a.vertices.length);
         }
-        return new Mesh(new_tris, new_verts, a.color);
-    }
-
-    public void draw(float[] matrix) { // provides a default simple way of displaying the mesh.
-        defaultShader.use(this,matrix,color);
+        return new Mesh(new_tris, new_verts);
     }
 }

@@ -48,7 +48,7 @@ public class Number extends GLObject{
             Vector2 bottom_rigth =  new Vector2(0,1);
             Vector2[] verts = new Vector2[]{top_right,top_left,bottom_left,bottom_rigth};
             short[] tris = new short[]{0,1,2,0,2,3};
-            mesh = new Mesh(tris,verts,color);
+            mesh = new Mesh(tris,verts);
         }
         num= value;
     }

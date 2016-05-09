@@ -5,10 +5,11 @@ import Graphics.Geometry.Vector2;
 
 public class DashedBeizierLine extends GLObject{
     public Mesh mesh;
-
+    DefaultShader shader;
     @Override
     public void gl_init() {
         mesh.init();
+        shader = new DefaultShader();
     }
 
     final int naive_precision = 30; //higher is more detailed
@@ -45,13 +46,12 @@ public class DashedBeizierLine extends GLObject{
             }
         }
 
-        mesh = new Mesh(outline_tris,outline_verts,new float[]{0,0,0,1});
-
+        mesh = new Mesh(outline_tris,outline_verts);
     }
 
     public void draw(float[] projectionMatrix){
         float[] mvpMatrix = new float[16];
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
-        mesh.draw(projectionMatrix);
+        shader.use(mesh,mvpMatrix,new float[]{0,0,0,1});
     }
 }

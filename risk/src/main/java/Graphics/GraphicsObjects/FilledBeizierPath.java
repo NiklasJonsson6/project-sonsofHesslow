@@ -2,10 +2,12 @@ package Graphics.GraphicsObjects;
 
 import android.opengl.Matrix;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
-import Graphics.Geometry.Beizier;
 import Graphics.Geometry.BeizierPath;
 import Graphics.Geometry.Util;
 import Graphics.Geometry.Vector2;
@@ -21,22 +23,23 @@ public class FilledBeizierPath extends GLObject implements GraphicsManager.Updat
     public Mesh fill_mesh;
     public Mesh outline_mesh;
     FlowShader flowShader;
+    LineShader lineShader;
     @Override
     public void gl_init() {
+        lineShader = new LineShader();
         flowShader = new FlowShader();
         fill_mesh.init();
         outline_mesh.init();
     }
 
-
     final int naive_precision = 3; //higher is more detailed
 
     public BeizierPath path;
-    Vector2 center;
     public Vector2 getCenter()
     {
-        return  this.center;
+        return  fill_mesh.center;
     }
+    public FloatBuffer vertSide;
     public FilledBeizierPath(BeizierPath path) // start ctl ctl point ctl ctl point ctl ctl (start)
     {
         if(!path.isClosed()) throw new IllegalArgumentException("the beizier path needs to be closed!");
@@ -48,6 +51,7 @@ public class FilledBeizierPath extends GLObject implements GraphicsManager.Updat
         //while the triangles are not guaranteed to be non-overlapping constant winding.
         // the way we render the triangles we just dont care.
         short[] outline_tris = new short[6*outline_verts.length];
+        float[] vertSide_arr = new float[outline_verts.length];
         for(int i = 0;i<verts.length;i++)
         {
             Vector2 prev = verts[i];
@@ -62,6 +66,9 @@ public class FilledBeizierPath extends GLObject implements GraphicsManager.Updat
             outline_verts[i*2+0] = Vector2.Add(current, orth);
             outline_verts[i*2+1] = Vector2.Sub(current, orth);
 
+            vertSide_arr[i*2+0] = 0;
+            vertSide_arr[i*2+0] = 1;
+
             outline_tris[i*6+0] =(short)(i*2+0);
             outline_tris[i*6+1] =(short)(i*2+1);
             outline_tris[i*6+2] =(short)((i*2+2)%outline_verts.length);
@@ -71,7 +78,13 @@ public class FilledBeizierPath extends GLObject implements GraphicsManager.Updat
             outline_tris[i*6+5] =(short)((i*2+3)%outline_verts.length);
         }
 
-        outline_mesh = new Mesh(outline_tris,outline_verts,new float[]{0,0,0,1});
+        ByteBuffer bb = ByteBuffer.allocateDirect(vertSide_arr.length * 4);
+        bb.order(ByteOrder.nativeOrder());
+        vertSide = bb.asFloatBuffer();
+        vertSide.put(vertSide_arr);
+        vertSide.position(0);
+
+        outline_mesh = new Mesh(outline_tris,outline_verts);
 
 
         //finding out the most prominent winding order
@@ -144,18 +157,31 @@ public class FilledBeizierPath extends GLObject implements GraphicsManager.Updat
             }
         }
 
-        float[] color = {0.7f,0.7f,0.7f,1f};
-        fill_mesh = new Mesh(tris, verts, color);
-        recalcCenter();
-        origin = new Vector3(center,0);
+        fill_mesh = new Mesh(tris, verts);
+        origin = new Vector3(fill_mesh.center,0);
     }
     public void setColorOutline(float[] color)
     {
-        outline_mesh.color = color;
+        outlineColor = color;
     }
 
-    float[] fromColor=new float[4];
-    float[] toColor=new float[4];
+    public void mergeWith(FilledBeizierPath other)
+    {
+        fill_mesh = Mesh.Add(fill_mesh,other.fill_mesh);
+        outline_mesh= Mesh.Add(outline_mesh,other.outline_mesh);
+
+        ByteBuffer bb = ByteBuffer.allocateDirect((vertSide.capacity()+other.vertSide.capacity())*4);
+        bb.order(ByteOrder.nativeOrder());
+        FloatBuffer vertSide_new = bb.asFloatBuffer();
+        vertSide_new.put(vertSide);
+        vertSide_new.put(other.vertSide);
+        vertSide_new.position(0);
+        vertSide = vertSide_new;
+    }
+
+    float[] fromColor= {0.7f,0.7f,0.7f,1f};
+    float[] toColor= {0.7f,0.7f,0.7f,1f};
+    float[] outlineColor = new float[]{0,0,0,1} ;
     float max_len=20;
     float len=20;
     Vector3 origin;
@@ -164,49 +190,29 @@ public class FilledBeizierPath extends GLObject implements GraphicsManager.Updat
         this.origin = new Vector3(origin,0);
         max_len = 20;
         len = 0;
-        fromColor = fill_mesh.color;
+        fromColor = toColor;
         toColor = color;
-        fill_mesh.color = color;
     }
 
     public void setColor(float[] color)
     {
-        setColor(color,center);
+        setColor(color,fill_mesh.center);
     }
 
     @Override
     public boolean update(float dt) {
-        if(max_len!=len)
-        {
+        if(Math.abs(max_len-len)>0.01) {
             len += (max_len-len)/200;
             return true;
         }
         return false;
     }
 
-    public void recalcCenter()
-    {
-        Vector2[] verts = fill_mesh.vertices;
-        float minX = verts[0].x;
-        float maxX = verts[0].x;
-        float minY = verts[0].y;
-        float maxY = verts[0].y;
-        for(int i = 1; i< verts.length;i++)
-        {
-            minX = Math.min(minX,verts[i].x);
-            minY = Math.min(minY,verts[i].y);
-            maxX = Math.max(maxX,verts[i].x);
-            maxY = Math.max(maxY,verts[i].y);
-        }
-        center = new Vector2((minX+maxX)/2,(minY+maxY)/2);
-    }
 
     public void draw(float[] projectionMatrix){
         float[] mvpMatrix = new float[16];
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
-        fill_mesh.draw(mvpMatrix);
-        flowShader.use(fill_mesh,mvpMatrix,origin,len,toColor,fromColor);
-        outline_mesh.draw(mvpMatrix);
-
+        flowShader.use(fill_mesh, mvpMatrix, origin, len,toColor,fromColor);
+        lineShader.use(outline_mesh, mvpMatrix, outlineColor,vertSide);
     }
 }

@@ -215,15 +215,13 @@ public class SvgImporter {
                 first_val.path.Remove();
                 second_val.path.Remove();
                 //merge the objects
-                first_val.path.fill_mesh = Mesh.Add(first_val.path.fill_mesh,second_val.path.fill_mesh);
-                first_val.path.outline_mesh= Mesh.Add(first_val.path.outline_mesh,second_val.path.outline_mesh);
+                first_val.path.mergeWith(second_val.path);
                 //add toghether the neigbors
                 first_val.neighbors.addAll(second_val.neighbors);
                 ret.remove(second_val);
 
                 //notify that the modified shape needs to be drawn (and initialized);
                 MyGLRenderer.delayed_init(first_val.path);
-                first_val.path.recalcCenter();
                 //handle the removed neigbor ids
                 for(SVG_ReturnValue val : ret)
                 {
