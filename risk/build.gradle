@@ -11,10 +11,21 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    signingConfigs {
+        release {
+            storeFile file("C:\\keystore\\sonsofhesslow.jks")
+            storePassword System.getenv("SOHKST")
+            keyAlias System.getenv("SOHKA")
+            keyPassword System.getenv("SOHKP")
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }
