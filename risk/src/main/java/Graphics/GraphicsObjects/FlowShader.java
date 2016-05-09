@@ -35,10 +35,12 @@ public class FlowShader {
                     "}";
 
     private static int flowShader = -1;
+    private boolean isFirst = false;
     public FlowShader()
     {
         if(flowShader == -1)
         {
+            isFirst = true;
             // prepare shaders and OpenGL program
             int vertexShader    = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
             int fragmentShader  = MyGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
@@ -50,16 +52,30 @@ public class FlowShader {
             System.out.println(GLES20.glGetShaderInfoLog(fragmentShader));
             GLES20.glLinkProgram(flowShader);                  // create OpenGL program executables
             System.out.println(GLES20.glGetProgramInfoLog(flowShader));
+
+            positionHandle = GLES20.glGetAttribLocation(flowShader, "position");
+            fromColorHandle = GLES20.glGetUniformLocation(flowShader, "color_from");
+            toColorHandle = GLES20.glGetUniformLocation(flowShader, "color_to");
+            maxDistHandle = GLES20.glGetUniformLocation(flowShader, "max_dist_sq");
+            matrixHandle = GLES20.glGetUniformLocation(flowShader, "matrix");
         }
     }
+
+    static int positionHandle;
+    static int fromColorHandle;
+    static int toColorHandle;
+    static int maxDistHandle;
+    static int matrixHandle;
 
     void use(Mesh mesh, float[] matrix, Vector3 origin, float maxDistance, float[] fromColor,float[] toColor)
     {
         GLES20.glUseProgram(flowShader);
-
         final int COORDS_PER_VERTEX = 3;
+
+
+        MyGLRenderer.checkGlError("glGetUniformLocation");
+
         //position
-        final int positionHandle = GLES20.glGetAttribLocation(flowShader, "position");
         GLES20.glEnableVertexAttribArray(positionHandle);
         GLES20.glVertexAttribPointer(
                 positionHandle, COORDS_PER_VERTEX,
@@ -67,27 +83,15 @@ public class FlowShader {
                 mesh.vertexStride, mesh.vertexBuffer);
 
         //color
-        final int fromColorHandle = GLES20.glGetUniformLocation(flowShader, "color_from");
         GLES20.glUniform4fv(fromColorHandle, 1, fromColor, 0);
-
-        final int toColorHandle = GLES20.glGetUniformLocation(flowShader, "color_to");
         GLES20.glUniform4fv(toColorHandle, 1, toColor, 0);
 
         float[] originArr = new float[]{origin.x,origin.y,origin.z};
         final int originHandle = GLES20.glGetUniformLocation(flowShader, "origin");
         GLES20.glUniform3fv(originHandle, 1, originArr, 0);
-
-        final int maxDistHandle = GLES20.glGetUniformLocation(flowShader, "max_dist_sq");
         GLES20.glUniform1f(maxDistHandle, maxDistance * maxDistance);
-
-
-        //matrix
-        final int matrixHandle = GLES20.glGetUniformLocation(flowShader, "matrix");
-        MyGLRenderer.checkGlError("glGetUniformLocation");
         GLES20.glUniformMatrix4fv(matrixHandle, 1, false, matrix, 0);
-        MyGLRenderer.checkGlError("glUniformMatrix4fv");
 
-        //actually draw it
         GLES20.glDrawElements(
                 GLES20.GL_TRIANGLES, mesh.triangles.length,
                 GLES20.GL_UNSIGNED_SHORT, mesh.drawListBuffer);

@@ -32,7 +32,7 @@ public class FilledBeizierPath extends GLObject implements GraphicsManager.Updat
         outline_mesh.init();
     }
 
-    final int naive_precision = 3; //higher is more detailed
+    final int naive_precision = 5; //higher is more detailed
 
     public BeizierPath path;
     public Vector2 getCenter()

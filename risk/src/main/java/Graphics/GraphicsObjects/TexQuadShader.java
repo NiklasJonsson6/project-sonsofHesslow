@@ -41,14 +41,24 @@ public class TexQuadShader {
             GLES20.glAttachShader(shaderHandle, vertexShader);
             GLES20.glAttachShader(shaderHandle, fragmentShader);
             GLES20.glLinkProgram(shaderHandle);
+
+            positionHandle = GLES20.glGetAttribLocation(shaderHandle, "position");
+            textureHandle = GLES20.glGetUniformLocation(shaderHandle, "texture");
+            matrixHandle = GLES20.glGetUniformLocation(shaderHandle, "matrix");
+            colorHandle = GLES20.glGetUniformLocation(shaderHandle, "color");
+
         }
     }
+
+    static int colorHandle;
+    static int matrixHandle;
+    static int textureHandle;
+    static int positionHandle;
 
     void use(Mesh mesh, float[] matrix, float[] color, int texture)
     {
         GLES20.glUseProgram(shaderHandle);
-        int positionHandle = GLES20.glGetAttribLocation(shaderHandle, "position");
-        int textureHandle = GLES20.glGetUniformLocation(shaderHandle, "texture");
+
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture);
         GLES20.glUniform1i(textureHandle, 0);
@@ -58,10 +68,8 @@ public class TexQuadShader {
                 GLES20.GL_FLOAT, false,
                 mesh.vertexStride, mesh.vertexBuffer);
 
-        int matrixHandle = GLES20.glGetUniformLocation(shaderHandle, "matrix");
         MyGLRenderer.checkGlError("glGetUniformLocation");
 
-        int colorHandle = GLES20.glGetUniformLocation(shaderHandle, "color");
         GLES20.glUniform4fv(colorHandle, 1, color, 0);
 
         GLES20.glUniformMatrix4fv(matrixHandle, 1, false, matrix, 0);

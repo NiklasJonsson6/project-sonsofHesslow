@@ -27,7 +27,7 @@ public class LineShader {
                     "varying float fside;"+
                     "void main() {" +
                     "float f=0.4;"+
-                    "  gl_FragColor = color * ((smoothstep(0.0,f,fside) * smoothstep(1.0,1.0-f,fside))) ;" +
+                    "gl_FragColor = color * (smoothstep(0.0,f,fside)*((smoothstep(0.0,f,1.0-fside))));" +
                     "}";
 
 
