@@ -17,7 +17,7 @@ public class Die {
 
     public static void fight(Territory attacker, Territory defender){
         if(!attacker.getOccupier().equals(defender.getOccupier()) && attacker.getArmyCount() > 1 && defender.getArmyCount() > 0){
-            int diceAmountAttacker = Math.min(attacker.getArmyCount(), 3);
+            int diceAmountAttacker = Math.min(attacker.getArmyCount()-1, 3);
             int diceAmountDefender = Math.min(defender.getArmyCount(), 2);
 
             ArrayList<Integer> attackDiceValues = new ArrayList<>();
