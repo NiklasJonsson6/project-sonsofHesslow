@@ -8,11 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="GameButton">
+    <style name="MainScreenButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@color/AccentColor</item>
-        <item name="android:textColor">@color/ButtonTextColor</item>
+        <item name="android:background">@color/MainScreenButtonBackground</item>
+        <item name="android:textColor">@color/MainScreenTextColor</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
     </style>
@@ -21,6 +21,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">40dp</item>
+        <item name="android:gravity">center</item>
     </style>
 
 </resources>

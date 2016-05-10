@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">risk</string>
-    <string name="start_game">Start Game</string>
+    <string name="single_player">play with others on this device</string>
 </resources>
