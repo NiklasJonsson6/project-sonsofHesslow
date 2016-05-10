@@ -1,1 +1,1 @@
-include ':risk'
+include ':risk', ':BaseGameUtils'
