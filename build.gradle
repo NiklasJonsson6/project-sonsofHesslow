@@ -16,6 +16,16 @@ allprojects {
     repositories {
         jcenter()
     }
+
+    ext {
+        android_compile_version = 23
+        android_version = '23.0.2'
+        android_min_sdk_version = 15
+
+        appcompat_library_version = '23.3.0'
+        support_library_version = '23.3.0'
+        gms_library_version = '8.4.0'
+    }
 }
 
 task clean(type: Delete) {
