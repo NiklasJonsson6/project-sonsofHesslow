@@ -34,6 +34,9 @@ public class Controller implements GL_TouchListener {
             //set continent
             riskModel.getTerritories()[i].setContinent(GraphicsManager.getContinetId(i));
         }
+
+        //give initial armies
+        setStartingArmies();
     }
 
     public void Handle(GL_TouchEvent event) {
@@ -45,19 +48,29 @@ public class Controller implements GL_TouchListener {
                         touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
                         touchedTerritory.setArmyCount(1);
                         territoriesPicked++;
+                        riskModel.getCurrentPlayer().decArmiesToPlace();
                         nextPlayer();
                         if(territoriesPicked == 42) {
-                            setArmiesToPlace();
+                            //setArmiesToPlace();
                             riskModel.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
                         }
                     }
                     break;
                 case PLACE_STARTING_ARMIES:
-                    if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer() && territoriesPicked == 42){
+                    if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
                         riskModel.setSelectedTerritory(touchedTerritory);
+
+                        touchedTerritory.changeArmyCount(1);
+                        riskModel.getCurrentPlayer().decArmiesToPlace();
+                        nextPlayer();
+                        if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
+                            riskModel.setGamePhase(Risk.GamePhase.FIGHT);
+                        }
                     }
+                    break;
+
                 case PLACE_ARMIES:
-                    if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()){
+                    if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
                         riskModel.setSelectedTerritory(touchedTerritory);
                     }
                     /*if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
@@ -87,6 +100,7 @@ public class Controller implements GL_TouchListener {
                         //TODO show attack button
                     }
                     break;
+
                 case MOVEMENT:
                     if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer() && touchedTerritory.getArmyCount() > 1 && riskModel.getSelectedTerritory() == null) {
                         //clear old possible defenders
@@ -103,6 +117,7 @@ public class Controller implements GL_TouchListener {
                         riskModel.setSecondSelectedTerritory(touchedTerritory);
                         //TODO show attack button
                     }
+                    break;
             }
         }
     }
@@ -153,6 +168,13 @@ public class Controller implements GL_TouchListener {
             }
         }
         return null;
+    }
+
+    private void setStartingArmies() {
+        //rules from hasbro
+        for (Player player: riskModel.getPlayers()) {
+            player.giveArmies(50 - riskModel.getPlayers().length);
+        }
     }
 
     public void setArmiesToPlace() {

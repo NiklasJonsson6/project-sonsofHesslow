@@ -13,7 +13,7 @@ public class Risk {
     private Territory defendingTerritory;
     private Territory selectedTerritory;
     private Territory secondSelectedTerritory;
-    private ArrayList<Territory> defenders = new ArrayList<>(); //for view to show, maybe yellow outline?
+    private ArrayList<Territory> defenders = new ArrayList<>();
     private ArrayList<Territory> neighbors = new ArrayList<>();
 
     enum GamePhase {PICK_TERRITORIES, PLACE_STARTING_ARMIES, PLACE_ARMIES, FIGHT, MOVEMENT}
