@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,7 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.sonsofhesslow.games.risk.MainActivity">
 
-    <Button
+    <Button style="@style/GameButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/start_game"
@@ -18,5 +18,10 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
         android:enabled="true"
-        android:onClick="startGame" />
-</RelativeLayout>
+        android:onClick="startGame"
+        />
+
+    <com.google.android.gms.common.SignInButton android:id="@+id/button_sign_in"
+        style="@style/SignInButton" />
+
+</FrameLayout>
