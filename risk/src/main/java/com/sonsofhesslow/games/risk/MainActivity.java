@@ -102,7 +102,9 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        switchToScreen(R.id.screen_sign_in);
+        //switchToScreen(R.id.screen_sign_in);
+        //switchToScreen(R.id.screen_main);
+        switchToMainScreen();
 
         resources = this.getResources();
         context = this;
@@ -268,7 +270,7 @@ public class MainActivity extends AppCompatActivity
 
     void startQuickGame() {
         // quick-start a game with 1 randomly selected opponent
-        final int MIN_OPPONENTS = 1, MAX_OPPONENTS = 1;
+        final int MIN_OPPONENTS = 1, MAX_OPPONENTS = 3;
         Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(MIN_OPPONENTS,
                 MAX_OPPONENTS, 0);
         RoomConfig.Builder rtmConfigBuilder = RoomConfig.builder(this);
