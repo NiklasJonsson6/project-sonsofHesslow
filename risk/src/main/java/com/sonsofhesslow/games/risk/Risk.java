@@ -154,8 +154,8 @@ public class Risk {
 
     public void setGamePhase(GamePhase phase) {
         System.out.println("Hej");
-        overlayChangeListener.phaseEvent(new OverlayChangeEvent(this));
         this.gamePhase = phase;
+        overlayChangeListener.phaseEvent(new OverlayChangeEvent(this));
     }
 
     public void placeEvent() {

@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener 
         overlayController.addView(graphicsView);
         //View overlay = factory.inflate(R.layout.activity_nextturn, null);
         overlayController.addView(R.layout.activity_playerturn);
-        overlayController.addView(R.layout.activity_nextturn);
+        overlayController.addView(R.layout.activity_chooseterritory);
         controller = new Controller();
         graphicsView.addListener(controller);
         setContentView(overlayController.getOverlay());

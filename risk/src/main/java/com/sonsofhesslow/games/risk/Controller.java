@@ -49,11 +49,11 @@ public class Controller implements GL_TouchListener {
                         touchedTerritory.setArmyCount(1);
                         territoriesPicked++;
                         riskModel.getCurrentPlayer().decArmiesToPlace();
-                        nextPlayer();
                         if(territoriesPicked == 42) {
                             //setArmiesToPlace();
                             riskModel.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
                         }
+                        nextPlayer();
                     }
                     break;
                 case PLACE_STARTING_ARMIES:
@@ -61,10 +61,10 @@ public class Controller implements GL_TouchListener {
                         touchedTerritory.changeArmyCount(1);
                         System.out.println(riskModel.getCurrentPlayer().getArmiesToPlace());
                         riskModel.getCurrentPlayer().decArmiesToPlace();
-                        nextPlayer();
                         if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
                             riskModel.setGamePhase(Risk.GamePhase.FIGHT);
                         }
+                        nextPlayer();
                     }
                     break;
 
@@ -144,10 +144,10 @@ public class Controller implements GL_TouchListener {
             riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
         }
         if(riskModel.getGamePhase() == Risk.GamePhase.FIGHT) {
+            riskModel.setGamePhase(Risk.GamePhase.MOVEMENT);
             riskModel.setAttackingTerritory(null);
             riskModel.setDefendingTerritory(null);
             riskModel.setSelectedTerritory(null);
-            riskModel.setGamePhase(Risk.GamePhase.MOVEMENT);
         }
     }
 
@@ -155,7 +155,6 @@ public class Controller implements GL_TouchListener {
         currentPlayerTracker++;
         if(currentPlayerTracker == riskModel.getPlayers().length) currentPlayerTracker = 0;
         riskModel.setCurrentPlayer(riskModel.getPlayers()[currentPlayerTracker]);
-
         if(riskModel.getGamePhase() == Risk.GamePhase.PICK_TERRITORIES) {
             riskModel.getCurrentPlayer().giveArmies(1);
         } else if(riskModel.getGamePhase() != Risk.GamePhase.PLACE_STARTING_ARMIES){
@@ -237,29 +236,17 @@ public class Controller implements GL_TouchListener {
         System.out.println(armies);
     }
     public void placeButtonPressed(int seekBarValue){
-        if(riskModel.getGamePhase() == Risk.GamePhase.PLACE_ARMIES || riskModel.getGamePhase() == Risk.GamePhase.PLACE_STARTING_ARMIES && riskModel.getSelectedTerritory() != null) {
+        if(riskModel.getGamePhase() == Risk.GamePhase.PLACE_ARMIES && riskModel.getSelectedTerritory() != null) {
             //riskModel.placeEvent();
             Territory territory = riskModel.getSelectedTerritory();
             territory.changeArmyCount(seekBarValue);
             riskModel.getCurrentPlayer().decArmiesToPlace(seekBarValue);
-            riskModel.placeEvent();
             if (riskModel.getCurrentPlayer().getArmiesToPlace() == 0 && riskModel.getGamePhase() == Risk.GamePhase.PLACE_ARMIES) {
                 System.out.println("In fight");
                 riskModel.setGamePhase(Risk.GamePhase.FIGHT);
                 riskModel.setSelectedTerritory(null);
-            } else if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0 && riskModel.getGamePhase() == Risk.GamePhase.PLACE_STARTING_ARMIES){
-                for(Player p : riskModel.getPlayers()){
-                    if(p.getArmiesToPlace() != 0){
-                        nextPlayer();
-                        riskModel.placeEvent();
-                        break;
-                    }
-                }
-                if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
-                    nextPlayer();
-                    riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
-                }
             }
+            riskModel.placeEvent();
         } else if (riskModel.getGamePhase() == Risk.GamePhase.MOVEMENT && riskModel.getSelectedTerritory() != null && riskModel.getSecondSelectedTerritory() != null) {
             Territory from = riskModel.getSelectedTerritory();
             Territory to = riskModel.getSecondSelectedTerritory();

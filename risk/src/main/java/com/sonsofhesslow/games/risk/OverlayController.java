@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.*;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -84,6 +85,8 @@ public class OverlayController {
             ((TextView) parent.findViewById(value)).setBackgroundColor(c);
         } else if(parent.findViewById(value) instanceof Button) {
             ((Button) parent.findViewById(value)).setBackgroundColor(c);
+        } else if(parent.findViewById(value) instanceof RelativeLayout) {
+            ((RelativeLayout) parent.findViewById(value)).setBackgroundColor(c);
         }
     }
     public int getBarValue(int value){
