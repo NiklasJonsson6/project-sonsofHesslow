@@ -3,7 +3,7 @@
     <string name="single_player">play with others on this device</string>
 
     <string name="game_title">Risk</string>
-    <string name="game_blurb">To play online, you must sign in with Google. If you do you can play with your friends, or random people across the world!</string>
+    <string name="game_blurb">To play online, you must sign in with Google. \n\n If you connect you can play with your friends, or random people across the world!</string>
     <string name="single_player_explanation">Get some practice!</string>
     <string name="quick_game">Quick game</string>
     <string name="invite_players">Invite friends</string>

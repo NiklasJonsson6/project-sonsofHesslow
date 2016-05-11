@@ -194,12 +194,7 @@ public class MainActivity extends AppCompatActivity
         System.out.println("Done button pressed");
     }
 
-
-
-
-
-
-
+    // main screen things below (google sign in etc)
 
     @Override
     public void onClick(View v) {
