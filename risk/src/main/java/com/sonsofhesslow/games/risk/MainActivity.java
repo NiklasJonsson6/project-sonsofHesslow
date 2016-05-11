@@ -87,8 +87,8 @@ public class MainActivity extends AppCompatActivity
             R.id.button_see_invitations,
             R.id.button_sign_in,
             R.id.button_sign_out,
-            //R.id.button_single_player,
-            //R.id.button_single_player_2
+            R.id.button_single_player,
+            R.id.button_single_player_2
     };
 
     // screens to do with play services
@@ -201,12 +201,11 @@ public class MainActivity extends AppCompatActivity
         Intent intent;
 
         switch (v.getId()) {
-            /*case R.id.button_single_player:
+            case R.id.button_single_player:
             case R.id.button_single_player_2:
                 // play a single-player game
-                resetGameVars();
-                startGame(false);
-                break;*/
+                startGame(v);
+                break;
             case R.id.button_sign_in:
                 // user wants to sign in
                 // Check to see the developer who's running this sample code read the instructions :-)

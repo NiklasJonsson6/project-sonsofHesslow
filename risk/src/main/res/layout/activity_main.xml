@@ -18,10 +18,9 @@
 
         <Button style="@style/MainScreenButton"
             android:text="@string/single_player"
-            android:id="@+id/button"
+            android:id="@+id/button_single_player"
             android:enabled="true"
             android:onClick="startGame"
-            android:layout_gravity="top"
             android:gravity="center" />
 
         <com.google.android.gms.common.SignInButton android:id="@+id/button_sign_in"
