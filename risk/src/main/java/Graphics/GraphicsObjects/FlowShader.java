@@ -47,11 +47,11 @@ public class FlowShader {
 
             flowShader = GLES20.glCreateProgram();             // create empty OpenGL Program
             GLES20.glAttachShader(flowShader, vertexShader);   // add the vertex shader to program
-            System.out.println(GLES20.glGetShaderInfoLog(vertexShader));
+            //System.out.println(GLES20.glGetShaderInfoLog(vertexShader));
             GLES20.glAttachShader(flowShader, fragmentShader); // add the fragment shader to program
-            System.out.println(GLES20.glGetShaderInfoLog(fragmentShader));
+            //System.out.println(GLES20.glGetShaderInfoLog(fragmentShader));
             GLES20.glLinkProgram(flowShader);                  // create OpenGL program executables
-            System.out.println(GLES20.glGetProgramInfoLog(flowShader));
+            //System.out.println(GLES20.glGetProgramInfoLog(flowShader));
 
             positionHandle = GLES20.glGetAttribLocation(flowShader, "position");
             fromColorHandle = GLES20.glGetUniformLocation(flowShader, "color_from");

@@ -99,6 +99,12 @@ public class View {
                 if (riskChangeEvent.newTerritory != null) {
                     GraphicsManager.setOutlineColor(riskChangeEvent.newTerritory.getId(), blue);
                     GraphicsManager.setHeight(riskChangeEvent.newTerritory.getId(), 0.04f);
+                    if(risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES){
+                        overlayController.addViewChange(R.layout.activity_placearmies);
+                        overlayController.setBarMaxValue(R.id.seekBar, risk.getCurrentPlayer().getArmiesToPlace());
+                        overlayController.replaceText(R.id.troopsSelected,"0");
+                        overlayController.replaceText(R.id.troopsLeft,""+ risk.getCurrentPlayer().getArmiesToPlace());
+                    }
                 }
                 if(riskChangeEvent.newTerritory == null){
                     overlayController.addViewChange(R.layout.activity_nextturn);
@@ -117,6 +123,8 @@ public class View {
                     GraphicsManager.setOutlineColor(riskChangeEvent.newTerritory.getId(), green);
                     GraphicsManager.setHeight(riskChangeEvent.newTerritory.getId(), 0.04f);
                     overlayController.addViewChange(R.layout.activity_placearmies);
+                    overlayController.setBarMaxValue(R.id.seekBar, risk.getSelectedTerritory().getArmyCount() - 1);
+                    overlayController.replaceText(R.id.troopsLeft, "" + (risk.getSelectedTerritory().getArmyCount() - 1));
                 }
                 if(riskChangeEvent.newTerritory == null){
                     overlayController.addViewChange(R.layout.activity_nextturn);
@@ -126,14 +134,11 @@ public class View {
         risk.addOverlayListener(new OverlayChangeListener(){
             @Override
             public void phaseEvent(OverlayChangeEvent overlayChangeEvent){
-                System.out.println("Niggah");
+                System.out.println("Pleeease");
                 System.out.println(overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
                 if(overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PICK_TERRITORIES){
-                    overlayController.addViewChange(R.layout.activity_placearmies);
-                    overlayController.setBarMaxValue(R.id.seekBar, overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
-                    overlayController.replaceText(R.id.troopsSelected,"0");
-                    overlayController.replaceText(R.id.troopsLeft,""+ overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
-                } else if(overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PLACE_STARTING_ARMIES || overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES){
+                } else if(overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES){
+                    System.out.println("Fight Phase view");
                     overlayController.addViewChange(R.layout.activity_placearmies);
                     overlayController.setBarMaxValue(R.id.seekBar, overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
                     overlayController.replaceText(R.id.troopsSelected,"0");
@@ -146,12 +151,12 @@ public class View {
             }
             @Override
             public void placeEvent(OverlayChangeEvent overlayChangeEvent){
-                if(overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES || overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PLACE_STARTING_ARMIES){
+                if(overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES){
                     overlayController.setBarMaxValue(R.id.seekBar, overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
                     overlayController.replaceText(R.id.troopsLeft, "" + overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
                 } else if(overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.MOVEMENT && overlayChangeEvent.risk.getSecondSelectedTerritory() != null){
-                    overlayController.setBarMaxValue(R.id.seekBar, overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
-                    overlayController.replaceText(R.id.troopsLeft, "" + overlayChangeEvent.risk.getSelectedTerritory());
+                    overlayController.setBarMaxValue(R.id.seekBar, overlayChangeEvent.risk.getSelectedTerritory().getArmyCount() - 1);
+                    overlayController.replaceText(R.id.troopsLeft, "" + (overlayChangeEvent.risk.getSelectedTerritory().getArmyCount() - 1));
                 } else {
                     overlayController.setBarMaxValue(R.id.seekBar, 0);
                     overlayController.replaceText(R.id.troopsLeft, "0");

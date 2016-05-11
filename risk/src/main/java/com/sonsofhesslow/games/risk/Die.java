@@ -41,7 +41,7 @@ public class Die {
             }
 
             //roll second die
-            if(attacker.getArmyCount() > 1 && defender.getArmyCount() > 1){
+            if(attacker.getArmyCount() > 2 && defender.getArmyCount() > 1){
                 if(attackDiceValues.get(diceAmountAttacker - 2) > defendDiceValues.get(diceAmountDefender - 2)){
                     defender.changeArmyCount(-1);
                 }else {

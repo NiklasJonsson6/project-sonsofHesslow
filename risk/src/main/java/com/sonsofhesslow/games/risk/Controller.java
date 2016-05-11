@@ -58,9 +58,8 @@ public class Controller implements GL_TouchListener {
                     break;
                 case PLACE_STARTING_ARMIES:
                     if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
-                        riskModel.setSelectedTerritory(touchedTerritory);
-
                         touchedTerritory.changeArmyCount(1);
+                        System.out.println(riskModel.getCurrentPlayer().getArmiesToPlace());
                         riskModel.getCurrentPlayer().decArmiesToPlace();
                         nextPlayer();
                         if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
@@ -70,6 +69,7 @@ public class Controller implements GL_TouchListener {
                     break;
 
                 case PLACE_ARMIES:
+                    System.out.println("Place Phase");
                     if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
                         riskModel.setSelectedTerritory(touchedTerritory);
                     }
@@ -95,7 +95,7 @@ public class Controller implements GL_TouchListener {
                                 riskModel.setDefendingTerritory(null);
                             }
                         }
-                    } else if (riskModel.getDefenders().contains(touchedTerritory)) {
+                    } else if (riskModel.getDefenders().contains(touchedTerritory) && riskModel.getAttackingTerritory() != null) {
                         riskModel.setDefendingTerritory(touchedTerritory);
                         //TODO show attack button
                     }
@@ -127,10 +127,13 @@ public class Controller implements GL_TouchListener {
         if(riskModel.getDefendingTerritory().getOccupier() == riskModel.getCurrentPlayer()) {
             riskModel.getAttackingTerritory().changeArmyCount(-1);
             riskModel.getDefendingTerritory().changeArmyCount(+1);
+            riskModel.setAttackingTerritory(null);
+            riskModel.setDefendingTerritory(null);
         } else if(riskModel.getAttackingTerritory().getArmyCount() < 2){
             riskModel.setAttackingTerritory(null);
             riskModel.setDefendingTerritory(null);
         }
+        riskModel.refreshBoard();
     }
 
     public void nextTurn() {
@@ -155,7 +158,7 @@ public class Controller implements GL_TouchListener {
 
         if(riskModel.getGamePhase() == Risk.GamePhase.PICK_TERRITORIES) {
             riskModel.getCurrentPlayer().giveArmies(1);
-        } else {
+        } else if(riskModel.getGamePhase() != Risk.GamePhase.PLACE_STARTING_ARMIES){
             setArmiesToPlace();
         }
     }
@@ -173,7 +176,7 @@ public class Controller implements GL_TouchListener {
     private void setStartingArmies() {
         //rules from hasbro
         for (Player player: riskModel.getPlayers()) {
-            player.giveArmies(50 - riskModel.getPlayers().length);
+            player.giveArmies(40/riskModel.getPlayers().length);
         }
     }
 

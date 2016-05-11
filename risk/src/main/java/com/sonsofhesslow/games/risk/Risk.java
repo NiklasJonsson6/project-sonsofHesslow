@@ -3,6 +3,9 @@ package com.sonsofhesslow.games.risk;
 import java.util.ArrayList;
 import java.util.List;
 
+import Graphics.GraphicsManager;
+import Graphics.MyGLRenderer;
+
 public class Risk {
 
     private Player[] players;
@@ -157,5 +160,8 @@ public class Risk {
 
     public void placeEvent() {
         overlayChangeListener.placeEvent(new OverlayChangeEvent(this));
+    }
+    public void refreshBoard(){
+        GraphicsManager.requestRender();
     }
 }
