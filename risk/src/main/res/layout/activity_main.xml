@@ -27,11 +27,19 @@
         <TextView style="@style/GameTitle" />
         <TextView style="@style/GameBlurb" />
 
-        <Button android:id="@+id/button_single_player"
-            style="@style/MainScreenButton"
-            android:text="@string/single_player" />
+        <Button style="@style/MainScreenButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/single_player"
+            android:id="@+id/button"
+            android:enabled="true"
+            android:onClick="startGame"
+            android:layout_gravity="top"/>
+
         <com.google.android.gms.common.SignInButton android:id="@+id/button_sign_in"
-            style="@style/SignInButton" />
+            style="@style/SignInButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <!-- MAIN SCREEN -->
