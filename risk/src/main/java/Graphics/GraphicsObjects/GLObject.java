@@ -9,8 +9,10 @@ public abstract class GLObject {
     public float[] modelMatrix = new float[16];
     public boolean isActive = true;
 
-    public GLObject()
+    private Renderer renderer;
+    public GLObject(Renderer renderer)
     {
+        this.renderer = renderer;
         modelMatrix = new float[]
         {
             1,0,0,0,
@@ -18,14 +20,14 @@ public abstract class GLObject {
             0,0,1,0,
             0,0,0,1,
         };
-        MyGLRenderer.delayed_init(this);
+        renderer.delayedInit(this);
     }
 
     public float drawOrder=0;
     public Vector3 pos = Vector3.Zero();
     public void Remove()
     {
-        MyGLRenderer.Remove(this);
+        renderer.remove(this);
     }
 
     public Vector3 getPos()

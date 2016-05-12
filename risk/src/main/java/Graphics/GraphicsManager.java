@@ -1,9 +1,9 @@
 package Graphics;
 
+import android.content.res.Resources;
 import android.os.Handler;
 import android.os.SystemClock;
 
-import com.sonsofhesslow.games.risk.MainActivity;
 import com.sonsofhesslow.games.risk.R;
 
 import java.io.IOException;
@@ -25,13 +25,8 @@ public class GraphicsManager {
     public static Integer[] beizContinents;
     public static Number[] numbers;
 
-    public interface Updatable
-    {
-        boolean update(float dt);
-    }
-
     static ConcurrentLinkedQueue<Updatable> updatables = new ConcurrentLinkedQueue<>();
-    public static void init()
+    public static void init(Resources resources,Renderer renderer)
     {
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -52,7 +47,7 @@ public class GraphicsManager {
 
         try
         {
-            List<SvgImporter.SVG_ReturnValue> tmp = SvgImporter.read(MainActivity.resources.openRawResource(R.raw.new_world));
+            List<SvgImporter.SVG_ReturnValue> tmp = SvgImporter.read(resources.openRawResource(R.raw.new_world),renderer);
             GraphicsManager.beiziers = new FilledBeizierPath[tmp.size()];
             GraphicsManager.beizNeighbors = new Integer[tmp.size()][];
             GraphicsManager.beizContinents = new Integer[tmp.size()];
@@ -69,7 +64,7 @@ public class GraphicsManager {
             numbers = new Number[tmp.size()];
             for(int i = 0; i<numbers.length;i++)
             {
-                numbers[i] = new Number(-1);
+                numbers[i] = new Number(-1,renderer);
                 numbers[i].setPos(beiziers[i].getCenter());
                 numbers[i].drawOrder = 1000;
             }

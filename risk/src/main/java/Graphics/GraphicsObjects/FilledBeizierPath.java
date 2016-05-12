@@ -12,12 +12,11 @@ import Graphics.Geometry.BeizierPath;
 import Graphics.Geometry.Util;
 import Graphics.Geometry.Vector2;
 import Graphics.Geometry.Vector3;
-import Graphics.GraphicsManager;
 
 /**
  * Created by daniel on 3/31/16.
  */
-public class FilledBeizierPath extends GLObject implements GraphicsManager.Updatable{
+public class FilledBeizierPath extends GLObject implements Updatable {
 
 
     public Mesh fill_mesh;
@@ -40,8 +39,9 @@ public class FilledBeizierPath extends GLObject implements GraphicsManager.Updat
         return  fill_mesh.center;
     }
     public FloatBuffer vertSide;
-    public FilledBeizierPath(BeizierPath path) // start ctl ctl point ctl ctl point ctl ctl (start)
+    public FilledBeizierPath(BeizierPath path, Renderer renderer) // start ctl ctl point ctl ctl point ctl ctl (start)
     {
+        super(renderer);
         if(!path.isClosed()) throw new IllegalArgumentException("the beizier path needs to be closed!");
         this.path = path;
 

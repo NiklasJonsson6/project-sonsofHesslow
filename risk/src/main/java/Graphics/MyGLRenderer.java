@@ -21,17 +21,15 @@ import javax.microedition.khronos.opengles.GL10;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
-import android.util.Log;
 
 import Graphics.GraphicsObjects.GLObject;
-import Graphics.GraphicsObjects.Mesh;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import Graphics.GraphicsObjects.Camera;
 import Graphics.Geometry.Vector2;
-import Graphics.Geometry.Vector3;
+import Graphics.GraphicsObjects.Renderer;
 import java.util.concurrent.*;
 
 /**
@@ -44,15 +42,21 @@ import java.util.concurrent.*;
  * </ul>
  */
 
-public class MyGLRenderer implements GLSurfaceView.Renderer {
+public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
 
-    private static final String TAG = "MyGLRenderer";
-    // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     public static final float[] mMVPMatrix = new float[16];
+
     private static final float[] mProjectionMatrix = new float[16];
     private static final float[] mViewMatrix = new float[16];
     private float mAngle;
     private static List<GLObject> gameObjects = new ArrayList<>();
+    private static MyGLRenderer ref = null;
+
+    MyGLRenderer getInstance()
+    {
+        if(ref == null) ref = new MyGLRenderer();
+        return ref;
+    }
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
@@ -64,12 +68,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     static ConcurrentLinkedQueue<GLObject> objectsToBeAdded = new ConcurrentLinkedQueue<>();
     static ConcurrentLinkedQueue<GLObject> objectsToBeRemoved = new ConcurrentLinkedQueue<>();
-    public static void delayed_init(GLObject m)
+
+    public void delayedInit(GLObject m)
     {
         objectsToBeAdded.add(m);
     }
-
-    public static void Remove(GLObject object)
+    public void remove(GLObject object)
     {
         objectsToBeRemoved.add(object);
     }
@@ -112,8 +116,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }
     }
 
-    public static int width;
-    public static int height;
+    private static int width;
+    private static int height;
 
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
@@ -129,11 +133,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
         Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 1, 20);
-    }
-
-    public static Vector3 ScreenToGl(Vector2 point)
-    {
-        return new Vector3((point.x) * 2.0f / width, ((point.y) * 2.0f / height),0);
     }
 
     public static Vector2 ScreenToWorldCoords(Vector2 point,float z_out)
@@ -166,49 +165,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         //div so w is one again.
         return new Vector2(ret[0] / ret[3], ret[1] / ret[3]);
-    }
-
-    /**
-     * Utility method for compiling a OpenGL shader.
-     *
-     * <p><strong>Note:</strong> When developing shaders, use the checkGlError()
-     * method to debug shader coding errors.</p>
-     *
-     * @param type - Vertex or fragment shader type.
-     * @param shaderCode - String containing the shader code.
-     * @return - Returns an id for the shader.
-     */
-    public static int loadShader(int type, String shaderCode){
-
-        // create a vertex shader type (GLES20.GL_VERTEX_SHADER)
-        // or a fragment shader type (GLES20.GL_FRAGMENT_SHADER)
-        int shader = GLES20.glCreateShader(type);
-
-        // add the source code to the shader and compile it
-        GLES20.glShaderSource(shader, shaderCode);
-        GLES20.glCompileShader(shader);
-
-        return shader;
-    }
-
-    /**
-    * Utility method for debugging OpenGL calls. Provide the name of the call
-    * just after making it:
-    *
-    * <pre>
-    * mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
-    * MyGLRenderer.checkGlError("glGetUniformLocation");</pre>
-    *
-    * If the operation is not successful, the check throws an error.
-    *
-    * @param glOperation - Name of the OpenGL call to check.
-    */
-    public static void checkGlError(String glOperation) {
-        int error;
-        while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
-            Log.e(TAG, glOperation + ": glError " + error);
-            throw new RuntimeException(glOperation + ": glError " + error);
-        }
     }
 
     /**

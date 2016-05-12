@@ -2,7 +2,7 @@ package Graphics.GraphicsObjects;
 
 import android.opengl.GLES20;
 
-import Graphics.MyGLRenderer;
+import Graphics.utils.ShaderUtils;
 
 /**
  * Created by Daniel on 06/05/2016.
@@ -34,8 +34,8 @@ public class TexQuadShader {
         if(shaderHandle == -1)
         {
             // prepare shaders and OpenGL program
-            int vertexShader    = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-            int fragmentShader  = MyGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+            int vertexShader    = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+            int fragmentShader  = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
             shaderHandle = GLES20.glCreateProgram();
             GLES20.glAttachShader(shaderHandle, vertexShader);
@@ -68,12 +68,12 @@ public class TexQuadShader {
                 GLES20.GL_FLOAT, false,
                 mesh.vertexStride, mesh.vertexBuffer);
 
-        MyGLRenderer.checkGlError("glGetUniformLocation");
+        ShaderUtils.checkGlError("glGetUniformLocation");
 
         GLES20.glUniform4fv(colorHandle, 1, color, 0);
 
         GLES20.glUniformMatrix4fv(matrixHandle, 1, false, matrix, 0);
-        MyGLRenderer.checkGlError("glUniformMatrix4fv");
+        ShaderUtils.checkGlError("glUniformMatrix4fv");
 
         GLES20.glDrawElements(
                 GLES20.GL_TRIANGLES, mesh.triangles.length,

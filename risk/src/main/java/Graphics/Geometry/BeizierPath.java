@@ -2,7 +2,7 @@ package Graphics.Geometry;
 
 import android.util.Pair;
 
-import com.sonsofhesslow.games.risk.ArrayUtils;
+import Graphics.utils.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;

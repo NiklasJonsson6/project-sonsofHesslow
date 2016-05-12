@@ -16,6 +16,7 @@
 package Graphics;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
@@ -70,16 +71,16 @@ public class MyGLSurfaceView extends GLSurfaceView {
             }
         }
     }
-    public MyGLSurfaceView(Context context) {
+    public MyGLSurfaceView(Context context,Resources resources) {
         super(context);
         ref = this;
-        GraphicsManager.init();
         // Create an OpenGL ES 2.0 context.
         setEGLContextClientVersion(2);
         super.setEGLConfigChooser(new MyConfigChooser());
         super.setEGLConfigChooser(8,8,8,8,16,0);
         // Set the Renderer for drawing on the GLSurfaceView
         mRenderer = new MyGLRenderer();
+        GraphicsManager.init(resources, mRenderer);
         setRenderer(mRenderer);
         SGD = new ScaleGestureDetector(getContext(), new ScaleListener());
 

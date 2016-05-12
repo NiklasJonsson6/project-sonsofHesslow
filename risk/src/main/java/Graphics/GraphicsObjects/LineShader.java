@@ -4,7 +4,7 @@ import android.opengl.GLES20;
 
 import java.nio.FloatBuffer;
 
-import Graphics.MyGLRenderer;
+import Graphics.utils.ShaderUtils;
 
 /**
  * Created by Daniel on 06/05/2016.
@@ -37,8 +37,8 @@ public class LineShader {
         if(shaderID == -1)
         {
             // prepare shaders and OpenGL program
-            int vertexShader    = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-            int fragmentShader  = MyGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+            int vertexShader    = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+            int fragmentShader  = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
             shaderID = GLES20.glCreateProgram();             // create empty OpenGL Program
             GLES20.glAttachShader(shaderID, vertexShader);   // add the vertex shader to program
@@ -76,9 +76,9 @@ public class LineShader {
 
         //matrix
         final int matrixHandle = GLES20.glGetUniformLocation(shaderID, "matrix");
-        MyGLRenderer.checkGlError("glGetUniformLocation");
+        ShaderUtils.checkGlError("glGetUniformLocation");
         GLES20.glUniformMatrix4fv(matrixHandle, 1, false, matrix, 0);
-        MyGLRenderer.checkGlError("glUniformMatrix4fv");
+        ShaderUtils.checkGlError("glUniformMatrix4fv");
 
         //actually draw it
         GLES20.glDrawElements(

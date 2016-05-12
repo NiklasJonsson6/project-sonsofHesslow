@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -16,7 +15,7 @@ import Graphics.Geometry.BeizierPath;
 import Graphics.Geometry.Vector2;
 import Graphics.GraphicsObjects.DashedBeizierLine;
 import Graphics.GraphicsObjects.FilledBeizierPath;
-import Graphics.GraphicsObjects.Mesh;
+import Graphics.GraphicsObjects.Renderer;
 
 /**
  * Created by daniel on 4/1/16.
@@ -43,7 +42,7 @@ public class SvgImporter {
         public Set<Integer> neighbors;
     }
 
-    public static List<SVG_ReturnValue> read(InputStream svgStream) throws IOException
+    public static List<SVG_ReturnValue> read(InputStream svgStream,Renderer renderer) throws IOException
     {
         List<BeizierPath> paths = new ArrayList<>();
         List<BeizierPath> splits = new ArrayList<>();
@@ -131,7 +130,7 @@ public class SvgImporter {
         int c = 0;
         for(Pair<BeizierPath,Integer> p : paths_with_info) {
             // using a hashset here might be slow...
-            ret.add(new SVG_ReturnValue(new FilledBeizierPath(p.first),p.second, c, new HashSet<Integer>()));
+            ret.add(new SVG_ReturnValue(new FilledBeizierPath(p.first,renderer),p.second, c, new HashSet<Integer>()));
             ++c;
         }
 
@@ -163,7 +162,7 @@ public class SvgImporter {
             Vector2 start = conn.points[0];
             Vector2 end = conn.points[conn.points.length-1];
 
-            new DashedBeizierLine(conn); //this should probably not be done from here..
+            new DashedBeizierLine(conn,renderer); //this should probably not be done from here..
             SVG_ReturnValue first_val = null;
             int first_index = -1;
 
@@ -221,7 +220,7 @@ public class SvgImporter {
                 ret.remove(second_val);
 
                 //notify that the modified shape needs to be drawn (and initialized);
-                MyGLRenderer.delayed_init(first_val.path);
+                renderer.delayedInit(first_val.path);
                 //handle the removed neigbor ids
                 for(SVG_ReturnValue val : ret)
                 {

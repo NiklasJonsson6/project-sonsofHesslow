@@ -15,7 +15,7 @@
  */
 package Graphics.GraphicsObjects;
 
-import com.sonsofhesslow.games.risk.ArrayUtils;
+import Graphics.utils.ArrayUtils;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

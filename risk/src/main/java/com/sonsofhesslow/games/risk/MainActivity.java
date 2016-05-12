@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity
         resources = this.getResources();
         context = this;
         overlayController = new OverlayController(this);
-        graphicsView = new MyGLSurfaceView(this);
+        graphicsView = new MyGLSurfaceView(this,getResources());
         graphicsView.addListener(this);
 
         // Create the Google Api Client with access to Games

@@ -3,7 +3,7 @@ package Graphics.GraphicsObjects;
 import android.opengl.GLES20;
 
 import Graphics.Geometry.Vector3;
-import Graphics.MyGLRenderer;
+import Graphics.utils.ShaderUtils;
 
 /**
  * Created by Daniel on 06/05/2016.
@@ -42,8 +42,8 @@ public class FlowShader {
         {
             isFirst = true;
             // prepare shaders and OpenGL program
-            int vertexShader    = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-            int fragmentShader  = MyGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+            int vertexShader    = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+            int fragmentShader  = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
             flowShader = GLES20.glCreateProgram();             // create empty OpenGL Program
             GLES20.glAttachShader(flowShader, vertexShader);   // add the vertex shader to program
@@ -73,7 +73,7 @@ public class FlowShader {
         final int COORDS_PER_VERTEX = 3;
 
 
-        MyGLRenderer.checkGlError("glGetUniformLocation");
+        ShaderUtils.checkGlError("glGetUniformLocation");
 
         //position
         GLES20.glEnableVertexAttribArray(positionHandle);

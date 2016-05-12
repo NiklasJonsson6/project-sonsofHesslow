@@ -14,9 +14,9 @@ public class DashedBeizierLine extends GLObject{
 
     final int naive_precision = 30; //higher is more detailed
 
-    public DashedBeizierLine(BeizierPath path) // start ctl ctl point ctl ctl point ctl ctl (start)
+    public DashedBeizierLine(BeizierPath path, Renderer renderer) // start ctl ctl point ctl ctl point ctl ctl (start)
     {
-
+        super(renderer);
         Vector2[] verts = path.approximateBeizierPath_naive(naive_precision);
         Vector2[] outline_verts = new Vector2[verts.length*2];
 

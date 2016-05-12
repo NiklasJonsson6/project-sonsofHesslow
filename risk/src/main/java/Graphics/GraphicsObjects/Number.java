@@ -31,7 +31,8 @@ public class Number extends GLObject{
     public void setValue(int value) {
         num = value;
     }
-    public Number(int value) {
+    public Number(int value, Renderer renderer) {
+        super(renderer);
         if(textures == null)
         {
             textures = new int[200];
