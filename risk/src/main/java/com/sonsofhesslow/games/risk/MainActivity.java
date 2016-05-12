@@ -427,8 +427,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        Log.d(TAG, "onConnected() called.  successful!");
-
+        Log.d(TAG, "onConnected() called. Sign in successful!");
         Log.d(TAG, "Sign-in succeeded.");
 
         // register listener so we are notified if we receive an invitation to play
