@@ -151,7 +151,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         }
 
         if ((e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_POINTER_UP)
-                && (e.getX() - downX + e.getY() - downY == 0)) {
+                && (e.getX() - downX + e.getY() - downY <= 10)) {
             System.out.println("X: " + Float.toString(e.getX() - downX));
             System.out.println("Y: " + Float.toString(e.getY() - downY));
             int index = 0;

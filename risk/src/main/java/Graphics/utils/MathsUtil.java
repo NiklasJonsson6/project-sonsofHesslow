@@ -1,9 +1,11 @@
-package Graphics.Geometry;
+package Graphics.utils;
+
+import Graphics.Geometry.Vector2;
 
 /**
  * Created by daniel on 3/31/16.
  */
-public class Util {
+public class MathsUtil {
 
 
 
@@ -23,7 +25,7 @@ public class Util {
     }
 
 
-    public static Vector2 interpolate(Vector2 start, Vector2 end, float t)
+    public static Vector2 lerp(Vector2 start, Vector2 end, float t)
     {
         return Vector2.Add(Vector2.Mul(start, 1 - t), Vector2.Mul(end, t));
     }

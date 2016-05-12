@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import Graphics.Geometry.BeizierPath;
-import Graphics.Geometry.Util;
+import Graphics.utils.MathsUtil;
 import Graphics.Geometry.Vector2;
 import Graphics.Geometry.Vector3;
 
@@ -147,7 +147,7 @@ public class FilledBeizierPath extends GLObject implements Updatable {
                 Vector2 c = verts[index_c];
 
                 //only add the tri if it's inside the polygon
-                float concavity =Util.crossProduct(a, b, c);
+                float concavity = MathsUtil.crossProduct(a, b, c);
                 if (Math.signum(concavity)!=winding||Math.abs(concavity)<=acceptable_concavity)
                 {
                     //check if there is any other vertex inside our proposed triangle
@@ -155,7 +155,7 @@ public class FilledBeizierPath extends GLObject implements Updatable {
                     for(int j = 0; j<verts.length;j++)
                     {
                         if(j == index_a || j == index_b || j == index_c)continue;
-                        if (Util.isInsideTri(verts[j], a, b, c))
+                        if (MathsUtil.isInsideTri(verts[j], a, b, c))
                         {
                             noneInside = false;
                             break;

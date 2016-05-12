@@ -2,8 +2,9 @@ package Graphics.Geometry;
 
 import android.util.Pair;
 
-import java.util.Arrays;
 import java.util.List;
+
+import Graphics.utils.MathsUtil;
 
 /**
  * Created by Daniel on 06/04/2016.
@@ -63,7 +64,7 @@ public class Beizier
         Vector2[] next_vectors = new Vector2[vectors.length-1];
         for(int i = 0; i<vectors.length-1;i++)
         {
-            next_vectors[i] = Util.interpolate(vectors[i], vectors[i + 1], t);
+            next_vectors[i] = MathsUtil.lerp(vectors[i], vectors[i + 1], t);
         }
         return next_vectors;
     }
@@ -192,8 +193,8 @@ public class Beizier
         float dist = Math.min(Vector2.Sub(p, points[0]).magnitude(),Vector2.Sub(p, points[3]).magnitude());
         if(dist < precision)return true;
         //the control points are a bounding box of the curve.
-        if(!Util.isInsideTri(p,points[0],points[1],points[2])&&
-                !Util.isInsideTri(p,points[3],points[1],points[2]))
+        if(!MathsUtil.isInsideTri(p, points[0], points[1], points[2])&&
+                !MathsUtil.isInsideTri(p, points[3], points[1], points[2]))
         {
             return false;
         }

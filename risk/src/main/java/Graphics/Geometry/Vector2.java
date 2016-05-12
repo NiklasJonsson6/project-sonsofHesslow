@@ -72,13 +72,11 @@ public class Vector2
         return (float) Math.sqrt(x*x+y*y);
     }
 
-    public Vector2 normalized()
-    {
-        float magnitude = this.magnitude();
+    public Vector2 normalized() {
         return new Vector2(this.x/magnitude(),this.y/magnitude());
     }
     public float projectFactor(Vector2 u)
-    { //probably
+    {
         return dot(u, this) / (dot(u,u));
     }
     public Vector2 projectOnto(Vector2 u)

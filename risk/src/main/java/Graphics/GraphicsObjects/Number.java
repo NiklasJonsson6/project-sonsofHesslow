@@ -31,6 +31,9 @@ public class Number extends GLObject{
     public void setValue(int value) {
         num = value;
     }
+    public int getValue() {
+        return num;
+    }
     public Number(int value, Renderer renderer) {
         super(renderer);
         if(textures == null)
@@ -52,6 +55,11 @@ public class Number extends GLObject{
             mesh = new Mesh(tris,verts);
         }
         num= value;
+    }
+    public Number(int value, Renderer renderer, float[] color)
+    {
+        this(value,renderer);
+        setColor(color);
     }
 
     // called back from the gl thread by the renderer for init

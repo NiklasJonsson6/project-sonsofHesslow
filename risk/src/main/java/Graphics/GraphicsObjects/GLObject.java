@@ -23,6 +23,11 @@ public abstract class GLObject {
         renderer.delayedInit(this);
     }
 
+    public float[] getMatrix()
+    {
+        return modelMatrix;
+    }
+
     public float drawOrder=0;
     public Vector3 pos = Vector3.Zero();
     public void Remove()

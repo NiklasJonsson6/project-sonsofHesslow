@@ -3,12 +3,16 @@ package Graphics;
 import android.content.res.Resources;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.Pair;
 
 import com.sonsofhesslow.games.risk.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import Graphics.Geometry.Vector3;
@@ -26,8 +30,10 @@ public class GraphicsManager {
     public static Number[] numbers;
 
     static ConcurrentLinkedQueue<Updatable> updatables = new ConcurrentLinkedQueue<>();
-    public static void init(Resources resources,Renderer renderer)
+    private static Renderer renderer; //this sucks
+    public static void init(Resources resources, Renderer renderer)
     {
+        GraphicsManager.renderer = renderer;
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             long last;
@@ -68,6 +74,15 @@ public class GraphicsManager {
                 numbers[i].setPos(beiziers[i].getCenter());
                 numbers[i].drawOrder = 1000;
             }
+            /*
+
+            addArrow(0,1,10,new float[]{0,.7f,.3f,1});
+            addArrow(1,2,9,new float[]{0,.7f,.3f,1});
+            addArrow(2,3,8,new float[]{0,.7f,.3f,1});
+            addArrow(3,4,7,new float[]{0,.7f,.3f,1});
+            addArrow(4, 2, 6, new float[]{0, .7f, .3f, 1});
+             */
+
         } catch (IOException ex)
         {
             ex.printStackTrace();
@@ -79,6 +94,27 @@ public class GraphicsManager {
     {
         beiziers[regionId].setPos(new Vector3(0, 0, -height));
     }
+    static Map<Pair<Integer,Integer>,NumberedArrow> arrows = new HashMap<>();
+    public static void addArrow(int territoryIdFrom, int territoyIdTo, int value,float[] color)
+    {
+        arrows.put(new Pair<Integer,Integer>(territoryIdFrom,territoyIdTo),
+                new NumberedArrow(renderer,beiziers[territoryIdFrom].getCenter(),
+                        beiziers[territoyIdTo].getCenter(),color,value));
+    }
+    public static void removeArrow(int territoryIdFrom, int territoyIdTo)
+    {
+        Iterator<Map.Entry<Pair<Integer,Integer>,NumberedArrow>> iter = arrows.entrySet().iterator();
+        while(iter.hasNext())  // because foreach loops can't handle them removes...
+        {
+            Map.Entry<Pair<Integer,Integer>,NumberedArrow> entry = iter.next();
+            if(entry.getKey().first.equals(territoryIdFrom) && entry.getKey().second.equals(territoyIdTo))
+            {
+                entry.getValue().remove();
+                iter.remove();
+            }
+        }
+    }
+
     public static void setColor(int regionId, float[] Color)
     {
         beiziers[regionId].setColor(Color);

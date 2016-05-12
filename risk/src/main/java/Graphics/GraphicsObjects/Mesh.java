@@ -22,7 +22,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-import Graphics.Geometry.Util;
+import Graphics.utils.MathsUtil;
 import Graphics.Geometry.Vector2;
 
 /**
@@ -49,7 +49,7 @@ public class Mesh {
             Vector2 p1  = vertices[triangles[currentTri * 3 + 1]];
             Vector2 p2 = vertices[triangles[currentTri * 3 + 2]];
             ++currentTri;
-            if(Util.isInsideTri(point, p0, p1, p2))
+            if(MathsUtil.isInsideTri(point, p0, p1, p2))
             {
                 return true;
             }
