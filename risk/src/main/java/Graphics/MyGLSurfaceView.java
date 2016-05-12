@@ -42,7 +42,12 @@ public class MyGLSurfaceView extends GLSurfaceView {
     private float scale = -3.0f;
     private final MyGLRenderer mRenderer;
     private boolean isZooming = false;
-    static  MyGLSurfaceView ref;
+    static MyGLSurfaceView ref;
+
+    //for not clicking when releasing after scrolling
+    private float downX;
+    private float downY;
+
     class MyConfigChooser implements GLSurfaceView.EGLConfigChooser {
         @Override
         public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
@@ -53,11 +58,11 @@ public class MyGLSurfaceView extends GLSurfaceView {
                     EGL10.EGL_RED_SIZE, 8,
                     EGL10.EGL_GREEN_SIZE, 8,
                     EGL10.EGL_BLUE_SIZE, 8,
-                    EGL10.EGL_ALPHA_SIZE,8,
+                    EGL10.EGL_ALPHA_SIZE, 8,
                     EGL10.EGL_DEPTH_SIZE, 16,
                     EGL10.EGL_SAMPLE_BUFFERS, 1,
                     EGL10.EGL_SAMPLES, 4,
-                    EGL10.EGL_STENCIL_SIZE,2,
+                    EGL10.EGL_STENCIL_SIZE, 2,
             };
             EGLConfig[] configs = new EGLConfig[1];
             int[] configCounts = new int[1];
@@ -71,13 +76,14 @@ public class MyGLSurfaceView extends GLSurfaceView {
             }
         }
     }
-    public MyGLSurfaceView(Context context,Resources resources) {
+
+    public MyGLSurfaceView(Context context, Resources resources) {
         super(context);
         ref = this;
         // Create an OpenGL ES 2.0 context.
         setEGLContextClientVersion(2);
         super.setEGLConfigChooser(new MyConfigChooser());
-        super.setEGLConfigChooser(8,8,8,8,16,0);
+        super.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         // Set the Renderer for drawing on the GLSurfaceView
         mRenderer = new MyGLRenderer();
         GraphicsManager.init(resources, mRenderer);
@@ -93,7 +99,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         // Create an OpenGL ES 2.0 context.
         setEGLContextClientVersion(2);
         super.setEGLConfigChooser(new MyConfigChooser());
-        super.setEGLConfigChooser(8,8,8,8,16,0);
+        super.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         // Set the Renderer for drawing on the GLSurfaceView
         mRenderer = new MyGLRenderer();
         setRenderer(mRenderer);
@@ -124,8 +130,8 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
 
     private ConcurrentLinkedQueue<GL_TouchListener> listeners = new ConcurrentLinkedQueue<>();
-    public void addListener(GL_TouchListener listener)
-    {
+
+    public void addListener(GL_TouchListener listener) {
         listeners.add(listener);
     }
 
@@ -136,47 +142,52 @@ public class MyGLSurfaceView extends GLSurfaceView {
         // and other input controls. In this case, you are only
         // interested in events where the touch position changed.
         GL_TouchEvent event;
-        Vector2 screen_pos = new Vector2(e.getX(),e.getY());
-        Vector2 world_pos = MyGLRenderer.ScreenToWorldCoords(screen_pos,0);
-        if(e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_POINTER_UP)
-        {
+        Vector2 screen_pos = new Vector2(e.getX(), e.getY());
+        Vector2 world_pos = MyGLRenderer.ScreenToWorldCoords(screen_pos, 0);
+
+        if (e.getAction() == MotionEvent.ACTION_DOWN || e.getAction() == MotionEvent.ACTION_POINTER_DOWN) {
+            downX = e.getX();
+            downY = e.getY();
+        }
+
+        if ((e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_POINTER_UP)
+                && (e.getX() - downX + e.getY() - downY == 0)) {
+            System.out.println("X: " + Float.toString(e.getX() - downX));
+            System.out.println("Y: " + Float.toString(e.getY() - downY));
             int index = 0;
             boolean hasTouchedRegion = false;
-            for(FilledBeizierPath path : GraphicsManager.beiziers)
-            {
+            for (FilledBeizierPath path : GraphicsManager.beiziers) {
                 float z = path.getPos().z;
                 Vector2 adjusted_worldPos;
-                if(z== 0)
+                if (z == 0)
                     adjusted_worldPos = world_pos;
                 else    // memoization is probably a bit more expensive than recalculation. it's quite uncommon after all.
-                    adjusted_worldPos = MyGLRenderer.ScreenToWorldCoords(screen_pos,z);
+                    adjusted_worldPos = MyGLRenderer.ScreenToWorldCoords(screen_pos, z);
 
-                if(path.fill_mesh.isOnMesh2D(adjusted_worldPos))
-                {
+                if (path.fill_mesh.isOnMesh2D(adjusted_worldPos)) {
                     hasTouchedRegion = true;
                     break;
                 }
                 ++index;
             }
-            if(!hasTouchedRegion) index = -1;
+            if (!hasTouchedRegion) index = -1;
             event = new GL_TouchEvent(e, hasTouchedRegion, isZooming, index, world_pos, screen_pos, scale);
+
+        } else {
+            event = new GL_TouchEvent(e, false, isZooming, -1, world_pos, screen_pos, scale);
         }
-        else
-        {
-            event = new GL_TouchEvent(e, false, isZooming, -1,world_pos, screen_pos, scale);
-        }
-        for(GL_TouchListener listener:listeners)
-        {
+        for (GL_TouchListener listener : listeners) {
             listener.Handle(event);
         }
 
         return true;
     }
+
     private class ScaleListener extends
             ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            scale *= 1 + (1-detector.getScaleFactor());
+            scale *= 1 + (1 - detector.getScaleFactor());
             System.out.println(detector.getScaleFactor());
             scale = Math.min(-1.1f, Math.max(scale, -6.0f));
             System.out.println(scale + "kalle");
