@@ -42,6 +42,7 @@ public class Mesh {
     public boolean isOnMesh2D(Vector2 point)
     {
         int currentTri = 0;
+        if(point.x<minX || point.x>maxX || point.y < minY || point.y > maxY)return false;
         while(triangles.length/3> currentTri)
         {
             Vector2 p0  = vertices[triangles[currentTri * 3 + 0]];
@@ -70,6 +71,22 @@ public class Mesh {
         }
         calculateMetrics();
     }
+    float minX,maxX,minY,maxY;
+    public void calculateMetrics()
+    {
+        Vector2[] verts = vertices;
+        minX = verts[0].x;
+        maxX = verts[0].x;
+        minY = verts[0].y;
+        maxY = verts[0].y;
+        for(int i = 1; i< verts.length;i++)
+        {
+            minX = Math.min(minX,verts[i].x);
+            minY = Math.min(minY,verts[i].y);
+            maxX = Math.max(maxX,verts[i].x);
+            maxY = Math.max(maxY,verts[i].y);
+        }
+    }
 
 
     public void init() {
@@ -90,23 +107,7 @@ public class Mesh {
         drawListBuffer.put(triangles);
         drawListBuffer.position(0);
     }
-    Vector2 center;
-    public void calculateMetrics()
-    {
-        Vector2[] verts = vertices;
-        float minX = verts[0].x;
-        float maxX = verts[0].x;
-        float minY = verts[0].y;
-        float maxY = verts[0].y;
-        for(int i = 1; i< verts.length;i++)
-        {
-            minX = Math.min(minX,verts[i].x);
-            minY = Math.min(minY,verts[i].y);
-            maxX = Math.max(maxX,verts[i].x);
-            maxY = Math.max(maxY,verts[i].y);
-        }
-        center = new Vector2((minX+maxX)/2,(minY+maxY)/2);
-    }
+
     public static Mesh Add(Mesh a, Mesh b)
     {
         Vector2[] new_verts = ArrayUtils.concat(a.vertices,b.vertices);

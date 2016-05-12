@@ -31,12 +31,37 @@ public class FilledBeizierPath extends GLObject implements Updatable {
         outline_mesh.init();
     }
 
+
+
+    Vector2 center;
+    float Area;
+    private void calcCenter()
+    {
+        // from https://en.wikipedia.org/wiki/Centroid
+        float x=0;
+        float y=0;
+        float A=0;
+        for(int i = 0;i<fill_mesh.vertices.length;i++)
+        {
+            Vector2 curr = fill_mesh.vertices[i];
+            Vector2 next = fill_mesh.vertices[(i+1)%fill_mesh.vertices.length];
+            float a = curr.x*next.y - next.x*curr.y;
+            x+= (curr.x+next.x) * a;
+            y+= (curr.y+next.y) * a;
+            A += a;
+        }
+        Area = Math.abs(A/2f);
+        float nrm = 1f/(3f*A);
+        center = new Vector2(x * nrm,y * nrm);
+    }
+
+
     final int naive_precision = 5; //higher is more detailed
 
     public BeizierPath path;
     public Vector2 getCenter()
     {
-        return  fill_mesh.center;
+        return  center;
     }
     public FloatBuffer vertSide;
     public FilledBeizierPath(BeizierPath path, Renderer renderer) // start ctl ctl point ctl ctl point ctl ctl (start)
@@ -158,7 +183,8 @@ public class FilledBeizierPath extends GLObject implements Updatable {
         }
 
         fill_mesh = new Mesh(tris, verts);
-        origin = new Vector3(fill_mesh.center,0);
+        calcCenter();
+        origin = new Vector3(center,0);
     }
     public void setColorOutline(float[] color)
     {
@@ -170,13 +196,14 @@ public class FilledBeizierPath extends GLObject implements Updatable {
         fill_mesh = Mesh.Add(fill_mesh,other.fill_mesh);
         outline_mesh= Mesh.Add(outline_mesh,other.outline_mesh);
 
-        ByteBuffer bb = ByteBuffer.allocateDirect((vertSide.capacity()+other.vertSide.capacity())*4);
+        ByteBuffer bb = ByteBuffer.allocateDirect((vertSide.capacity() + other.vertSide.capacity()) * 4);
         bb.order(ByteOrder.nativeOrder());
         FloatBuffer vertSide_new = bb.asFloatBuffer();
         vertSide_new.put(vertSide);
         vertSide_new.put(other.vertSide);
         vertSide_new.position(0);
         vertSide = vertSide_new;
+        center = Vector2.Mul(Vector2.Add(Vector2.Mul(center, Area), Vector2.Mul(other.center, other.Area)),1f/(other.Area+Area));
     }
 
     float[] fromColor= {0.7f,0.7f,0.7f,1f};
@@ -196,8 +223,12 @@ public class FilledBeizierPath extends GLObject implements Updatable {
 
     public void setColor(float[] color)
     {
-        setColor(color,fill_mesh.center);
+        setColor(color,center);
     }
+
+
+
+
 
     @Override
     public boolean update(float dt) {
