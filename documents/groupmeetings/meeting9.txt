@@ -1,261 +1,67 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf460
-{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
-{\colortbl;\red255\green255\blue255;\red38\green38\blue38;\red234\green234\blue234;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww16680\viewh11880\viewkind0
-\deftab720
+Date: 2016-05-11
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clmgf \clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx4320
-\clmrg \clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
 
-\f0\fs24 \cf2 \expnd0\expndtw0\kerning0
-Date: 2016-05-11\cell 
-\pard\intbl\itap1\cell \row
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 \
-\cell \row
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2   	Facilitator: Arvid Hast\cell \row
+  	Facilitator: Arvid Hast
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2   	Participants: Arvid Hast, Niklas Jonsson, Daniel Hesslow\cell \row
+  	Participants: Arvid Hast, Niklas Jonsson, Daniel Hesslow
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 \
-\cell \row
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 1. Objectives\cell \row
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 	Network integration\cell \row
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 	Landscape / Portrait mode\cell \row
+1. Objectives
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 	UI controlls\cell \row
+	Network integration
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 \
-\cell \row
+	Landscape / Portrait mode
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 2. Reports (15 min) from previous meeting\cell \row
+	UI controlls
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 	All members started with their respective  tasks\cell \row
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 		Daniel: Fixed numbers and shaders, how shaders work\cell \row
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 		Niklas: Model and controller, game rules\cell \row
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 		Arvid: Network connection between phones is working, working on integration\cell \row
+2. Reports (15 min) from previous meeting
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 		Fredrik: UI controlls\cell \row
+	All members started with their respective  tasks
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 \
-\cell \row
+		Daniel: Fixed numbers and shaders, how shaders work
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 3. Discussion items (35 min) \cell \row
+		Niklas: Model and controller, game rules
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 	Network\cell \row
+		Arvid: Network connection between phones is working, working on integration
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 	Improvements of the UI\cell \row
+		Fredrik: UI controlls
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 	How to solve landscape/portrait mode\cell \row
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 \
-\cell \row
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 4. Outcomes and assignments (5 min)	\cell \row
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2  	General work responsibilities:\cell \row
+3. Discussion items (35 min) 
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2   		Niklas, Portrait, landscape\cell \row
+	Network
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2   		Fredrik, Continue working on UI\cell \row
+	Improvements of the UI
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 		Arvid, Integration of network\cell \row
+	How to solve landscape/portrait mode
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2   		Daniel, Helping with integration of network\cell \row
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 \
-\cell \row
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2 5. Wrap up\cell \row
 
-\itap1\trowd \taflags1 \trgaph108\trleft-108 \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
-\clvertalt \clshdrawnil \clwWidth1000\clftsWidth3 \clminw1000 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrs\brdrw20\brdrcf3 \clpadl200 \clpadr200 \gaph\cellx4320
-\clvertalt \clshdrawnil \clwWidth18560\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl200 \clpadr200 \gaph\cellx8640
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf0 \cell 
-\pard\intbl\itap1\pardeftab720\partightenfactor0
-\cf2   	Next meeting: 2016-5-13, 13.15\cell \lastrow\row
-}
+4. Outcomes and assignments (5 min)	
+
+ 	General work responsibilities:
+
+  		Niklas, Portrait, landscape
+
+  		Fredrik, Continue working on UI
+
+		Arvid, Integration of network
+
+  		Daniel, Helping with integration of network
+
+
+
+
+5. Wrap up
+
+  	Next meeting: 2016-5-13, 13.15
