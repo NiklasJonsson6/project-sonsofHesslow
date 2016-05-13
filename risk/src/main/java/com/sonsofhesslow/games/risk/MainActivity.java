@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.button_single_player:
             case R.id.button_single_player_2:
                 // play a single-player game
-                startGame(v);
+                startGame(false, new int[2]);
                 break;
             case R.id.button_sign_in:
                 Log.d(TAG, "Sign-in button clicked");
@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity
                     Log.d(TAG, "Starting game (waiting room returned OK).");
 
                     // TODO: 2016-05-13 implement start game
-                    //startGame(view);
+                    startGame(true, new int[2]);
                 } else if (responseCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                     // player indicated that they want to leave the room
                     leaveRoom();
@@ -458,7 +458,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnectedToRoom(Room room) {
         Log.d(TAG, "onConnectedToRoom.");
-
         //get participants and my ID:
         mParticipants = room.getParticipants();
         mMyId = room.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient));
@@ -510,12 +509,18 @@ public class MainActivity extends AppCompatActivity
         // show the waiting room UI
         showWaitingRoom(room);
     }
-
     // room is fully connected.
     @Override
     public void onRoomConnected(int statusCode, Room room) {
         Log.d(TAG, "onRoomConnected(" + statusCode + ", " + room + ")");
         if (statusCode != GamesStatusCodes.STATUS_OK) {
+            int c=0;
+            int[] ids = new int[mParticipants.size()];
+            for(Participant p : mParticipants){
+                ids[c++] = p.getPlayer().getPlayerId().hashCode(); //@hash collisions
+            }
+
+            startGame(true, ids);
             Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
             showGameError();
             return;
@@ -594,7 +599,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void startGame(View v) {
+    public void startGame(boolean online, int[] ids) {
         /*setContentView(R.layout.activity_overlay);
         View C = findViewById(R.id.Test);
         ViewGroup parent = (ViewGroup) C.getParent();
@@ -606,7 +611,10 @@ public class MainActivity extends AppCompatActivity
         //View overlay = factory.inflate(R.layout.activity_nextturn, null);
         overlayController.addView(R.layout.activity_playerturn);
         overlayController.addView(R.layout.activity_chooseterritory);
-        controller = new Controller();
+        controller = new Controller(ids);
+        if(online)
+            new NetworkManager(controller.riskModel,this);
+
         graphicsView.addListener(controller);
         setContentView(overlayController.getOverlay());
         mCurScreen = R.id.screen_game;
@@ -620,6 +628,20 @@ public class MainActivity extends AppCompatActivity
         byte[] messageBuffer = rtm.getMessageData();
         String sender = rtm.getSenderParticipantId();
         // TODO: 2016-05-13
+
+        NetworkMessage recievedNetworkData = NetworkMessage.deseirialize(messageBuffer);
+
+        switch(recievedNetworkData.action){
+            case regionTroupsChange:
+                Territory changedTerritory = Controller.getTerritoryById(recievedNetworkData.getRegionID());
+                changedTerritory.setArmyCount(recievedNetworkData.getValue());
+                break;
+            case ownerChange:
+                //code
+                break;
+            default:
+                BaseGameUtils.makeSimpleDialog(this, "Unknown network failure");
+        }
     }
 
     // Broadcast my score to everybody else.

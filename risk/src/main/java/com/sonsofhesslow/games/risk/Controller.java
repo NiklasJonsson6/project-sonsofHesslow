@@ -7,14 +7,14 @@ import Graphics.GL_TouchListener;
 import Graphics.GraphicsManager;
 
 public class Controller implements GL_TouchListener {
-    private Risk riskModel;
+    public static Risk riskModel;
 
     private int currentPlayerTracker = 0; //used to set next player
     private int territoriesPicked = 0;
 
-    public Controller() {
+    public Controller(int[] playerIds) {
         int territoryCount = GraphicsManager.getNumberOfTerritories();
-        riskModel = new Risk(2, territoryCount); //somehow set number of players (2)
+        riskModel = new Risk(playerIds, territoryCount); //somehow set number of players (2)
         //view observer thing?
 
         riskModel.setCurrentPlayer(riskModel.getPlayers()[0]);
@@ -163,7 +163,7 @@ public class Controller implements GL_TouchListener {
     }
 
     @Nullable
-    private Territory getTerritoryById(int id) {
+    public static Territory getTerritoryById(int id) {
         for(Territory territory: riskModel.getTerritories()) {
             if(territory.getId() == id) {
                 return territory;
@@ -254,7 +254,6 @@ public class Controller implements GL_TouchListener {
             from.changeArmyCount(-seekBarValue);
             riskModel.placeEvent();
         }
-
     }
     public void doneButtonPressed(){
         riskModel.setSelectedTerritory(null);

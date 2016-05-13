@@ -21,12 +21,12 @@ public class Risk {
 
     enum GamePhase {PICK_TERRITORIES, PLACE_STARTING_ARMIES, PLACE_ARMIES, FIGHT, MOVEMENT}
 
-    public Risk(int playerCount, int territoryCount) {
+    public Risk(int playerIds[], int territoryCount) {
         territories = new Territory[territoryCount];
 
-        players = new Player[playerCount];
-        for (int i = 0; i < playerCount; i++) {
-            players[i] = new Player();
+        players = new Player[playerIds.length];
+        for (int i = 0; i < playerIds.length; i++) {
+            players[i] = new Player(playerIds[i]);
         }
         //create territory objects
         for (int i = 0; i < territoryCount; i++) {

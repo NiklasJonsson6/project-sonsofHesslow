@@ -6,15 +6,18 @@ public class Player {
     private String name;
     private boolean isAlive;
     private int armiesToPlace;
+    public final int participantId;
+
     private boolean allowedToMove;
     ArrayList<Card> cards = new ArrayList<>();
     private int territoriesOwned;
 
-    public Player() {
+    public Player(int participantId) {
         Random rand = new Random();
         String[] name = {"Bilbo Baggins","Filibert Bolger","Fredegar Bolger","Mrs. Bracegirdle","Melilot Brandybuck","Rosie Cotton","Elanor Gamgee","Frodo Gamgee","Hamfast Gamgee","Farmer Maggot","Old Noakes","Mrs. Proudfoot","Odo Proudfoot","Otho Sackville-Baggins","Lobelia Sackville-Baggins","Ted Sandyman", "Diamond Took"};
         int n = rand.nextInt(name.length);
         this.name = name[n]; //TODO get name input somehow
+        this.participantId  = participantId;
     }
 
     public String getName() {
@@ -68,7 +71,12 @@ public class Player {
     public void decArmiesToPlace() {
         armiesToPlace--;
     }
+
     public void decArmiesToPlace(int amount) {
         armiesToPlace-=amount;
+    }
+
+    public int getParticipantId() {
+        return participantId;
     }
 }
