@@ -1,26 +1,11 @@
-/* Copyright (C) 2013 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.sonsofhesslow.games.risk;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -31,8 +16,8 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
-import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.GamesActivityResultCodes;
+import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
@@ -50,10 +35,10 @@ import java.util.List;
 
 import Graphics.GL_TouchEvent;
 import Graphics.GL_TouchListener;
-import Graphics.MyGLRenderer;
-import Graphics.GraphicsObjects.Camera;
 import Graphics.Geometry.Vector2;
 import Graphics.Geometry.Vector3;
+import Graphics.GraphicsObjects.Camera;
+import Graphics.MyGLRenderer;
 import Graphics.MyGLSurfaceView;
 
 public class MainActivity extends AppCompatActivity
@@ -67,7 +52,6 @@ public class MainActivity extends AppCompatActivity
     static OverlayController overlayController;
     MyGLSurfaceView graphicsView;
     Controller controller;
-
 
 
     final static String TAG = "Risk";
@@ -159,7 +143,7 @@ public class MainActivity extends AppCompatActivity
         prevPos = event.screenPosition;
     }
 
-        @Override
+    @Override
     public void onClick(View v) {
         Intent intent;
 
@@ -443,7 +427,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
         switchToMainScreen();
-
     }
 
     @Override
@@ -739,7 +722,6 @@ public class MainActivity extends AppCompatActivity
         controller.doneButtonPressed();
         System.out.println("Done button pressed");
     }
-
 
     //MISC SECTION. Miscellaneous methods
 
