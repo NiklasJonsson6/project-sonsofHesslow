@@ -94,6 +94,8 @@ public class MainActivity extends AppCompatActivity
 
     Vector2 prevPos;
 
+
+    NetworkManager networkManager = null;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -613,7 +615,7 @@ public class MainActivity extends AppCompatActivity
         overlayController.addView(R.layout.activity_chooseterritory);
         controller = new Controller(ids);
         if(online)
-            new NetworkManager(controller.riskModel,this);
+            networkManager = new NetworkManager(controller.riskModel,this);
 
         graphicsView.addListener(controller);
         setContentView(overlayController.getOverlay());
@@ -625,7 +627,9 @@ public class MainActivity extends AppCompatActivity
     // Called when received message from the network (updates from other players).
     @Override
     public void onRealTimeMessageReceived(RealTimeMessage rtm) {
-        byte[] messageBuffer = rtm.getMessageData();
+        networkManager.onRealTimeMessageReceived(rtm, this);
+
+        /*byte[] messageBuffer = rtm.getMessageData();
         String sender = rtm.getSenderParticipantId();
         // TODO: 2016-05-13
 
@@ -641,10 +645,10 @@ public class MainActivity extends AppCompatActivity
                 break;
             default:
                 BaseGameUtils.makeSimpleDialog(this, "Unknown network failure");
-        }
+        }*/
     }
 
-    // Broadcast my score to everybody else.
+    // Broadcast to everybody else.
     void broadcast(byte[] messageBuffer, boolean mustBeReliable) {
         if (!mMultiplayer)
             return; // playing single-player mode (method should not be called anyway)

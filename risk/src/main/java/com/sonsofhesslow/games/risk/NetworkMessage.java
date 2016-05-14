@@ -20,7 +20,7 @@ public class NetworkMessage {
     int[] values;
     NetworkAction action;
     public NetworkMessage(int[] values) {
-        action = getAction(values[0]);
+        this.values = values;
     }
 
     public static NetworkMessage territoryChangedMessageBuilder(Territory territory){
@@ -29,7 +29,7 @@ public class NetworkMessage {
     }
 
     public static NetworkMessage ownerChangedMessageBuilder(Territory territory){
-        int[] valueArray = {NetworkAction.ownerChange.getValue(), };
+        int[] valueArray = {NetworkAction.ownerChange.getValue(), territory.getId(), territory.getOccupier().getParticipantId() };
         return new NetworkMessage(valueArray);
     }
 
@@ -44,31 +44,19 @@ public class NetworkMessage {
         return values[2];
     }
     public int getOccupierId() {
-        return values[1];
+        return values[2];
     }
 
-    public void send(MainActivity activity) {
-        int[] arr = new int[values.length + 1];
-        arr[0] = action.getValue();
-        for(int i = 1; i < values.length + 1; i++){
-            arr[i] = values[i];
-        }
-
-        ByteBuffer dlb = ByteBuffer.allocateDirect(arr.length * 4);
+    public byte[] serialize() {
+        ByteBuffer dlb = ByteBuffer.allocateDirect(values.length * 4);
         IntBuffer buffer = dlb.asIntBuffer();
-        buffer.put(arr);
+        buffer.put(values);
         buffer.position(0);
-        byte[] message = dlb.array();
-        activity.broadcast(message,true);
+        return dlb.array();
     }
 
-    private static NetworkAction getAction(int value) {
-        for(NetworkAction action: NetworkAction.values()) {
-            if(action.value == value) {
-                return action;
-            }
-        }
-        return null;
+    public NetworkAction getAction() {
+        return NetworkAction.values()[values[0]];
     }
 
     public enum NetworkAction {

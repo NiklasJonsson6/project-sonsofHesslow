@@ -6,7 +6,7 @@ public class Player {
     private String name;
     private boolean isAlive;
     private int armiesToPlace;
-    public final int participantId;
+    private final int participantId;
 
     private boolean allowedToMove;
     ArrayList<Card> cards = new ArrayList<>();
@@ -79,4 +79,5 @@ public class Player {
     public int getParticipantId() {
         return participantId;
     }
+
 }
