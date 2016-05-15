@@ -11,8 +11,9 @@ public class Controller implements GL_TouchListener {
 
     private int currentPlayerTracker = 0; //used to set next player
     private int territoriesPicked = 0;
-
-    public Controller(int[] playerIds) {
+    private int self_id;
+    public Controller(int[] playerIds,int self_id) {
+        this.self_id = self_id;
         int territoryCount = GraphicsManager.getNumberOfTerritories();
         riskModel = new Risk(playerIds, territoryCount); //somehow set number of players (2)
         //view observer thing?
@@ -42,82 +43,84 @@ public class Controller implements GL_TouchListener {
     public void Handle(GL_TouchEvent event) {
         if(event.touchedRegion) {
             Territory touchedTerritory = getTerritoryById(event.regionId);
-            switch(riskModel.getGamePhase()) {
-                case PICK_TERRITORIES:
-                    if(touchedTerritory.getOccupier() == null) {
-                        touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
-                        touchedTerritory.setArmyCount(1);
-                        territoriesPicked++;
-                        riskModel.getCurrentPlayer().decArmiesToPlace();
-                        if(territoriesPicked == 42) {
-                            //setArmiesToPlace();
-                            riskModel.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
-                        }
-                        nextPlayer();
-                    }
-                    break;
-                case PLACE_STARTING_ARMIES:
-                    if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
-                        touchedTerritory.changeArmyCount(1);
-                        System.out.println(riskModel.getCurrentPlayer().getArmiesToPlace());
-                        riskModel.getCurrentPlayer().decArmiesToPlace();
-                        if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
-                            riskModel.setGamePhase(Risk.GamePhase.FIGHT);
-                        }
-                        nextPlayer();
-                    }
-                    break;
-
-                case PLACE_ARMIES:
-                    System.out.println("Place Phase");
-                    if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
-                        riskModel.setSelectedTerritory(touchedTerritory);
-                    }
-                    /*if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
-                        touchedTerritory.changeArmyCount(1);
-                        riskModel.getCurrentPlayer().decArmiesToPlace();
-                    }*/
-                    /*if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
-                        gamePhase = GamePhase.FIGHT;
-                        overlayController.addViewChange(R.layout.activity_nextturn);
-                    }*/
-                    break;
-
-                case FIGHT:
-                    if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer() && touchedTerritory.getArmyCount() > 1) {
-                        //clear old possible defenders
-                        riskModel.getDefenders().clear();
-                        //checks if any neighboring territory can be attacked
-                        for(Territory neighbour: touchedTerritory.getNeighbours()) {
-                            if(neighbour.getOccupier() != riskModel.getCurrentPlayer()) {
-                                riskModel.getDefenders().add(neighbour); //for view to show, maybe outline yellow or something?
-                                riskModel.setAttackingTerritory(touchedTerritory);
-                                riskModel.setDefendingTerritory(null);
+            if(self_id == riskModel.getPlayers()[currentPlayerTracker].getParticipantId())
+            {
+                switch(riskModel.getGamePhase()) {
+                    case PICK_TERRITORIES:
+                        if(touchedTerritory.getOccupier() == null) {
+                            touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
+                            touchedTerritory.setArmyCount(1);
+                            territoriesPicked++;
+                            riskModel.getCurrentPlayer().decArmiesToPlace();
+                            if(territoriesPicked == 42) {
+                                riskModel.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
                             }
+                            nextPlayer();
                         }
-                    } else if (riskModel.getDefenders().contains(touchedTerritory) && riskModel.getAttackingTerritory() != null) {
-                        riskModel.setDefendingTerritory(touchedTerritory);
-                        //TODO show attack button
-                    }
-                    break;
-
-                case MOVEMENT:
-                    if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer() && touchedTerritory.getArmyCount() > 1 && riskModel.getSelectedTerritory() == null) {
-                        //clear old possible defenders
-                        riskModel.getNeighbors().clear();
-                        //checks if any neighboring territory can be attacked
-                        riskModel.setSelectedTerritory(touchedTerritory);
-                        for(Territory neighbour: touchedTerritory.getNeighbours()) {
-                            if(neighbour.getOccupier() == riskModel.getCurrentPlayer()) {
-                                riskModel.getNeighbors().add(neighbour); //for view to show, maybe outline yellow or something?
-                                riskModel.setSecondSelectedTerritory(null);
+                        break;
+                    case PLACE_STARTING_ARMIES:
+                        if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
+                            touchedTerritory.changeArmyCount(1);
+                            System.out.println(riskModel.getCurrentPlayer().getArmiesToPlace());
+                            riskModel.getCurrentPlayer().decArmiesToPlace();
+                            if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
+                                riskModel.setGamePhase(Risk.GamePhase.FIGHT);
                             }
+                            nextPlayer();
                         }
-                    } else if (riskModel.getNeighbors().contains(touchedTerritory) && riskModel.getSelectedTerritory() != null) {
-                        riskModel.setSecondSelectedTerritory(touchedTerritory);
-                        //TODO show attack button
-                    }
-                    break;
+                        break;
+
+                    case PLACE_ARMIES:
+                        System.out.println("Place Phase");
+                        if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
+                            riskModel.setSelectedTerritory(touchedTerritory);
+                        }
+                        /*if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
+                            touchedTerritory.changeArmyCount(1);
+                            riskModel.getCurrentPlayer().decArmiesToPlace();
+                        }*/
+                        /*if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
+                            gamePhase = GamePhase.FIGHT;
+                            overlayController.addViewChange(R.layout.activity_nextturn);
+                        }*/
+                        break;
+
+                    case FIGHT:
+                        if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer() && touchedTerritory.getArmyCount() > 1) {
+                            //clear old possible defenders
+                            riskModel.getDefenders().clear();
+                            //checks if any neighboring territory can be attacked
+                            for(Territory neighbour: touchedTerritory.getNeighbours()) {
+                                if(neighbour.getOccupier() != riskModel.getCurrentPlayer()) {
+                                    riskModel.getDefenders().add(neighbour); //for view to show, maybe outline yellow or something?
+                                    riskModel.setAttackingTerritory(touchedTerritory);
+                                    riskModel.setDefendingTerritory(null);
+                                }
+                            }
+                        } else if (riskModel.getDefenders().contains(touchedTerritory) && riskModel.getAttackingTerritory() != null) {
+                            riskModel.setDefendingTerritory(touchedTerritory);
+                            //TODO show attack button
+                        }
+                        break;
+
+                    case MOVEMENT:
+                        if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer() && touchedTerritory.getArmyCount() > 1 && riskModel.getSelectedTerritory() == null) {
+                            //clear old possible defenders
+                            riskModel.getNeighbors().clear();
+                            //checks if any neighboring territory can be attacked
+                            riskModel.setSelectedTerritory(touchedTerritory);
+                            for(Territory neighbour: touchedTerritory.getNeighbours()) {
+                                if(neighbour.getOccupier() == riskModel.getCurrentPlayer()) {
+                                    riskModel.getNeighbors().add(neighbour); //for view to show, maybe outline yellow or something?
+                                    riskModel.setSecondSelectedTerritory(null);
+                                }
+                            }
+                        } else if (riskModel.getNeighbors().contains(touchedTerritory) && riskModel.getSelectedTerritory() != null) {
+                            riskModel.setSecondSelectedTerritory(touchedTerritory);
+                            //TODO show attack button
+                        }
+                        break;
+                }
             }
         }
     }

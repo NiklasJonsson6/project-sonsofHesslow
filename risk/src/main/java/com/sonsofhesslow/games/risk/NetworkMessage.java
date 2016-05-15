@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.io.StreamCorruptedException;
 
 public class NetworkMessage implements Serializable{
-
+    private static final long serialVersionUID = 1L;
     static NetworkMessage deSerialize(byte[] arr) throws StreamCorruptedException,IOException,ClassNotFoundException {
         ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(arr));
         NetworkMessage message = (NetworkMessage) ois.readObject();
@@ -55,5 +55,5 @@ public class NetworkMessage implements Serializable{
     public static NetworkMessage turnChangedMessageBuilder(Player currentPlayerDone){
         return new NetworkMessage(NetworkAction.turnChange,-1,currentPlayerDone.getParticipantId(),-1);
     }
-
 }
+

@@ -603,7 +603,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void startGame(boolean online, int[] ids) {
-        controller = new Controller(ids);
+        controller = new Controller(ids, mMyId!= null ? mMyId.hashCode() : 0);
         if(online)
             networkManager = new NetworkManager(controller.riskModel,this);
         /*setContentView(R.layout.activity_overlay);

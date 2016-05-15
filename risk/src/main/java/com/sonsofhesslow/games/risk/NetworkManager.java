@@ -49,7 +49,6 @@ public class NetworkManager {
         byte[] messageBuffer = rtm.getMessageData();
         String sender = rtm.getSenderParticipantId();
 
-
         try
         {
             NetworkMessage recievedNetworkData = NetworkMessage.deSerialize(messageBuffer);
@@ -73,7 +72,7 @@ public class NetworkManager {
                     Territory changedTerritory = Controller.getTerritoryById(recievedNetworkData.regionId);
                     Player newOccupier = null;
 
-                    for(Player p : mainActivity.controller.riskModel.getPlayers()) {
+                    for(Player p : Controller.riskModel.getPlayers()) {
                         if(p.getParticipantId() == recievedNetworkData.participantId){
                             System.out.println("found owner");
                             newOccupier = p;
