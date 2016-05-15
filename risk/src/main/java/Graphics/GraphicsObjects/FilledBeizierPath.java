@@ -56,7 +56,7 @@ public class FilledBeizierPath extends GLObject implements Updatable {
     }
 
 
-    final int naive_precision = 5; //higher is more detailed
+    final int naive_precision = 2; //higher is more detailed
 
     public BeizierPath path;
     public Vector2 getCenter()

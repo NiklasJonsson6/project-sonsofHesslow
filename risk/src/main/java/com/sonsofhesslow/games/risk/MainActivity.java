@@ -522,6 +522,7 @@ public class MainActivity extends AppCompatActivity
                 ids[c++] = p.getPlayer().getPlayerId().hashCode(); //@hash collisions
             }
 
+            mMultiplayer = true;
             startGame(true, ids);
             Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
             showGameError();
@@ -602,6 +603,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void startGame(boolean online, int[] ids) {
+        controller = new Controller(ids);
+        if(online)
+            networkManager = new NetworkManager(controller.riskModel,this);
         /*setContentView(R.layout.activity_overlay);
         View C = findViewById(R.id.Test);
         ViewGroup parent = (ViewGroup) C.getParent();
@@ -613,9 +617,6 @@ public class MainActivity extends AppCompatActivity
         //View overlay = factory.inflate(R.layout.activity_nextturn, null);
         overlayController.addView(R.layout.activity_playerturn);
         overlayController.addView(R.layout.activity_chooseterritory);
-        controller = new Controller(ids);
-        if(online)
-            networkManager = new NetworkManager(controller.riskModel,this);
 
         graphicsView.addListener(controller);
         setContentView(overlayController.getOverlay());
@@ -627,6 +628,7 @@ public class MainActivity extends AppCompatActivity
     // Called when received message from the network (updates from other players).
     @Override
     public void onRealTimeMessageReceived(RealTimeMessage rtm) {
+        System.out.println("mainactivity mesgrec");
         networkManager.onRealTimeMessageReceived(rtm, this);
 
         /*byte[] messageBuffer = rtm.getMessageData();
@@ -650,17 +652,27 @@ public class MainActivity extends AppCompatActivity
 
     // Broadcast to everybody else.
     void broadcast(byte[] messageBuffer, boolean mustBeReliable) {
-        if (!mMultiplayer)
+        System.out.println("broadcasting message");
+        mMultiplayer = true;
+        if (!mMultiplayer){
+            System.out.println("exit 0");
             return; // playing single-player mode (method should not be called anyway)
+        }
+
+
+        System.out.println("participant amount:_ " + mParticipants.size());
 
         // Send to every other participant.
         for (Participant p : mParticipants) {
+            System.out.println("in participant loop");
             //should not be sending message
             if (p.getParticipantId().equals(mMyId)) {
+                System.out.println("broadcast exit1");
                 continue;
             }
             //should not be sending message
             if (p.getStatus() != Participant.STATUS_JOINED) {
+                System.out.println("broadcast exit2");
                 continue;
             }
 
@@ -668,6 +680,7 @@ public class MainActivity extends AppCompatActivity
             if(mustBeReliable) {
                 Games.RealTimeMultiplayer.sendReliableMessage(mGoogleApiClient, null, messageBuffer,
                         mRoomId, p.getParticipantId());
+                System.out.println("broadcasting to a participant");
             } else {
                 Games.RealTimeMultiplayer.sendUnreliableMessage(mGoogleApiClient, messageBuffer,
                         mRoomId, p.getParticipantId());
