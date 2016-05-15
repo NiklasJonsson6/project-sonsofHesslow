@@ -165,7 +165,7 @@ public class GraphicsManager {
     public static int getNumberOfTerritories() {
         return beiziers.length;
     }
-    public static void requestRender(){MyGLSurfaceView.ref.requestRender();}
+    public static void  requestRender(){MyGLSurfaceView.ref.requestRender();}
 }
 
 

@@ -11,13 +11,12 @@ android {
         versionCode 1
         versionName "1.0"
     }
-
     signingConfigs {
         release {
             storeFile file("C:\\keystore\\sonsofhesslow.jks")
-            storePassword System.getenv("SOHKST")
-            keyAlias System.getenv("SOHKA")
-            keyPassword System.getenv("SOHKP")
+            storePassword "ctk191py"
+            keyAlias "sonsofhesslowkey"
+            keyPassword "smnfg78a"
         }
     }
 

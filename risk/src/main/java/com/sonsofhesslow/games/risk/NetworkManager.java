@@ -17,7 +17,14 @@ public class NetworkManager {
                 public void handle(Territory.TroupChangeEvent troupChangeEvent) {
                     if (!selfModified) {
                         NetworkMessage message = NetworkMessage.territoryChangedMessageBuilder(territory, troupChangeEvent.newValue);
-                        activity.broadcast(message.serialize(), true);
+                        try
+                        {
+                            activity.broadcast(message.serialize(), true);
+                        }
+                        catch (Exception ex)
+                        {
+                            ex.printStackTrace();
+                        }
                     }
                 }
             });
@@ -26,7 +33,11 @@ public class NetworkManager {
                 public void handle(Territory.OwnerChangeEvent ownerChangeEvent) {
                     if (!selfModified) {
                         NetworkMessage message = NetworkMessage.ownerChangedMessageBuilder(territory, ownerChangeEvent.newValue);
-                        activity.broadcast(message.serialize(), true);
+                        try {
+                            activity.broadcast(message.serialize(), true);
+                        } catch (Exception ex) {
+                            //
+                        }
                     }
                 }
             });
@@ -38,58 +49,73 @@ public class NetworkManager {
         byte[] messageBuffer = rtm.getMessageData();
         String sender = rtm.getSenderParticipantId();
 
-        NetworkMessage recievedNetworkData = NetworkMessage.deseirialize(messageBuffer);
 
-        selfModified = true;
+        try
+        {
+            NetworkMessage recievedNetworkData = NetworkMessage.deSerialize(messageBuffer);
 
-        switch (recievedNetworkData.getAction()) {
-            case regionTroupsChange: {
-                System.out.println("rtmr region changed");
-                System.out.println("regiontroupschange region id: " + recievedNetworkData.getRegionID() + " occupierid");
-                Territory changedTerritory = Controller.getTerritoryById(recievedNetworkData.getRegionID());
-                System.out.println("regiontroupschange region id: " + recievedNetworkData.getRegionID() + " occupierid");
+            selfModified = true;
 
-                changedTerritory.setArmyCount(recievedNetworkData.getValue());
-            }
-            break;
-            case ownerChange: {
-                System.out.println("rtmr in owner changed");
-                Territory changedTerritory = Controller.getTerritoryById(recievedNetworkData.getRegionID());
-                Player newOccupier = null;
-
-                for(Player p : mainActivity.controller.riskModel.getPlayers()) {
-                    if(p.getParticipantId() == recievedNetworkData.getOccupierId()){
-                        System.out.println("found owner");
-                        newOccupier = p;
-                        break;
+            switch (recievedNetworkData.action) {
+                case troupChange: {
+                    System.out.println("rtmr region changed");
+                    Territory changedTerritory = Controller.getTerritoryById(recievedNetworkData.regionId);
+                    if(changedTerritory!=null)
+                        changedTerritory.setArmyCount(recievedNetworkData.troups);
+                    else
+                    {
+                        System.out.println("illegal region index");
                     }
                 }
+                break;
+                case ownerChange: {
+                    System.out.println("rtmr in owner changed");
+                    Territory changedTerritory = Controller.getTerritoryById(recievedNetworkData.regionId);
+                    Player newOccupier = null;
 
-                changedTerritory.setOccupier(newOccupier);
-            }
-            break;
-            case turnChange: {
-                System.out.println("rtmr turnchange");
-                int playerIndex = 0;
-                int amountOfPlayers = Controller.riskModel.getPlayers().length;
-                for(int i = 0; i < amountOfPlayers; i++) {
-                    if(recievedNetworkData.getNewPlayerId() == Controller.riskModel.getPlayers()[i].getParticipantId()){
-                        playerIndex = i;
+                    for(Player p : mainActivity.controller.riskModel.getPlayers()) {
+                        if(p.getParticipantId() == recievedNetworkData.participantId){
+                            System.out.println("found owner");
+                            newOccupier = p;
+                            break;
+                        }
+                    }
+                    if(changedTerritory!=null)
+                    {
+                        changedTerritory.setOccupier(newOccupier);
+                    }
+                    else {
+                        System.out.println("illegal region index");
                     }
                 }
-                if(playerIndex == amountOfPlayers - 1){
-                    System.out.printf("new players turn (wrap turn)");
-                    Controller.riskModel.setCurrentPlayer(Controller.riskModel.getPlayers()[0]);
-                } else {
-                    System.out.println("new players turn");
-                    Controller.riskModel.setCurrentPlayer(Controller.riskModel.getPlayers()[playerIndex + 1]);
+                break;
+                case turnChange: {
+                    System.out.println("rtmr turnchange");
+                    int playerIndex = 0;
+                    int amountOfPlayers = Controller.riskModel.getPlayers().length;
+                    for(int i = 0; i < amountOfPlayers; i++) {
+                        if(recievedNetworkData.participantId == Controller.riskModel.getPlayers()[i].getParticipantId()){
+                            playerIndex = i;
+                        }
+                    }
+                    if(playerIndex == amountOfPlayers - 1){
+                        System.out.printf("new players turn (wrap turn)");
+                        Controller.riskModel.setCurrentPlayer(Controller.riskModel.getPlayers()[0]);
+                    } else {
+                        System.out.println("new players turn");
+                        Controller.riskModel.setCurrentPlayer(Controller.riskModel.getPlayers()[playerIndex + 1]);
+                    }
+                }
+                break;
+                default:{
+                    System.out.println("network failure");
+                    BaseGameUtils.makeSimpleDialog(mainActivity, "Unknown network failure.\n(Please send an email to onetapchap@gmail.com and tell us how this happend, thank you!)");
                 }
             }
-            break;
-            default:{
-                System.out.println("network failure");
-                BaseGameUtils.makeSimpleDialog(mainActivity, "Unknown network failure.\n(Please send an email to onetapchap@gmail.com and tell us how this happend, thank you!)");
-            }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
         }
 
         selfModified = false;
