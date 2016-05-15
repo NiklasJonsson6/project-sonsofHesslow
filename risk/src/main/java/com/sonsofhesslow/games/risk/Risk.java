@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Graphics.GraphicsManager;
-import Graphics.MyGLRenderer;
 
 public class Risk {
 
@@ -61,7 +60,15 @@ public class Risk {
     List<RiskEventListener> deffenceListeners = new ArrayList<>();
     List<RiskEventListener> selectedListeners = new ArrayList<>();
     List<RiskEventListener> secondSelectedListeners = new ArrayList<>();
+    List<PlayerChangeEventListener> playerChangeListeners = new ArrayList<>();
 
+    public void addPlayerChangeListener(PlayerChangeEventListener playerChangeListener){
+        playerChangeListeners.add(playerChangeListener);
+    }
+
+    public void removePlayerChangeListener(PlayerChangeEventListener playerChangeListener){
+        playerChangeListeners.remove(playerChangeListener);
+    }
 
     static class RiskChangeEvent {
         public RiskChangeEvent(Risk risk, Territory newTerritory, Territory oldTerritory) {
@@ -102,6 +109,11 @@ public class Risk {
     }
 
     public void setCurrentPlayer(Player player) {
+        System.out.println("current player: " + getCurrentPlayer() + " new player: " + player);
+        for(PlayerChangeEventListener playerChangeListener : playerChangeListeners){
+            System.out.println("calling changeevent");
+            playerChangeListener.changeEvent(new PlayerChangeEvent(getCurrentPlayer() ,player));
+        }
         currentPlayer = player;
         overlayChangeListener.playerChangeEvent(new OverlayChangeEvent(this));
     }

@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity
                     Log.d(TAG, "Starting game (waiting room returned OK).");
 
                     // TODO: 2016-05-13 implement start game
-                    startGame(true, new int[2]);
+                    //startGame(true, new int[2]);
                 } else if (responseCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                     // player indicated that they want to leave the room
                     leaveRoom();
@@ -515,15 +515,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRoomConnected(int statusCode, Room room) {
         Log.d(TAG, "onRoomConnected(" + statusCode + ", " + room + ")");
-        if (statusCode != GamesStatusCodes.STATUS_OK) {
             int c=0;
             int[] ids = new int[mParticipants.size()];
             for(Participant p : mParticipants){
-                ids[c++] = p.getPlayer().getPlayerId().hashCode(); //@hash collisions
+                System.out.println("id: " + p.getParticipantId() + " hc: " + p.getParticipantId().hashCode());
+
+                ids[c++] = p.getParticipantId().hashCode(); //@hash collisions
             }
 
             mMultiplayer = true;
             startGame(true, ids);
+        if (statusCode != GamesStatusCodes.STATUS_OK) {
+
             Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
             showGameError();
             return;
@@ -604,6 +607,9 @@ public class MainActivity extends AppCompatActivity
 
     public void startGame(boolean online, int[] ids) {
         controller = new Controller(ids, mMyId!= null ? mMyId.hashCode() : 0);
+        for(Player p : controller.riskModel.getPlayers()){
+            System.out.println("par id: " + p.getParticipantId());
+        }
         if(online)
             networkManager = new NetworkManager(controller.riskModel,this);
         /*setContentView(R.layout.activity_overlay);

@@ -154,7 +154,7 @@ public class Controller implements GL_TouchListener {
         }
     }
 
-    private void nextPlayer() {
+    public void nextPlayer() {
         currentPlayerTracker++;
         if(currentPlayerTracker == riskModel.getPlayers().length) currentPlayerTracker = 0;
         riskModel.setCurrentPlayer(riskModel.getPlayers()[currentPlayerTracker]);

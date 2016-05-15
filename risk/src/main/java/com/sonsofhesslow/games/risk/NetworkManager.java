@@ -1,12 +1,13 @@
 package com.sonsofhesslow.games.risk;
 
-import com.google.android.gms.drive.internal.ControlProgressRequest;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
+import java.io.IOException;
+
 import Graphics.GraphicsManager;
 
-public class NetworkManager {
+public class NetworkManager implements PlayerChangeEventListener {
     MainActivity activity;
     boolean selfModified;
     public NetworkManager(Risk risk, final MainActivity activity) {
@@ -42,6 +43,7 @@ public class NetworkManager {
                 }
             });
         }
+        activity.controller.riskModel.addPlayerChangeListener(this);
     }
 
 
@@ -90,7 +92,8 @@ public class NetworkManager {
                 break;
                 case turnChange: {
                     System.out.println("rtmr turnchange");
-                    int playerIndex = 0;
+                    activity.controller.nextPlayer();
+                    /*int playerIndex = 0;
                     int amountOfPlayers = Controller.riskModel.getPlayers().length;
                     for(int i = 0; i < amountOfPlayers; i++) {
                         if(recievedNetworkData.participantId == Controller.riskModel.getPlayers()[i].getParticipantId()){
@@ -103,7 +106,7 @@ public class NetworkManager {
                     } else {
                         System.out.println("new players turn");
                         Controller.riskModel.setCurrentPlayer(Controller.riskModel.getPlayers()[playerIndex + 1]);
-                    }
+                    }*/
                 }
                 break;
                 default:{
@@ -120,6 +123,19 @@ public class NetworkManager {
         selfModified = false;
 
         GraphicsManager.requestRender();
+    }
+
+    @Override
+    public void changeEvent(PlayerChangeEvent playerChangeEvent) {
+        if(!selfModified){
+            NetworkMessage message = NetworkMessage.turnChangedMessageBuilder(playerChangeEvent.newPlayer);
+
+            try {
+                activity.broadcast(message.serialize(), true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 
