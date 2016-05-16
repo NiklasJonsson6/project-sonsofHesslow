@@ -29,17 +29,18 @@ import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener;
 import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 import com.google.example.games.basegameutils.BaseGameUtils;
+import com.sonsofhesslow.games.risk.network.NetworkManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import Graphics.GL_TouchEvent;
-import Graphics.GL_TouchListener;
-import Graphics.Geometry.Vector2;
-import Graphics.Geometry.Vector3;
-import Graphics.GraphicsObjects.Camera;
-import Graphics.MyGLRenderer;
-import Graphics.MyGLSurfaceView;
+import com.sonsofhesslow.games.risk.graphics.GL_TouchEvent;
+import com.sonsofhesslow.games.risk.graphics.GL_TouchListener;
+import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.Geometry.Vector3;
+import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.Camera;
+import com.sonsofhesslow.games.risk.graphics.MyGLRenderer;
+import com.sonsofhesslow.games.risk.graphics.MyGLSurfaceView;
 
 public class MainActivity extends AppCompatActivity
         implements GL_TouchListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity
     public static Context context;
     static OverlayController overlayController;
     MyGLSurfaceView graphicsView;
-    Controller controller;
+    public Controller controller;
 
 
     final static String TAG = "Risk";
@@ -657,7 +658,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     // Broadcast to everybody else.
-    void broadcast(byte[] messageBuffer, boolean mustBeReliable) {
+    public void broadcast(byte[] messageBuffer, boolean mustBeReliable) {
         System.out.println("broadcasting message");
         mMultiplayer = true;
         if (!mMultiplayer){

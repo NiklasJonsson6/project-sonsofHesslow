@@ -1,4 +1,4 @@
-package com.sonsofhesslow.games.risk.Graphics.Geometry;
+package com.sonsofhesslow.games.risk.graphics.Geometry;
 
 /**
  * Created by daniel on 3/31/16.

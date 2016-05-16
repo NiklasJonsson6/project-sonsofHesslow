@@ -1,8 +1,8 @@
-package com.sonsofhesslow.games.risk.Graphics.GraphicsObjects;
+package com.sonsofhesslow.games.risk.graphics.GraphicsObjects;
 
 import android.opengl.GLES20;
 
-import com.sonsofhesslow.games.risk.Graphics.utils.ShaderUtils;
+import com.sonsofhesslow.games.risk.graphics.utils.ShaderUtils;
 
 /**
  * Created by Daniel on 06/05/2016.

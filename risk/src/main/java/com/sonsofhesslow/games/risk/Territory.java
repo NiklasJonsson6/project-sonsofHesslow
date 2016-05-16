@@ -79,7 +79,8 @@ public class Territory {
     }
 
     //listeners  boilerplate
-    class TroupChangeEvent{Territory territory;int oldValue;int newValue;
+    public class TroupChangeEvent{Territory territory;int oldValue;
+        public int newValue;
 
         public TroupChangeEvent(Territory territory, int oldValue, int newValue) {
             this.territory = territory;
@@ -87,13 +88,13 @@ public class Territory {
             this.newValue = newValue;
         }
     }
-    interface TroupChangeListener{void handle(TroupChangeEvent troupChangeEvent);}
+    public interface TroupChangeListener{void handle(TroupChangeEvent troupChangeEvent);}
     List<TroupChangeListener> troupListeners = new ArrayList<>();
-    void addTroupListeners(TroupChangeListener listener){troupListeners.add(listener);}
-    class OwnerChangeEvent{
+    public void addTroupListeners(TroupChangeListener listener){troupListeners.add(listener);}
+    public class OwnerChangeEvent{
         Territory territory;
         Player oldValue;
-        Player newValue;
+        public Player newValue;
 
         public OwnerChangeEvent(Territory territory, Player oldValue, Player newValue) {
             this.territory = territory;
@@ -101,7 +102,7 @@ public class Territory {
             this.newValue = newValue;
         }
     }
-    interface OwnerChangeListener{void handle(OwnerChangeEvent ownerChangeEvent);}
+    public interface OwnerChangeListener{void handle(OwnerChangeEvent ownerChangeEvent);}
     List<OwnerChangeListener> ownerListeners = new ArrayList<>();
-    void addOwnerListeners(OwnerChangeListener listener){ownerListeners.add(listener);}
+    public void addOwnerListeners(OwnerChangeListener listener){ownerListeners.add(listener);}
 }

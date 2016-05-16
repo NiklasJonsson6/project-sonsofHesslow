@@ -3,7 +3,7 @@ package com.sonsofhesslow.games.risk;
 import java.util.ArrayList;
 import java.util.List;
 
-import Graphics.GraphicsManager;
+import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 
 public class Risk {
 
@@ -174,7 +174,7 @@ public class Risk {
         overlayChangeListener.placeEvent(new OverlayChangeEvent(this));
     }
 
-    //TODO Risk should not call a mathod in Graphics Manager
+    //TODO Risk should not call a mathod in com.sonsofhesslow.games.risk.Graphics Manager
     public void refreshBoard(){
         GraphicsManager.requestRender();
     }

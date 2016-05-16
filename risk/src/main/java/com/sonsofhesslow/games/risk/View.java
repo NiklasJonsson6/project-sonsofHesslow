@@ -5,7 +5,7 @@ import android.graphics.Color;
 import java.util.HashMap;
 import java.util.Map;
 
-import Graphics.GraphicsManager;
+import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 
 /**
  * Created by Daniel on 27/04/2016.

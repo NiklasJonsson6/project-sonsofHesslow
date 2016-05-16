@@ -1,4 +1,4 @@
-package com.sonsofhesslow.games.risk.Graphics;
+package com.sonsofhesslow.games.risk.graphics;
 
 import android.content.res.Resources;
 import android.os.Handler;
@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.sonsofhesslow.games.risk.Graphics.Geometry.Vector3;
-import com.sonsofhesslow.games.risk.Graphics.GraphicsObjects.*;
-import com.sonsofhesslow.games.risk.Graphics.GraphicsObjects.Number;
+import com.sonsofhesslow.games.risk.graphics.Geometry.Vector3;
+import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.*;
+import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.Number;
 
 /**
  * Created by Daniel on 11/04/2016.

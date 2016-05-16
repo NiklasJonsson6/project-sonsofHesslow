@@ -1,4 +1,4 @@
-package com.sonsofhesslow.games.risk.Graphics.utils;
+package com.sonsofhesslow.games.risk.graphics.utils;
 
 import android.opengl.GLES20;
 

@@ -1,4 +1,4 @@
-package com.sonsofhesslow.games.risk.Graphics;
+package com.sonsofhesslow.games.risk.graphics;
 
 import android.util.Pair;
 import java.io.IOException;
@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.sonsofhesslow.games.risk.Graphics.Geometry.Beizier;
-import com.sonsofhesslow.games.risk.Graphics.Geometry.BeizierPath;
-import com.sonsofhesslow.games.risk.Graphics.Geometry.Vector2;
-import com.sonsofhesslow.games.risk.Graphics.GraphicsObjects.DashedBeizierLine;
-import com.sonsofhesslow.games.risk.Graphics.GraphicsObjects.FilledBeizierPath;
-import com.sonsofhesslow.games.risk.Graphics.GraphicsObjects.Renderer;
+import com.sonsofhesslow.games.risk.graphics.Geometry.Beizier;
+import com.sonsofhesslow.games.risk.graphics.Geometry.BeizierPath;
+import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.DashedBeizierLine;
+import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.FilledBeizierPath;
+import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.Renderer;
 
 /**
  * Created by daniel on 4/1/16.

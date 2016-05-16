@@ -1,8 +1,8 @@
-package com.sonsofhesslow.games.risk.Graphics.Geometry;
+package com.sonsofhesslow.games.risk.graphics.Geometry;
 
 import android.util.Pair;
 
-import com.sonsofhesslow.games.risk.Graphics.utils.ArrayUtils;
+import com.sonsofhesslow.games.risk.graphics.utils.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;

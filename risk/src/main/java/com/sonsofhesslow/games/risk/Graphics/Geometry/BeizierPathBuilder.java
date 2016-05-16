@@ -1,4 +1,4 @@
-package com.sonsofhesslow.games.risk.Graphics.Geometry;
+package com.sonsofhesslow.games.risk.graphics.Geometry;
 
 import java.util.ArrayList;
 import java.util.Arrays;

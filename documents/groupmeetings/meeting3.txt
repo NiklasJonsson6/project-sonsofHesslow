@@ -9,10 +9,10 @@ Date: 2016-4-14, 10:45
 	Problem with task delegation has been causing issues.
 
 2. Reports (15 min) from previous meeting
-	Graphics is now working for everyone.
+	com.sonsofhesslow.games.risk.Graphics is now working for everyone.
 	The vektormap is almost finished and a work on a map overlay has started.
 	The basic class structure and functinality is now working.
-	Graphics now calculate country neighbours.
+	com.sonsofhesslow.games.risk.Graphics now calculate country neighbours.
 	All members started with new tasks
 		Daniel: is making the graphics structure better and more logical.
 		Niklas:	is making and testing the basic game logic
@@ -22,7 +22,7 @@ Date: 2016-4-14, 10:45
 3. Discussion items (35 min) 
 	We have disscused if it's allowed to have a uploaded branch so we can work on diffrent computers
 	Overlay
-	Graphics implementation
+	com.sonsofhesslow.games.risk.Graphics implementation
 	Game logics
 
 4. Outcomes and assignments (5 min)	

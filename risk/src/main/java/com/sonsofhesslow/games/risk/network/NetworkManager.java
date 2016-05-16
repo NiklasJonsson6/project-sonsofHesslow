@@ -12,7 +12,7 @@ import com.sonsofhesslow.games.risk.Territory;
 
 import java.io.IOException;
 
-import Graphics.GraphicsManager;
+import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 
 public class NetworkManager implements PlayerChangeEventListener {
     MainActivity activity;

@@ -1,7 +1,7 @@
-package com.sonsofhesslow.games.risk.Graphics.GraphicsObjects;
+package com.sonsofhesslow.games.risk.graphics.GraphicsObjects;
 
-import com.sonsofhesslow.games.risk.Graphics.Geometry.Vector2;
-import com.sonsofhesslow.games.risk.Graphics.Geometry.Vector3;
+import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.Geometry.Vector3;
 
 
 public abstract class GLObject {

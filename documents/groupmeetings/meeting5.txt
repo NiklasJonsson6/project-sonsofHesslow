@@ -30,7 +30,7 @@ Note: The meeting was delayed to the afternoon.
 
 	Niklas: Game logic progress.
 
-	Daniel: Graphics progress.
+	Daniel: com.sonsofhesslow.games.risk.Graphics progress.
 
 
 

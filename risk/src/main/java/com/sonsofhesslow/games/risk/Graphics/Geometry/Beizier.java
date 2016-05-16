@@ -1,10 +1,10 @@
-package com.sonsofhesslow.games.risk.Graphics.Geometry;
+package com.sonsofhesslow.games.risk.graphics.Geometry;
 
 import android.util.Pair;
 
 import java.util.List;
 
-import com.sonsofhesslow.games.risk.Graphics.utils.MathsUtil;
+import com.sonsofhesslow.games.risk.graphics.utils.MathsUtil;
 
 /**
  * Created by Daniel on 06/04/2016.

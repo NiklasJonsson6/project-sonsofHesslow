@@ -1,4 +1,4 @@
-package com.sonsofhesslow.games.risk.Graphics;
+package com.sonsofhesslow.games.risk.graphics;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,10 +6,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PushbackReader;
 
-import com.sonsofhesslow.games.risk.Graphics.Geometry.Beizier;
-import com.sonsofhesslow.games.risk.Graphics.Geometry.BeizierPath;
-import com.sonsofhesslow.games.risk.Graphics.Geometry.BeizierPathBuilder;
-import com.sonsofhesslow.games.risk.Graphics.Geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.Geometry.Beizier;
+import com.sonsofhesslow.games.risk.graphics.Geometry.BeizierPath;
+import com.sonsofhesslow.games.risk.graphics.Geometry.BeizierPathBuilder;
+import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
 
 /**
  * Created by Daniel on 20/04/2016.

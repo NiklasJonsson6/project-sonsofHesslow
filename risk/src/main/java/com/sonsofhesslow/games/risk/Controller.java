@@ -2,9 +2,9 @@ package com.sonsofhesslow.games.risk;
 
 import android.support.annotation.Nullable;
 
-import Graphics.GL_TouchEvent;
-import Graphics.GL_TouchListener;
-import Graphics.GraphicsManager;
+import com.sonsofhesslow.games.risk.graphics.GL_TouchEvent;
+import com.sonsofhesslow.games.risk.graphics.GL_TouchListener;
+import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 
 public class Controller implements GL_TouchListener {
     public static Risk riskModel;

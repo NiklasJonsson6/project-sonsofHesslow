@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sonsofhesslow.games.risk.Graphics;
+package com.sonsofhesslow.games.risk.graphics;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -28,8 +28,8 @@ import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 
-import com.sonsofhesslow.games.risk.Graphics.GraphicsObjects.FilledBeizierPath;
-import com.sonsofhesslow.games.risk.Graphics.Geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.FilledBeizierPath;
+import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
 
 /**
  * A view container where OpenGL ES graphics can be drawn on screen.

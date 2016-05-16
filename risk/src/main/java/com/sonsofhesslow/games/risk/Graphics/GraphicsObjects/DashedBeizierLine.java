@@ -1,7 +1,7 @@
-package com.sonsofhesslow.games.risk.Graphics.GraphicsObjects;
+package com.sonsofhesslow.games.risk.graphics.GraphicsObjects;
 import android.opengl.Matrix;
-import com.sonsofhesslow.games.risk.Graphics.Geometry.BeizierPath;
-import com.sonsofhesslow.games.risk.Graphics.Geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.Geometry.BeizierPath;
+import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
 
 public class DashedBeizierLine extends GLObject{
     public Mesh mesh;

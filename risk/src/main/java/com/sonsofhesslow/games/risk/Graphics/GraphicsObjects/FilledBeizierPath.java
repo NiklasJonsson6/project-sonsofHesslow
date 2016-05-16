@@ -1,4 +1,4 @@
-package com.sonsofhesslow.games.risk.Graphics.GraphicsObjects;
+package com.sonsofhesslow.games.risk.graphics.GraphicsObjects;
 
 import android.opengl.Matrix;
 
@@ -8,10 +8,10 @@ import java.nio.FloatBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.sonsofhesslow.games.risk.Graphics.Geometry.BeizierPath;
-import com.sonsofhesslow.games.risk.Graphics.utils.MathsUtil;
-import com.sonsofhesslow.games.risk.Graphics.Geometry.Vector2;
-import com.sonsofhesslow.games.risk.Graphics.Geometry.Vector3;
+import com.sonsofhesslow.games.risk.graphics.Geometry.BeizierPath;
+import com.sonsofhesslow.games.risk.graphics.utils.MathsUtil;
+import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.Geometry.Vector3;
 
 /**
  * Created by daniel on 3/31/16.

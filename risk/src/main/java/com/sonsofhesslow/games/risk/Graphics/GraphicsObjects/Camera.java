@@ -1,6 +1,6 @@
-package com.sonsofhesslow.games.risk.Graphics.GraphicsObjects;
+package com.sonsofhesslow.games.risk.graphics.GraphicsObjects;
 
-import com.sonsofhesslow.games.risk.Graphics.Geometry.Vector3;
+import com.sonsofhesslow.games.risk.graphics.Geometry.Vector3;
 
 /**
  * Created by daniel on 3/31/16.
