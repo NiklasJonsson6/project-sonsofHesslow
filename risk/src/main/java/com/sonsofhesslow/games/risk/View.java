@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 
@@ -35,7 +36,8 @@ public class View {
                 public void handle(Territory.OwnerChangeEvent ownerChangeEvent) {
                     if(!playerColors.containsKey(ownerChangeEvent.newValue))
                     {
-                        float[] rndColor = {(float)Math.random(),(float)Math.random(),(float)Math.random(),1};
+                        Random random = new Random(Controller.riskModel.getPlayers()[playerColors.size()].getParticipantId());
+                        float[] rndColor = {random.nextFloat(),random.nextFloat(),random.nextFloat(),1};
                         playerColors.put(ownerChangeEvent.newValue,rndColor);
                     }
                     if(risk.getAttackingTerritory()!=null)
