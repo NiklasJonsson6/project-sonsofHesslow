@@ -12,7 +12,9 @@ public class Controller implements GL_TouchListener {
     private int currentPlayerTracker = 0; //used to set next player
     private int territoriesPicked = 0;
     private int self_id;
-    public Controller(int[] playerIds,int self_id) {
+    private boolean territoryTaken = false;
+
+    public Controller(int[] playerIds, int self_id) {
         this.self_id = self_id;
         int territoryCount = GraphicsManager.getNumberOfTerritories();
         riskModel = new Risk(playerIds, territoryCount); //somehow set number of players (2)
@@ -21,13 +23,13 @@ public class Controller implements GL_TouchListener {
         riskModel.setCurrentPlayer(riskModel.getPlayers()[0]);
 
         //set neighbours and continent
-        for(int i = 0; i < territoryCount; i++) {
+        for (int i = 0; i < territoryCount; i++) {
             Integer[] ids = GraphicsManager.getNeighbours(i);
             int number = ids.length; //number of neighbours
             Territory[] neighbours = new Territory[number];
 
             //set neighbours
-            for(int k = 0; k < number; k++) {
+            for (int k = 0; k < number; k++) {
                 neighbours[k] = getTerritoryById(ids[k]);
             }
             riskModel.getTerritories()[i].setNeighbours(neighbours);
@@ -41,29 +43,28 @@ public class Controller implements GL_TouchListener {
     }
 
     public void Handle(GL_TouchEvent event) {
-        if(event.touchedRegion) {
+        if (event.touchedRegion) {
             Territory touchedTerritory = getTerritoryById(event.regionId);
-            if(self_id == riskModel.getPlayers()[currentPlayerTracker].getParticipantId())
-            {
-                switch(riskModel.getGamePhase()) {
+            if (self_id == riskModel.getPlayers()[currentPlayerTracker].getParticipantId()) {
+                switch (riskModel.getGamePhase()) {
                     case PICK_TERRITORIES:
-                        if(touchedTerritory.getOccupier() == null) {
+                        if (touchedTerritory.getOccupier() == null) {
                             touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
                             touchedTerritory.setArmyCount(1);
                             territoriesPicked++;
                             riskModel.getCurrentPlayer().decArmiesToPlace();
-                            if(territoriesPicked == 42) {
+                            if (territoriesPicked == 42) {
                                 riskModel.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
                             }
                             nextPlayer();
                         }
                         break;
                     case PLACE_STARTING_ARMIES:
-                        if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
+                        if (touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
                             touchedTerritory.changeArmyCount(1);
                             System.out.println(riskModel.getCurrentPlayer().getArmiesToPlace());
                             riskModel.getCurrentPlayer().decArmiesToPlace();
-                            if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
+                            if (riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
                                 riskModel.setGamePhase(Risk.GamePhase.FIGHT);
                             }
                             nextPlayer();
@@ -72,7 +73,7 @@ public class Controller implements GL_TouchListener {
 
                     case PLACE_ARMIES:
                         System.out.println("Place Phase");
-                        if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
+                        if (touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
                             riskModel.setSelectedTerritory(touchedTerritory);
                         }
                         /*if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
@@ -86,36 +87,41 @@ public class Controller implements GL_TouchListener {
                         break;
 
                     case FIGHT:
-                        if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer() && touchedTerritory.getArmyCount() > 1) {
+                        if (touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()
+                                && touchedTerritory.getArmyCount() > 1) {
                             //clear old possible defenders
                             riskModel.getDefenders().clear();
                             //checks if any neighboring territory can be attacked
-                            for(Territory neighbour: touchedTerritory.getNeighbours()) {
-                                if(neighbour.getOccupier() != riskModel.getCurrentPlayer()) {
-                                    riskModel.getDefenders().add(neighbour); //for view to show, maybe outline yellow or something?
+                            for (Territory neighbour : touchedTerritory.getNeighbours()) {
+                                if (neighbour.getOccupier() != riskModel.getCurrentPlayer()) {
+                                    riskModel.getDefenders().add(neighbour);
                                     riskModel.setAttackingTerritory(touchedTerritory);
                                     riskModel.setDefendingTerritory(null);
                                 }
                             }
-                        } else if (riskModel.getDefenders().contains(touchedTerritory) && riskModel.getAttackingTerritory() != null) {
+                        } else if (riskModel.getDefenders().contains(touchedTerritory)
+                                && riskModel.getAttackingTerritory() != null) {
                             riskModel.setDefendingTerritory(touchedTerritory);
                             //TODO show attack button
                         }
                         break;
 
                     case MOVEMENT:
-                        if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer() && touchedTerritory.getArmyCount() > 1 && riskModel.getSelectedTerritory() == null) {
+                        if (touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()
+                                && touchedTerritory.getArmyCount() > 1
+                                && riskModel.getSelectedTerritory() == null) {
                             //clear old possible defenders
                             riskModel.getNeighbors().clear();
                             //checks if any neighboring territory can be attacked
                             riskModel.setSelectedTerritory(touchedTerritory);
-                            for(Territory neighbour: touchedTerritory.getNeighbours()) {
-                                if(neighbour.getOccupier() == riskModel.getCurrentPlayer()) {
-                                    riskModel.getNeighbors().add(neighbour); //for view to show, maybe outline yellow or something?
+                            for (Territory neighbour : touchedTerritory.getNeighbours()) {
+                                if (neighbour.getOccupier() == riskModel.getCurrentPlayer()) {
+                                    riskModel.getNeighbors().add(neighbour);
                                     riskModel.setSecondSelectedTerritory(null);
                                 }
                             }
-                        } else if (riskModel.getNeighbors().contains(touchedTerritory) && riskModel.getSelectedTerritory() != null) {
+                        } else if (riskModel.getNeighbors().contains(touchedTerritory)
+                                && riskModel.getSelectedTerritory() != null) {
                             riskModel.setSecondSelectedTerritory(touchedTerritory);
                             //TODO show attack button
                         }
@@ -127,12 +133,13 @@ public class Controller implements GL_TouchListener {
 
     public void fightButtonPressed() {
         Die.fight(riskModel.getAttackingTerritory(), riskModel.getDefendingTerritory());
-        if(riskModel.getDefendingTerritory().getOccupier() == riskModel.getCurrentPlayer()) {
+        if (riskModel.getDefendingTerritory().getOccupier() == riskModel.getCurrentPlayer()) {
+            territoryTaken = true;
             riskModel.getAttackingTerritory().changeArmyCount(-1);
             riskModel.getDefendingTerritory().changeArmyCount(+1);
             riskModel.setAttackingTerritory(null);
             riskModel.setDefendingTerritory(null);
-        } else if(riskModel.getAttackingTerritory().getArmyCount() < 2){
+        } else if (riskModel.getAttackingTerritory().getArmyCount() < 2) {
             riskModel.setAttackingTerritory(null);
             riskModel.setDefendingTerritory(null);
         }
@@ -140,13 +147,13 @@ public class Controller implements GL_TouchListener {
     }
 
     public void nextTurn() {
-        if(riskModel.getGamePhase() == Risk.GamePhase.MOVEMENT) {
+        if (riskModel.getGamePhase() == Risk.GamePhase.MOVEMENT) {
             riskModel.setSelectedTerritory(null);
             riskModel.setSecondSelectedTerritory(null);
             nextPlayer();
             riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
         }
-        if(riskModel.getGamePhase() == Risk.GamePhase.FIGHT) {
+        if (riskModel.getGamePhase() == Risk.GamePhase.FIGHT) {
             riskModel.setGamePhase(Risk.GamePhase.MOVEMENT);
             riskModel.setAttackingTerritory(null);
             riskModel.setDefendingTerritory(null);
@@ -155,20 +162,29 @@ public class Controller implements GL_TouchListener {
     }
 
     public void nextPlayer() {
+        //progress currentplayertracker
         currentPlayerTracker++;
-        if(currentPlayerTracker == riskModel.getPlayers().length) currentPlayerTracker = 0;
+        if (currentPlayerTracker == riskModel.getPlayers().length) currentPlayerTracker = 0;
+
+        //give card
+        if(territoryTaken) {
+            riskModel.getCurrentPlayer().giveOneCard();
+            territoryTaken = false;
+        }
+
+        //next player, change gamephase
         riskModel.setCurrentPlayer(riskModel.getPlayers()[currentPlayerTracker]);
-        if(riskModel.getGamePhase() == Risk.GamePhase.PICK_TERRITORIES) {
+        if (riskModel.getGamePhase() == Risk.GamePhase.PICK_TERRITORIES) {
             riskModel.getCurrentPlayer().giveArmies(1);
-        } else if(riskModel.getGamePhase() != Risk.GamePhase.PLACE_STARTING_ARMIES){
+        } else if (riskModel.getGamePhase() != Risk.GamePhase.PLACE_STARTING_ARMIES) {
             setArmiesToPlace();
         }
     }
 
     @Nullable
     public static Territory getTerritoryById(int id) {
-        for(Territory territory: riskModel.getTerritories()) {
-            if(territory.getId() == id) {
+        for (Territory territory : riskModel.getTerritories()) {
+            if (territory.getId() == id) {
                 return territory;
             }
         }
@@ -177,8 +193,8 @@ public class Controller implements GL_TouchListener {
 
     private void setStartingArmies() {
         //rules from hasbro
-        for (Player player: riskModel.getPlayers()) {
-            player.giveArmies(40/riskModel.getPlayers().length);
+        for (Player player : riskModel.getPlayers()) {
+            player.giveArmies(40 / riskModel.getPlayers().length);
         }
     }
 
@@ -192,65 +208,76 @@ public class Controller implements GL_TouchListener {
         int territoriesFoundOceania = 0;
         int territoriesFoundSouthAmerica = 0;
 
-        for(Territory territory: riskModel.getTerritories()) {
+        for (Territory territory : riskModel.getTerritories()) {
             switch (territory.getContinent()) {
                 case ASIA:
-                    if(territory.getOccupier() == riskModel.getCurrentPlayer()) territoriesFoundAsia++;
+                    if (territory.getOccupier() == riskModel.getCurrentPlayer())
+                        territoriesFoundAsia++;
                     break;
                 case NORTH_AMERICA:
-                    if(territory.getOccupier() == riskModel.getCurrentPlayer()) territoriesFoundNorthAmerica++;
+                    if (territory.getOccupier() == riskModel.getCurrentPlayer())
+                        territoriesFoundNorthAmerica++;
                     break;
                 case EUROPE:
-                    if(territory.getOccupier() == riskModel.getCurrentPlayer()) territoriesFoundEurope++;
+                    if (territory.getOccupier() == riskModel.getCurrentPlayer())
+                        territoriesFoundEurope++;
                     break;
                 case AFRICA:
-                    if(territory.getOccupier() == riskModel.getCurrentPlayer()) territoriesFoundAfrica++;
+                    if (territory.getOccupier() == riskModel.getCurrentPlayer())
+                        territoriesFoundAfrica++;
                     break;
                 case OCEANIA:
-                    if(territory.getOccupier() == riskModel.getCurrentPlayer()) territoriesFoundOceania++;
+                    if (territory.getOccupier() == riskModel.getCurrentPlayer())
+                        territoriesFoundOceania++;
                     break;
                 case SOUTH_AMERICA:
-                    if(territory.getOccupier() == riskModel.getCurrentPlayer()) territoriesFoundSouthAmerica++;
+                    if (territory.getOccupier() == riskModel.getCurrentPlayer())
+                        territoriesFoundSouthAmerica++;
                     break;
             }
         }
 
         //if owning a whole continent, add corresponding  armies amounts:
-        if(territoriesFoundAsia == 12) {
+        if (territoriesFoundAsia == 12) {
             armies += 7;
         }
-        if(territoriesFoundNorthAmerica == 9) {
+        if (territoriesFoundNorthAmerica == 9) {
             armies += 5;
         }
-        if(territoriesFoundEurope == 7) {
+        if (territoriesFoundEurope == 7) {
             armies += 5;
         }
-        if(territoriesFoundAfrica == 6) {
+        if (territoriesFoundAfrica == 6) {
             armies += 3;
         }
-        if(territoriesFoundOceania == 4) {
+        if (territoriesFoundOceania == 4) {
             armies += 2;
         }
-        if(territoriesFoundSouthAmerica == 4) {
+        if (territoriesFoundSouthAmerica == 4) {
             armies += 2;
         }
 
         riskModel.getCurrentPlayer().giveArmies(armies);
         System.out.println(armies);
     }
-    public void placeButtonPressed(int seekBarValue){
-        if(riskModel.getGamePhase() == Risk.GamePhase.PLACE_ARMIES && riskModel.getSelectedTerritory() != null) {
+
+    public void placeButtonPressed(int seekBarValue) {
+        if (riskModel.getGamePhase() == Risk.GamePhase.PLACE_ARMIES
+                && riskModel.getSelectedTerritory() != null) {
             //riskModel.placeEvent();
             Territory territory = riskModel.getSelectedTerritory();
             territory.changeArmyCount(seekBarValue);
             riskModel.getCurrentPlayer().decArmiesToPlace(seekBarValue);
-            if (riskModel.getCurrentPlayer().getArmiesToPlace() == 0 && riskModel.getGamePhase() == Risk.GamePhase.PLACE_ARMIES) {
+            if (riskModel.getCurrentPlayer().getArmiesToPlace() == 0
+                    && riskModel.getGamePhase() == Risk.GamePhase.PLACE_ARMIES) {
                 System.out.println("In fight");
                 riskModel.setGamePhase(Risk.GamePhase.FIGHT);
                 riskModel.setSelectedTerritory(null);
             }
             riskModel.placeEvent();
-        } else if (riskModel.getGamePhase() == Risk.GamePhase.MOVEMENT && riskModel.getSelectedTerritory() != null && riskModel.getSecondSelectedTerritory() != null) {
+        } else if (riskModel.getGamePhase() == Risk.GamePhase.MOVEMENT
+                && riskModel.getSelectedTerritory() != null
+                && riskModel.getSecondSelectedTerritory() != null) {
             Territory from = riskModel.getSelectedTerritory();
             Territory to = riskModel.getSecondSelectedTerritory();
             to.changeArmyCount(seekBarValue);
@@ -258,7 +285,8 @@ public class Controller implements GL_TouchListener {
             riskModel.placeEvent();
         }
     }
-    public void doneButtonPressed(){
+
+    public void doneButtonPressed() {
         riskModel.setSelectedTerritory(null);
         riskModel.setSecondSelectedTerritory(null);
     }
