@@ -6,6 +6,8 @@ import com.sonsofhesslow.games.risk.graphics.GL_TouchEvent;
 import com.sonsofhesslow.games.risk.graphics.GL_TouchListener;
 import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 
+import java.util.Random;
+
 public class Controller implements GL_TouchListener {
     public static Risk riskModel;
 
@@ -48,18 +50,46 @@ public class Controller implements GL_TouchListener {
             if (self_id == riskModel.getPlayers()[currentPlayerTracker].getParticipantId()) {
                 switch (riskModel.getGamePhase()) {
                     case PICK_TERRITORIES:
+                        System.out.println("pick territories phase");
                         if (touchedTerritory.getOccupier() == null) {
                             touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
+
+                            //for debugging only
+                            Random r = new Random();
+                            final int EXTRA_TRIES = 20;
+                            for(int i = 0; i < EXTRA_TRIES; i++) {
+                                int randomNumber = r.nextInt(42);
+                                Territory randomTerritory = getTerritoryById(randomNumber);
+                                if(randomTerritory.getOccupier() == null) {
+                                    randomTerritory.setArmyCount(1);
+                                    randomTerritory.setOccupier(riskModel.getCurrentPlayer());
+                                } else{
+                                    i--;
+                                }
+                            }
+
+
+
                             touchedTerritory.setArmyCount(1);
                             territoriesPicked++;
                             riskModel.getCurrentPlayer().decArmiesToPlace();
-                            if (territoriesPicked == 42) {
+                            // TODO: 2016-05-16 better solution?
+                            boolean canContinueToPlacePhase = true;
+                            for(Territory territory : riskModel.getTerritories()){
+                                if(territory.getOccupier() == null){
+                                    canContinueToPlacePhase = false;        //one territory with no occupier found
+                                    break;
+                                }
+                            }
+
+                            if (canContinueToPlacePhase) {
                                 riskModel.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
                             }
                             nextPlayer();
                         }
                         break;
                     case PLACE_STARTING_ARMIES:
+                        System.out.println("place starting armies phase");
                         if (touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
                             touchedTerritory.changeArmyCount(1);
                             System.out.println(riskModel.getCurrentPlayer().getArmiesToPlace());
@@ -87,6 +117,7 @@ public class Controller implements GL_TouchListener {
                         break;
 
                     case FIGHT:
+                        System.out.println("fight phase");
                         if (touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()
                                 && touchedTerritory.getArmyCount() > 1) {
                             //clear old possible defenders
@@ -107,6 +138,7 @@ public class Controller implements GL_TouchListener {
                         break;
 
                     case MOVEMENT:
+                        System.out.println("movement phase");
                         if (touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()
                                 && touchedTerritory.getArmyCount() > 1
                                 && riskModel.getSelectedTerritory() == null) {
@@ -289,5 +321,19 @@ public class Controller implements GL_TouchListener {
     public void doneButtonPressed() {
         riskModel.setSelectedTerritory(null);
         riskModel.setSecondSelectedTerritory(null);
+    }
+
+    public void refreshGameState() {
+        boolean canContinueToPlacePhase = true;
+        for(Territory territory : riskModel.getTerritories()){
+            if(territory.getOccupier() == null){
+                canContinueToPlacePhase = false;        //one territory with no occupier found
+                break;
+            }
+        }
+
+        if (canContinueToPlacePhase) {
+            riskModel.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
+        }
     }
 }

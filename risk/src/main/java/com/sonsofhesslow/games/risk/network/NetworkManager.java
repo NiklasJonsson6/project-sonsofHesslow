@@ -64,6 +64,8 @@ public class NetworkManager implements PlayerChangeEventListener {
 
             selfModified = true;
 
+            activity.controller.refreshGameState();
+
             switch (recievedNetworkData.action) {
                 case troupChange: {
                     System.out.println("rtmr region changed");
