@@ -36,7 +36,7 @@ public class View {
                 public void handle(Territory.OwnerChangeEvent ownerChangeEvent) {
                     if(!playerColors.containsKey(ownerChangeEvent.newValue))
                     {
-                        Random random = new Random(Controller.riskModel.getPlayers()[playerColors.size()].getParticipantId());
+                        Random random = new Random(Controller.riskModel.getPlayers()[playerColors.size()].getParticipantId() + playerColors.size());
                         float[] rndColor = {random.nextFloat(),random.nextFloat(),random.nextFloat(),1};
                         playerColors.put(ownerChangeEvent.newValue,rndColor);
                     }
