@@ -173,6 +173,8 @@ public class Risk {
     public void placeEvent() {
         overlayChangeListener.placeEvent(new OverlayChangeEvent(this));
     }
+
+    //TODO Risk should not call a mathod in Graphics Manager
     public void refreshBoard(){
         GraphicsManager.requestRender();
     }
