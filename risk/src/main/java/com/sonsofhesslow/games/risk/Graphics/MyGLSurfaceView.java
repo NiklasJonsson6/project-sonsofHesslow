@@ -150,7 +150,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         }
 
         if ((e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_POINTER_UP)
-                && (e.getX() - downX + e.getY() - downY <= 10)) {
+                && (Math.abs(e.getX() - downX + e.getY() - downY) <= 10)) {
             System.out.println("X: " + Float.toString(e.getX() - downX));
             System.out.println("Y: " + Float.toString(e.getY() - downY));
             int index = 0;
@@ -176,7 +176,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
             event = new GL_TouchEvent(e, false, isZooming, -1, world_pos, screen_pos, scale);
         }
         for (GL_TouchListener listener : listeners) {
-            listener.Handle(event);
+            listener.handle(event);
         }
 
         return true;

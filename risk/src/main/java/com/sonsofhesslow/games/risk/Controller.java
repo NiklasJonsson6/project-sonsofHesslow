@@ -42,7 +42,7 @@ public class Controller implements GL_TouchListener {
         setStartingArmies();
     }
 
-    public void Handle(GL_TouchEvent event) {
+    public void handle(GL_TouchEvent event) {
         if (event.touchedRegion) {
             Territory touchedTerritory = getTerritoryById(event.regionId);
             if (self_id == riskModel.getPlayers()[currentPlayerTracker].getParticipantId()) {
@@ -143,7 +143,7 @@ public class Controller implements GL_TouchListener {
             riskModel.setAttackingTerritory(null);
             riskModel.setDefendingTerritory(null);
         }
-        riskModel.refreshBoard();
+        GraphicsManager.requestRender();
     }
 
     public void nextTurn() {

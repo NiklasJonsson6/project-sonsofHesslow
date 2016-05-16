@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void Handle(GL_TouchEvent event) {
+    public void handle(GL_TouchEvent event) {
 
         if (prevPos != null) {
             //sq.setPos(event.worldPosition);

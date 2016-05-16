@@ -3,8 +3,6 @@ package com.sonsofhesslow.games.risk;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
-
 public class Risk {
 
     private Player[] players;
@@ -29,7 +27,7 @@ public class Risk {
         }
         //create territory objects
         for (int i = 0; i < territoryCount; i++) {
-            territories[i] = new Territory(i); //TODO continent
+            territories[i] = new Territory(i);
         }
         new View(this);
         gamePhase = GamePhase.PICK_TERRITORIES;
@@ -172,10 +170,5 @@ public class Risk {
 
     public void placeEvent() {
         overlayChangeListener.placeEvent(new OverlayChangeEvent(this));
-    }
-
-    //TODO Risk should not call a mathod in com.sonsofhesslow.games.risk.Graphics Manager
-    public void refreshBoard(){
-        GraphicsManager.requestRender();
     }
 }
