@@ -611,8 +611,17 @@ public class MainActivity extends AppCompatActivity
         for(Player p : controller.riskModel.getPlayers()){
             System.out.println("par id: " + p.getParticipantId());
         }
-        if(online)
+
+        if(online) {
             networkManager = new NetworkManager(controller.riskModel,this);
+            for(Player player : controller.riskModel.getPlayers()){
+                for(Participant participant : mParticipants) {
+                    if(participant.getParticipantId().hashCode() == player.getParticipantId()) {
+                        player.setName(participant.getDisplayName());
+                    }
+                }
+            }
+        }
         /*setContentView(R.layout.activity_overlay);
         View C = findViewById(R.id.Test);
         ViewGroup parent = (ViewGroup) C.getParent();
