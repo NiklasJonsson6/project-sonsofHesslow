@@ -31,7 +31,7 @@ public class View {
         overlayController = MainActivity.overlayController;
         for(Territory t : risk.getTerritories())
         {
-            t.addOwnerListeners(new Territory.OccupierChangeListener() {
+            t.addOccupierListeners(new Territory.OccupierChangeListener() {
                 @Override
                 public void handle(Territory.OccupierChangeEvent occupierChangeEvent) {
                     if(!playerColors.containsKey(occupierChangeEvent.newValue))
@@ -58,7 +58,7 @@ public class View {
             t.addArmyListeners(new Territory.ArmyChangeListener() {
                 @Override
                 public void handle(Territory.ArmyChangeEvent armyChangeEvent) {
-                    GraphicsManager.setTroops(armyChangeEvent.territory.getId(), armyChangeEvent.newValue);
+                    GraphicsManager.setArmies(armyChangeEvent.territory.getId(), armyChangeEvent.newValue);
                 }
             });
 

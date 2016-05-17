@@ -36,7 +36,7 @@ public class NetworkManager implements PlayerChangeEventListener {
                     }
                 }
             });
-            territory.addOwnerListeners(new Territory.OccupierChangeListener() {
+            territory.addOccupierListeners(new Territory.OccupierChangeListener() {
                 @Override
                 public void handle(Territory.OccupierChangeEvent occupierChangeEvent) {
                     if (!selfModified) {

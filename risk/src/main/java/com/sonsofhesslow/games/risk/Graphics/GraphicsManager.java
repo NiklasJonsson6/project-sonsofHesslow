@@ -130,9 +130,9 @@ public class GraphicsManager {
         beiziers[regionId].setColorOutline(Color);
     }
 
-    public static void setTroops(int regionId, int numberOfTroups)
+    public static void setArmies(int regionId, int numberOfArmies)
     {
-        numbers[regionId].setValue(numberOfTroups);
+        numbers[regionId].setValue(numberOfArmies);
     }
 
     public static Integer[] getNeighbours(int regionId)
@@ -145,7 +145,7 @@ public class GraphicsManager {
         return beizContinents[regionId];
     }
 
-    public static void setTroupColor(int regionId, float[] color) {
+    public static void setArmyColor(int regionId, float[] color) {
         numbers[regionId].setColor(color);
     }
 

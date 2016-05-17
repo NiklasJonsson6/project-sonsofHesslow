@@ -124,7 +124,7 @@ public class Territory {
 
     List<OccupierChangeListener> occupierListeners = new ArrayList<>();
 
-    public void addOwnerListeners(OccupierChangeListener listener) {
+    public void addOccupierListeners(OccupierChangeListener listener) {
         occupierListeners.add(listener);
     }
 }
