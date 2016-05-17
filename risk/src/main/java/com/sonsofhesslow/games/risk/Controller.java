@@ -65,11 +65,9 @@ public class Controller implements GL_TouchListener {
                                     randomTerritory.setArmyCount(1);
                                     randomTerritory.setOccupier(riskModel.getCurrentPlayer());
                                 } else{
-                                    i--;
+                                    i--;    //find a new territory to place
                                 }
                             }
-
-
 
                             touchedTerritory.setArmyCount(1);
                             territoriesPicked++;

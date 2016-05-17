@@ -29,8 +29,8 @@ public class NetworkMessage implements Serializable{
     enum NetworkAction
     {
         turnChange,
-        troupChange,
-        ownerChange,
+        armyAmountChange,
+        occupierChange,
     }
 
     public NetworkMessage(NetworkAction action, int troups, int participantId, int regionId) {
@@ -46,11 +46,11 @@ public class NetworkMessage implements Serializable{
     public int regionId;
 
     public static NetworkMessage territoryChangedMessageBuilder(Territory territory, int newTroops){
-        return new NetworkMessage(NetworkAction.troupChange,newTroops,-1,territory.getId());
+        return new NetworkMessage(NetworkAction.armyAmountChange,newTroops,-1,territory.getId());
     }
 
     public static NetworkMessage ownerChangedMessageBuilder(Territory territory, Player newOccupier){
-        return new NetworkMessage(NetworkAction.ownerChange,-1,newOccupier.getParticipantId(),territory.getId());
+        return new NetworkMessage(NetworkAction.occupierChange,-1,newOccupier.getParticipantId(),territory.getId());
     }
 
     public static NetworkMessage turnChangedMessageBuilder(Player currentPlayerDone){

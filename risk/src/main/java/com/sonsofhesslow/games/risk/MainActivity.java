@@ -658,7 +658,7 @@ public class MainActivity extends AppCompatActivity
                 Territory changedTerritory = Controller.getTerritoryById(recievedNetworkData.getRegionID());
                 changedTerritory.setArmyCount(recievedNetworkData.getValue());
                 break;
-            case ownerChange:
+            case occupierChange:
                 //code
                 break;
             default:

@@ -67,7 +67,7 @@ public class NetworkManager implements PlayerChangeEventListener {
             activity.getController().refreshGameState();
 
             switch (recievedNetworkData.action) {
-                case troupChange: {
+                case armyAmountChange: {
                     System.out.println("rtmr region changed");
                     Territory changedTerritory = Controller.getTerritoryById(recievedNetworkData.regionId);
                     if(changedTerritory!=null)
@@ -78,7 +78,7 @@ public class NetworkManager implements PlayerChangeEventListener {
                     }
                 }
                 break;
-                case ownerChange: {
+                case occupierChange: {
                     System.out.println("rtmr in owner changed");
                     Territory changedTerritory = Controller.getTerritoryById(recievedNetworkData.regionId);
                     Player newOccupier = null;
