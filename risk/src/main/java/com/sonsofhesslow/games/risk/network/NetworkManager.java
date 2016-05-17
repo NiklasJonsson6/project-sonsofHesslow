@@ -64,7 +64,7 @@ public class NetworkManager implements PlayerChangeEventListener {
 
             selfModified = true;
 
-            activity.getController().refreshGameState();
+            activity.getController().refreshGamePhase();
 
             switch (recievedNetworkData.action) {
                 case armyAmountChange: {

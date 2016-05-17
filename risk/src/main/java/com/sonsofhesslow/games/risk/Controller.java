@@ -94,9 +94,11 @@ public class Controller implements GL_TouchListener {
                             System.out.println(riskModel.getCurrentPlayer().getArmiesToPlace());
                             riskModel.getCurrentPlayer().decArmiesToPlace();
                             if (riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
+                                System.out.println("current game phase: " + riskModel.getGamePhase());
+                                System.out.println("Should switch to fight phase");
                                 riskModel.setGamePhase(Risk.GamePhase.FIGHT);
+                                nextPlayer();
                             }
-                            nextPlayer();
                         }
                         break;
 
@@ -322,17 +324,19 @@ public class Controller implements GL_TouchListener {
         riskModel.setSecondSelectedTerritory(null);
     }
 
-    public void refreshGameState() {
-        boolean canContinueToPlacePhase = true;
-        for(Territory territory : riskModel.getTerritories()){
-            if(territory.getOccupier() == null){
-                canContinueToPlacePhase = false;        //one territory with no occupier found
-                break;
+    public void refreshGamePhase() {
+        if (riskModel.getGamePhase() == Risk.GamePhase.PICK_TERRITORIES) {
+            boolean canContinueToPlacePhase = true;
+            for (Territory territory : riskModel.getTerritories()) {
+                if (territory.getOccupier() == null) {
+                    canContinueToPlacePhase = false;        //one territory with no occupier found
+                    break;
+                }
             }
-        }
 
-        if (canContinueToPlacePhase) {
-            riskModel.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
+            if (canContinueToPlacePhase) {
+                riskModel.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
+            }
         }
     }
 
