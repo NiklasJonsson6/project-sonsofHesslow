@@ -2,8 +2,9 @@ package com.sonsofhesslow.games.risk;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
-public class Risk {
+public class Risk extends Observable {
 
     private Player[] players;
     private Player currentPlayer;
@@ -34,8 +35,12 @@ public class Risk {
 
     public void setAttackingTerritory(Territory territory) {
         System.out.println("attacking contry set");
-        RiskChangeEvent riskChangeEvent = new RiskChangeEvent(this, territory, this.attackingTerritory);
+        RiskChangeEvent riskChangeEvent = new RiskChangeEvent(RiskChangeEvent.EventType.ATTACK, this, territory, this.attackingTerritory);
+        notifyObservers(riskChangeEvent);
+
+        //TODO remove old listeners
         for (RiskEventListener rl : attackListeners) rl.changeEvent(riskChangeEvent);
+
         attackingTerritory = territory;
     }
 
@@ -44,8 +49,11 @@ public class Risk {
     }
 
     public void setDefendingTerritory(Territory territory) {
-        System.out.println("deffending contry set");
-        RiskChangeEvent riskChangeEvent = new RiskChangeEvent(this, territory, this.defendingTerritory);
+        System.out.println("defending contry set");
+        RiskChangeEvent riskChangeEvent = new RiskChangeEvent(RiskChangeEvent.EventType.DEFENCE, this, territory, this.defendingTerritory);
+        notifyObservers(riskChangeEvent);
+
+        //TODO remove old listeners
         for (RiskEventListener rl : defenceListeners) rl.changeEvent(riskChangeEvent);
         defendingTerritory = territory;
     }
@@ -56,11 +64,13 @@ public class Risk {
 
     public void setCurrentPlayer(Player player) {
         System.out.println("current player: " + getCurrentPlayer() + " new player: " + player);
+
         for(PlayerChangeEventListener playerChangeListener : playerChangeListeners){
             System.out.println("calling changeevent");
             playerChangeListener.changeEvent(new PlayerChangeEvent(getCurrentPlayer() ,player));
         }
         currentPlayer = player;
+
         overlayChangeListener.playerChangeEvent(new OverlayChangeEvent(this));
     }
 
@@ -89,17 +99,24 @@ public class Risk {
     }
 
     public void setSelectedTerritory(Territory touchedTerritory) {
-        RiskChangeEvent riskChangeEvent = new RiskChangeEvent(this, touchedTerritory, this.selectedTerritory);
+        RiskChangeEvent riskChangeEvent = new RiskChangeEvent(RiskChangeEvent.EventType.SELECTED, this, touchedTerritory, this.selectedTerritory);
+        notifyObservers(riskChangeEvent);
+
+        //TODO remove old listeners
         for (RiskEventListener rl : selectedListeners) rl.changeEvent(riskChangeEvent);
+
         selectedTerritory = touchedTerritory;
 
     }
 
     public void setSecondSelectedTerritory(Territory touchedTerritory) {
-        RiskChangeEvent riskChangeEvent = new RiskChangeEvent(this, touchedTerritory, this.secondSelectedTerritory);
-        for (RiskEventListener rl : secondSelectedListeners) rl.changeEvent(riskChangeEvent);
-        secondSelectedTerritory = touchedTerritory;
+        RiskChangeEvent riskChangeEvent = new RiskChangeEvent(RiskChangeEvent.EventType.SECOND_SELECTED, this, touchedTerritory, this.secondSelectedTerritory);
+        notifyObservers(riskChangeEvent);
 
+        //TODO remove old listeners
+        for (RiskEventListener rl : secondSelectedListeners) rl.changeEvent(riskChangeEvent);
+
+        secondSelectedTerritory = touchedTerritory;
     }
 
     public Territory getSecondSelectedTerritory() {
@@ -122,6 +139,23 @@ public class Risk {
     /*
     Listeners
      */
+    static class RiskChangeEvent {
+        enum EventType {ATTACK, DEFENCE, SELECTED, SECOND_SELECTED}
+
+        EventType eventType;
+        Risk risk;
+        Territory newTerritory;
+        Territory oldTerritory;
+
+        public RiskChangeEvent(EventType eventType, Risk risk, Territory newTerritory, Territory oldTerritory) {
+            this.eventType = eventType;
+            this.risk = risk;
+            this.newTerritory = newTerritory;
+            this.oldTerritory = oldTerritory;
+        }
+    }
+
+    //TODO remove this shit
     void addAttackListener(RiskEventListener riskEventListener) {
         attackListeners.add(riskEventListener);
     }
@@ -155,18 +189,6 @@ public class Risk {
 
     public void removePlayerChangeListener(PlayerChangeEventListener playerChangeListener){
         playerChangeListeners.remove(playerChangeListener);
-    }
-
-    static class RiskChangeEvent {
-        public RiskChangeEvent(Risk risk, Territory newTerritory, Territory oldTerritory) {
-            this.risk = risk;
-            this.newTerritory = newTerritory;
-            this.oldTerritory = oldTerritory;
-        }
-
-        Risk risk;
-        Territory newTerritory;
-        Territory oldTerritory;
     }
 
     interface RiskEventListener {

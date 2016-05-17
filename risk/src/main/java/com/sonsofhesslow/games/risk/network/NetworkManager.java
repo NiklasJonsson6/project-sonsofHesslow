@@ -50,6 +50,10 @@ public class NetworkManager implements PlayerChangeEventListener {
                 }
             });
         }
+        /*
+        TODO notifyobservers, should networkmanager be observable aswell?
+        TODO probably not, this should probably be handeled in model (setCurrentPlayer()) or something
+        */
         activity.getController().getRiskModel().addPlayerChangeListener(this);
     }
 

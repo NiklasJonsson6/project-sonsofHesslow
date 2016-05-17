@@ -22,6 +22,7 @@ public class Controller implements GL_TouchListener {
         int territoryCount = GraphicsManager.getNumberOfTerritories();
         riskModel = new Risk(playerIds, territoryCount); //somehow set number of players (2)
         riskView = new View(riskModel);
+        riskModel.addObserver(riskView);
 
         riskModel.setCurrentPlayer(riskModel.getPlayers()[0]);
 
@@ -106,6 +107,7 @@ public class Controller implements GL_TouchListener {
                     case PLACE_ARMIES:
                         System.out.println("Place Phase");
                         if (touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
+                            //armies are palced with a slider, triggered by listener
                             riskModel.setSelectedTerritory(touchedTerritory);
                         }
                         /*if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
