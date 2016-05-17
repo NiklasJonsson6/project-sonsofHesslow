@@ -31,10 +31,10 @@ public class View {
         overlayController = MainActivity.overlayController;
         for(Territory t : risk.getTerritories())
         {
-            t.addOwnerListeners(new Territory.OwnerChangeListener() {
+            t.addOwnerListeners(new Territory.OccupierChangeListener() {
                 @Override
-                public void handle(Territory.OwnerChangeEvent ownerChangeEvent) {
-                    if(!playerColors.containsKey(ownerChangeEvent.newValue))
+                public void handle(Territory.OccupierChangeEvent occupierChangeEvent) {
+                    if(!playerColors.containsKey(occupierChangeEvent.newValue))
                     {
                         Player[] players = Controller.getRiskModel().getPlayers();
                         Random random = new Random(players[playerColors.size()].getParticipantId() +
@@ -42,23 +42,23 @@ public class View {
                                         new Random().nextInt(1000):         //multiplayer - have same color across all units
                                         playerColors.size() ));             //singleplayer - have different color every time
                         float[] rndColor = {random.nextFloat(),random.nextFloat(),random.nextFloat(),1};
-                        playerColors.put(ownerChangeEvent.newValue,rndColor);
+                        playerColors.put(occupierChangeEvent.newValue,rndColor);
                     }
                     if(risk.getAttackingTerritory()!=null)
                     {
-                        GraphicsManager.setColor(ownerChangeEvent.territory.getId(),playerColors.get(ownerChangeEvent.newValue),risk.getAttackingTerritory().getId());
+                        GraphicsManager.setColor(occupierChangeEvent.territory.getId(),playerColors.get(occupierChangeEvent.newValue),risk.getAttackingTerritory().getId());
                     }
                     else
                     {
-                        GraphicsManager.setColor(ownerChangeEvent.territory.getId(),playerColors.get(ownerChangeEvent.newValue));
+                        GraphicsManager.setColor(occupierChangeEvent.territory.getId(),playerColors.get(occupierChangeEvent.newValue));
                     }
                 }
             });
 
-            t.addTroupListeners(new Territory.TroupChangeListener() {
+            t.addArmyListeners(new Territory.ArmyChangeListener() {
                 @Override
-                public void handle(Territory.TroupChangeEvent troupChangeEvent) {
-                    GraphicsManager.setTroops(troupChangeEvent.territory.getId(), troupChangeEvent.newValue);
+                public void handle(Territory.ArmyChangeEvent armyChangeEvent) {
+                    GraphicsManager.setTroops(armyChangeEvent.territory.getId(), armyChangeEvent.newValue);
                 }
             });
 

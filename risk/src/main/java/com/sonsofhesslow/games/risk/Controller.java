@@ -10,6 +10,7 @@ import java.util.Random;
 
 public class Controller implements GL_TouchListener {
     private static Risk riskModel;
+    private View riskView;
 
     private int currentPlayerTracker = 0; //used to set next player
     private int territoriesPicked = 0;
@@ -20,7 +21,7 @@ public class Controller implements GL_TouchListener {
         this.self_id = self_id;
         int territoryCount = GraphicsManager.getNumberOfTerritories();
         riskModel = new Risk(playerIds, territoryCount); //somehow set number of players (2)
-        //view observer thing?
+        riskView = new View(riskModel);
 
         riskModel.setCurrentPlayer(riskModel.getPlayers()[0]);
 

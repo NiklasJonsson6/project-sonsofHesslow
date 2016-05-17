@@ -21,9 +21,9 @@ public class Territory {
     }
 
     public void setArmyCount(int armyCount) {
-        TroupChangeEvent event = new TroupChangeEvent(this,this.armyCount,armyCount);
+        ArmyChangeEvent event = new ArmyChangeEvent(this, this.armyCount, armyCount);
         this.armyCount = armyCount;
-        for(TroupChangeListener listener : troupListeners) listener.handle(event);
+        for (ArmyChangeListener listener : armyListeners) listener.handle(event);
     }
 
     public Player getOccupier() {
@@ -31,20 +31,19 @@ public class Territory {
     }
 
     public void setOccupier(Player occupier) {
-        if(occupier != this.occupier)
-        {
-            OwnerChangeEvent event = new OwnerChangeEvent(this,this.occupier,occupier);
-            for(OwnerChangeListener listener : ownerListeners) listener.handle(event);
+        if (occupier != this.occupier) {
+            OccupierChangeEvent event = new OccupierChangeEvent(this, this.occupier, occupier);
+            for (OccupierChangeListener listener : occupierListeners) listener.handle(event);
         }
-        if(this.occupier != null) {
+        if (this.occupier != null) {
             this.occupier.changeTerritoriesOwned(-1);
         }
         occupier.changeTerritoriesOwned(1);
         this.occupier = occupier;
     }
 
-    public void changeArmyCount(int change){
-        setArmyCount(armyCount+change);
+    public void changeArmyCount(int change) {
+        setArmyCount(armyCount + change);
     }
 
     public int getId() {
@@ -60,8 +59,8 @@ public class Territory {
     }
 
     public boolean isNeighbour(Territory territory) {
-        for(Territory neighbour: this.getNeighbours()) {
-            if(neighbour == territory) return true;
+        for (Territory neighbour : this.getNeighbours()) {
+            if (neighbour == territory) return true;
         }
         return false;
     }
@@ -79,30 +78,53 @@ public class Territory {
     }
 
     //listeners  boilerplate
-    public class TroupChangeEvent{Territory territory;int oldValue;
+    /*
+    Armies
+     */
+    public class ArmyChangeEvent {
+        Territory territory;
+        int oldValue;
         public int newValue;
 
-        public TroupChangeEvent(Territory territory, int oldValue, int newValue) {
+        public ArmyChangeEvent(Territory territory, int oldValue, int newValue) {
             this.territory = territory;
             this.oldValue = oldValue;
             this.newValue = newValue;
         }
     }
-    public interface TroupChangeListener{void handle(TroupChangeEvent troupChangeEvent);}
-    List<TroupChangeListener> troupListeners = new ArrayList<>();
-    public void addTroupListeners(TroupChangeListener listener){troupListeners.add(listener);}
-    public class OwnerChangeEvent{
+
+    public interface ArmyChangeListener {
+        void handle(ArmyChangeEvent armyChangeEvent);
+    }
+
+    List<ArmyChangeListener> armyListeners = new ArrayList<>();
+
+    public void addArmyListeners(ArmyChangeListener listener) {
+        armyListeners.add(listener);
+    }
+
+    /*
+    Occupier
+     */
+    public class OccupierChangeEvent {
         Territory territory;
         Player oldValue;
         public Player newValue;
 
-        public OwnerChangeEvent(Territory territory, Player oldValue, Player newValue) {
+        public OccupierChangeEvent(Territory territory, Player oldValue, Player newValue) {
             this.territory = territory;
             this.oldValue = oldValue;
             this.newValue = newValue;
         }
     }
-    public interface OwnerChangeListener{void handle(OwnerChangeEvent ownerChangeEvent);}
-    List<OwnerChangeListener> ownerListeners = new ArrayList<>();
-    public void addOwnerListeners(OwnerChangeListener listener){ownerListeners.add(listener);}
+
+    public interface OccupierChangeListener {
+        void handle(OccupierChangeEvent occupierChangeEvent);
+    }
+
+    List<OccupierChangeListener> occupierListeners = new ArrayList<>();
+
+    public void addOwnerListeners(OccupierChangeListener listener) {
+        occupierListeners.add(listener);
+    }
 }

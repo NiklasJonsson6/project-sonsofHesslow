@@ -20,11 +20,11 @@ public class NetworkManager implements PlayerChangeEventListener {
     public NetworkManager(Risk risk, final MainActivity activity) {
         this.activity = activity;
         for (final Territory territory : risk.getTerritories()) {
-            territory.addTroupListeners(new Territory.TroupChangeListener() {
+            territory.addArmyListeners(new Territory.ArmyChangeListener() {
                 @Override
-                public void handle(Territory.TroupChangeEvent troupChangeEvent) {
+                public void handle(Territory.ArmyChangeEvent armyChangeEvent) {
                     if (!selfModified) {
-                        NetworkMessage message = NetworkMessage.territoryChangedMessageBuilder(territory, troupChangeEvent.newValue);
+                        NetworkMessage message = NetworkMessage.territoryChangedMessageBuilder(territory, armyChangeEvent.newValue);
                         try
                         {
                             activity.broadcast(message.serialize(), true);
@@ -36,11 +36,11 @@ public class NetworkManager implements PlayerChangeEventListener {
                     }
                 }
             });
-            territory.addOwnerListeners(new Territory.OwnerChangeListener() {
+            territory.addOwnerListeners(new Territory.OccupierChangeListener() {
                 @Override
-                public void handle(Territory.OwnerChangeEvent ownerChangeEvent) {
+                public void handle(Territory.OccupierChangeEvent occupierChangeEvent) {
                     if (!selfModified) {
-                        NetworkMessage message = NetworkMessage.ownerChangedMessageBuilder(territory, ownerChangeEvent.newValue);
+                        NetworkMessage message = NetworkMessage.ownerChangedMessageBuilder(territory, occupierChangeEvent.newValue);
                         try {
                             activity.broadcast(message.serialize(), true);
                         } catch (Exception ex) {

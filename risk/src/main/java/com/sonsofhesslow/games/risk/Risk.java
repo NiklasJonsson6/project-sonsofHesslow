@@ -29,59 +29,7 @@ public class Risk {
         for (int i = 0; i < territoryCount; i++) {
             territories[i] = new Territory(i);
         }
-        new View(this);
         gamePhase = GamePhase.PICK_TERRITORIES;
-    }
-
-    void addAttackListener(RiskEventListener riskEventListener) {
-        attackListeners.add(riskEventListener);
-    }
-
-    void addDefenceListeners(RiskEventListener riskEventListener) {
-        defenceListeners.add(riskEventListener);
-    }
-
-    void addSelectedListeners(RiskEventListener riskEventListener) {
-        selectedListeners.add(riskEventListener);
-    }
-
-    void addSecondSelectedListeners(RiskEventListener riskEventListener) {
-        secondSelectedListeners.add(riskEventListener);
-    }
-
-    void addOverlayListener(OverlayChangeListener overlayChangeListener) {
-        this.overlayChangeListener = overlayChangeListener;
-    }
-
-    OverlayChangeListener overlayChangeListener;
-    List<RiskEventListener> attackListeners = new ArrayList<>();
-    List<RiskEventListener> defenceListeners = new ArrayList<>();
-    List<RiskEventListener> selectedListeners = new ArrayList<>();
-    List<RiskEventListener> secondSelectedListeners = new ArrayList<>();
-    List<PlayerChangeEventListener> playerChangeListeners = new ArrayList<>();
-
-    public void addPlayerChangeListener(PlayerChangeEventListener playerChangeListener){
-        playerChangeListeners.add(playerChangeListener);
-    }
-
-    public void removePlayerChangeListener(PlayerChangeEventListener playerChangeListener){
-        playerChangeListeners.remove(playerChangeListener);
-    }
-
-    static class RiskChangeEvent {
-        public RiskChangeEvent(Risk risk, Territory newTerritory, Territory oldTerritory) {
-            this.risk = risk;
-            this.newTerritory = newTerritory;
-            this.oldTerritory = oldTerritory;
-        }
-
-        Risk risk;
-        Territory newTerritory;
-        Territory oldTerritory;
-    }
-
-    interface RiskEventListener {
-        void changeEvent(RiskChangeEvent riskChangeEvent);
     }
 
     public void setAttackingTerritory(Territory territory) {
@@ -170,5 +118,59 @@ public class Risk {
 
     public void placeEvent() {
         overlayChangeListener.placeEvent(new OverlayChangeEvent(this));
+    }
+
+    /*
+    Listeners
+     */
+    void addAttackListener(RiskEventListener riskEventListener) {
+        attackListeners.add(riskEventListener);
+    }
+
+    void addDefenceListeners(RiskEventListener riskEventListener) {
+        defenceListeners.add(riskEventListener);
+    }
+
+    void addSelectedListeners(RiskEventListener riskEventListener) {
+        selectedListeners.add(riskEventListener);
+    }
+
+    void addSecondSelectedListeners(RiskEventListener riskEventListener) {
+        secondSelectedListeners.add(riskEventListener);
+    }
+
+    void addOverlayListener(OverlayChangeListener overlayChangeListener) {
+        this.overlayChangeListener = overlayChangeListener;
+    }
+
+    OverlayChangeListener overlayChangeListener;
+    List<RiskEventListener> attackListeners = new ArrayList<>();
+    List<RiskEventListener> defenceListeners = new ArrayList<>();
+    List<RiskEventListener> selectedListeners = new ArrayList<>();
+    List<RiskEventListener> secondSelectedListeners = new ArrayList<>();
+    List<PlayerChangeEventListener> playerChangeListeners = new ArrayList<>();
+
+    public void addPlayerChangeListener(PlayerChangeEventListener playerChangeListener){
+        playerChangeListeners.add(playerChangeListener);
+    }
+
+    public void removePlayerChangeListener(PlayerChangeEventListener playerChangeListener){
+        playerChangeListeners.remove(playerChangeListener);
+    }
+
+    static class RiskChangeEvent {
+        public RiskChangeEvent(Risk risk, Territory newTerritory, Territory oldTerritory) {
+            this.risk = risk;
+            this.newTerritory = newTerritory;
+            this.oldTerritory = oldTerritory;
+        }
+
+        Risk risk;
+        Territory newTerritory;
+        Territory oldTerritory;
+    }
+
+    interface RiskEventListener {
+        void changeEvent(RiskChangeEvent riskChangeEvent);
     }
 }
