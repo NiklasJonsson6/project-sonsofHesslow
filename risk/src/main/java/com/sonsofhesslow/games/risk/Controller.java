@@ -9,7 +9,7 @@ import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 import java.util.Random;
 
 public class Controller implements GL_TouchListener {
-    public static Risk riskModel;
+    private static Risk riskModel;
 
     private int currentPlayerTracker = 0; //used to set next player
     private int territoriesPicked = 0;
@@ -335,5 +335,9 @@ public class Controller implements GL_TouchListener {
         if (canContinueToPlacePhase) {
             riskModel.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
         }
+    }
+
+    public static Risk getRiskModel() {
+        return riskModel;
     }
 }

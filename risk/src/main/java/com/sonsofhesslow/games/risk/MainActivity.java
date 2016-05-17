@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity
     public static Context context;
     static OverlayController overlayController;
     MyGLSurfaceView graphicsView;
-    public Controller controller;
+    private Controller controller;
 
 
     final static String TAG = "Risk";
@@ -608,13 +608,13 @@ public class MainActivity extends AppCompatActivity
 
     public void startGame(boolean online, int[] ids) {
         controller = new Controller(ids, mMyId!= null ? mMyId.hashCode() : 0);
-        for(Player p : controller.riskModel.getPlayers()){
+        for(Player p : controller.getRiskModel().getPlayers()){
             System.out.println("par id: " + p.getParticipantId());
         }
 
         if(online) {
-            networkManager = new NetworkManager(controller.riskModel,this);
-            for(Player player : controller.riskModel.getPlayers()){
+            networkManager = new NetworkManager(controller.getRiskModel(),this);
+            for(Player player : controller.getRiskModel().getPlayers()){
                 for(Participant participant : mParticipants) {
                     if(participant.getParticipantId().hashCode() == player.getParticipantId()) {
                         player.setName(participant.getDisplayName());
@@ -671,24 +671,17 @@ public class MainActivity extends AppCompatActivity
         System.out.println("broadcasting message");
         mMultiplayer = true;
         if (!mMultiplayer){
-            System.out.println("exit 0");
-            return; // playing single-player mode (method should not be called anyway)
+            return;     // playing single-player mode (method should not be called anyway)
         }
-
-
-        System.out.println("participant amount:_ " + mParticipants.size());
 
         // Send to every other participant.
         for (Participant p : mParticipants) {
-            System.out.println("in participant loop");
             //should not be sending message
             if (p.getParticipantId().equals(mMyId)) {
-                System.out.println("broadcast exit1");
                 continue;
             }
             //should not be sending message
             if (p.getStatus() != Participant.STATUS_JOINED) {
-                System.out.println("broadcast exit2");
                 continue;
             }
 
@@ -696,7 +689,6 @@ public class MainActivity extends AppCompatActivity
             if(mustBeReliable) {
                 Games.RealTimeMultiplayer.sendReliableMessage(mGoogleApiClient, null, messageBuffer,
                         mRoomId, p.getParticipantId());
-                System.out.println("broadcasting to a participant");
             } else {
                 Games.RealTimeMultiplayer.sendUnreliableMessage(mGoogleApiClient, messageBuffer,
                         mRoomId, p.getParticipantId());
@@ -792,5 +784,9 @@ public class MainActivity extends AppCompatActivity
 
     private void resetGameVars() {
         // TODO: 2016-05-13
+    }
+
+    public Controller getController() {
+        return controller;
     }
 }

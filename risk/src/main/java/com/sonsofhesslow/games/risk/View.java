@@ -36,7 +36,11 @@ public class View {
                 public void handle(Territory.OwnerChangeEvent ownerChangeEvent) {
                     if(!playerColors.containsKey(ownerChangeEvent.newValue))
                     {
-                        Random random = new Random(Controller.riskModel.getPlayers()[playerColors.size()].getParticipantId() + playerColors.size());
+                        Player[] players = Controller.getRiskModel().getPlayers();
+                        Random random = new Random(players[playerColors.size()].getParticipantId() +
+                                (players[0].getParticipantId() == players[1].getParticipantId()?
+                                        new Random().nextInt(1000):         //multiplayer - have same color across all units
+                                        playerColors.size() ));             //singleplayer - have different color every time
                         float[] rndColor = {random.nextFloat(),random.nextFloat(),random.nextFloat(),1};
                         playerColors.put(ownerChangeEvent.newValue,rndColor);
                     }

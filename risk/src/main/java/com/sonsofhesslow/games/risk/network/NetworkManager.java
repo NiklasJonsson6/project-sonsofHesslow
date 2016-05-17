@@ -50,7 +50,7 @@ public class NetworkManager implements PlayerChangeEventListener {
                 }
             });
         }
-        activity.controller.riskModel.addPlayerChangeListener(this);
+        activity.getController().getRiskModel().addPlayerChangeListener(this);
     }
 
 
@@ -64,7 +64,7 @@ public class NetworkManager implements PlayerChangeEventListener {
 
             selfModified = true;
 
-            activity.controller.refreshGameState();
+            activity.getController().refreshGameState();
 
             switch (recievedNetworkData.action) {
                 case troupChange: {
@@ -83,7 +83,7 @@ public class NetworkManager implements PlayerChangeEventListener {
                     Territory changedTerritory = Controller.getTerritoryById(recievedNetworkData.regionId);
                     Player newOccupier = null;
 
-                    for(Player p : Controller.riskModel.getPlayers()) {
+                    for(Player p : Controller.getRiskModel().getPlayers()) {
                         if(p.getParticipantId() == recievedNetworkData.participantId){
                             System.out.println("found owner");
                             newOccupier = p;
@@ -101,7 +101,7 @@ public class NetworkManager implements PlayerChangeEventListener {
                 break;
                 case turnChange: {
                     System.out.println("rtmr turnchange");
-                    activity.controller.nextPlayer();
+                    activity.getController().nextPlayer();
                     /*int playerIndex = 0;
                     int amountOfPlayers = Controller.riskModel.getPlayers().length;
                     for(int i = 0; i < amountOfPlayers; i++) {

@@ -38,7 +38,7 @@ public class Risk {
     }
 
     void addDefenceListeners(RiskEventListener riskEventListener) {
-        deffenceListeners.add(riskEventListener);
+        defenceListeners.add(riskEventListener);
     }
 
     void addSelectedListeners(RiskEventListener riskEventListener) {
@@ -55,7 +55,7 @@ public class Risk {
 
     OverlayChangeListener overlayChangeListener;
     List<RiskEventListener> attackListeners = new ArrayList<>();
-    List<RiskEventListener> deffenceListeners = new ArrayList<>();
+    List<RiskEventListener> defenceListeners = new ArrayList<>();
     List<RiskEventListener> selectedListeners = new ArrayList<>();
     List<RiskEventListener> secondSelectedListeners = new ArrayList<>();
     List<PlayerChangeEventListener> playerChangeListeners = new ArrayList<>();
@@ -98,7 +98,7 @@ public class Risk {
     public void setDefendingTerritory(Territory territory) {
         System.out.println("deffending contry set");
         RiskChangeEvent riskChangeEvent = new RiskChangeEvent(this, territory, this.defendingTerritory);
-        for (RiskEventListener rl : deffenceListeners) rl.changeEvent(riskChangeEvent);
+        for (RiskEventListener rl : defenceListeners) rl.changeEvent(riskChangeEvent);
         defendingTerritory = territory;
     }
 
