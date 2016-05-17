@@ -57,7 +57,7 @@ public class Controller implements GL_TouchListener {
 
                             //for debugging only
                             Random r = new Random();
-                            final int EXTRA_TRIES = 20;
+                            final int EXTRA_TRIES = 0;
                             for(int i = 0; i < EXTRA_TRIES; i++) {
                                 int randomNumber = r.nextInt(42);
                                 Territory randomTerritory = getTerritoryById(randomNumber);
@@ -87,6 +87,7 @@ public class Controller implements GL_TouchListener {
                             nextPlayer();
                         }
                         break;
+
                     case PLACE_STARTING_ARMIES:
                         System.out.println("place starting armies phase");
                         if (touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
@@ -97,8 +98,8 @@ public class Controller implements GL_TouchListener {
                                 System.out.println("current game phase: " + riskModel.getGamePhase());
                                 System.out.println("Should switch to fight phase");
                                 riskModel.setGamePhase(Risk.GamePhase.FIGHT);
-                                nextPlayer();
                             }
+                            nextPlayer();
                         }
                         break;
 
@@ -211,6 +212,12 @@ public class Controller implements GL_TouchListener {
             riskModel.getCurrentPlayer().giveArmies(1);
         } else if (riskModel.getGamePhase() != Risk.GamePhase.PLACE_STARTING_ARMIES) {
             setArmiesToPlace();
+        }
+
+        if(riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId() && riskModel.getCurrentPlayer().getParticipantId() != self_id) {
+            //multiplayer
+            System.out.println("multiplayer@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+            MainActivity.getOverlayController().addViewChange(R.layout.activity_wait);
         }
     }
 

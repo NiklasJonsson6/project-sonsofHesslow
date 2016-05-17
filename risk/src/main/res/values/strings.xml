@@ -20,4 +20,6 @@
     <string name="click_me">Click me!</string>
     <string name="is_inviting_you">is challenging you to a game!</string>
     <string name="signin_other_error">There was an issue with sign in. Please try again later.</string>
+    <string name="please_wait_text">Please wait for you turn</string>
+
 </resources>

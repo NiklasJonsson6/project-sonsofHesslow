@@ -789,4 +789,8 @@ public class MainActivity extends AppCompatActivity
     public Controller getController() {
         return controller;
     }
+
+    public static OverlayController getOverlayController() {
+        return overlayController;
+    }
 }
