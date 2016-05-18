@@ -11,6 +11,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     public static Resources resources;
     public static Context context;
     static OverlayController overlayController;
+    static Overlay newOverlayController;
     MyGLSurfaceView graphicsView;
     private Controller controller;
 
@@ -104,6 +107,7 @@ public class MainActivity extends AppCompatActivity
 
         context = this;
         overlayController = new OverlayController(this);
+        newOverlayController = new Overlay(this);
         graphicsView = new MyGLSurfaceView(this,getResources());
         graphicsView.addListener(this);
 
@@ -629,13 +633,17 @@ public class MainActivity extends AppCompatActivity
         parent.removeView(C);
         C = graphicsView;
         parent.addView(C, index);*/
-        overlayController.addView(graphicsView);
+        //overlayController.addView(graphicsView);
+        newOverlayController.addView(graphicsView);
+        newOverlayController.addView(R.layout.activity_mainoverlay);
         //View overlay = factory.inflate(R.layout.activity_nextturn, null);
-        overlayController.addView(R.layout.activity_playerturn);
-        overlayController.addView(R.layout.activity_chooseterritory);
-
+        //overlayController.addView(R.layout.activity_playerturn);
+        //overlayController.addView(R.layout.activity_chooseterritory);
+        //overlayController.addView(R.layout.activity_mainoverlay);
         graphicsView.addListener(controller);
-        setContentView(overlayController.getOverlay());
+        //setContentView(overlayController.getOverlay());
+        setContentView(newOverlayController.getOverlay());
+        populateListView();
         mCurScreen = R.id.screen_game;
     }
 
@@ -790,7 +798,25 @@ public class MainActivity extends AppCompatActivity
         return controller;
     }
 
+
     public static OverlayController getOverlayController() {
         return overlayController;
+    }
+    private void populateListView(){
+        //Elements
+        String array[] = {"Daniel", "Arvid", "Niklas", "Fredrik"};
+        int [] image = {R.drawable.downarrow};
+        String count[] = {"5", "6", "7", "1337"};
+        //Adapter
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.activity_playerinfo, array);
+        ListView listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(new CustomAdapter(this, array, image, count));
+    }
+
+    public void showList(View v){
+        newOverlayController.setListVisible(true);
+    }
+    public void hideList(View v){
+        newOverlayController.setListVisible(false);
     }
 }

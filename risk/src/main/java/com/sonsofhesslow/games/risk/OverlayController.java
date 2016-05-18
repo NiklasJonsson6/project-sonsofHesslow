@@ -20,25 +20,6 @@ public class OverlayController {
         frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT,Gravity.BOTTOM));
         parent = frameLayout;
         this.factory = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        bar = ((SeekBar)factory.inflate(R.layout.activity_placearmies, null).findViewById(R.id.seekBar));
-        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                replaceText(R.id.troopsSelected,"" + progress);
-                replaceText(R.id.troopsLeft,"" + (seekBar.getMax()-progress));
-                System.out.println("Hej du ändra mig");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                System.out.println("Hej du ändra mig");
-            }
-        });
     }
     public void addView(int value){
         parent.addView(factory.inflate(value,null));
