@@ -643,6 +643,7 @@ public class MainActivity extends AppCompatActivity
         graphicsView.addListener(controller);
         //setContentView(overlayController.getOverlay());
         setContentView(newOverlayController.getOverlay());
+        newOverlayController.setGamePhase(Risk.GamePhase.PICK_TERRITORIES);
         populateListView();
         mCurScreen = R.id.screen_game;
     }
@@ -770,11 +771,12 @@ public class MainActivity extends AppCompatActivity
         controller.fightButtonPressed();
     }
     public void placePressed(View v){
-        controller.placeButtonPressed(overlayController.getBarValue(R.id.seekBar));
+        controller.placeButtonPressed(newOverlayController.getBarValue());
         System.out.println("Place button pressed");
     }
     public void donePressed(View v){
         controller.doneButtonPressed();
+        newOverlayController.setNextTurnVisible(true);
         System.out.println("Done button pressed");
     }
 

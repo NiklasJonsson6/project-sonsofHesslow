@@ -19,17 +19,15 @@ public class View implements Observer {
     final float[] black = {0, 0, 0, 1};
     final float[] green = {0, 1, 0, 1};
     final float[] blue = {0, 0, 1, 1};
-    int movementBlue;
 
 
     final Risk risk;
     Map<Player, float[]> playerColors = new HashMap<>();
-    OverlayController overlayController;
+    Overlay overlayController;
 
     public View(final Risk risk) {
-        movementBlue = Color.parseColor("#ff0099cc");
         this.risk = risk;
-        overlayController = MainActivity.overlayController;
+        overlayController = MainActivity.newOverlayController;
         /* for (Territory t : risk.getTerritories()) {
             t.addOccupierListeners(new Territory.OccupierChangeListener() {
                 @Override
@@ -152,48 +150,49 @@ public class View implements Observer {
                 if (overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PICK_TERRITORIES) {
 
                 } else if (overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PLACE_STARTING_ARMIES) {
-                    overlayController.addViewChange(R.layout.activity_placestartingarmies);
-                    overlayController.replaceText(R.id.armiesToPlace, "Armies to place: " + risk.getCurrentPlayer().getArmiesToPlace());
-                    overlayController.setBackgroundColour(R.id.placeStartingArmies, Util.getIntFromColor(playerColors.get(risk.getCurrentPlayer())));
+                    // Hide all
+                    overlayController.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
+                    overlayController.setInformation("Armies to place: " + risk.getCurrentPlayer().getArmiesToPlace(), true);
                 } else if (overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES) {
+                    // Hide all
                     System.out.println("Fight Phase view");
-                    overlayController.addViewChange(R.layout.activity_placearmies);
-                    overlayController.setBarMaxValue(R.id.seekBar, overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
-                    overlayController.replaceText(R.id.troopsSelected, "0");
-                    overlayController.replaceText(R.id.troopsLeft, "" + overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
+                    overlayController.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
+                    overlayController.setPlaceArmiesVisible(true);
+                    overlayController.setBarMaxValue(overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
+                    //add some kind of indication to how many
                 } else if (overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.FIGHT) {
-
+                    overlayController.setGamePhase(Risk.GamePhase.FIGHT);
                 } else if (overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.MOVEMENT) {
-
+                    overlayController.setGamePhase(Risk.GamePhase.MOVEMENT);
                 }
             }
 
             @Override
             public void placeEvent(OverlayChangeEvent overlayChangeEvent) {
                 if (overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES) {
-                    overlayController.setBarMaxValue(R.id.seekBar, overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
-                    overlayController.replaceText(R.id.troopsLeft, "" + overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
+                    overlayController.setBarMaxValue(overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace());
+                    //add some kind of indication to how many
                     if (overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace() == 0) {
-                        overlayController.addViewChange(R.layout.activity_attackphase);
+                        overlayController.setGamePhase(Risk.GamePhase.FIGHT);
                     }
                 } else if (overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.MOVEMENT && overlayChangeEvent.risk.getSecondSelectedTerritory() != null) {
-                    overlayController.setBarMaxValue(R.id.seekBar, overlayChangeEvent.risk.getSelectedTerritory().getArmyCount() - 1);
-                    overlayController.replaceText(R.id.troopsLeft, "" + (overlayChangeEvent.risk.getSelectedTerritory().getArmyCount() - 1));
+                    overlayController.setBarMaxValue(overlayChangeEvent.risk.getSelectedTerritory().getArmyCount() - 1);
+                    //add some kind of indication to how many
                 } else {
-                    overlayController.setBarMaxValue(R.id.seekBar, 0);
-                    overlayController.replaceText(R.id.troopsLeft, "0");
+                    overlayController.setBarMaxValue(0);
+                    //add some kind of indication to how many
                 }
             }
 
             @Override
             public void playerChangeEvent(OverlayChangeEvent overlayChangeEvent) {
-                overlayController.replaceText(R.id.playerTurn, "Player: " + overlayChangeEvent.risk.getCurrentPlayer().getName());
                 if (playerColors.get(overlayChangeEvent.risk.getCurrentPlayer()) != null) {
-                    overlayController.setBackgroundColour(R.id.playerTurn, Util.getIntFromColor(playerColors.get(overlayChangeEvent.risk.getCurrentPlayer())));
+                    overlayController.setCurrentPlayer(overlayChangeEvent.risk.getCurrentPlayer(), Util.getIntFromColor(playerColors.get(overlayChangeEvent.risk.getCurrentPlayer())));
                 }
                 if (overlayChangeEvent.risk.getGamePhase() == Risk.GamePhase.PLACE_STARTING_ARMIES) {
-                    overlayController.addViewChange(R.layout.activity_placestartingarmies);
-                    overlayController.replaceText(R.id.armiesToPlace, "Armies to place: " + risk.getCurrentPlayer().getArmiesToPlace());
+                    overlayController.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
+                    overlayController.setInformation("Armies to place: " + overlayChangeEvent.risk.getCurrentPlayer().getArmiesToPlace(), true);
+                    //add some kind of indication to how many
                 }
             }
         });
@@ -219,8 +218,7 @@ public class View implements Observer {
                             GraphicsManager.setHeight(event.newTerritory.getId(), 0.04f);
                         }
                         if (event.newTerritory == null) {
-                            overlayController.addViewChange(R.layout.activity_attackphase);
-                            overlayController.replaceText(R.id.nextTurnButton, "Next Phase");
+                            overlayController.setGamePhase(Risk.GamePhase.FIGHT);
                         }
                         break;
 
@@ -232,10 +230,10 @@ public class View implements Observer {
                         if (event.newTerritory != null) {
                             GraphicsManager.setOutlineColor(event.newTerritory.getId(), red);
                             GraphicsManager.setHeight(event.newTerritory.getId(), 0.04f);
-                            overlayController.addViewChange(R.layout.activity_fightbutton);
+                            overlayController.setFightVisible(true);
                         }
                         if (event.newTerritory == null) {
-                            overlayController.addViewChange(R.layout.activity_attackphase);
+                            overlayController.setNextTurnVisible(true);
                         }
                         break;
 
@@ -248,20 +246,17 @@ public class View implements Observer {
                             GraphicsManager.setOutlineColor(event.newTerritory.getId(), blue);
                             GraphicsManager.setHeight(event.newTerritory.getId(), 0.04f);
                             if (risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES) {
-                                overlayController.addViewChange(R.layout.activity_placearmies);
-                                overlayController.setBarMaxValue(R.id.seekBar, risk.getCurrentPlayer().getArmiesToPlace());
-                                overlayController.replaceText(R.id.troopsSelected, "0");
-                                overlayController.replaceText(R.id.troopsLeft, "" + risk.getCurrentPlayer().getArmiesToPlace());
+                                overlayController.setPlaceArmiesVisible(true);
+                                overlayController.setBarMaxValue(risk.getCurrentPlayer().getArmiesToPlace());
                             }
                         }
                         if (event.newTerritory == null) {
                             if (risk.getGamePhase() == Risk.GamePhase.MOVEMENT) {
-                                overlayController.addViewChange(R.layout.activity_movmentphase);
+                                overlayController.setGamePhase(Risk.GamePhase.MOVEMENT);
                             } else {
-                                overlayController.addViewChange(R.layout.activity_placearmies);
-                                overlayController.setBarMaxValue(R.id.seekBar, risk.getCurrentPlayer().getArmiesToPlace());
-                                overlayController.replaceText(R.id.troopsSelected, "0");
-                                overlayController.replaceText(R.id.troopsLeft, "" + risk.getCurrentPlayer().getArmiesToPlace());
+                                overlayController.setPlaceArmiesVisible(true);
+                                overlayController.setBarMaxValue(risk.getCurrentPlayer().getArmiesToPlace());
+                                //Indication
                             }
                         }
                         break;
@@ -275,12 +270,12 @@ public class View implements Observer {
                         if (event.newTerritory != null) {
                             GraphicsManager.setOutlineColor(event.newTerritory.getId(), green);
                             GraphicsManager.setHeight(event.newTerritory.getId(), 0.04f);
-                            overlayController.addViewChange(R.layout.activity_placearmies);
-                            overlayController.setBarMaxValue(R.id.seekBar, risk.getSelectedTerritory().getArmyCount() - 1);
-                            overlayController.replaceText(R.id.troopsLeft, "" + (risk.getSelectedTerritory().getArmyCount() - 1));
+                            overlayController.setPlaceArmiesVisible(true);
+                            overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - 1);
+                            // indication
                         }
                         if (event.newTerritory == null) {
-                            overlayController.addViewChange(R.layout.activity_movmentphase);
+                            overlayController.setGamePhase(Risk.GamePhase.MOVEMENT);
                         }
                         break;
                 }
