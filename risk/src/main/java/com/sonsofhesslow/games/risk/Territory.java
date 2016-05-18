@@ -30,7 +30,7 @@ public class Territory extends Observable {
         this.armyCount = armyCount;
 
         //TODO remove old listeners
-        //for (ArmyChangeListener listener : armyListeners) listener.handle(event);
+        for (ArmyChangeListener listener : armyListeners) listener.handle(event);
     }
 
     public Player getOccupier() {
@@ -46,7 +46,7 @@ public class Territory extends Observable {
             notifyObservers(event);
 
             //TODO remove old listeners
-            //for (OccupierChangeListener listener : occupierListeners) listener.handle(event);
+            for (OccupierChangeListener listener : occupierListeners) listener.handle(event);
         }
         if (this.occupier != null) {
             this.occupier.changeTerritoriesOwned(-1);
