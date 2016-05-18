@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity
 
     public static Resources resources;
     public static Context context;
-    static OverlayController overlayController;
     static Overlay newOverlayController;
     MyGLSurfaceView graphicsView;
     private Controller controller;
@@ -106,7 +105,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         context = this;
-        overlayController = new OverlayController(this);
         newOverlayController = new Overlay(this);
         graphicsView = new MyGLSurfaceView(this,getResources());
         graphicsView.addListener(this);
@@ -801,8 +799,8 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public static OverlayController getOverlayController() {
-        return overlayController;
+    public static Overlay getOverlayController() {
+        return newOverlayController;
     }
     private void populateListView(){
         //Elements

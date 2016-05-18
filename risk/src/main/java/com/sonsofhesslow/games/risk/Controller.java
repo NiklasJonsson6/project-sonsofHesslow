@@ -223,7 +223,7 @@ public class Controller implements GL_TouchListener {
         if(riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId() && riskModel.getCurrentPlayer().getParticipantId() != self_id) {
             //multiplayer
             System.out.println("multiplayer@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-            MainActivity.getOverlayController().addViewChange(R.layout.activity_wait);
+            MainActivity.getOverlayController().addView(R.layout.activity_wait);
         }
     }
 
