@@ -295,7 +295,7 @@ public class View implements Observer {
                 System.out.println("colors?");
                 Territory.OccupierChangeEvent event = (Territory.OccupierChangeEvent) arg;
                 if (!playerColors.containsKey(event.newValue)) {
-                    Player[] players = Controller.getRiskModel().getPlayers();
+                    Player[] players = risk.getPlayers();
                     Random random = new Random(players[playerColors.size()].getParticipantId() +
                             (players[0].getParticipantId() == players[1].getParticipantId() ?
                                     new Random().nextInt(1000) :         //multiplayer - have same color across all units
