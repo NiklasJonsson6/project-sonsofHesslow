@@ -22,7 +22,11 @@ public class Controller implements GL_TouchListener {
         int territoryCount = GraphicsManager.getNumberOfTerritories();
         riskModel = new Risk(playerIds, territoryCount); //somehow set number of players (2)
         riskView = new View(riskModel);
+        //add observers
         riskModel.addObserver(riskView);
+        for(Territory territory: riskModel.getTerritories()) {
+            territory.addObserver(riskView);
+        }
 
         riskModel.setCurrentPlayer(riskModel.getPlayers()[0]);
 

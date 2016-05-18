@@ -23,11 +23,14 @@ public class Territory extends Observable {
 
     public void setArmyCount(int armyCount) {
         ArmyChangeEvent event = new ArmyChangeEvent(this, this.armyCount, armyCount);
+
+        setChanged();
         notifyObservers(event);
+
         this.armyCount = armyCount;
 
         //TODO remove old listeners
-        for (ArmyChangeListener listener : armyListeners) listener.handle(event);
+        //for (ArmyChangeListener listener : armyListeners) listener.handle(event);
     }
 
     public Player getOccupier() {
@@ -37,10 +40,13 @@ public class Territory extends Observable {
     public void setOccupier(Player occupier) {
         if (occupier != this.occupier) {
             OccupierChangeEvent event = new OccupierChangeEvent(this, this.occupier, occupier);
+
+            System.out.println("event?");
+            setChanged();
             notifyObservers(event);
 
             //TODO remove old listeners
-            for (OccupierChangeListener listener : occupierListeners) listener.handle(event);
+            //for (OccupierChangeListener listener : occupierListeners) listener.handle(event);
         }
         if (this.occupier != null) {
             this.occupier.changeTerritoriesOwned(-1);
@@ -101,7 +107,7 @@ public class Territory extends Observable {
         }
     }
 
-    //TODO remove these
+    //TODO remove these, implemented in network as well...
     public interface ArmyChangeListener {
         void handle(ArmyChangeEvent armyChangeEvent);
     }

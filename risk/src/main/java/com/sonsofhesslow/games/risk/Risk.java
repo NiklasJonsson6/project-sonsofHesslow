@@ -36,10 +36,12 @@ public class Risk extends Observable {
     public void setAttackingTerritory(Territory territory) {
         System.out.println("attacking contry set");
         RiskChangeEvent riskChangeEvent = new RiskChangeEvent(RiskChangeEvent.EventType.ATTACK, this, territory, this.attackingTerritory);
+
+        setChanged();
         notifyObservers(riskChangeEvent);
 
         //TODO remove old listeners
-        for (RiskEventListener rl : attackListeners) rl.changeEvent(riskChangeEvent);
+        //for (RiskEventListener rl : attackListeners) rl.changeEvent(riskChangeEvent);
 
         attackingTerritory = territory;
     }
@@ -51,10 +53,13 @@ public class Risk extends Observable {
     public void setDefendingTerritory(Territory territory) {
         System.out.println("defending contry set");
         RiskChangeEvent riskChangeEvent = new RiskChangeEvent(RiskChangeEvent.EventType.DEFENCE, this, territory, this.defendingTerritory);
+
+        setChanged();
         notifyObservers(riskChangeEvent);
 
         //TODO remove old listeners
-        for (RiskEventListener rl : defenceListeners) rl.changeEvent(riskChangeEvent);
+        //for (RiskEventListener rl : defenceListeners) rl.changeEvent(riskChangeEvent);
+
         defendingTerritory = territory;
     }
 
@@ -100,10 +105,12 @@ public class Risk extends Observable {
 
     public void setSelectedTerritory(Territory touchedTerritory) {
         RiskChangeEvent riskChangeEvent = new RiskChangeEvent(RiskChangeEvent.EventType.SELECTED, this, touchedTerritory, this.selectedTerritory);
+
+        setChanged();
         notifyObservers(riskChangeEvent);
 
         //TODO remove old listeners
-        for (RiskEventListener rl : selectedListeners) rl.changeEvent(riskChangeEvent);
+        //for (RiskEventListener rl : selectedListeners) rl.changeEvent(riskChangeEvent);
 
         selectedTerritory = touchedTerritory;
 
@@ -111,10 +118,12 @@ public class Risk extends Observable {
 
     public void setSecondSelectedTerritory(Territory touchedTerritory) {
         RiskChangeEvent riskChangeEvent = new RiskChangeEvent(RiskChangeEvent.EventType.SECOND_SELECTED, this, touchedTerritory, this.secondSelectedTerritory);
+
+        setChanged();
         notifyObservers(riskChangeEvent);
 
         //TODO remove old listeners
-        for (RiskEventListener rl : secondSelectedListeners) rl.changeEvent(riskChangeEvent);
+        //for (RiskEventListener rl : secondSelectedListeners) rl.changeEvent(riskChangeEvent);
 
         secondSelectedTerritory = touchedTerritory;
     }

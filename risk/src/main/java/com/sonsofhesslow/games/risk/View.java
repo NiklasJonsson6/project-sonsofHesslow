@@ -30,7 +30,7 @@ public class View implements Observer {
         movementBlue = Color.parseColor("#ff0099cc");
         this.risk = risk;
         overlayController = MainActivity.overlayController;
-        for (Territory t : risk.getTerritories()) {
+        /* for (Territory t : risk.getTerritories()) {
             t.addOccupierListeners(new Territory.OccupierChangeListener() {
                 @Override
                 public void handle(Territory.OccupierChangeEvent occupierChangeEvent) {
@@ -143,7 +143,7 @@ public class View implements Observer {
                     overlayController.addViewChange(R.layout.activity_movmentphase);
                 }
             }
-        });
+        }); */
         risk.addOverlayListener(new OverlayChangeListener() {
             @Override
             public void phaseEvent(OverlayChangeEvent overlayChangeEvent) {
@@ -204,6 +204,7 @@ public class View implements Observer {
     }
 
     public void update(Observable obs, Object arg) {
+        System.out.println("update");
         if (obs instanceof Risk) {
             if (arg instanceof Risk.RiskChangeEvent) {
                 Risk.RiskChangeEvent event = (Risk.RiskChangeEvent) arg;
@@ -291,6 +292,7 @@ public class View implements Observer {
                 GraphicsManager.setArmies(event.territory.getId(), event.newValue);
 
             } else if (arg instanceof Territory.OccupierChangeEvent) {
+                System.out.println("colors?");
                 Territory.OccupierChangeEvent event = (Territory.OccupierChangeEvent) arg;
                 if (!playerColors.containsKey(event.newValue)) {
                     Player[] players = Controller.getRiskModel().getPlayers();
