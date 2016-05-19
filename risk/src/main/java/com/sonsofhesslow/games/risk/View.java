@@ -1,7 +1,5 @@
 package com.sonsofhesslow.games.risk;
 
-import android.graphics.Color;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -9,6 +7,9 @@ import java.util.Observer;
 import java.util.Random;
 
 import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
+import com.sonsofhesslow.games.risk.model.Player;
+import com.sonsofhesslow.games.risk.model.Risk;
+import com.sonsofhesslow.games.risk.model.Territory;
 
 /**
  * Created by Daniel on 27/04/2016.

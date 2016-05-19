@@ -1,4 +1,9 @@
-package com.sonsofhesslow.games.risk;
+package com.sonsofhesslow.games.risk.model;
+
+import com.sonsofhesslow.games.risk.OverlayChangeEvent;
+import com.sonsofhesslow.games.risk.OverlayChangeListener;
+import com.sonsofhesslow.games.risk.PlayerChangeEvent;
+import com.sonsofhesslow.games.risk.PlayerChangeEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +22,7 @@ public class Risk extends Observable {
     private ArrayList<Territory> defenders = new ArrayList<>();
     private ArrayList<Territory> neighbors = new ArrayList<>();
 
-    enum GamePhase {PICK_TERRITORIES, PLACE_STARTING_ARMIES, PLACE_ARMIES, FIGHT, MOVEMENT}
+    public enum GamePhase {PICK_TERRITORIES, PLACE_STARTING_ARMIES, PLACE_ARMIES, FIGHT, MOVEMENT}
 
     public Risk(int playerIds[], int territoryCount) {
         territories = new Territory[territoryCount];
@@ -148,13 +153,13 @@ public class Risk extends Observable {
     /*
     Listeners
      */
-    static class RiskChangeEvent {
-        enum EventType {ATTACK, DEFENCE, SELECTED, SECOND_SELECTED}
+    public static class RiskChangeEvent {
+        public enum EventType {ATTACK, DEFENCE, SELECTED, SECOND_SELECTED}
 
-        EventType eventType;
+        public EventType eventType;
         Risk risk;
-        Territory newTerritory;
-        Territory oldTerritory;
+        public Territory newTerritory;
+        public Territory oldTerritory;
 
         public RiskChangeEvent(EventType eventType, Risk risk, Territory newTerritory, Territory oldTerritory) {
             this.eventType = eventType;
@@ -181,7 +186,7 @@ public class Risk extends Observable {
         secondSelectedListeners.add(riskEventListener);
     }
 
-    void addOverlayListener(OverlayChangeListener overlayChangeListener) {
+    public void addOverlayListener(OverlayChangeListener overlayChangeListener) {
         this.overlayChangeListener = overlayChangeListener;
     }
 

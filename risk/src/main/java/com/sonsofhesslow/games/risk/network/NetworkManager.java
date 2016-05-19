@@ -4,11 +4,11 @@ import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
 import com.google.example.games.basegameutils.BaseGameUtils;
 import com.sonsofhesslow.games.risk.Controller;
 import com.sonsofhesslow.games.risk.MainActivity;
-import com.sonsofhesslow.games.risk.Player;
+import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.PlayerChangeEvent;
 import com.sonsofhesslow.games.risk.PlayerChangeEventListener;
-import com.sonsofhesslow.games.risk.Risk;
-import com.sonsofhesslow.games.risk.Territory;
+import com.sonsofhesslow.games.risk.model.Risk;
+import com.sonsofhesslow.games.risk.model.Territory;
 
 import java.io.IOException;
 

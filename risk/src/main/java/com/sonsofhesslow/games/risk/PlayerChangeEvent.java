@@ -1,5 +1,7 @@
 package com.sonsofhesslow.games.risk;
 
+import com.sonsofhesslow.games.risk.model.Player;
+
 public class PlayerChangeEvent {
     Player oldPlayer;
     public Player newPlayer;

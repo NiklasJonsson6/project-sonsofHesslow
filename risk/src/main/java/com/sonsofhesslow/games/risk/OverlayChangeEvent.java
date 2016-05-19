@@ -1,5 +1,7 @@
 package com.sonsofhesslow.games.risk;
 
+import com.sonsofhesslow.games.risk.model.Risk;
+
 /**
  * Created by fredr on 2016-05-08.
  */

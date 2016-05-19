@@ -1,4 +1,6 @@
-package com.sonsofhesslow.games.risk;
+package com.sonsofhesslow.games.risk.model;
+import com.sonsofhesslow.games.risk.Card;
+
 import java.util.ArrayList;
 import java.util.Random;
 

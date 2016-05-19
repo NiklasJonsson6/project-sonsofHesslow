@@ -1,5 +1,7 @@
 package com.sonsofhesslow.games.risk;
 
+import com.sonsofhesslow.games.risk.model.Territory;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;

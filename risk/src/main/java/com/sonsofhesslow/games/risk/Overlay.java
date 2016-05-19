@@ -2,17 +2,14 @@ package com.sonsofhesslow.games.risk;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.view.*;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.sonsofhesslow.games.risk.model.Player;
+import com.sonsofhesslow.games.risk.model.Risk;
 
 /**
  * Created by fredr on 2016-05-18.

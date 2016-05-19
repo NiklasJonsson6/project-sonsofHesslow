@@ -31,6 +31,8 @@ import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener;
 import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 import com.google.example.games.basegameutils.BaseGameUtils;
+import com.sonsofhesslow.games.risk.model.Player;
+import com.sonsofhesslow.games.risk.model.Risk;
 import com.sonsofhesslow.games.risk.network.NetworkManager;
 
 import java.util.ArrayList;

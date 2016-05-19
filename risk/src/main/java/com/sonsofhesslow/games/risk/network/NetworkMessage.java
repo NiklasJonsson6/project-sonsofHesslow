@@ -1,7 +1,7 @@
 package com.sonsofhesslow.games.risk.network;
 
-import com.sonsofhesslow.games.risk.Player;
-import com.sonsofhesslow.games.risk.Territory;
+import com.sonsofhesslow.games.risk.model.Player;
+import com.sonsofhesslow.games.risk.model.Territory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
