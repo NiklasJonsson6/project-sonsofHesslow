@@ -143,7 +143,7 @@ public class View implements Observer {
                 }
             }
         }); */
-        risk.addOverlayListener(new OverlayChangeListener() {
+        /* risk.addOverlayListener(new OverlayChangeListener() {
             @Override
             public void phaseEvent(OverlayChangeEvent overlayChangeEvent) {
                 System.out.println("Pleeease");
@@ -196,7 +196,7 @@ public class View implements Observer {
                     //add some kind of indication to how many
                 }
             }
-        });
+        }); */
     }
 
     public float[] getColor(Player p) {
@@ -204,9 +204,12 @@ public class View implements Observer {
     }
 
     public void update(Observable obs, Object arg) {
-        System.out.println("update");
         if (obs instanceof Risk) {
+            Risk risk = (Risk) obs;
             if (arg instanceof Risk.RiskChangeEvent) {
+                /*
+                RISK CHANGE EVENT
+                 */
                 Risk.RiskChangeEvent event = (Risk.RiskChangeEvent) arg;
                 switch(event.eventType) {
                     case ATTACK:
@@ -280,15 +283,74 @@ public class View implements Observer {
                         }
                         break;
                 }
+            } else if (arg instanceof Player) {
+                /*
+                PLAYER CHANGE EVENT
+                 */
+                Player event = (Player) arg;
+                if (playerColors.get(event) != null) {
+                    overlayController.setCurrentPlayer(event, Util.getIntFromColor(playerColors.get(event)));
+                }
+                if (risk.getGamePhase() == Risk.GamePhase.PLACE_STARTING_ARMIES) {
+                    overlayController.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
+                    overlayController.setInformation("Armies to place: " + risk.getCurrentPlayer().getArmiesToPlace(), true);
+                    //add some kind of indication to how many
+                }
+            } else if (arg instanceof Risk.GamePhase) {
+                /*
+                PHASE EVENT
+                 */
+                Risk.GamePhase event = (Risk.GamePhase) arg;
+                System.out.println(risk.getCurrentPlayer().getArmiesToPlace());
+                if (event == Risk.GamePhase.PICK_TERRITORIES) {
+
+                } else if (event == Risk.GamePhase.PLACE_STARTING_ARMIES) {
+                    // Hide all
+                    overlayController.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
+                    overlayController.setInformation("Armies to place: " + risk.getCurrentPlayer().getArmiesToPlace(), true);
+                } else if (event == Risk.GamePhase.PLACE_ARMIES) {
+                    // Hide all
+                    System.out.println("Fight Phase view");
+                    overlayController.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
+                    overlayController.setPlaceArmiesVisible(true);
+                    overlayController.setBarMaxValue(risk.getCurrentPlayer().getArmiesToPlace());
+                    //add some kind of indication to how many
+                } else if (event == Risk.GamePhase.FIGHT) {
+                    overlayController.setGamePhase(Risk.GamePhase.FIGHT);
+                } else if (event == Risk.GamePhase.MOVEMENT) {
+                    overlayController.setGamePhase(Risk.GamePhase.MOVEMENT);
+                }
+            } else {
+                /*
+                PLACE EVENT
+                 */
+                if (risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES) {
+                    overlayController.setBarMaxValue(risk.getCurrentPlayer().getArmiesToPlace());
+                    //add some kind of indication to how many
+                    if (risk.getCurrentPlayer().getArmiesToPlace() == 0) {
+                        overlayController.setGamePhase(Risk.GamePhase.FIGHT);
+                    }
+                } else if (risk.getGamePhase() == Risk.GamePhase.MOVEMENT && risk.getSecondSelectedTerritory() != null) {
+                    overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - 1);
+                    //add some kind of indication to how many
+                } else {
+                    overlayController.setBarMaxValue(0);
+                    //add some kind of indication to how many
+                }
             }
 
         } else if (obs instanceof Territory) {
             Territory territory = (Territory) obs;
             if (arg instanceof Integer) {
+                /*
+                ARMY CHANGE EVENT
+                 */
                 int event = (Integer) arg;
                 GraphicsManager.setArmies(territory.getId(), event);
-
             } else if (arg instanceof Player) {
+                /*
+                OCCUPIER CHANGE EVENT
+                 */
                 Player event = (Player) arg;
                 if (!playerColors.containsKey(event)) {
                     Player[] players = risk.getPlayers();

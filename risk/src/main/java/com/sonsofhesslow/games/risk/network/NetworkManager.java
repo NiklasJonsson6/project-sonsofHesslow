@@ -11,15 +11,24 @@ import com.sonsofhesslow.games.risk.model.Risk;
 import com.sonsofhesslow.games.risk.model.Territory;
 
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 
 import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 
-public class NetworkManager implements PlayerChangeEventListener {
+public class NetworkManager implements /* PlayerChangeEventListener,*/ Observer {
     MainActivity activity;
     boolean selfModified;
     public NetworkManager(Risk risk, final MainActivity activity) {
         this.activity = activity;
-        for (final Territory territory : risk.getTerritories()) {
+
+        //add to observables
+        risk.addObserver(this);
+        for(Territory territory: risk.getTerritories()) {
+            territory.addObserver(this);
+        }
+
+        /* for (final Territory territory : risk.getTerritories()) {
             territory.addArmyListeners(new Territory.ArmyChangeListener() {
                 @Override
                 public void handle(Territory.ArmyChangeEvent armyChangeEvent) {
@@ -49,21 +58,66 @@ public class NetworkManager implements PlayerChangeEventListener {
                     }
                 }
             });
-        }
-        /*
-        TODO notifyobservers, should networkmanager be observable aswell?
-        TODO probably not, this should probably be handeled in model (setCurrentPlayer()) or something
-        */
-        activity.getController().getRiskModel().addPlayerChangeListener(this);
+        } */
+
+        //activity.getController().getRiskModel().addPlayerChangeListener(this);
     }
 
+    public void update(Observable obs, Object arg) {
+        if (obs instanceof Territory) {
+            Territory territory = (Territory) obs;
+            if (arg instanceof Integer) {
+                /*
+                ARMY CHANGE EVENT
+                 */
+                int event = (Integer) arg;
+                if (!selfModified) {
+                    NetworkMessage message = NetworkMessage.territoryChangedMessageBuilder(territory, event);
+                    try {
+                        activity.broadcast(message.serialize(), true);
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            } else if (arg instanceof Player) {
+                /*
+                OCCUPIER CHANGE EVENT
+                 */
+                Player event = (Player) arg;
+                if (!selfModified) {
+                    NetworkMessage message = NetworkMessage.ownerChangedMessageBuilder(territory, event);
+                    try {
+                        activity.broadcast(message.serialize(), true);
+                    } catch (Exception ex) {
+                        //
+                    }
+                }
+            }
+        } else if (obs instanceof Risk) {
+            /*
+            PLAYER CHANGE EVENT LISTENER
+             */
+            if (arg instanceof Player) {
+                Player event = (Player) arg;
+                if(!selfModified){
+                    NetworkMessage message = NetworkMessage.turnChangedMessageBuilder(event);
+
+                    try {
+                        activity.broadcast(message.serialize(), true);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
 
     public void onRealTimeMessageReceived(RealTimeMessage rtm, MainActivity mainActivity){
         byte[] messageBuffer = rtm.getMessageData();
         String sender = rtm.getSenderParticipantId();
 
-        try
-        {
+        try {
             NetworkMessage recievedNetworkData = NetworkMessage.deSerialize(messageBuffer);
 
             selfModified = true;
@@ -74,10 +128,10 @@ public class NetworkManager implements PlayerChangeEventListener {
                 case armyAmountChange: {
                     System.out.println("rtmr region changed");
                     Territory changedTerritory = Controller.getTerritoryById(recievedNetworkData.regionId);
-                    if(changedTerritory!=null)
+                    if(changedTerritory!=null) {
                         changedTerritory.setArmyCount(recievedNetworkData.troups);
-                    else
-                    {
+                    }
+                    else {
                         System.out.println("illegal region index");
                     }
                 }
@@ -88,14 +142,13 @@ public class NetworkManager implements PlayerChangeEventListener {
                     Player newOccupier = null;
 
                     for(Player p : Controller.getRiskModel().getPlayers()) {
-                        if(p.getParticipantId() == recievedNetworkData.participantId){
+                        if(p.getParticipantId() == recievedNetworkData.participantId) {
                             System.out.println("found owner");
                             newOccupier = p;
                             break;
                         }
                     }
-                    if(changedTerritory!=null)
-                    {
+                    if(changedTerritory!=null) {
                         changedTerritory.setOccupier(newOccupier);
                     }
                     else {
@@ -128,8 +181,7 @@ public class NetworkManager implements PlayerChangeEventListener {
                 }
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             ex.printStackTrace();
         }
 
@@ -138,7 +190,7 @@ public class NetworkManager implements PlayerChangeEventListener {
         GraphicsManager.requestRender();
     }
 
-    @Override
+    /* @Override
     public void changeEvent(PlayerChangeEvent playerChangeEvent) {
         if(!selfModified){
             NetworkMessage message = NetworkMessage.turnChangedMessageBuilder(playerChangeEvent.newPlayer);
@@ -149,6 +201,6 @@ public class NetworkManager implements PlayerChangeEventListener {
                 e.printStackTrace();
             }
         }
-    }
+    } */
 }
 

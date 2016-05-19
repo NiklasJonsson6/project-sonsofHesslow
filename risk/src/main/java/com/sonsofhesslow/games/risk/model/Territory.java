@@ -23,7 +23,7 @@ public class Territory extends Observable {
 
     public void setArmyCount(int armyCount) {
         //TODO ArmyChangeEvent not needed for View
-        ArmyChangeEvent event = new ArmyChangeEvent(this, this.armyCount, armyCount);
+        //ArmyChangeEvent event = new ArmyChangeEvent(this, this.armyCount, armyCount);
 
         setChanged();
         notifyObservers(armyCount);
@@ -31,7 +31,7 @@ public class Territory extends Observable {
         this.armyCount = armyCount;
 
         //TODO remove old listeners
-        for (ArmyChangeListener listener : armyListeners) listener.handle(event);
+        //for (ArmyChangeListener listener : armyListeners) listener.handle(event);
     }
 
     public Player getOccupier() {
@@ -41,13 +41,13 @@ public class Territory extends Observable {
     public void setOccupier(Player occupier) {
         if (occupier != this.occupier) {
             //TODO OccupierChangeEvent not needed for View
-            OccupierChangeEvent event = new OccupierChangeEvent(this, this.occupier, occupier);
+            //OccupierChangeEvent event = new OccupierChangeEvent(this, this.occupier, occupier);
 
             setChanged();
             notifyObservers(occupier);
 
             //TODO remove old listeners
-            for (OccupierChangeListener listener : occupierListeners) listener.handle(event);
+            //for (OccupierChangeListener listener : occupierListeners) listener.handle(event);
         }
         if (this.occupier != null) {
             this.occupier.changeTerritoriesOwned(-1);
@@ -94,7 +94,7 @@ public class Territory extends Observable {
     //listeners  boilerplate
     /*
     Armies
-     */
+
     public static class ArmyChangeEvent {
         Territory territory;
         int oldValue;
@@ -106,20 +106,20 @@ public class Territory extends Observable {
             this.oldValue = oldValue;
             this.newValue = newValue;
         }
-    }
+    } */
 
     //TODO remove these, implemented in network as well...
-    public interface ArmyChangeListener {
+    /* public interface ArmyChangeListener {
         void handle(ArmyChangeEvent armyChangeEvent);
     }
     List<ArmyChangeListener> armyListeners = new ArrayList<>();
     public void addArmyListeners(ArmyChangeListener listener) {
         armyListeners.add(listener);
-    }
+    } */
 
     /*
     Occupier
-     */
+
     public static class OccupierChangeEvent {
         Territory territory;
         Player oldValue;
@@ -131,14 +131,14 @@ public class Territory extends Observable {
             this.oldValue = oldValue;
             this.newValue = newValue;
         }
-    }
+    } */
 
     //TODO remove these
-    public interface OccupierChangeListener {
+    /* public interface OccupierChangeListener {
         void handle(OccupierChangeEvent occupierChangeEvent);
     }
     List<OccupierChangeListener> occupierListeners = new ArrayList<>();
     public void addOccupierListeners(OccupierChangeListener listener) {
         occupierListeners.add(listener);
-    }
+    } */
 }

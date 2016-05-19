@@ -75,13 +75,17 @@ public class Risk extends Observable {
     public void setCurrentPlayer(Player player) {
         System.out.println("current player: " + getCurrentPlayer() + " new player: " + player);
 
-        for(PlayerChangeEventListener playerChangeListener : playerChangeListeners){
+        /* for(PlayerChangeEventListener playerChangeListener : playerChangeListeners){
             System.out.println("calling changeevent");
             playerChangeListener.changeEvent(new PlayerChangeEvent(getCurrentPlayer() ,player));
-        }
+        } */
+
+        setChanged();
+        notifyObservers(player);
+
         currentPlayer = player;
 
-        overlayChangeListener.playerChangeEvent(new OverlayChangeEvent(this));
+        //overlayChangeListener.playerChangeEvent(new OverlayChangeEvent(this));
     }
 
     public Player getCurrentPlayer() {
@@ -143,11 +147,18 @@ public class Risk extends Observable {
 
     public void setGamePhase(GamePhase phase) {
         this.gamePhase = phase;
-        overlayChangeListener.phaseEvent(new OverlayChangeEvent(this));
+
+        setChanged();
+        notifyObservers(phase);
+
+        //overlayChangeListener.phaseEvent(new OverlayChangeEvent(this));
     }
 
     public void placeEvent() {
-        overlayChangeListener.placeEvent(new OverlayChangeEvent(this));
+        setChanged();
+        notifyObservers();
+
+        //overlayChangeListener.placeEvent(new OverlayChangeEvent(this));
     }
 
     /*
@@ -170,7 +181,7 @@ public class Risk extends Observable {
     }
 
     //TODO remove this shit
-    void addAttackListener(RiskEventListener riskEventListener) {
+    /* void addAttackListener(RiskEventListener riskEventListener) {
         attackListeners.add(riskEventListener);
     }
 
@@ -207,5 +218,5 @@ public class Risk extends Observable {
 
     interface RiskEventListener {
         void changeEvent(RiskChangeEvent riskChangeEvent);
-    }
+    } */
 }
