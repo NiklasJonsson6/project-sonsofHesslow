@@ -22,10 +22,11 @@ public class Territory extends Observable {
     }
 
     public void setArmyCount(int armyCount) {
+        //TODO ArmyChangeEvent not needed for View
         ArmyChangeEvent event = new ArmyChangeEvent(this, this.armyCount, armyCount);
 
         setChanged();
-        notifyObservers(event);
+        notifyObservers(armyCount);
 
         this.armyCount = armyCount;
 
@@ -39,11 +40,11 @@ public class Territory extends Observable {
 
     public void setOccupier(Player occupier) {
         if (occupier != this.occupier) {
+            //TODO OccupierChangeEvent not needed for View
             OccupierChangeEvent event = new OccupierChangeEvent(this, this.occupier, occupier);
 
-            System.out.println("event?");
             setChanged();
-            notifyObservers(event);
+            notifyObservers(occupier);
 
             //TODO remove old listeners
             for (OccupierChangeListener listener : occupierListeners) listener.handle(event);

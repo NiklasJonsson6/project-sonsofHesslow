@@ -282,26 +282,26 @@ public class View implements Observer {
             }
 
         } else if (obs instanceof Territory) {
-            if (arg instanceof Territory.ArmyChangeEvent) {
-                Territory.ArmyChangeEvent event = (Territory.ArmyChangeEvent) arg;
-                GraphicsManager.setArmies(event.territory.getId(), event.newValue);
+            Territory territory = (Territory) obs;
+            if (arg instanceof Integer) {
+                int event = (Integer) arg;
+                GraphicsManager.setArmies(territory.getId(), event);
 
-            } else if (arg instanceof Territory.OccupierChangeEvent) {
-                System.out.println("colors?");
-                Territory.OccupierChangeEvent event = (Territory.OccupierChangeEvent) arg;
-                if (!playerColors.containsKey(event.newValue)) {
+            } else if (arg instanceof Player) {
+                Player event = (Player) arg;
+                if (!playerColors.containsKey(event)) {
                     Player[] players = risk.getPlayers();
                     Random random = new Random(players[playerColors.size()].getParticipantId() +
                             (players[0].getParticipantId() == players[1].getParticipantId() ?
                                     new Random().nextInt(1000) :         //multiplayer - have same color across all units
                                     playerColors.size()));             //singleplayer - have different color every time
                     float[] rndColor = {random.nextFloat(), random.nextFloat(), random.nextFloat(), 1};
-                    playerColors.put(event.newValue, rndColor);
+                    playerColors.put(event, rndColor);
                 }
                 if (risk.getAttackingTerritory() != null) {
-                    GraphicsManager.setColor(event.territory.getId(), playerColors.get(event.newValue), risk.getAttackingTerritory().getId());
+                    GraphicsManager.setColor(territory.getId(), playerColors.get(event), risk.getAttackingTerritory().getId());
                 } else {
-                    GraphicsManager.setColor(event.territory.getId(), playerColors.get(event.newValue));
+                    GraphicsManager.setColor(territory.getId(), playerColors.get(event));
                 }
             }
         }
