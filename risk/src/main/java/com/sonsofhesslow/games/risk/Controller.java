@@ -16,7 +16,6 @@ public class Controller implements GL_TouchListener {
     private View riskView;
 
     private int currentPlayerTracker = 0; //used to set next player
-    private int territoriesPicked = 0;
     private int self_id;
     private boolean territoryTaken = false;
 
@@ -65,7 +64,7 @@ public class Controller implements GL_TouchListener {
 
                             //for debugging only
                             Random r = new Random();
-                            final int EXTRA_TRIES = 6;
+                            final int EXTRA_TRIES = 20;
                             for(int i = 0; i < EXTRA_TRIES; i++) {
                                 int randomNumber = r.nextInt(42);
                                 Territory randomTerritory = getTerritoryById(randomNumber);
@@ -73,13 +72,14 @@ public class Controller implements GL_TouchListener {
                                     randomTerritory.setArmyCount(1);
                                     randomTerritory.setOccupier(riskModel.getCurrentPlayer());
                                     riskModel.getCurrentPlayer().decArmiesToPlace();
+                                    System.out.println("troups left to place: " + riskModel.getCurrentPlayer().getArmiesToPlace());
                                 } else{
                                     i--;    //find a new territory to place
                                 }
                             }
 
                             touchedTerritory.setArmyCount(1);
-                            territoriesPicked++;
+                            System.out.println("dec armies in controller --------------------------------");
                             riskModel.getCurrentPlayer().decArmiesToPlace();
                             // TODO: 2016-05-16 better solution?
                             boolean canContinueToPlacePhase = true;
@@ -218,11 +218,6 @@ public class Controller implements GL_TouchListener {
 
         //next player, change gamephase
         riskModel.setCurrentPlayer(riskModel.getPlayers()[currentPlayerTracker]);
-        if (riskModel.getGamePhase() == Risk.GamePhase.PICK_TERRITORIES) {
-            riskModel.getCurrentPlayer().giveArmies(1);
-        } else if (riskModel.getGamePhase() != Risk.GamePhase.PLACE_STARTING_ARMIES) {
-            setArmiesToPlace();
-        }
 
         if(riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId() && riskModel.getCurrentPlayer().getParticipantId() != self_id) {
             //multiplayer
@@ -248,7 +243,8 @@ public class Controller implements GL_TouchListener {
         if (riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId()) {
             //multiplayer
             for (Player player: riskModel.getPlayers()) {
-                if (player.getParticipantId() != self_id) {
+                if (player.getParticipantId()== self_id) {
+                    System.out.println("giving starting troups");
                     player.giveArmies(50 - (5*riskModel.getPlayers().length));
                 }
             }

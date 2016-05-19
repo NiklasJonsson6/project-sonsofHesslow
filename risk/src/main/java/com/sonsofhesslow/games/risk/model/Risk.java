@@ -74,17 +74,13 @@ public class Risk extends Observable {
 
     public void setCurrentPlayer(Player player) {
         System.out.println("current player: " + getCurrentPlayer() + " new player: " + player);
-
+        currentPlayer = player;
         /* for(PlayerChangeEventListener playerChangeListener : playerChangeListeners){
             System.out.println("calling changeevent");
             playerChangeListener.changeEvent(new PlayerChangeEvent(getCurrentPlayer() ,player));
         } */
-
         setChanged();
         notifyObservers(player);
-
-        currentPlayer = player;
-
         //overlayChangeListener.playerChangeEvent(new OverlayChangeEvent(this));
     }
 

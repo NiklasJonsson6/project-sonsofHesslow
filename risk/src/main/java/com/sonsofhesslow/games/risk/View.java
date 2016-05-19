@@ -22,7 +22,7 @@ public class View implements Observer {
     final float[] blue = {0, 0, 1, 1};
 
 
-    final Risk risk;
+    private final Risk risk;
     Map<Player, float[]> playerColors = new HashMap<>();
     Overlay overlayController;
 
@@ -293,6 +293,7 @@ public class View implements Observer {
                 }
                 if (risk.getGamePhase() == Risk.GamePhase.PLACE_STARTING_ARMIES) {
                     overlayController.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
+                    System.out.println("armies to place: " + risk.getCurrentPlayer().getArmiesToPlace());
                     overlayController.setInformation("Armies to place: " + risk.getCurrentPlayer().getArmiesToPlace(), true);
                     //add some kind of indication to how many
                 }
