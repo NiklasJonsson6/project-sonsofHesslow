@@ -44,23 +44,13 @@ import java.util.concurrent.*;
 
 public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
 
-    public static final float[] mMVPMatrix = new float[16];
-
-    private static final float[] mProjectionMatrix = new float[16];
-    private static final float[] mViewMatrix = new float[16];
-    private float mAngle;
+    public static final float[] MVPMatrix = new float[16];
+    private static final float[] projectionMatrix = new float[16];
+    private static final float[] viewMatrix = new float[16];
     private static List<GLObject> gameObjects = new ArrayList<>();
-    private static MyGLRenderer ref = null;
-
-    MyGLRenderer getInstance()
-    {
-        if(ref == null) ref = new MyGLRenderer();
-        return ref;
-    }
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-        // Set the background frame color
         GLES20.glClearColor(1f, 1f, 1f, 1.0f);
         GLES20.glEnable(GLES20.GL_BLEND);
         GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
@@ -80,41 +70,64 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
 
     @Override
     public void onDrawFrame(GL10 unused) {
-        for(GLObject go : objectsToBeRemoved)
+        frame_init();
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+        Camera cam = Camera.getInstance();
+        Matrix.setLookAtM(viewMatrix, 0, cam.pos.x, cam.pos.y, cam.pos.z, cam.lookAt.x, cam.lookAt.y, cam.lookAt.z, cam.up.x, cam.up.y, cam.up.z);
+
+        if(cam.stitchPostion > 0 && cam.stitchPostion < 1)
         {
+            Camera[] cams = cam.getStitchCams();
+            int x =(int)(width*cam.stitchPostion);
+            if(x!=0 && x != width)
+            {
+                render(0, 0, x, height, cams[0]);
+                render(x, 0, width, height,cams[1]);
+                return;
+            }
+        }
+        render(0, 0, width, height, cam);
+    }
+    private void frame_init()
+    {
+        for(GLObject go : objectsToBeRemoved) {
             objectsToBeAdded.remove(go);
             gameObjects.remove(go);
         }
         objectsToBeRemoved.clear();
-        for(GLObject go : objectsToBeAdded)
-        {
+        for(GLObject go : objectsToBeAdded) {
             go.gl_init();
             gameObjects.add(go);
         }
         objectsToBeAdded.clear();
-        float[] scratch = new float[16];
+    }
+    private void render(int left, int bottom, int right, int top, Camera camera)
+    {
+        int width = right-left;
+        int height = top-bottom;
 
-        // Draw background color
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+        GLES20.glViewport(left, bottom, width, height);
+        float[] projectionMatrix = new float[16];
+        float ratio = (float) width / height;
+        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1, 1, 1, 20);
 
-        Camera cam = Camera.getInstance();
-        // Set the camera position (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, cam.pos.x, cam.pos.y, cam.pos.z, cam.lookAt.x, cam.lookAt.y, cam.lookAt.z, cam.up.x, cam.up.y, cam.up.z);
+        float[] viewMatrix = new float[16];
+        Matrix.setLookAtM(viewMatrix, 0, camera.pos.x, camera.pos.y, camera.pos.z, camera.lookAt.x, camera.lookAt.y, camera.lookAt.z, camera.up.x, camera.up.y, camera.up.z);
 
         // Calculate the projection and view transformation
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
+        Matrix.multiplyMM(MVPMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
         Collections.sort(gameObjects, new Comparator<GLObject>() {
             @Override
             public int compare(GLObject lhs, GLObject rhs) {
                 return Float.compare(lhs.drawOrder, rhs.drawOrder);
             }
         });
-        for(GLObject go : gameObjects)
-        {
+        for(GLObject go : gameObjects) {
             if(go.isActive)
-                go.draw(mMVPMatrix);
+                go.draw(MVPMatrix);
         }
     }
+
 
     private static int width;
     private static int height;
@@ -124,21 +137,40 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
         this.width = width;
         this.height = height;
 
-        // Adjust the viewport based on geometry changes,
-        // such as screen rotation
-        GLES20.glViewport(0, 0, width, height);
-
         float ratio = (float) width / height;
-
-        // this projection matrix is applied to object coordinates
-        // in the onDrawFrame() method
-        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 1, 20);
+        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1, 1, 1, 20);
     }
 
-    public static Vector2 ScreenToWorldCoords(Vector2 point,float z_out)
+    public static Vector2 ViewPortToWorldCoord(Vector2 point, float z_out)
     {
         float[] transformMatrix = new float[16];
-        Matrix.multiplyMM(transformMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
+        Matrix.multiplyMM(transformMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
+
+        float[] invTransformMatrix = new float[16];
+        Matrix.invertM(invTransformMatrix, 0, transformMatrix, 0);
+
+        if(invTransformMatrix[10] == 0)
+        {
+            throw new RuntimeException("my bad // gl form viewport coords");
+        }
+        float gl_x = point.x;
+        float gl_y = point.y;
+        float gl_z = (invTransformMatrix[2]*gl_x + invTransformMatrix[6]*gl_y + invTransformMatrix[14] -z_out) / -invTransformMatrix[10];
+
+        float[] pointInGL = new float[]{gl_x,gl_y,gl_z,1};
+        float[] ret = new float[4];
+        Matrix.multiplyMV(ret, 0, invTransformMatrix, 0, pointInGL, 0);
+
+        // avoid div with 0. Don't know if this is a problem
+        if (ret[3] == 0.0)
+            throw new RuntimeException("2: viewPort to world cords failed, div by zero");
+
+        return new Vector2(ret[0] / ret[3], ret[1] / ret[3]);
+    }
+    public static Vector2 ScreenToWorldCoords(Vector2 point, float z_out)
+    {
+        float[] transformMatrix = new float[16];
+        Matrix.multiplyMM(transformMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
 
         float[] invTransformMatrix = new float[16];
         Matrix.invertM(invTransformMatrix, 0, transformMatrix, 0);
@@ -160,26 +192,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
         //System.out.println("ret z" + ret[2]);
 
         // avoid div with 0. Don't know if this is a problem
-        if (ret[3] == 0.0)
+        if (Math.abs(ret[3]) < 0.0001)
             throw new RuntimeException("2: to world cords failed, div by zero");
 
         //div so w is one again.
         return new Vector2(ret[0] / ret[3], ret[1] / ret[3]);
-    }
-
-    /**
-     * Returns the rotation angle of the triangle shape (mTriangle).
-     *
-     * @return - A float representing the rotation angle.
-     */
-    public float getAngle() {
-        return mAngle;
-    }
-
-    /**
-     * Sets the rotation angle of the triangle shape (mTriangle).
-     */
-    public void setAngle(float angle) {
-        mAngle = angle;
     }
 }
