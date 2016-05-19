@@ -130,10 +130,11 @@ public class FilledBeizierPath extends GLObject implements Updatable {
         {
             remainingIndices.add(i);
         }
-
+        boolean doRest=false;
         //triangulation by earclipping not perfect....
         while(remainingIndices.size() >= 3)
         {
+            System.out.println("earclipping " + remainingIndices.size() + " left");
             boolean removed = false;
             float acceptable_concavity = 0;
             for(int i = 0;i<remainingIndices.size();i++)
@@ -148,10 +149,11 @@ public class FilledBeizierPath extends GLObject implements Updatable {
 
                 //only add the tri if it's inside the polygon
                 float concavity = MathsUtil.crossProduct(a, b, c);
-                if (Math.signum(concavity)!=winding||Math.abs(concavity)<=acceptable_concavity)
+                if (Math.signum(concavity)!=winding||Math.abs(concavity)<=acceptable_concavity||doRest)
                 {
                     //check if there is any other vertex inside our proposed triangle
                     boolean noneInside = true;
+                    if(!doRest)
                     for(int j = 0; j<verts.length;j++)
                     {
                         if(j == index_a || j == index_b || j == index_c)continue;
@@ -162,7 +164,7 @@ public class FilledBeizierPath extends GLObject implements Updatable {
                         }
                     }
 
-                    if(noneInside)
+                    if(noneInside||doRest)
                     {
                         //add the triangle and remove the middle vertex from further consideration
                         tris[current_index++] = (short) index_a;
@@ -178,8 +180,9 @@ public class FilledBeizierPath extends GLObject implements Updatable {
             if (!removed)
             {
                 System.out.println("not all tris was drawn.. is it self intersecting or is the precision set very high?");
-                break;
+                doRest = true;
             }
+            if(remainingIndices.size() <= 2) break;
         }
 
         fill_mesh = new Mesh(tris, verts);

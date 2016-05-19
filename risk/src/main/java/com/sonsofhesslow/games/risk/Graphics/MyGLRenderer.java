@@ -37,7 +37,7 @@ import java.util.concurrent.*;
 
 public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
 
-    public static final float[] MVPMatrix = new float[16];
+    private static final float[] MVPMatrix = new float[16];
     private static final float[] projectionMatrix = new float[16];
     private static final float[] viewMatrix = new float[16];
 
