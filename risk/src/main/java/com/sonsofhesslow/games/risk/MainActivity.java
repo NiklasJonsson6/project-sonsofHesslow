@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity
             //sq.setPos(event.worldPosition);
             Vector2 delta;
             if (!event.isZooming) {
-                delta = Vector2.Sub(MyGLRenderer.ScreenToWorldCoords(prevPos, 0), event.worldPosition);
+                delta = Vector2.Sub(MyGLRenderer.screenToWorldCoords(prevPos, 0), event.worldPosition);
             } else {
                 delta = new Vector2(0, 0);
             }

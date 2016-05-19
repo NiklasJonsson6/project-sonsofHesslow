@@ -28,7 +28,7 @@ import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 
-import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.FilledBeizierPath;
+import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.*;
 import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
 
 /**
@@ -142,7 +142,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         // interested in events where the touch position changed.
         GL_TouchEvent event;
         Vector2 screen_pos = new Vector2(e.getX(), e.getY());
-        Vector2 world_pos = MyGLRenderer.ScreenToWorldCoords(screen_pos, 0);
+        Vector2 world_pos = MyGLRenderer.screenToWorldCoords(screen_pos, 0);
 
         if (e.getAction() == MotionEvent.ACTION_DOWN || e.getAction() == MotionEvent.ACTION_POINTER_DOWN) {
             downX = e.getX();
@@ -151,17 +151,16 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
         if ((e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_POINTER_UP)
                 && (Math.abs(e.getX() - downX + e.getY() - downY) <= 10)) {
-            System.out.println("X: " + Float.toString(e.getX() - downX));
-            System.out.println("Y: " + Float.toString(e.getY() - downY));
             int index = 0;
             boolean hasTouchedRegion = false;
+            Vector2 world_pos_stitched = MyGLRenderer.screenToWorldCoors_stitched(screen_pos, 0);
             for (FilledBeizierPath path : GraphicsManager.beiziers) {
                 float z = path.getPos().z;
                 Vector2 adjusted_worldPos;
                 if (z == 0)
-                    adjusted_worldPos = world_pos;
-                else    // memoization is probably a bit more expensive than recalculation. it's quite uncommon after all.
-                    adjusted_worldPos = MyGLRenderer.ScreenToWorldCoords(screen_pos, z);
+                    adjusted_worldPos = world_pos_stitched;
+                else
+                    adjusted_worldPos = MyGLRenderer.screenToWorldCoors_stitched(screen_pos, z);
 
                 if (path.fill_mesh.isOnMesh2D(adjusted_worldPos)) {
                     hasTouchedRegion = true;
