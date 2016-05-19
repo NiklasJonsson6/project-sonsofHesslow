@@ -245,8 +245,18 @@ public class Controller implements GL_TouchListener {
 
     private void setStartingArmies() {
         //rules from hasbro
-        for (Player player : riskModel.getPlayers()) {
-            player.giveArmies(50 - (5*riskModel.getPlayers().length));
+        if (riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId()) {
+            //multiplayer
+            for (Player player: riskModel.getPlayers()) {
+                if (player.getParticipantId() != self_id) {
+                    player.giveArmies(50 - (5*riskModel.getPlayers().length));
+                }
+            }
+        } else {
+            //singleplayer
+            for (Player player: riskModel.getPlayers()) {
+                player.giveArmies(50 - (5*riskModel.getPlayers().length));
+            }
         }
     }
 
