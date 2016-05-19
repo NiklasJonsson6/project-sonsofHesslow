@@ -44,6 +44,8 @@ public class Overlay {
         parent.addView(view);
     }
 
+    public void removeView(int value) {parent.removeView(parent.findViewById(R.id.waitTurn));}
+
     public void setGamePhase(Risk.GamePhase phase){
         switch (phase){
             case PICK_TERRITORIES:

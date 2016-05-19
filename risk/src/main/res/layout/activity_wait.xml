@@ -5,13 +5,13 @@
     android:gravity="bottom|center_horizontal"
     android:layout_gravity="bottom"
     android:baselineAligned="false"
-    android:clickable="false">
+    android:clickable="false"
+    android:id="@+id/waitTurn">
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:background="#999999"
-        android:id="@+id/placeStartingArmies">
+        android:background="#999999">
 
         <TextView
             android:layout_width="wrap_content"

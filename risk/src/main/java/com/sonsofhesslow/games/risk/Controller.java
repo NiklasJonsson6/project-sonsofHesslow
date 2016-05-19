@@ -62,7 +62,7 @@ public class Controller implements GL_TouchListener {
 
                             //for debugging only
                             Random r = new Random();
-                            final int EXTRA_TRIES = 0;
+                            final int EXTRA_TRIES = 6;
                             for(int i = 0; i < EXTRA_TRIES; i++) {
                                 int randomNumber = r.nextInt(42);
                                 Territory randomTerritory = getTerritoryById(randomNumber);
@@ -224,6 +224,8 @@ public class Controller implements GL_TouchListener {
             //multiplayer
             System.out.println("multiplayer@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             MainActivity.getOverlayController().addView(R.layout.activity_wait);
+        } else {
+            MainActivity.getOverlayController().removeView(R.layout.activity_wait);
         }
     }
 
