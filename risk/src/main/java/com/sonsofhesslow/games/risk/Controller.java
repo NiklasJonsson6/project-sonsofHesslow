@@ -72,6 +72,7 @@ public class Controller implements GL_TouchListener {
                                 if(randomTerritory.getOccupier() == null) {
                                     randomTerritory.setArmyCount(1);
                                     randomTerritory.setOccupier(riskModel.getCurrentPlayer());
+                                    riskModel.getCurrentPlayer().decArmiesToPlace();
                                 } else{
                                     i--;    //find a new territory to place
                                 }
@@ -245,7 +246,7 @@ public class Controller implements GL_TouchListener {
     private void setStartingArmies() {
         //rules from hasbro
         for (Player player : riskModel.getPlayers()) {
-            player.giveArmies(40 / riskModel.getPlayers().length);
+            player.giveArmies(50 - (5*riskModel.getPlayers().length));
         }
     }
 
