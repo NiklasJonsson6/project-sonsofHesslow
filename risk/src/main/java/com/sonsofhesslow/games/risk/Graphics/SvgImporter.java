@@ -36,7 +36,7 @@ public class SvgImporter {
             this.region_id = region_id;
         }
 
-        public FilledBeizierPath path;
+        public final FilledBeizierPath path;
         public Integer continent_id;
         public Integer region_id;
         public Set<Integer> neighbors;
@@ -52,7 +52,6 @@ public class SvgImporter {
 
         SvgReader sr = new SvgReader(svgStream);
         //parse all paths in the svg. add them into the appropriate category.
-        int counter = 0;
         while(true) {
             ReadRet new_read = sr.readPath();
             if(new_read != null) {
@@ -154,9 +153,7 @@ public class SvgImporter {
                 ret.get(index).neighbors.addAll(neighbors);
             }
         }
-        int i = 0;
-
-
+        int i;
         for(BeizierPath conn:connections)
         {
             Vector2 start = conn.points[0];
@@ -307,10 +304,10 @@ public class SvgImporter {
             this.isCont = isCont;
         }
 
-        BeizierPath path;
-        boolean isDashed;
-        boolean isReg;
-        boolean isCont;
+        final BeizierPath path;
+        final boolean isDashed;
+        final boolean isReg;
+        final boolean isCont;
 
     }
 }

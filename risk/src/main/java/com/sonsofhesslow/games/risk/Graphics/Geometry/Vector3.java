@@ -4,7 +4,9 @@ package com.sonsofhesslow.games.risk.graphics.Geometry;
  * Created by Daniel on 09/04/2016.
  */
 public class Vector3 {
-    public float x,y,z;
+    public final float x;
+    public final float y;
+    public final float z;
     public Vector3(float x, float y, float z)
     {
         this.x = x;

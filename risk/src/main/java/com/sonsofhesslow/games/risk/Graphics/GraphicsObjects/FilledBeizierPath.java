@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.sonsofhesslow.games.risk.graphics.Geometry.BeizierPath;
-import com.sonsofhesslow.games.risk.graphics.utils.MathsUtil;
 import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
 import com.sonsofhesslow.games.risk.graphics.Geometry.Vector3;
 
@@ -20,9 +19,9 @@ public class FilledBeizierPath extends GLObject implements Updatable {
 
 
     public Mesh fill_mesh;
-    public Mesh outline_mesh;
-    FlowShader flowShader;
-    LineShader lineShader;
+    private Mesh outline_mesh;
+    private FlowShader flowShader;
+    private LineShader lineShader;
     @Override
     public void gl_init() {
         lineShader = new LineShader();
@@ -33,8 +32,8 @@ public class FilledBeizierPath extends GLObject implements Updatable {
 
 
 
-    Vector2 center;
-    float Area;
+    private Vector2 center;
+    private float Area;
     private void calcCenter()
     {
         // from https://en.wikipedia.org/wiki/Centroid
@@ -56,14 +55,15 @@ public class FilledBeizierPath extends GLObject implements Updatable {
     }
 
 
-    final int naive_precision = 2; //higher is more detailed
+    private final int naive_precision = 2; //higher is more detailed
 
     public BeizierPath path;
     public Vector2 getCenter()
     {
         return  center;
     }
-    public FloatBuffer vertSide;
+    private FloatBuffer vertSide;
+    boolean doRest=false;
     public FilledBeizierPath(BeizierPath path, Renderer renderer) // start ctl ctl point ctl ctl point ctl ctl (start)
     {
         super(renderer);
@@ -130,7 +130,6 @@ public class FilledBeizierPath extends GLObject implements Updatable {
         {
             remainingIndices.add(i);
         }
-        boolean doRest=false;
         //triangulation by earclipping not perfect....
         while(remainingIndices.size() >= 3)
         {
@@ -148,7 +147,7 @@ public class FilledBeizierPath extends GLObject implements Updatable {
                 Vector2 c = verts[index_c];
 
                 //only add the tri if it's inside the polygon
-                float concavity = MathsUtil.crossProduct(a, b, c);
+                float concavity = Vector2.crossProduct(a, b, c);
                 if (Math.signum(concavity)!=winding||Math.abs(concavity)<=acceptable_concavity||doRest)
                 {
                     //check if there is any other vertex inside our proposed triangle
@@ -157,7 +156,7 @@ public class FilledBeizierPath extends GLObject implements Updatable {
                     for(int j = 0; j<verts.length;j++)
                     {
                         if(j == index_a || j == index_b || j == index_c)continue;
-                        if (MathsUtil.isInsideTri(verts[j], a, b, c))
+                        if (Vector2.isInsideTri(verts[j], a, b, c))
                         {
                             noneInside = false;
                             break;
@@ -209,12 +208,12 @@ public class FilledBeizierPath extends GLObject implements Updatable {
         center = Vector2.Mul(Vector2.Add(Vector2.Mul(center, Area), Vector2.Mul(other.center, other.Area)),1f/(other.Area+Area));
     }
 
-    float[] fromColor= {0.7f,0.7f,0.7f,1f};
-    float[] toColor= {0.7f,0.7f,0.7f,1f};
-    float[] outlineColor = new float[]{0,0,0,1} ;
-    float max_len=20;
-    float len=20;
-    Vector3 origin;
+    private float[] fromColor= {0.7f,0.7f,0.7f,1f};
+    private float[] toColor= {0.7f,0.7f,0.7f,1f};
+    private float[] outlineColor = new float[]{0,0,0,1} ;
+    private float max_len=20;
+    private float len=20;
+    private Vector3 origin;
     public void setColor(float[] color, Vector2 origin)
     {
         this.origin = new Vector3(origin,0);

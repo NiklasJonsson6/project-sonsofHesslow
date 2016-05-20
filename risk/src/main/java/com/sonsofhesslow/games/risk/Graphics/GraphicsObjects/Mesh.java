@@ -22,7 +22,6 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-import com.sonsofhesslow.games.risk.graphics.utils.MathsUtil;
 import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
 
 /**
@@ -35,8 +34,8 @@ public class Mesh {
 
     // number of coordinates per vertex in this array
     static final int COORDS_PER_VERTEX = 3;
-    short[] triangles;
-    Vector2[] vertices;
+    final short[] triangles;
+    final Vector2[] vertices;
     final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex (coord right? //daniel)
 
     public boolean isOnMesh2D(Vector2 point)
@@ -49,7 +48,7 @@ public class Mesh {
             Vector2 p1  = vertices[triangles[currentTri * 3 + 1]];
             Vector2 p2 = vertices[triangles[currentTri * 3 + 2]];
             ++currentTri;
-            if(MathsUtil.isInsideTri(point, p0, p1, p2))
+            if(Vector2.isInsideTri(point, p0, p1, p2))
             {
                 return true;
             }
@@ -57,7 +56,7 @@ public class Mesh {
         return false;
     }
 
-    float[] new_verts;
+    private final float[] new_verts;
     public Mesh(short[] triangles, Vector2[] vertices)
     {
         this.vertices = vertices;
@@ -71,8 +70,11 @@ public class Mesh {
         }
         calculateMetrics();
     }
-    float minX,maxX,minY,maxY;
-    public void calculateMetrics()
+    private float minX;
+    private float maxX;
+    private float minY;
+    private float maxY;
+    private void calculateMetrics()
     {
         Vector2[] verts = vertices;
         minX = verts[0].x;
@@ -115,9 +117,7 @@ public class Mesh {
         int bt_len = b.triangles.length;
 
         short[] new_tris = new short[at_len + bt_len];
-        for(int i = 0;i<at_len;i++) {
-            new_tris[i] = a.triangles[i];
-        }
+        System.arraycopy(a.triangles, 0, new_tris, 0, at_len);
         for(int i = 0;i<bt_len;i++) {
             new_tris[at_len+i] = (short)(b.triangles[i]+a.vertices.length);
         }

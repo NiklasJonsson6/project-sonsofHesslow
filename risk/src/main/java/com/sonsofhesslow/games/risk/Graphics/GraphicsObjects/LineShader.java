@@ -9,7 +9,7 @@ import com.sonsofhesslow.games.risk.graphics.utils.ShaderUtils;
 /**
  * Created by Daniel on 06/05/2016.
  */
-public class LineShader {
+class LineShader {
 
     private static final String vertexShaderCode =
             "uniform mat4 matrix;" +

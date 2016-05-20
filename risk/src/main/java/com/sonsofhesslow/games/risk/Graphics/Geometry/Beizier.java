@@ -4,8 +4,6 @@ import android.util.Pair;
 
 import java.util.List;
 
-import com.sonsofhesslow.games.risk.graphics.utils.MathsUtil;
-
 /**
  * Created by Daniel on 06/04/2016.
  */
@@ -19,7 +17,7 @@ public class Beizier
     {
         this.points = points;
     }
-    public Vector2[] points;
+    public final Vector2[] points;
 
 
     public Beizier[] split(float t)
@@ -39,7 +37,7 @@ public class Beizier
         return ret;
     }
 
-    public Beizier[] split(float[] ts)
+    private Beizier[] split(float[] ts)
     {
         Beizier[] ret = new Beizier[ts.length];
 
@@ -59,16 +57,16 @@ public class Beizier
 
 
 
-    public static Vector2[] de_castillio_step(Vector2[] vectors, float t)
+    private static Vector2[] de_castillio_step(Vector2[] vectors, float t)
     {
         Vector2[] next_vectors = new Vector2[vectors.length-1];
         for(int i = 0; i<vectors.length-1;i++)
         {
-            next_vectors[i] = MathsUtil.lerp(vectors[i], vectors[i + 1], t);
+            next_vectors[i] = Vector2.lerp(vectors[i], vectors[i + 1], t);
         }
         return next_vectors;
     }
-    public Beizier de_catillio_reduce(float t)
+    private Beizier de_catillio_reduce(float t)
     {
         return new Beizier(de_castillio_step(this.points,t));
     }
@@ -85,7 +83,7 @@ public class Beizier
         return Intersect(a, b, tolerance, _out_tab, 0f, 1f, 0f, 1f);
     }
 
-    public static boolean Intersect(Beizier a, Beizier b, float tolerance)
+    private static boolean Intersect(Beizier a, Beizier b, float tolerance)
     {
         return Intersect(a, b, tolerance, 0f, 1f, 0f, 1f);
     }
@@ -193,8 +191,8 @@ public class Beizier
         float dist = Math.min(Vector2.Sub(p, points[0]).magnitude(),Vector2.Sub(p, points[3]).magnitude());
         if(dist < precision)return true;
         //the control points are a bounding box of the curve.
-        if(!MathsUtil.isInsideTri(p, points[0], points[1], points[2])&&
-                !MathsUtil.isInsideTri(p, points[3], points[1], points[2]))
+        if(!Vector2.isInsideTri(p, points[0], points[1], points[2])&&
+                !Vector2.isInsideTri(p, points[3], points[1], points[2]))
         {
             return false;
         }
@@ -252,10 +250,6 @@ public class Beizier
         {
             return false;
         }
-
-        //ignoring the div by two since tolerance is arbitrary anyway.
-        float a_area = Math.abs((max_ax-min_ax)* (max_ay-min_ay));
-        float b_area = Math.abs((max_bx - min_bx) * (max_by - min_by));
 
         if(ta_high-ta_low < tolerance){
             return true;

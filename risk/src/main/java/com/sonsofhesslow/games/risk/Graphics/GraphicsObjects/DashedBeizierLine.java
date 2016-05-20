@@ -4,15 +4,15 @@ import com.sonsofhesslow.games.risk.graphics.Geometry.BeizierPath;
 import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
 
 public class DashedBeizierLine extends GLObject{
-    public Mesh mesh;
-    DefaultShader shader;
+    private final Mesh mesh;
+    private DefaultShader shader;
     @Override
     public void gl_init() {
         mesh.init();
         shader = new DefaultShader();
     }
 
-    final int naive_precision = 30; //higher is more detailed
+    private final int naive_precision = 30; //higher is more detailed
 
     public DashedBeizierLine(BeizierPath path, Renderer renderer) // start ctl ctl point ctl ctl point ctl ctl (start)
     {

@@ -41,7 +41,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
     private static final float[] projectionMatrix = new float[16];
     private static final float[] viewMatrix = new float[16];
 
-    private static List<GLObject> gameObjects = new ArrayList<>();
+    private static final List<GLObject> gameObjects = new ArrayList<>();
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
@@ -50,8 +50,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
         GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    static ConcurrentLinkedQueue<GLObject> objectsToBeAdded = new ConcurrentLinkedQueue<>();
-    static ConcurrentLinkedQueue<GLObject> objectsToBeRemoved = new ConcurrentLinkedQueue<>();
+    private static final ConcurrentLinkedQueue<GLObject> objectsToBeAdded = new ConcurrentLinkedQueue<>();
+    private static final ConcurrentLinkedQueue<GLObject> objectsToBeRemoved = new ConcurrentLinkedQueue<>();
 
     public void delayedInit(GLObject m) {
         objectsToBeAdded.add(m);
@@ -115,7 +115,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
 
     private static float[] calculateProjectionMatrix(float height, float width) {
         float[] projectionMatrix = new float[16];
-        float ratio = (float) width / height;
+        float ratio =  width / height;
         Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1, 1, 1, 20);
         return projectionMatrix;
     }
@@ -126,14 +126,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
 
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
-        this.width = width;
-        this.height = height;
+        MyGLRenderer.width = width;
+        MyGLRenderer.height = height;
 
         float ratio = (float) width / height;
         Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1, 1, 1, 20);
     }
 
-    public static Vector2 viewPortToWorldCoord(Vector2 point, float z_out, float[] projectionMatrix, float[] viewMatrix) {
+    private static Vector2 viewPortToWorldCoord(Vector2 point, float z_out, float[] projectionMatrix, float[] viewMatrix) {
         float[] transformMatrix = new float[16];
         Matrix.multiplyMM(transformMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
         float[] invTransformMatrix = new float[16];
@@ -160,7 +160,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
         return viewPortToWorldCoord(point, z_out, projectionMatrix, viewMatrix);
     }
 
-    public static Vector2 screenToWorldCoords(Vector2 point, float z_out, int width, int height, float[] viewMatrix) {
+    private static Vector2 screenToWorldCoords(Vector2 point, float z_out, int width, int height, float[] viewMatrix) {
         float gl_x = ((point.x) * 2.0f / width - 1.0f);
         float gl_y = ((height - point.y) * 2.0f / height - 1.0f);
         return viewPortToWorldCoord(new Vector2(gl_x, gl_y), z_out, calculateProjectionMatrix(height, width), viewMatrix);

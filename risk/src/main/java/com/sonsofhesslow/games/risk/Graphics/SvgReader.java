@@ -14,7 +14,7 @@ import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
 /**
  * Created by Daniel on 20/04/2016.
  */
-public class SvgReader
+class SvgReader
 {
     // we need to seriously speed this up.
     // probably using the raw input stream and byte arrays. Pretending this is c here I come!
@@ -23,7 +23,7 @@ public class SvgReader
         r = new PushbackReader(new BufferedReader(new InputStreamReader(inputStream)),100);
     }
     private Vector2 pos = Vector2.Zero();
-    private PushbackReader r;
+    private final PushbackReader r;
 
     private float readFloat() throws IOException {
         //fast minimal float stream parsing.
@@ -141,13 +141,6 @@ public class SvgReader
         }
     }
 
-    class PathInfo
-    {
-        BeizierPath path;
-        String[] attribute_names;
-        String[] attribute_values;
-    }
-
     //todo attributes may come in any order.
     //don't assuse that d is last.... it's not.
 
@@ -168,61 +161,58 @@ public class SvgReader
             if(s.length()==0)return null;
             advancePast('=');
             advancePast('"');
-            if (s.equals("d")) {
-                pos = Vector2.Zero();
-                BeizierPathBuilder b = new BeizierPathBuilder();
+            switch (s) {
+                case "d":
+                    pos = Vector2.Zero();
+                    BeizierPathBuilder b = new BeizierPathBuilder();
 
-                for(;;)
-                {
-                    skipWhite();
-                    int c = (char)r.read();
-                    if(c==-1) break;
-                    if(c == '\"')
-                    {
-                        ret= b.get(false);
-                        r.unread('\"'); //we'll advance past later on. need to keep our return state consitant.
-                        break;
-                    }
-                    if(c == 'z' || c=='Z')
-                    {
-                        ret = b.get(true);
-                        break;
-                    }
-                    while (isNextFloat())
-                    {
-                        Beizier beiz = readBeiz((char) c);
-                        if(beiz != null)
-                            b.addBeiz(beiz);
-                    }
-                }
-                if(ret == null) {
-                    throw new FileFormatException("no data in the path->d tag");
-                }
-            }
-            else if(s.equals("id")) {
-                String id = readWord();
-                if(id.equals("cont"))isCont=true;
-                if(id.equals("reg"))isReg=true;
-            }
-            else if(s.equals("style")) {
-                for(;;){
-                    skipWhite();
-                    String attr = readWord(":\"");
-                    if(attr.equals("stroke-dasharray"))
-                    {
-                        r.read();//reads the :
+                    for (; ; ) {
                         skipWhite();
-                        if(isNextFloat()){
-                            isDashed = true;
+                        int c = (char) r.read();
+                        if (c == -1) break;
+                        if (c == '\"') {
+                            ret = b.get(false);
+                            r.unread('\"'); //we'll advance past later on. need to keep our return state consitant.
+                            break;
                         }
-                        break;
+                        if (c == 'z' || c == 'Z') {
+                            ret = b.get(true);
+                            break;
+                        }
+                        while (isNextFloat()) {
+                            Beizier beiz = readBeiz((char) c);
+                            if (beiz != null)
+                                b.addBeiz(beiz);
+                        }
                     }
-                    skipWhite();
-                    readWord(";\"");
-                    int p = peek();
-                    if(p == -1 || p == '\"')break;
-                    r.read(); // reads the ;
-                }
+                    if (ret == null) {
+                        throw new FileFormatException("no data in the path->d tag");
+                    }
+                    break;
+                case "id":
+                    String id = readWord();
+                    if (id.equals("cont")) isCont = true;
+                    if (id.equals("reg")) isReg = true;
+                    break;
+                case "style":
+                    for (; ; ) {
+                        skipWhite();
+                        String attr = readWord(":\"");
+                        if (attr.equals("stroke-dasharray")) {
+                            r.read();//reads the :
+                            skipWhite();
+                            if (isNextFloat()) {
+                                isDashed = true;
+                            }
+                            break;
+                        }
+                        skipWhite();
+                        readWord(";\"");
+                        int p = peek();
+                        if (p == -1 || p == '\"') break;
+                        r.read(); // reads the ;
+                    }
+                    break;
             }
             advancePast('"');
             skipWhite();

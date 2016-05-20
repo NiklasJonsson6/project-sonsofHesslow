@@ -18,10 +18,6 @@ public class BeizierPath implements Iterable<Beizier> {
     public Vector2[] points;
     public BeizierPath(Vector2[] points) // on the form start c1 c2 p c1 c2 (explicit end)(or implicit start)
     {
-        for(int i = 0; i<points.length;i++)
-        {
-            if(points[i] == null) throw new IllegalArgumentException("beizier path cannot have null elements...");
-        }
         this.points = points;
     }
 
@@ -37,12 +33,10 @@ public class BeizierPath implements Iterable<Beizier> {
 
     public class BeizIterator implements Iterator<Beizier>
     {
-        BeizierPath path;
+        final BeizierPath path;
         public int index = 0;
-        Beizier b;
         public BeizIterator(BeizierPath path)
         {
-            b = new Beizier(new Vector2[4]);
             this.path = path;
         }
 
@@ -142,18 +136,6 @@ public class BeizierPath implements Iterable<Beizier> {
         return ret;
     }
 
-    public static boolean isNeighbour(BeizierPath a, BeizierPath b)
-    {
-        for(Beizier beizier_a : a)
-        {
-            for(Beizier beizier_b : b)
-            {
-                if(Beizier.IsPartOf(beizier_a, beizier_b, 10))
-                    return true;
-            }
-        }
-        return false;
-    }
 
     public static class splitReturn
     {
@@ -182,8 +164,8 @@ public class BeizierPath implements Iterable<Beizier> {
                     // tolerance of the one intersection point. Thats why we're not currently throwing any exceptions.
                     //and instead just gets the middle-most and ignores the rest.
 
-                    line_splits.add(new Pair<Integer, Float>(i, intersectionPoints.get(intersectionPoints.size()/2).first));
-                    path_splits.add(new Pair<Integer, Float>(j, intersectionPoints.get(intersectionPoints.size()/2).second));
+                    line_splits.add(new Pair<>(i, intersectionPoints.get(intersectionPoints.size()/2).first));
+                    path_splits.add(new Pair<>(j, intersectionPoints.get(intersectionPoints.size()/2).second));
                 }
                 intersectionPoints.clear();
                 ++j;
@@ -225,7 +207,7 @@ public class BeizierPath implements Iterable<Beizier> {
         return this;
     }
 
-    public static BeizierPath[] splitBeizPath(BeizierPath beizPath, List<Pair<Integer,Float>> poses)
+    private static BeizierPath[] splitBeizPath(BeizierPath beizPath, List<Pair<Integer, Float>> poses)
     {
 
         Collections.sort(poses, new Comparator<Pair<Integer, Float>>() {

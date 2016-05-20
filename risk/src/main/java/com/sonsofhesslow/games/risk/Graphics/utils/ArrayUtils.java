@@ -6,26 +6,26 @@ public class ArrayUtils {
 
     public static <T> T[] concat(T[]... arrays) {
         int len_ack = 0;
-        for (int i = 0; i < arrays.length; i++) {
-            len_ack += arrays[i].length;
+        for (T[] array : arrays) {
+            len_ack += array.length;
         }
 
         @SuppressWarnings("unchecked")
         T[] ret = (T[]) Array.newInstance(arrays[0].getClass().getComponentType(), len_ack);
 
         int elemenet_ack = 0;
-        for (int i = 0; i < arrays.length; i++) {
-            System.arraycopy(arrays[i], 0, ret, elemenet_ack, arrays[i].length);
-            elemenet_ack += arrays[i].length;
+        for (T[] array : arrays) {
+            System.arraycopy(array, 0, ret, elemenet_ack, array.length);
+            elemenet_ack += array.length;
         }
 
         return ret;
     }
 
     public static <T> boolean contains(T[] a, T[] b) {
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < b.length; j++) {
-                if (a[i].equals(b[j])) {
+        for (T elemA  : a) {
+            for (T elemB : b) {
+                if (elemA.equals(elemB)) {
                     return true;
                 }
             }
@@ -34,8 +34,8 @@ public class ArrayUtils {
     }
 
     public static <T> boolean contains(T[] a, T b) {
-        for (int i = 0; i < a.length; i++) {
-            if (a[i] == b) {
+        for (T anA : a) {
+            if (anA == b) {
                 return true;
             }
         }

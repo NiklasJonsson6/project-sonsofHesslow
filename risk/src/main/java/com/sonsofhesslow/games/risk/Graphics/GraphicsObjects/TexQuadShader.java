@@ -4,10 +4,7 @@ import android.opengl.GLES20;
 
 import com.sonsofhesslow.games.risk.graphics.utils.ShaderUtils;
 
-/**
- * Created by Daniel on 06/05/2016.
- */
-public class TexQuadShader {
+class TexQuadShader {
 
     private final String vertexShaderCode =
             "uniform mat4 matrix;" +
@@ -19,7 +16,6 @@ public class TexQuadShader {
                     "}";
 
     private final String fragmentShaderCode =
-
             "precision mediump float;" +
                     "uniform sampler2D texture;"+
                     "uniform vec4 color;"+
@@ -50,10 +46,10 @@ public class TexQuadShader {
         }
     }
 
-    static int colorHandle;
-    static int matrixHandle;
-    static int textureHandle;
-    static int positionHandle;
+    private static int colorHandle;
+    private static int matrixHandle;
+    private static int textureHandle;
+    private static int positionHandle;
 
     void use(Mesh mesh, float[] matrix, float[] color, int texture)
     {
@@ -64,7 +60,7 @@ public class TexQuadShader {
         GLES20.glUniform1i(textureHandle, 0);
         GLES20.glEnableVertexAttribArray(positionHandle);
         GLES20.glVertexAttribPointer(
-                positionHandle, mesh.COORDS_PER_VERTEX,
+                positionHandle, Mesh.COORDS_PER_VERTEX,
                 GLES20.GL_FLOAT, false,
                 mesh.vertexStride, mesh.vertexBuffer);
 

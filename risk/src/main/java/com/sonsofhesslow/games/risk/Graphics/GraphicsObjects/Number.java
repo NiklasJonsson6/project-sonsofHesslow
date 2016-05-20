@@ -19,10 +19,10 @@ import com.sonsofhesslow.games.risk.graphics.Geometry.Vector3;
 // renders numbers onto textures and then displays them as textured quads.
 // textures are cashed and reused.
 public class Number extends GLObject{
-    static int[] textures = null;
+    private static int[] textures = null;
     private int num=-1;
-    TexQuadShader shader;
-    Mesh mesh;
+    private TexQuadShader shader;
+    private final Mesh mesh;
     public void setValue(int value) {
         num = value;
     }
@@ -79,7 +79,7 @@ public class Number extends GLObject{
         this.color = color;
     }
 
-    public static int genTexture(String s)
+    private static int genTexture(String s)
     {
         final int[] textureHandle = new int[1];
 

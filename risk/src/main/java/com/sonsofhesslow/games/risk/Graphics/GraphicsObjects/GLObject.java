@@ -5,11 +5,11 @@ import com.sonsofhesslow.games.risk.graphics.Geometry.Vector3;
 
 
 public abstract class GLObject {
-    public float[] modelMatrix = new float[16];
+    float[] modelMatrix = new float[16];
     public boolean isActive = true;
 
-    private Renderer renderer;
-    public GLObject(Renderer renderer)
+    private final Renderer renderer;
+    GLObject(Renderer renderer)
     {
         this.renderer = renderer;
         modelMatrix = new float[]
@@ -28,7 +28,7 @@ public abstract class GLObject {
     }
 
     public float drawOrder=0;
-    public Vector3 pos = Vector3.Zero();
+    private Vector3 pos = Vector3.Zero();
     public void Remove()
     {
         renderer.remove(this);

@@ -10,7 +10,7 @@ import java.util.List;
 
 public class BeizierPathBuilder
 {
-    List<Beizier> beiziers = new ArrayList<>();
+    private final List<Beizier> beiziers = new ArrayList<>();
 
     public boolean addBeiz(Beizier beizier)
     {
@@ -21,7 +21,7 @@ public class BeizierPathBuilder
         }
         else
         {
-            throw new RuntimeException(beizier.points[0] + " " + beiziers.get(beiziers.size()-1).points[3]);
+            return false;
         }
     }
     public void addBeizPath(BeizierPath beizPath)
@@ -119,7 +119,7 @@ public class BeizierPathBuilder
             }
             Vector2 endPoint = beiziers.get(beiziers.size()-1).points[3];
 
-            points[i++] = endPoint;
+            points[i] = endPoint;
 
             return new BeizierPath(points);
         }

@@ -25,11 +25,11 @@ import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.Number;
 public class GraphicsManager {
 
     public static FilledBeizierPath[] beiziers;
-    public static Integer[][] beizNeighbors;
-    public static Integer[] beizContinents;
-    public static Number[] numbers;
+    private static Integer[][] beizNeighbors;
+    private static Integer[] beizContinents;
+    private static Number[] numbers;
 
-    static ConcurrentLinkedQueue<Updatable> updatables = new ConcurrentLinkedQueue<>();
+    private static final ConcurrentLinkedQueue<Updatable> updatables = new ConcurrentLinkedQueue<>();
     private static Renderer renderer; //this sucks
     public static void init(Resources resources, Renderer renderer)
     {
@@ -94,10 +94,10 @@ public class GraphicsManager {
     {
         beiziers[regionId].setPos(new Vector3(0, 0, -height));
     }
-    static Map<Pair<Integer,Integer>,NumberedArrow> arrows = new HashMap<>();
+    private static final Map<Pair<Integer,Integer>,NumberedArrow> arrows = new HashMap<>();
     public static void addArrow(int territoryIdFrom, int territoyIdTo, int value,float[] color)
     {
-        arrows.put(new Pair<Integer,Integer>(territoryIdFrom,territoyIdTo),
+        arrows.put(new Pair<>(territoryIdFrom,territoyIdTo),
                 new NumberedArrow(renderer,beiziers[territoryIdFrom].getCenter(),
                         beiziers[territoyIdTo].getCenter(),color,value));
     }

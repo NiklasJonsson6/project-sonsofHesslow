@@ -10,11 +10,10 @@ import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
  * Created by Daniel on 12/05/2016.
  */
 public class Arrow extends GLObject{
-    DefaultShader shader;
-    Mesh mesh;
-    Mesh outlineMesh;
-    float color[];
-    FloatBuffer sideBuffer;
+    private DefaultShader shader;
+    private final Mesh mesh;
+    private final Mesh outlineMesh;
+    private final float[] color;
 
     public Arrow(Vector2 from, Vector2 to, float[] color, Renderer renderer)
     {

@@ -6,7 +6,7 @@ import com.sonsofhesslow.games.risk.graphics.utils.ShaderUtils;
 /**
  * Created by Daniel on 06/05/2016.
  */
-public class DefaultShader {
+class DefaultShader {
 
     private static final String vertexShaderCode =
             "uniform mat4 matrix;" +
@@ -42,9 +42,9 @@ public class DefaultShader {
 
         }
     }
-    static int positionHandle;
-    static int colorHandle;
-    static int matrixHandle;
+    private static int positionHandle;
+    private static int colorHandle;
+    private static int matrixHandle;
 
     void use(Mesh mesh, float[] matrix, float[] color)
     {

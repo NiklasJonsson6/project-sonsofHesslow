@@ -10,7 +10,7 @@ import com.sonsofhesslow.games.risk.graphics.MyGLRenderer;
  * Created by daniel on 3/31/16.
  */
 public class Camera {
-    public Camera() {
+    private Camera() {
         updateLookAt();
     }
 
@@ -24,19 +24,19 @@ public class Camera {
     public float stitchPosition;
     public Vector3 pos = new Vector3(-5, -5, -3); //-5-5 is about the current center..
     public Vector3 lookAt;
-    public Vector3 up = new Vector3(0, 1, 0);
+    public final Vector3 up = new Vector3(0, 1, 0);
 
-    float WORLD_MIN_X = -16;
-    float WORLD_MAX_X = 0;
+    private final float WORLD_MIN_X = -16;
+    private final float WORLD_MAX_X = 0;
 
-    float WORLD_MIN_Y = -12;
-    float WORLD_MAX_Y = 5;
+    private final float WORLD_MIN_Y = -12;
+    private final float WORLD_MAX_Y = 5;
 
-    float clamp(float f, float min, float max) {
+    private float clamp(float f, float min, float max) {
         return Math.min(Math.max(min, f), max);
     }
 
-    public void setPos(Vector3 newPos) {
+    private void setPos(Vector3 newPos) {
 
             float width = MyGLRenderer.viewPortToWorldCoord(new Vector2(-1, 0), 0).x
                     - MyGLRenderer.viewPortToWorldCoord(new Vector2(+1, 0), 0).x;

@@ -37,7 +37,7 @@ import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
  * interacting with drawn objects.
  */
 public class MyGLSurfaceView extends GLSurfaceView {
-    private ScaleGestureDetector SGD;
+    private final ScaleGestureDetector SGD;
     private float scale = -3.0f;
     private final MyGLRenderer mRenderer;
     private boolean isZooming = false;
@@ -47,7 +47,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     private float downX;
     private float downY;
 
-    class MyConfigChooser implements GLSurfaceView.EGLConfigChooser {
+    private class MyConfigChooser implements GLSurfaceView.EGLConfigChooser {
         @Override
         public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
             int attribs[] = {
@@ -128,7 +128,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     private Vector2 prevPos;
 
 
-    private ConcurrentLinkedQueue<GL_TouchListener> listeners = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<GL_TouchListener> listeners = new ConcurrentLinkedQueue<>();
 
     public void addListener(GL_TouchListener listener) {
         listeners.add(listener);

@@ -8,7 +8,7 @@ import com.sonsofhesslow.games.risk.graphics.utils.ShaderUtils;
 /**
  * Created by Daniel on 06/05/2016.
  */
-public class FlowShader {
+class FlowShader {
 
     private static final String vertexShaderCode =
             "uniform mat4 matrix;" +
@@ -35,12 +35,10 @@ public class FlowShader {
                     "}";
 
     private static int flowShader = -1;
-    private boolean isFirst = false;
     public FlowShader()
     {
         if(flowShader == -1)
         {
-            isFirst = true;
             // prepare shaders and OpenGL program
             int vertexShader    = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
             int fragmentShader  = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
@@ -61,11 +59,11 @@ public class FlowShader {
         }
     }
 
-    static int positionHandle;
-    static int fromColorHandle;
-    static int toColorHandle;
-    static int maxDistHandle;
-    static int matrixHandle;
+    private static int positionHandle;
+    private static int fromColorHandle;
+    private static int toColorHandle;
+    private static int maxDistHandle;
+    private static int matrixHandle;
 
     void use(Mesh mesh, float[] matrix, Vector3 origin, float maxDistance, float[] fromColor,float[] toColor)
     {
