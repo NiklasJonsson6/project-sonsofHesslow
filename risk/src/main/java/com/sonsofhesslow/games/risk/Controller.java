@@ -15,7 +15,7 @@ public class Controller implements GL_TouchListener {
     private static Risk riskModel;
     private View riskView;
 
-    private int currentPlayerTracker = 0; //used to set next player
+    private int currentPlayerIndex = 0; //used to set next player
     private int self_id;
     private boolean territoryTaken = false;
 
@@ -55,7 +55,7 @@ public class Controller implements GL_TouchListener {
     public void handle(GL_TouchEvent event) {
         if (event.touchedRegion) {
             Territory touchedTerritory = getTerritoryById(event.regionId);
-            if (self_id == riskModel.getPlayers()[currentPlayerTracker].getParticipantId()) {
+            if (self_id == riskModel.getPlayers()[currentPlayerIndex].getParticipantId()) {
                 switch (riskModel.getGamePhase()) {
                     case PICK_TERRITORIES:
                         System.out.println("pick territories phase");
@@ -72,14 +72,12 @@ public class Controller implements GL_TouchListener {
                                     randomTerritory.setArmyCount(1);
                                     randomTerritory.setOccupier(riskModel.getCurrentPlayer());
                                     riskModel.getCurrentPlayer().decArmiesToPlace();
-                                    System.out.println("troups left to place: " + riskModel.getCurrentPlayer().getArmiesToPlace());
                                 } else{
                                     i--;    //find a new territory to place
                                 }
                             }
 
                             touchedTerritory.setArmyCount(1);
-                            System.out.println("dec armies in controller --------------------------------");
                             riskModel.getCurrentPlayer().decArmiesToPlace();
                             // TODO: 2016-05-16 better solution?
                             boolean canContinueToPlacePhase = true;
@@ -206,26 +204,64 @@ public class Controller implements GL_TouchListener {
     }
 
     public void nextPlayer() {
-        //progress currentplayertracker
-        currentPlayerTracker++;
-        if (currentPlayerTracker == riskModel.getPlayers().length) currentPlayerTracker = 0;
+        int playerSearchIndex = currentPlayerIndex;
+        
+        boolean nextPlayerIndexFound = false;
 
-        //give card
+        while (!nextPlayerIndexFound){
+            playerSearchIndex++;
+            if (playerSearchIndex == riskModel.getPlayers().length) {
+                //give card?
+                playerSearchIndex = 0;
+            }
+
+            Player playerToTest = riskModel.getPlayers()[playerSearchIndex];
+
+            //check if player is alive
+            if(riskModel.getGamePhase() == Risk.GamePhase.PICK_TERRITORIES) {
+                nextPlayerIndexFound = true;
+            } else if(playerToTest.isAlive() ) {
+                for (Territory territory : riskModel.getTerritories()) {
+                    if (territory.getOccupier().getParticipantId() == playerToTest.getParticipantId()) {
+                        //player is occupier of atleast one territory, is alive
+                        nextPlayerIndexFound = true;
+                        break;
+                    }
+                }
+                if(!nextPlayerIndexFound) {
+                    //player is no longer alive
+                    riskModel.getPlayers()[playerSearchIndex].setAlive(false);
+                }
+            }
+        }
+
+        if(playerSearchIndex == currentPlayerIndex) {
+            //player won
+            playerWon(riskModel.getPlayers()[currentPlayerIndex]);
+        }
+
+        //set next player
+        currentPlayerIndex = playerSearchIndex;
+
         if(territoryTaken) {
             riskModel.getCurrentPlayer().giveOneCard();
             territoryTaken = false;
         }
 
         //next player, change gamephase
-        riskModel.setCurrentPlayer(riskModel.getPlayers()[currentPlayerTracker]);
+        riskModel.setCurrentPlayer(riskModel.getPlayers()[currentPlayerIndex]);
 
         if(riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId() && riskModel.getCurrentPlayer().getParticipantId() != self_id) {
-            //multiplayer
-            System.out.println("multiplayer@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+            //multiplayer & not users turn
             MainActivity.getOverlayController().addView(R.layout.activity_wait);
         } else {
             MainActivity.getOverlayController().removeView(R.layout.activity_wait);
         }
+    }
+
+    private void playerWon(Player player) {
+        System.out.println("player won@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        // TODO: 2016-05-20
     }
 
     @Nullable

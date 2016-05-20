@@ -20,6 +20,7 @@ public class Player {
         int n = rand.nextInt(name.length);
         this.name = name[n]; //TODO get name input somehow
         this.participantId  = participantId;
+        this.isAlive = true;
     }
 
     public String getName() {
