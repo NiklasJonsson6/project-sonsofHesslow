@@ -170,7 +170,9 @@ public class Overlay {
         for (Player player : players){
             names.add(player.getName());
             armyCount.add("Territory count: " + player.getTerritoriesOwned());
-            images.add(player.getImageRefrence());
+            if(player.getImageRefrence() != null) {
+                images.add(player.getImageRefrence());
+            }
         }
         //Adapter
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, R.layout.activity_playerinfo, array);

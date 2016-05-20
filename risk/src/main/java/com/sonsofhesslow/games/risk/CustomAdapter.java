@@ -71,10 +71,11 @@ public class CustomAdapter extends BaseAdapter{
         holder.tv.setText(armyCount.get(position));
         holder.tv=(TextView) rowView.findViewById(R.id.colourHax);
         holder.tv.setBackgroundColor(Util.getIntFromColor(colours.get(position)));
-        if(imageId.size() >= position) {
+        if(imageId.size() >= 2) {
             holder.img.setImageURI(imageId.get(position));
+        } else {
+            holder.img.setImageResource(R.drawable.ic_account_box_black_48dp);
         }
-        holder.img.setImageResource(R.drawable.ic_account_box_black_48dp);
         rowView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
