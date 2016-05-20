@@ -3,11 +3,14 @@ package com.sonsofhesslow.games.risk;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
+import android.util.TypedValue;
 import android.view.*;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -15,6 +18,7 @@ import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by fredr on 2016-05-18.
@@ -155,11 +159,13 @@ public class Overlay {
         setInformation("", false);
     }
 
-    public void populateListView(Player[] players){
+    public void populateListView(Player[] players, Collection<float[]> colours){
         //Elements
+        ArrayList<float[]> colour = new ArrayList<float[]>(colours);
         ArrayList<String> names = new ArrayList<String>();
         ArrayList<String> armyCount = new ArrayList<String>();
         ArrayList<Uri> images = new ArrayList<Uri>();
+        int size = 1;
         String array[] = {"Daniel", "Arvid", "Niklas", "Fredrik"};
         for (Player player : players){
             names.add(player.getName());
@@ -169,6 +175,8 @@ public class Overlay {
         //Adapter
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, R.layout.activity_playerinfo, array);
         ListView listView = (ListView) parent.findViewById(R.id.listView);
-        listView.setAdapter(new CustomAdapter((MainActivity) context, names, images, armyCount));
+        listView.setAdapter(new CustomAdapter((MainActivity) context, names, images, armyCount, colour));
+        ((FrameLayout) parent.findViewById(R.id.listFrame)).setLayoutParams(new FrameLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 280, context.getResources().getDisplayMetrics()),
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 57*names.size() + 50, context.getResources().getDisplayMetrics())));
     }
 }

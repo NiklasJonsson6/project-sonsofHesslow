@@ -20,13 +20,15 @@ import java.util.ArrayList;
 public class CustomAdapter extends BaseAdapter{
     ArrayList<String> playerName;
     ArrayList<String> armyCount;
+    ArrayList<float[]> colours;
     Context context;
     ArrayList<Uri> imageId;
     private static LayoutInflater inflater=null;
-    public CustomAdapter(MainActivity mainActivity, ArrayList<String> playerName, ArrayList<Uri> playerImage, ArrayList<String> armyCount) {
+    public CustomAdapter(MainActivity mainActivity, ArrayList<String> playerName, ArrayList<Uri> playerImage, ArrayList<String> armyCount, ArrayList<float[]> colours) {
         // TODO Auto-generated constructor stub
         this.playerName=playerName;
         this.armyCount=armyCount;
+        this.colours=colours;
         context=mainActivity;
         imageId=playerImage;
         inflater = ( LayoutInflater )context.
@@ -67,6 +69,8 @@ public class CustomAdapter extends BaseAdapter{
         holder.tv.setText(playerName.get(position));
         holder.tv=(TextView) rowView.findViewById(R.id.armiesToPlace);
         holder.tv.setText(armyCount.get(position));
+        holder.tv=(TextView) rowView.findViewById(R.id.colourHax);
+        holder.tv.setBackgroundColor(Util.getIntFromColor(colours.get(position)));
         if(imageId.size() >= position) {
             holder.img.setImageURI(imageId.get(position));
         }

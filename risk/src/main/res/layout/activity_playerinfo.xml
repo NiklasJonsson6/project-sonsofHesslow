@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="56dp">
+    android:layout_height="56dp"
+    android:background="#bdbdbd">
 
     <ImageView
         android:layout_width="56dp"
@@ -22,8 +23,9 @@
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/playerImage"
         android:layout_toEndOf="@+id/playerImage"
-        android:layout_marginTop="3dp"
-        android:layout_marginLeft="10dp" />
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:textSize="17dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -34,15 +36,21 @@
         android:layout_below="@+id/playerName"
         android:layout_alignLeft="@+id/playerName"
         android:layout_alignStart="@+id/playerName"
-        android:layout_marginTop="3dp" />
+        android:layout_marginTop="3dp"
+        android:textSize="14dp" />
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="25dp"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
+    <TextView
+        android:layout_width="10dp"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/colourHax"
+        android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:id="@+id/playerColour"
-        android:background="#ff2d2d"></LinearLayout>
+        android:singleLine="true"
+        android:background="#ff4a4a"
+        android:layout_margin="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_marginBottom="3dp" />
+
 </RelativeLayout>

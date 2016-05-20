@@ -207,7 +207,7 @@ public class View implements Observer {
         if (obs instanceof Risk) {
             Risk risk = (Risk) obs;
             if(overlayController.getOverlay().getChildCount() > 1){
-                overlayController.populateListView(risk.getPlayers());
+                overlayController.populateListView(risk.getPlayers(), playerColors.values());
             }
             if (arg instanceof Risk.RiskChangeEvent) {
                 /*
