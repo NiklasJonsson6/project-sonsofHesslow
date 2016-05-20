@@ -18,12 +18,15 @@ public class Controller implements GL_TouchListener {
     private int currentPlayerIndex = 0; //used to set next player
     private int self_id;
     private boolean territoryTaken = false;
+    private Overlay overlayController;
 
-    public Controller(int[] playerIds, int self_id) {
+    public Controller(int[] playerIds, int self_id, Overlay overlayController) {
         this.self_id = self_id;
+        this.overlayController = overlayController;
         int territoryCount = GraphicsManager.getNumberOfTerritories();
         riskModel = new Risk(playerIds, territoryCount); //somehow set number of players (2)
         riskView = new View(riskModel);
+
         //add observers
         riskModel.addObserver(riskView);
         for(Territory territory: riskModel.getTerritories()) {
@@ -253,9 +256,9 @@ public class Controller implements GL_TouchListener {
 
         if(riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId() && riskModel.getCurrentPlayer().getParticipantId() != self_id) {
             //multiplayer & not users turn
-            MainActivity.getOverlayController().addView(R.layout.activity_wait);
+            overlayController.addView(R.layout.activity_wait);
         } else {
-            MainActivity.getOverlayController().removeView(R.layout.activity_wait);
+            overlayController.removeView(R.layout.activity_wait);
         }
     }
 

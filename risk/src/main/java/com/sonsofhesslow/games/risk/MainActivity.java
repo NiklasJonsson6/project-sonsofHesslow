@@ -611,7 +611,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void startGame(boolean online, int[] ids) {
-        controller = new Controller(ids, mMyId!= null ? mMyId.hashCode() : 0);
+        controller = new Controller(ids, mMyId!= null ? mMyId.hashCode() : 0, newOverlayController);
         for(Player p : controller.getRiskModel().getPlayers()){
             System.out.println("par id: " + p.getParticipantId());
         }
@@ -800,10 +800,6 @@ public class MainActivity extends AppCompatActivity
         return controller;
     }
 
-
-    public static Overlay getOverlayController() {
-        return newOverlayController;
-    }
     private void populateListView(){
         //Elements
         String array[] = {"Daniel", "Arvid", "Niklas", "Fredrik"};
