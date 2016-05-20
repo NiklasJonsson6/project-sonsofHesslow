@@ -215,4 +215,5 @@ public class Risk extends Observable {
     interface RiskEventListener {
         void changeEvent(RiskChangeEvent riskChangeEvent);
     } */
+
 }

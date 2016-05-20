@@ -1,25 +1,29 @@
 package com.sonsofhesslow.games.risk;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sonsofhesslow.games.risk.MainActivity;
 import com.sonsofhesslow.games.risk.R;
 
+import java.util.ArrayList;
+
 public class CustomAdapter extends BaseAdapter{
-    String[] playerName;
-    String[] armyCount;
+    ArrayList<String> playerName;
+    ArrayList<String> armyCount;
     Context context;
-    int [] imageId;
+    ArrayList<Uri> imageId;
     private static LayoutInflater inflater=null;
-    public CustomAdapter(MainActivity mainActivity, String[] playerName, int[] playerImage, String[] armyCount) {
+    public CustomAdapter(MainActivity mainActivity, ArrayList<String> playerName, ArrayList<Uri> playerImage, ArrayList<String> armyCount) {
         // TODO Auto-generated constructor stub
         this.playerName=playerName;
         this.armyCount=armyCount;
@@ -31,7 +35,7 @@ public class CustomAdapter extends BaseAdapter{
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
-        return playerName.length;
+        return playerName.size();
     }
 
     @Override
@@ -50,6 +54,7 @@ public class CustomAdapter extends BaseAdapter{
     {
         TextView tv;
         ImageView img;
+        LinearLayout la;
     }
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -59,15 +64,18 @@ public class CustomAdapter extends BaseAdapter{
         rowView = inflater.inflate(R.layout.activity_playerinfo, null);
         holder.tv=(TextView) rowView.findViewById(R.id.playerName);
         holder.img=(ImageView) rowView.findViewById(R.id.playerImage);
-        holder.tv.setText(playerName[position]);
+        holder.tv.setText(playerName.get(position));
         holder.tv=(TextView) rowView.findViewById(R.id.armiesToPlace);
-        holder.tv.setText(armyCount[position]);
-        //holder.img.setImageResource(imageId[position]);
+        holder.tv.setText(armyCount.get(position));
+        if(imageId.size() >= position) {
+            holder.img.setImageURI(imageId.get(position));
+        }
+        holder.img.setImageResource(R.drawable.ic_account_box_black_48dp);
         rowView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                Toast.makeText(context, "You Clicked "+playerName[position], Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "You Clicked "+playerName.get(position), Toast.LENGTH_LONG).show();
             }
         });
         return rowView;

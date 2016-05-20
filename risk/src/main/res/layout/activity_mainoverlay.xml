@@ -107,7 +107,7 @@
         android:layout_alignParentBottom="true"
         android:layout_toEndOf="@+id/listView"
         android:textSize="20dp"
-        android:layout_alignParentLeft="false"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentRight="false"
         android:layout_alignParentTop="false"
         android:background="@android:color/holo_orange_light"

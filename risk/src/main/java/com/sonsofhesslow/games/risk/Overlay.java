@@ -2,14 +2,19 @@ package com.sonsofhesslow.games.risk;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.net.Uri;
 import android.view.*;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
+
+import java.util.ArrayList;
 
 /**
  * Created by fredr on 2016-05-18.
@@ -17,6 +22,7 @@ import com.sonsofhesslow.games.risk.model.Risk;
 public class Overlay {
     ViewGroup parent;
     LayoutInflater factory;
+    Context context;
     int movementBlue;
     int placeArmiesGreen;
     int pickTerritoriesOrange;
@@ -30,6 +36,7 @@ public class Overlay {
         FrameLayout frameLayout = new FrameLayout(context);
         frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.BOTTOM));
         parent = frameLayout;
+        this.context = context;
         this.factory = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -146,5 +153,22 @@ public class Overlay {
         setPlaceArmiesVisible(false);
         setFightVisible(false);
         setInformation("", false);
+    }
+
+    public void populateListView(Player[] players){
+        //Elements
+        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> armyCount = new ArrayList<String>();
+        ArrayList<Uri> images = new ArrayList<Uri>();
+        String array[] = {"Daniel", "Arvid", "Niklas", "Fredrik"};
+        for (Player player : players){
+            names.add(player.getName());
+            armyCount.add("Territory count: " + player.getTerritoriesOwned());
+            images.add(player.getImageRefrence());
+        }
+        //Adapter
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, R.layout.activity_playerinfo, array);
+        ListView listView = (ListView) parent.findViewById(R.id.listView);
+        listView.setAdapter(new CustomAdapter((MainActivity) context, names, images, armyCount));
     }
 }

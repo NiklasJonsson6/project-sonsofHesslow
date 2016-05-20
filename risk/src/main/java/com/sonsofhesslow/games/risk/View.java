@@ -206,6 +206,9 @@ public class View implements Observer {
     public void update(Observable obs, Object arg) {
         if (obs instanceof Risk) {
             Risk risk = (Risk) obs;
+            if(overlayController.getOverlay().getChildCount() > 1){
+                overlayController.populateListView(risk.getPlayers());
+            }
             if (arg instanceof Risk.RiskChangeEvent) {
                 /*
                 RISK CHANGE EVENT

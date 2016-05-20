@@ -407,4 +407,5 @@ public class Controller implements GL_TouchListener {
     public static Risk getRiskModel() {
         return riskModel;
     }
+
 }

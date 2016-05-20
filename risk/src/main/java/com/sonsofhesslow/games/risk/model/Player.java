@@ -1,4 +1,6 @@
 package com.sonsofhesslow.games.risk.model;
+import android.net.Uri;
+
 import com.sonsofhesslow.games.risk.Card;
 
 import java.util.ArrayList;
@@ -9,6 +11,7 @@ public class Player {
     private boolean isAlive;
     private int armiesToPlace;
     private final int participantId;
+    private Uri imageRefrence;
 
     private boolean allowedToMove;
     ArrayList<Card> cards = new ArrayList<>();
@@ -83,4 +86,11 @@ public class Player {
         return participantId;
     }
 
+    public Uri getImageRefrence() {
+        return imageRefrence;
+    }
+
+    public void setImageRefrence(Uri imageRefrence) {
+        this.imageRefrence = imageRefrence;
+    }
 }
