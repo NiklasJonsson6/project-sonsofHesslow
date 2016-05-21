@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.images.ImageManager;
 import com.sonsofhesslow.games.risk.MainActivity;
 import com.sonsofhesslow.games.risk.R;
 
@@ -72,7 +73,8 @@ public class CustomAdapter extends BaseAdapter{
         holder.tv.setBackgroundColor(Util.getIntFromColor(colours.get(position)));
         if(imageId.get(position) != null) {
             System.out.println("Image uri set");
-            holder.img.setImageURI(imageId.get(position));
+            ImageManager mrg = ImageManager.create(context);
+            mrg.loadImage(holder.img,imageId.get(position));
         } else {
             holder.img.setImageResource(R.drawable.ic_account_box_black_48dp);
         }
