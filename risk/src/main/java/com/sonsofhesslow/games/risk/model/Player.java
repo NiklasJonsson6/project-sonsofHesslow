@@ -24,6 +24,7 @@ public class Player {
         this.name = name[n]; //TODO get name input somehow
         this.participantId  = participantId;
         this.isAlive = true;
+        imageRefrence = null;
     }
 
     public String getName() {

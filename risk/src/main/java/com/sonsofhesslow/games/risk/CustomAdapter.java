@@ -56,7 +56,6 @@ public class CustomAdapter extends BaseAdapter{
     {
         TextView tv;
         ImageView img;
-        LinearLayout la;
     }
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -71,7 +70,8 @@ public class CustomAdapter extends BaseAdapter{
         holder.tv.setText(armyCount.get(position));
         holder.tv=(TextView) rowView.findViewById(R.id.colourHax);
         holder.tv.setBackgroundColor(Util.getIntFromColor(colours.get(position)));
-        if(imageId.size() >= 2) {
+        if(imageId.get(position) != null) {
+            System.out.println("Image uri set");
             holder.img.setImageURI(imageId.get(position));
         } else {
             holder.img.setImageResource(R.drawable.ic_account_box_black_48dp);

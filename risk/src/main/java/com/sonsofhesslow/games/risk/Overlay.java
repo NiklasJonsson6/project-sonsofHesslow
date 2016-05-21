@@ -165,17 +165,12 @@ public class Overlay {
         ArrayList<String> names = new ArrayList<String>();
         ArrayList<String> armyCount = new ArrayList<String>();
         ArrayList<Uri> images = new ArrayList<Uri>();
-        int size = 1;
-        String array[] = {"Daniel", "Arvid", "Niklas", "Fredrik"};
         for (Player player : players){
             names.add(player.getName());
             armyCount.add("Territory count: " + player.getTerritoriesOwned());
-            if(player.getImageRefrence() != null) {
-                images.add(player.getImageRefrence());
-            }
+            images.add(player.getImageRefrence());
         }
         //Adapter
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, R.layout.activity_playerinfo, array);
         ListView listView = (ListView) parent.findViewById(R.id.listView);
         listView.setAdapter(new CustomAdapter((MainActivity) context, names, images, armyCount, colour));
         ((FrameLayout) parent.findViewById(R.id.listFrame)).setLayoutParams(new FrameLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 280, context.getResources().getDisplayMetrics()),
