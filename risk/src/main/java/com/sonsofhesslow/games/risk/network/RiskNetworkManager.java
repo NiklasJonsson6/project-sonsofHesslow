@@ -10,8 +10,7 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
-public class RiskNetworkManager implements /* PlayerChangeEventListener,*/ Observer {
-    MainActivity activity;
+public class RiskNetworkManager implements Observer {
     boolean selfModified;
     GooglePlayNetworkCompatible riskNetwork = null;
     Controller controller;
