@@ -26,9 +26,11 @@ public class View implements Observer {
     Map<Player, float[]> playerColors = new HashMap<>();
     Overlay overlayController;
 
+    GraphicsManager manager;
     public View(final Risk risk) {
         this.risk = risk;
         overlayController = MainActivity.newOverlayController;
+        manager = manager.getInstance();
     }
 
     public float[] getColor(Player p) {
@@ -49,12 +51,12 @@ public class View implements Observer {
                 switch(event.eventType) {
                     case ATTACK:
                         if (event.oldTerritory != null) {
-                            GraphicsManager.setOutlineColor(event.oldTerritory.getId(), black);
-                            GraphicsManager.setHeight(event.oldTerritory.getId(), 0);
+                            manager.setOutlineColor(event.oldTerritory.getId(), black);
+                            manager.setHeight(event.oldTerritory.getId(), 0);
                         }
                         if (event.newTerritory != null) {
-                            GraphicsManager.setOutlineColor(event.newTerritory.getId(), blue);
-                            GraphicsManager.setHeight(event.newTerritory.getId(), 0.04f);
+                            manager.setOutlineColor(event.newTerritory.getId(), blue);
+                            manager.setHeight(event.newTerritory.getId(), 0.04f);
                         }
                         if (event.newTerritory == null) {
                             overlayController.setGamePhase(Risk.GamePhase.FIGHT);
@@ -63,12 +65,12 @@ public class View implements Observer {
 
                     case DEFENCE:
                         if (event.oldTerritory != null) {
-                            GraphicsManager.setOutlineColor(event.oldTerritory.getId(), black);
-                            GraphicsManager.setHeight(event.oldTerritory.getId(), 0);
+                            manager.setOutlineColor(event.oldTerritory.getId(), black);
+                            manager.setHeight(event.oldTerritory.getId(), 0);
                         }
                         if (event.newTerritory != null) {
-                            GraphicsManager.setOutlineColor(event.newTerritory.getId(), red);
-                            GraphicsManager.setHeight(event.newTerritory.getId(), 0.04f);
+                            manager.setOutlineColor(event.newTerritory.getId(), red);
+                            manager.setHeight(event.newTerritory.getId(), 0.04f);
                             overlayController.setFightVisible(true);
                         }
                         if (event.newTerritory == null) {
@@ -78,12 +80,12 @@ public class View implements Observer {
 
                     case SELECTED:
                         if (event.oldTerritory != null) {
-                            GraphicsManager.setOutlineColor(event.oldTerritory.getId(), black);
-                            GraphicsManager.setHeight(event.oldTerritory.getId(), 0);
+                            manager.setOutlineColor(event.oldTerritory.getId(), black);
+                            manager.setHeight(event.oldTerritory.getId(), 0);
                         }
                         if (event.newTerritory != null) {
-                            GraphicsManager.setOutlineColor(event.newTerritory.getId(), blue);
-                            GraphicsManager.setHeight(event.newTerritory.getId(), 0.04f);
+                            manager.setOutlineColor(event.newTerritory.getId(), blue);
+                            manager.setHeight(event.newTerritory.getId(), 0.04f);
                             if (risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES) {
                                 overlayController.setPlaceArmiesVisible(true);
                                 overlayController.setBarMaxValue(risk.getCurrentPlayer().getArmiesToPlace());
@@ -102,13 +104,13 @@ public class View implements Observer {
 
                     case SECOND_SELECTED:
                         if (event.oldTerritory != null) {
-                            GraphicsManager.setOutlineColor(event.oldTerritory.getId(), black);
-                            GraphicsManager.setHeight(event.oldTerritory.getId(), 0);
+                            manager.setOutlineColor(event.oldTerritory.getId(), black);
+                            manager.setHeight(event.oldTerritory.getId(), 0);
                         }
 
                         if (event.newTerritory != null) {
-                            GraphicsManager.setOutlineColor(event.newTerritory.getId(), green);
-                            GraphicsManager.setHeight(event.newTerritory.getId(), 0.04f);
+                            manager.setOutlineColor(event.newTerritory.getId(), green);
+                            manager.setHeight(event.newTerritory.getId(), 0.04f);
                             overlayController.setPlaceArmiesVisible(true);
                             overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - 1);
                             // indication
@@ -182,7 +184,7 @@ public class View implements Observer {
                 ARMY CHANGE EVENT
                  */
                 int event = (Integer) arg;
-                GraphicsManager.setArmies(territory.getId(), event);
+                manager.setArmies(territory.getId(), event);
             } else if (arg instanceof Player) {
                 /*
                 OCCUPIER CHANGE EVENT
@@ -198,9 +200,9 @@ public class View implements Observer {
                     playerColors.put(event, rndColor);
                 }
                 if (risk.getAttackingTerritory() != null) {
-                    GraphicsManager.setColor(territory.getId(), playerColors.get(event), risk.getAttackingTerritory().getId());
+                    manager.setColor(territory.getId(), playerColors.get(event), risk.getAttackingTerritory().getId());
                 } else {
-                    GraphicsManager.setColor(territory.getId(), playerColors.get(event));
+                    manager.setColor(territory.getId(), playerColors.get(event));
                 }
             }
         }

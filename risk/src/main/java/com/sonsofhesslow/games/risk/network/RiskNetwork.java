@@ -395,7 +395,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
 
         selfModified = false;
 
-        GraphicsManager.requestRender();
+        GraphicsManager.getInstance().requestRender();
     }
 
     // Broadcast to everybody else.

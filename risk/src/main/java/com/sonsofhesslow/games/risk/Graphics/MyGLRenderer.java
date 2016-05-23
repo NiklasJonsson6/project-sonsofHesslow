@@ -139,7 +139,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
         float[] invTransformMatrix = new float[16];
         Matrix.invertM(invTransformMatrix, 0, transformMatrix, 0);
         if (invTransformMatrix[10] == 0) {
-            throw new RuntimeException("my bad // gl form viewport coords");
+            return point;
         }
         float gl_x = point.x;
         float gl_y = point.y;

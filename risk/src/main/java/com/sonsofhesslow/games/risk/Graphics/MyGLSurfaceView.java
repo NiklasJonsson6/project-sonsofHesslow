@@ -85,7 +85,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         super.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         // Set the Renderer for drawing on the GLSurfaceView
         mRenderer = new MyGLRenderer();
-        GraphicsManager.init(resources, mRenderer);
+        GraphicsManager.getInstance().init(resources, mRenderer);
         setRenderer(mRenderer);
         SGD = new ScaleGestureDetector(getContext(), new ScaleListener());
 
@@ -154,7 +154,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
             int index = 0;
             boolean hasTouchedRegion = false;
             Vector2 world_pos_stitched = MyGLRenderer.screenToWorldCoors_stitched(screen_pos, 0);
-            for (FilledBeizierPath path : GraphicsManager.beiziers) {
+            for (FilledBeizierPath path : GraphicsManager.getInstance().beiziers) {
                 float z = path.getPos().z;
                 Vector2 adjusted_worldPos;
                 if (z == 0)

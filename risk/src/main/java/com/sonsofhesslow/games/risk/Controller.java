@@ -37,7 +37,7 @@ public class Controller implements GL_TouchListener {
     public Controller(int[] playerIds, int self_id, Overlay overlayController) {
         this.self_id = self_id;
         this.overlayController = overlayController;
-        int territoryCount = GraphicsManager.getNumberOfTerritories();
+        int territoryCount = GraphicsManager.getInstance().getNumberOfTerritories();
         riskModel = new Risk(playerIds, territoryCount); //somehow set number of players (2)
         riskView = new View(riskModel);
 
@@ -51,7 +51,7 @@ public class Controller implements GL_TouchListener {
 
         //set neighbours and continent
         for (int i = 0; i < territoryCount; i++) {
-            Integer[] ids = GraphicsManager.getNeighbours(i);
+            Integer[] ids = GraphicsManager.getInstance().getNeighbours(i);
             int number = ids.length; //number of neighbours
             Territory[] neighbours = new Territory[number];
 
@@ -62,7 +62,7 @@ public class Controller implements GL_TouchListener {
             riskModel.getTerritories()[i].setNeighbours(neighbours);
 
             //set continent
-            riskModel.getTerritories()[i].setContinent(GraphicsManager.getContinetId(i));
+            riskModel.getTerritories()[i].setContinent(GraphicsManager.getInstance().getContinetId(i));
         }
 
         //give initial armies
@@ -203,7 +203,7 @@ public class Controller implements GL_TouchListener {
             riskModel.setAttackingTerritory(null);
             riskModel.setDefendingTerritory(null);
         }
-        GraphicsManager.requestRender();
+        GraphicsManager.getInstance().requestRender();
     }
 
     public void nextTurn() {
