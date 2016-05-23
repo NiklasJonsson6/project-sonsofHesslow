@@ -35,13 +35,18 @@ import com.sonsofhesslow.games.risk.network.RiskNetworkManager;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements GL_TouchListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity
+        implements GL_TouchListener, View.OnClickListener
+        //, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        // RoomStatusUpdateListener, RoomUpdateListener, OnInvitationReceivedListener
+        {
 
     public static Resources resources;
     public static Context context;
     static Overlay newOverlayController;
     MyGLSurfaceView graphicsView;
     private Controller controller;
+
 
     final static String TAG = "Risk";
 
@@ -209,6 +214,9 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener,
                 if (responseCode == Activity.RESULT_OK) {
                     // ready to start playing
                     Log.d(TAG, "Starting game (waiting room returned OK).");
+
+                    // TODO: 2016-05-13 implement start game
+                    //startGame(true, new int[2]);
                 } else if (responseCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                     // player indicated that they want to leave the room
                     leaveRoom();
@@ -421,18 +429,15 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener,
     public void fightPressed(View v){
         controller.fightButtonPressed();
     }
-
     public void placePressed(View v){
         controller.placeButtonPressed(newOverlayController.getBarValue());
         System.out.println("Place button pressed");
     }
-
     public void donePressed(View v){
         controller.doneButtonPressed();
         newOverlayController.setNextTurnVisible(true);
         System.out.println("Done button pressed");
     }
-
     //MISC SECTION. Miscellaneous methods
 
     // Sets the flag to keep this screen on
@@ -475,4 +480,19 @@ public class MainActivity extends AppCompatActivity implements GL_TouchListener,
     public void hideList(View v){
         newOverlayController.setListVisible(false);
     }
+    public ArrayList<Participant> getmParticipants() {
+        return mParticipants;
+    }
+
+    /*private void populateListView(){
+>>>>>>> List awesome
+        //Elements
+        String array[] = {"Daniel", "Arvid", "Niklas", "Fredrik"};
+        int [] image = {R.drawable.downarrow};
+        String count[] = {"5", "6", "7", "1337"};
+        //Adapter
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.activity_playerinfo, array);
+        ListView listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(new CustomAdapter(this, array, image, count));
+    }*/
 }

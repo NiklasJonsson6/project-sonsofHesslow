@@ -9,6 +9,7 @@ import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
 import com.sonsofhesslow.games.risk.model.Territory;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Controller implements GL_TouchListener {
@@ -214,11 +215,37 @@ public class Controller implements GL_TouchListener {
             riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
         }
         if (riskModel.getGamePhase() == Risk.GamePhase.FIGHT) {
-            riskModel.setGamePhase(Risk.GamePhase.MOVEMENT);
+            if (!playerCanMove(riskModel.getCurrentPlayer())) {
+                riskModel.setGamePhase(Risk.GamePhase.MOVEMENT);
+            } else {
+                riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
+                nextPlayer();
+                // TODO: 2016-05-24 notify player 
+            }
+
             riskModel.setAttackingTerritory(null);
             riskModel.setDefendingTerritory(null);
             riskModel.setSelectedTerritory(null);
         }
+    }
+
+    private boolean playerCanMove(Player player) {
+        ArrayList<Territory> playersTerritories = new ArrayList<>();
+        for(Territory territory : riskModel.getTerritories()) {
+            if(territory.getOccupier().equals(player)){
+                playersTerritories.add(territory);
+            }
+        }
+
+        for(Territory territory : playersTerritories) {
+            if(territory.getArmyCount() > 1){
+                //cannot move
+                return false;
+            }
+        }
+
+        //can move, there is atleast one territory with more than 1 army
+        return true;
     }
 
     public void nextPlayer() {
@@ -280,6 +307,7 @@ public class Controller implements GL_TouchListener {
         } else {
             overlayController.removeView(R.layout.activity_wait);
         }
+        GraphicsManager.requestRender();
     }
 
     private void playerWon(Player player) {
