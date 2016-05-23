@@ -1,12 +1,6 @@
 package com.sonsofhesslow.games.risk.model;
 
-import com.sonsofhesslow.games.risk.OverlayChangeEvent;
-import com.sonsofhesslow.games.risk.OverlayChangeListener;
-import com.sonsofhesslow.games.risk.PlayerChangeEvent;
-import com.sonsofhesslow.games.risk.PlayerChangeEventListener;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 
 public class Risk extends Observable {
@@ -45,9 +39,6 @@ public class Risk extends Observable {
         setChanged();
         notifyObservers(riskChangeEvent);
 
-        //TODO remove old listeners
-        //for (RiskEventListener rl : attackListeners) rl.changeEvent(riskChangeEvent);
-
         attackingTerritory = territory;
     }
 
@@ -62,9 +53,6 @@ public class Risk extends Observable {
         setChanged();
         notifyObservers(riskChangeEvent);
 
-        //TODO remove old listeners
-        //for (RiskEventListener rl : defenceListeners) rl.changeEvent(riskChangeEvent);
-
         defendingTerritory = territory;
     }
 
@@ -75,13 +63,9 @@ public class Risk extends Observable {
     public void setCurrentPlayer(Player player) {
         System.out.println("current player: " + getCurrentPlayer() + " new player: " + player);
         currentPlayer = player;
-        /* for(PlayerChangeEventListener playerChangeListener : playerChangeListeners){
-            System.out.println("calling changeevent");
-            playerChangeListener.changeEvent(new PlayerChangeEvent(getCurrentPlayer() ,player));
-        } */
+
         setChanged();
         notifyObservers(player);
-        //overlayChangeListener.playerChangeEvent(new OverlayChangeEvent(this));
     }
 
     public Player getCurrentPlayer() {
@@ -114,11 +98,7 @@ public class Risk extends Observable {
         setChanged();
         notifyObservers(riskChangeEvent);
 
-        //TODO remove old listeners
-        //for (RiskEventListener rl : selectedListeners) rl.changeEvent(riskChangeEvent);
-
         selectedTerritory = touchedTerritory;
-
     }
 
     public void setSecondSelectedTerritory(Territory touchedTerritory) {
@@ -126,9 +106,6 @@ public class Risk extends Observable {
 
         setChanged();
         notifyObservers(riskChangeEvent);
-
-        //TODO remove old listeners
-        //for (RiskEventListener rl : secondSelectedListeners) rl.changeEvent(riskChangeEvent);
 
         secondSelectedTerritory = touchedTerritory;
     }
@@ -143,18 +120,13 @@ public class Risk extends Observable {
 
     public void setGamePhase(GamePhase phase) {
         this.gamePhase = phase;
-
         setChanged();
         notifyObservers(phase);
-
-        //overlayChangeListener.phaseEvent(new OverlayChangeEvent(this));
     }
 
     public void placeEvent() {
         setChanged();
         notifyObservers();
-
-        //overlayChangeListener.placeEvent(new OverlayChangeEvent(this));
     }
 
     /*
@@ -175,45 +147,4 @@ public class Risk extends Observable {
             this.oldTerritory = oldTerritory;
         }
     }
-
-    //TODO remove this shit
-    /* void addAttackListener(RiskEventListener riskEventListener) {
-        attackListeners.add(riskEventListener);
-    }
-
-    void addDefenceListeners(RiskEventListener riskEventListener) {
-        defenceListeners.add(riskEventListener);
-    }
-
-    void addSelectedListeners(RiskEventListener riskEventListener) {
-        selectedListeners.add(riskEventListener);
-    }
-
-    void addSecondSelectedListeners(RiskEventListener riskEventListener) {
-        secondSelectedListeners.add(riskEventListener);
-    }
-
-    public void addOverlayListener(OverlayChangeListener overlayChangeListener) {
-        this.overlayChangeListener = overlayChangeListener;
-    }
-
-    OverlayChangeListener overlayChangeListener;
-    List<RiskEventListener> attackListeners = new ArrayList<>();
-    List<RiskEventListener> defenceListeners = new ArrayList<>();
-    List<RiskEventListener> selectedListeners = new ArrayList<>();
-    List<RiskEventListener> secondSelectedListeners = new ArrayList<>();
-    List<PlayerChangeEventListener> playerChangeListeners = new ArrayList<>();
-
-    public void addPlayerChangeListener(PlayerChangeEventListener playerChangeListener){
-        playerChangeListeners.add(playerChangeListener);
-    }
-
-    public void removePlayerChangeListener(PlayerChangeEventListener playerChangeListener){
-        playerChangeListeners.remove(playerChangeListener);
-    }
-
-    interface RiskEventListener {
-        void changeEvent(RiskChangeEvent riskChangeEvent);
-    } */
-
 }

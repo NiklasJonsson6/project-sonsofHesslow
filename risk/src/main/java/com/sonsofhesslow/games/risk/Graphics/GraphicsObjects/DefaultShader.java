@@ -1,6 +1,6 @@
 package com.sonsofhesslow.games.risk.graphics.GraphicsObjects;
-import android.opengl.GLES20;
 
+import android.opengl.GLES20;
 import com.sonsofhesslow.games.risk.graphics.utils.ShaderUtils;
 
 /**

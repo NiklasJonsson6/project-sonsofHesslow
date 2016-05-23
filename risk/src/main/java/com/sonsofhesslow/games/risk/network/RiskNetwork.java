@@ -81,21 +81,6 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
 
     private boolean selfModified = false;
 
-    // Handle the result of the invitation inbox UI, where the player can pick an invitation to accept.
-    private void handleInvitationInboxResult(int response, Intent data) {
-        if (response != Activity.RESULT_OK) {
-            Log.w(TAG, "*** invitation inbox UI cancelled, " + response);
-            switchToMainScreen();
-            return;
-        }
-
-        Log.d(TAG, "Invitation inbox UI succeeded.");
-        Invitation inv = data.getExtras().getParcelable(Multiplayer.EXTRA_INVITATION);
-
-        // accept invitation
-        acceptInviteToRoom(inv.getInvitationId());
-    }
-
     // Accept the given invitation.
     void acceptInviteToRoom(String invId) {
         Log.d(TAG, "Accepting invitation: " + invId);
@@ -108,17 +93,6 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
         resetGameVars();
         Games.RealTimeMultiplayer.join(mGoogleApiClient, roomConfigBuilder.build());
     }
-
-    // Activity is going to the background. Leave the current room.
-   //onstop removed
-
-    //onstart removed
-
-    // Handle back key to make sure player cleanly leave a game if player are in the middle of one
-    // onkeydown removed
-
-    // Leave the room.
-    //leaveroom removed
 
     // Show the waiting room UI
     void showWaitingRoom(Room room) {
@@ -345,10 +319,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
 
     //COMMUNICATIONS SECTION. Methods that implement the game's network protocol
 
-    // Called when received message from the network (updates from other players).
     @Override
-
-
     public void onRealTimeMessageReceived(RealTimeMessage rtm) {
         byte[] messageBuffer = rtm.getMessageData();
         String sender = rtm.getSenderParticipantId();

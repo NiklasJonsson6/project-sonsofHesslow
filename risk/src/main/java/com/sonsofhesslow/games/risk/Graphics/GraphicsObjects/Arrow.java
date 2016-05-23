@@ -2,8 +2,6 @@ package com.sonsofhesslow.games.risk.graphics.GraphicsObjects;
 
 import android.opengl.Matrix;
 
-import java.nio.FloatBuffer;
-
 import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
 
 /**

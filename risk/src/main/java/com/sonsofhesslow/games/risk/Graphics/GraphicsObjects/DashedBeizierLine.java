@@ -1,4 +1,5 @@
 package com.sonsofhesslow.games.risk.graphics.GraphicsObjects;
+
 import android.opengl.Matrix;
 import com.sonsofhesslow.games.risk.graphics.Geometry.BeizierPath;
 import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;

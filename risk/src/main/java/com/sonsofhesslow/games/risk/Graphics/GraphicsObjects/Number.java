@@ -14,8 +14,6 @@ import com.sonsofhesslow.games.risk.graphics.Geometry.Vector3;
 /**
  * Created by Daniel on 04/05/2016.
  */
-
-
 // renders numbers onto textures and then displays them as textured quads.
 // textures are cashed and reused.
 public class Number extends GLObject{

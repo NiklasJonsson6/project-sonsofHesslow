@@ -13,7 +13,6 @@ public class Player {
     private final int participantId;
     private Uri imageRefrence;
 
-    private boolean allowedToMove;
     ArrayList<Card> cards = new ArrayList<>();
     private int territoriesOwned;
 
@@ -61,10 +60,6 @@ public class Player {
 
     public void changeTerritoriesOwned(int change) {
         territoriesOwned += change;
-    }
-
-    public void setTerritoriesOwned(int amount){
-        territoriesOwned = amount;
     }
 
     public void giveArmies(int change) {
