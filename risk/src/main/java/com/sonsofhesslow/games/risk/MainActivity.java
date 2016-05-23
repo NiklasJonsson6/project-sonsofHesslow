@@ -11,33 +11,15 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesActivityResultCodes;
-import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
-import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
 import com.google.android.gms.games.multiplayer.Participant;
-import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
-import com.google.android.gms.games.multiplayer.realtime.RealTimeMessageReceivedListener;
-import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
-import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener;
-import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 import com.google.example.games.basegameutils.BaseGameUtils;
-import com.sonsofhesslow.games.risk.model.Player;
-import com.sonsofhesslow.games.risk.model.Risk;
-import com.sonsofhesslow.games.risk.network.NetworkManager;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import com.sonsofhesslow.games.risk.graphics.GL_TouchEvent;
 import com.sonsofhesslow.games.risk.graphics.GL_TouchListener;
 import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
@@ -45,12 +27,19 @@ import com.sonsofhesslow.games.risk.graphics.Geometry.Vector3;
 import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.Camera;
 import com.sonsofhesslow.games.risk.graphics.MyGLRenderer;
 import com.sonsofhesslow.games.risk.graphics.MyGLSurfaceView;
+import com.sonsofhesslow.games.risk.model.Player;
+import com.sonsofhesslow.games.risk.model.Risk;
+import com.sonsofhesslow.games.risk.network.GooglePlayNetwork;
+import com.sonsofhesslow.games.risk.network.RiskNetwork;
+import com.sonsofhesslow.games.risk.network.RiskNetworkManager;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements GL_TouchListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener, RealTimeMessageReceivedListener,
-        RoomStatusUpdateListener, RoomUpdateListener, OnInvitationReceivedListener {
-
+        implements GL_TouchListener, View.OnClickListener
+        //, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        // RoomStatusUpdateListener, RoomUpdateListener, OnInvitationReceivedListener
+        {
 
     public static Resources resources;
     public static Context context;
@@ -72,16 +61,6 @@ public class MainActivity extends AppCompatActivity
     // Client used to interact with Google APIs.
     private GoogleApiClient mGoogleApiClient;
 
-    // Currently resolving a connection failure?
-    private boolean mResolvingConnectionFailure = false;
-
-    // Has the user clicked the sign-in button?
-    private boolean mSignInClicked = false;
-
-    // Set to true to automatically start the sign in flow when the Activity starts.
-    // Set to false to require the user to click the button in order to sign in.
-    private boolean mAutoStartSignInFlow = false;
-
     // Room ID where the currently active game is taking place
     String mRoomId = null;
 
@@ -91,17 +70,17 @@ public class MainActivity extends AppCompatActivity
     // The participants in the currently active game
     ArrayList<Participant> mParticipants = null;
 
-    // My participant ID in the currently active game
-    String mMyId = null;
-
     // Id of the invitation player received via the invitation listener
     String mIncomingInvitationId = null;
 
     Vector2 prevPos;
 
+    GooglePlayNetwork googlePlayNetwork = null;
 
-    NetworkManager networkManager = null;
-    @Override
+    private RiskNetwork riskNetwork = null;
+
+    RiskNetworkManager riskNetworkManager = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -110,12 +89,21 @@ public class MainActivity extends AppCompatActivity
         graphicsView = new MyGLSurfaceView(this,getResources());
         graphicsView.addListener(this);
 
+        //this.riskNetwork = new RiskNetwork(this);
+
+        googlePlayNetwork = new GooglePlayNetwork();
+
         // Create the Google Api Client with access to Games
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
+                .addConnectionCallbacks(googlePlayNetwork)
+                .addOnConnectionFailedListener(googlePlayNetwork)
                 .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
+
+        riskNetwork = new RiskNetwork(this, this.mGoogleApiClient);
+
+        riskNetwork.setGooglePlayNetwork(googlePlayNetwork);
+        googlePlayNetwork.setNetworkTarget(riskNetwork);
 
         // set up a click listener for everything in main menus
         for (int id : CLICKABLES) {
@@ -123,7 +111,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
     public void handle(GL_TouchEvent event) {
 
         if (prevPos != null) {
@@ -148,7 +135,6 @@ public class MainActivity extends AppCompatActivity
         prevPos = event.screenPosition;
     }
 
-    @Override
     public void onClick(View v) {
         Intent intent;
 
@@ -156,17 +142,16 @@ public class MainActivity extends AppCompatActivity
             case R.id.button_single_player:
             case R.id.button_single_player_2:
                 // play a single-player game
-                startGame(false, new int[2]);
+                System.out.println("online singleplayer");
+                startGame(false, new int[2], null);
                 break;
             case R.id.button_sign_in:
                 Log.d(TAG, "Sign-in button clicked");
-                mSignInClicked = true;
                 mGoogleApiClient.connect();
                 break;
             case R.id.button_sign_out:
                 // user wants to sign out
                 Log.d(TAG, "Sign-out button clicked");
-                mSignInClicked = false;
                 Games.signOut(mGoogleApiClient);
                 mGoogleApiClient.disconnect();
                 switchToScreen(R.id.screen_sign_in);
@@ -200,9 +185,10 @@ public class MainActivity extends AppCompatActivity
         final int MIN_OPPONENTS = 1, MAX_OPPONENTS = 3;
         Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(MIN_OPPONENTS,
                 MAX_OPPONENTS, 0);
-        RoomConfig.Builder rtmConfigBuilder = RoomConfig.builder(this);
-        rtmConfigBuilder.setMessageReceivedListener(this);
-        rtmConfigBuilder.setRoomStatusUpdateListener(this);
+        //this.matchCriteria = autoMatchCriteria;
+        RoomConfig.Builder rtmConfigBuilder = RoomConfig.builder(googlePlayNetwork);
+        rtmConfigBuilder.setMessageReceivedListener(googlePlayNetwork);
+        rtmConfigBuilder.setRoomStatusUpdateListener(googlePlayNetwork);
         rtmConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
         switchToScreen(R.id.screen_wait);
         keepScreenOn();
@@ -214,11 +200,10 @@ public class MainActivity extends AppCompatActivity
     public void onActivityResult(int requestCode, int responseCode,
                                  Intent intent) {
         super.onActivityResult(requestCode, responseCode, intent);
-
         switch (requestCode) {
             case RC_SELECT_PLAYERS:
                 // result from "select players" UI -- ready to create the room
-                handleSelectPlayersResult(responseCode, intent);
+                riskNetwork.handleSelectPlayersResult(responseCode, intent);
                 break;
             case RC_INVITATION_INBOX:
                 // result from the "select invitation" UI (invitation inbox).
@@ -243,58 +228,16 @@ public class MainActivity extends AppCompatActivity
             case RC_SIGN_IN:
                 Log.d(TAG, "onActivityResult with requestCode == RC_SIGN_IN, responseCode="
                         + responseCode + ", intent=" + intent);
-                mSignInClicked = false;
-                mResolvingConnectionFailure = false;
-                if (responseCode == RESULT_OK) {
+                if (responseCode == Activity.RESULT_OK) {
                     mGoogleApiClient.connect();
                 } else {
-                    BaseGameUtils.showActivityResultError(this,requestCode,responseCode, R.string.signin_other_error);
+                    BaseGameUtils.showActivityResultError(this, requestCode,responseCode, R.string.signin_other_error);
                 }
                 break;
         }
         super.onActivityResult(requestCode, responseCode, intent);
     }
 
-    // Handle the result of the "Select players UI", launched when the user clicked the
-    // "Invite friends" button. Creating a room with selected players.
-    private void handleSelectPlayersResult(int response, Intent data) {
-        if (response != Activity.RESULT_OK) {
-            Log.w(TAG, "*** select players UI cancelled, " + response);
-            switchToMainScreen();
-            return;
-        }
-
-        Log.d(TAG, "Select players UI succeeded.");
-
-        // get the invitee list
-        final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
-        Log.d(TAG, "Invitee count: " + invitees.size());
-
-        // get the automatch criteria
-        Bundle autoMatchCriteria = null;
-        int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
-        int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
-        if (minAutoMatchPlayers > 0 || maxAutoMatchPlayers > 0) {
-            autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
-                    minAutoMatchPlayers, maxAutoMatchPlayers, 0);
-            Log.d(TAG, "Automatch criteria: " + autoMatchCriteria);
-        }
-
-        // create the room
-        Log.d(TAG, "Creating room...");
-        RoomConfig.Builder rtmConfigBuilder = RoomConfig.builder(this);
-        rtmConfigBuilder.addPlayersToInvite(invitees);
-        rtmConfigBuilder.setMessageReceivedListener(this);
-        rtmConfigBuilder.setRoomStatusUpdateListener(this);
-        if (autoMatchCriteria != null) {
-            rtmConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
-        }
-        switchToScreen(R.id.screen_wait);
-        keepScreenOn();
-        resetGameVars();
-        Games.RealTimeMultiplayer.create(mGoogleApiClient, rtmConfigBuilder.build());
-        Log.d(TAG, "Room created, waiting for it to be ready...");
-    }
 
     // Handle the result of the invitation inbox UI, where the player can pick an invitation to accept.
     private void handleInvitationInboxResult(int response, Intent data) {
@@ -314,10 +257,10 @@ public class MainActivity extends AppCompatActivity
     // Accept the given invitation.
     void acceptInviteToRoom(String invId) {
         Log.d(TAG, "Accepting invitation: " + invId);
-        RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this);
+        RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(googlePlayNetwork);
         roomConfigBuilder.setInvitationIdToAccept(invId)
-                .setMessageReceivedListener(this)
-                .setRoomStatusUpdateListener(this);
+                .setMessageReceivedListener(googlePlayNetwork)
+                .setRoomStatusUpdateListener(googlePlayNetwork);
         switchToScreen(R.id.screen_wait);
         keepScreenOn();
         resetGameVars();
@@ -325,7 +268,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     // Activity is going to the background. Leave the current room.
-    @Override
     public void onStop() {
         Log.d(TAG, "**** got onStop");
 
@@ -344,7 +286,6 @@ public class MainActivity extends AppCompatActivity
         super.onStop();
     }
 
-    @Override
     public void onStart() {
         switchToScreen(R.id.screen_wait);
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
@@ -358,7 +299,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     // Handle back key to make sure player cleanly leave a game if player are in the middle of one
-    @Override
     public boolean onKeyDown(int keyCode, KeyEvent e) {
         if (keyCode == KeyEvent.KEYCODE_BACK && mCurScreen == R.id.screen_game) {
             leaveRoom();
@@ -368,11 +308,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     // Leave the room.
-    void leaveRoom() {
+    public void leaveRoom() {
         Log.d(TAG, "Leaving room.");
         stopKeepingScreenOn();
         if (mRoomId != null) {
-            Games.RealTimeMultiplayer.leave(mGoogleApiClient, this, mRoomId);
+            Games.RealTimeMultiplayer.leave(mGoogleApiClient, googlePlayNetwork, mRoomId);
             mRoomId = null;
             switchToScreen(R.id.screen_wait);
         } else {
@@ -380,251 +320,26 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    // Show the waiting room UI
-    void showWaitingRoom(Room room) {
-        // minimum number of players required for our game
-        // For simplicity, it's required for everyone to join the game before it's started
-        final int MIN_PLAYERS = Integer.MAX_VALUE;
-        Intent i = Games.RealTimeMultiplayer.getWaitingRoomIntent(mGoogleApiClient, room, MIN_PLAYERS);
-
-        // show waiting room UI
-        startActivityForResult(i, RC_WAITING_ROOM);
-    }
-
-    @Override
-    public void onInvitationReceived(Invitation invitation) {
-        //invitation to play a game, store it in mIncomingInvitationId and show popup on screen
-        mIncomingInvitationId = invitation.getInvitationId();
-        ((TextView) findViewById(R.id.incoming_invitation_text)).setText(
-                invitation.getInviter().getDisplayName() + " " +
-                        getString(R.string.is_inviting_you));
-        switchToScreen(mCurScreen); // This will show the invitation popup
-    }
-
-    @Override
-    public void onInvitationRemoved(String invitationId) {
-        if (mIncomingInvitationId.equals(invitationId)&&mIncomingInvitationId!=null) {
-            mIncomingInvitationId = null;
-            switchToScreen(mCurScreen); //hide the invitation popup
-        }
-    }
-
-     //CALLBACKS SECTION. (API callbacks)
-
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        Log.d(TAG, "onConnected() called. Sign in successful!");
-
-        Log.d(TAG, "Sign-in succeeded.");
-
-        //to be notified when invited to play
-        Games.Invitations.registerInvitationListener(mGoogleApiClient, this);
-
-        if (connectionHint != null) {
-            Log.d(TAG, "onConnected: connection hint provided. Checking for invite.");
-            Invitation inv = connectionHint
-                    .getParcelable(Multiplayer.EXTRA_INVITATION);
-            if (inv != null && inv.getInvitationId() != null) {
-                // retrieve and cache the invitation ID
-                Log.d(TAG,"onConnected: connection hint has a room invite!");
-                acceptInviteToRoom(inv.getInvitationId());
-                return;
-            }
-        }
-        switchToMainScreen();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.d(TAG, "onConnectionSuspended() called. Trying to reconnect.");
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed() called, result: " + connectionResult);
-
-        if (mResolvingConnectionFailure) {
-            Log.d(TAG, "onConnectionFailed() ignoring connection failure; already resolving.");
-            return;
-        }
-
-        if (mSignInClicked || mAutoStartSignInFlow) {
-            mAutoStartSignInFlow = false;
-            mSignInClicked = false;
-            mResolvingConnectionFailure = BaseGameUtils.resolveConnectionFailure(this, mGoogleApiClient,
-                    connectionResult, RC_SIGN_IN, getString(R.string.signin_other_error));
-        }
-
-        switchToScreen(R.id.screen_sign_in);
-    }
-
-    //connected to the room, (not playing yet)
-    @Override
-    public void onConnectedToRoom(Room room) {
-        Log.d(TAG, "onConnectedToRoom.");
-        //get participants and my ID:
-        mParticipants = room.getParticipants();
-        mMyId = room.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient));
-
-        // save room ID if its not initialized in onRoomCreated() so player can leave cleanly before the game starts.
-        if(mRoomId==null)
-            mRoomId = room.getRoomId();
-
-        // print out the list of participants (for debug purposes)
-        Log.d(TAG, "Room ID: " + mRoomId);
-        Log.d(TAG, "My ID " + mMyId);
-        Log.d(TAG, "<< CONNECTED TO ROOM>>");
-    }
-
-    // Called when player successfully left the room (this happens a result of voluntarily leaving via a call to leaveRoom().
-    @Override
-    public void onLeftRoom(int statusCode, String roomId) {
-        // player have left the room; return to main screen.
-        Log.d(TAG, "onLeftRoom, code " + statusCode);
-        switchToMainScreen();
-    }
-
-    // Called when player  get disconnected from the room. User returns to the main screen.
-    @Override
-    public void onDisconnectedFromRoom(Room room) {
-        mRoomId = null;
-        showGameError();
-    }
-
-    // Show error message about game being cancelled and return to main screen.
-    void showGameError() {
-        BaseGameUtils.makeSimpleDialog(this, getString(R.string.game_problem));
-        switchToMainScreen();
-    }
-
-    // room has been created
-    @Override
-    public void onRoomCreated(int statusCode, Room room) {
-        Log.d(TAG, "onRoomCreated(" + statusCode + ", " + room + ")");
-        if (statusCode != GamesStatusCodes.STATUS_OK) {
-            Log.e(TAG, "*** Error: onRoomCreated, status " + statusCode);
-            showGameError();
-            return;
-        }
-
-        // save room ID so player can leave cleanly before the game starts.
-        mRoomId = room.getRoomId();
-
-        // show the waiting room UI
-        showWaitingRoom(room);
-    }
-    // room is fully connected.
-    @Override
-    public void onRoomConnected(int statusCode, Room room) {
-        Log.d(TAG, "onRoomConnected(" + statusCode + ", " + room + ")");
-            int c=0;
-            int[] ids = new int[mParticipants.size()];
-            for(Participant p : mParticipants){
-                System.out.println("id: " + p.getParticipantId() + " hc: " + p.getParticipantId().hashCode());
-
-                ids[c++] = p.getParticipantId().hashCode(); //@hash collisions
-            }
-
-            mMultiplayer = true;
-            startGame(true, ids);
-        if (statusCode != GamesStatusCodes.STATUS_OK) {
-
-            Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
-            showGameError();
-            return;
-        }
-        updateRoom(room);
-    }
-
-    @Override
-    public void onJoinedRoom(int statusCode, Room room) {
-        Log.d(TAG, "onJoinedRoom(" + statusCode + ", " + room + ")");
-        if (statusCode != GamesStatusCodes.STATUS_OK) {
-            Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
-            showGameError();
-            return;
-        }
-
-        // show the waiting room UI
-        showWaitingRoom(room);
-    }
-
-    // TODO: 2016-05-13 useful things, not just update
-    @Override
-    public void onPeerDeclined(Room room, List<String> arg1) {
-        updateRoom(room);
-    }
-
-    @Override
-    public void onPeerInvitedToRoom(Room room, List<String> arg1) {
-        updateRoom(room);
-    }
-
-    @Override
-    public void onP2PDisconnected(String participant) {
-    }
-
-    @Override
-    public void onP2PConnected(String participant) {
-    }
-
-    @Override
-    public void onPeerJoined(Room room, List<String> arg1) {
-        updateRoom(room);
-    }
-
-    @Override
-    public void onPeerLeft(Room room, List<String> peersWhoLeft) {
-        updateRoom(room);
-    }
-
-    @Override
-    public void onRoomAutoMatching(Room room) {
-        updateRoom(room);
-    }
-
-    @Override
-    public void onRoomConnecting(Room room) {
-        updateRoom(room);
-    }
-
-    @Override
-    public void onPeersConnected(Room room, List<String> peers) {
-        updateRoom(room);
-    }
-
-    @Override
-    public void onPeersDisconnected(Room room, List<String> peers) {
-        updateRoom(room);
-    }
-
-    void updateRoom(Room room) {
-        if (room != null) {
-            mParticipants = room.getParticipants();
-        }
-        if (mParticipants != null) {
-            // TODO: 2016-05-13 update variables from participants
-        }
-    }
-
-    public void startGame(boolean online, int[] ids) {
-        controller = new Controller(ids, mMyId!= null ? mMyId.hashCode() : 0, newOverlayController);
-        for(Player p : controller.getRiskModel().getPlayers()){
-            System.out.println("par id: " + p.getParticipantId());
-        }
+    public void startGame(boolean online, int[] ids, ArrayList<Participant> participants) {
 
         if(online) {
-            networkManager = new NetworkManager(controller.getRiskModel(),this);
+            initOnlineGame(ids);
             for(Player player : controller.getRiskModel().getPlayers()){
-                for(Participant participant : mParticipants) {
+                for(Participant participant : participants) {
                     if(participant.getParticipantId().hashCode() == player.getParticipantId()) {
                         player.setName(participant.getDisplayName());
                         player.setImageRefrence(participant.getIconImageUri());
                     }
                 }
             }
+        } else {
+            initOfflineGame(ids);
         }
+
+        /*for(Player p : controller.getRiskModel().getPlayers()){
+            System.out.println("par id: " + p.getParticipantId());
+        }*/
+
         /*setContentView(R.layout.activity_overlay);
         View C = findViewById(R.id.Test);
         ViewGroup parent = (ViewGroup) C.getParent();
@@ -646,64 +361,9 @@ public class MainActivity extends AppCompatActivity
         mCurScreen = R.id.screen_game;
     }
 
-    //COMMUNICATIONS SECTION. Methods that implement the game's network protocol
-
-    // Called when received message from the network (updates from other players).
-    @Override
-    public void onRealTimeMessageReceived(RealTimeMessage rtm) {
-        System.out.println("mainactivity mesgrec");
-        networkManager.onRealTimeMessageReceived(rtm, this);
-
-        /*byte[] messageBuffer = rtm.getMessageData();
-        String sender = rtm.getSenderParticipantId();
-        // TODO: 2016-05-13
-
-        NetworkMessage recievedNetworkData = NetworkMessage.deseirialize(messageBuffer);
-
-        switch(recievedNetworkData.action){
-            case regionTroupsChange:
-                Territory changedTerritory = Controller.getTerritoryById(recievedNetworkData.getRegionID());
-                changedTerritory.setArmyCount(recievedNetworkData.getValue());
-                break;
-            case occupierChange:
-                //code
-                break;
-            default:
-                BaseGameUtils.makeSimpleDialog(this, "Unknown network failure");
-        }*/
-    }
-
-    // Broadcast to everybody else.
-    public void broadcast(byte[] messageBuffer, boolean mustBeReliable) {
-        System.out.println("broadcasting message");
-        mMultiplayer = true;
-        if (!mMultiplayer){
-            return;     // playing single-player mode (method should not be called anyway)
-        }
-
-        // Send to every other participant.
-        for (Participant p : mParticipants) {
-            //should not be sending message
-            if (p.getParticipantId().equals(mMyId)) {
-                continue;
-            }
-            //should not be sending message
-            if (p.getStatus() != Participant.STATUS_JOINED) {
-                continue;
-            }
-
-            //should send message
-            if(mustBeReliable) {
-                Games.RealTimeMultiplayer.sendReliableMessage(mGoogleApiClient, null, messageBuffer,
-                        mRoomId, p.getParticipantId());
-            } else {
-                Games.RealTimeMultiplayer.sendUnreliableMessage(mGoogleApiClient, messageBuffer,
-                        mRoomId, p.getParticipantId());
-            }
-        }
-    }
 
     //UI SECTION. Methods that implement the game's UI.
+
 
     // This array lists everything that's clickable, for installing click event handlers.
     final static int[] CLICKABLES = {
@@ -718,8 +378,8 @@ public class MainActivity extends AppCompatActivity
             R.id.screen_game, R.id.screen_main, R.id.screen_sign_in,
             R.id.screen_wait
     };
-    int mCurScreen = -1;
 
+    int mCurScreen = -1;
     void switchToScreen(int screenId) {
         // make the requested screen visible; hide all others.
         for (int id : SCREENS) {
@@ -765,6 +425,7 @@ public class MainActivity extends AppCompatActivity
     public void showCardsPressed(View v) {
         //TODO show new layout with cards and trade in button
     }
+
     public void fightPressed(View v){
         controller.fightButtonPressed();
     }
@@ -777,7 +438,6 @@ public class MainActivity extends AppCompatActivity
         newOverlayController.setNextTurnVisible(true);
         System.out.println("Done button pressed");
     }
-
     //MISC SECTION. Miscellaneous methods
 
     // Sets the flag to keep this screen on
@@ -790,6 +450,20 @@ public class MainActivity extends AppCompatActivity
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
+    private void initOnlineGame(int[] ids) {
+        System.out.println("init online game");
+        System.out.println("risknetowrk_: " + riskNetwork + " \nmmyid: " + riskNetwork.getmMyId());
+        this.controller = new Controller(ids, riskNetwork.getmMyId().hashCode(), newOverlayController);
+        //this.riskNetwork = new RiskNetwork(this);
+        this.riskNetworkManager = new RiskNetworkManager(controller.getRiskModel(), this.controller, this.riskNetwork);
+        //riskNetwork.setGooglePlayNetwork(googlePlayNetwork);
+        //googlePlayNetwork.setNetworkTarget(riskNetwork);
+    }
+
+    private void initOfflineGame(int[] ids) {
+        this.controller = new Controller(ids, 0, newOverlayController);
+    }
+
     private void resetGameVars() {
         // TODO: 2016-05-13
     }
@@ -798,10 +472,18 @@ public class MainActivity extends AppCompatActivity
         return controller;
     }
 
+    public void showList(View v){
+        newOverlayController.setListVisible(true);
 
-    public static Overlay getOverlayController() {
-        return newOverlayController;
     }
+
+    public void hideList(View v){
+        newOverlayController.setListVisible(false);
+    }
+    public ArrayList<Participant> getmParticipants() {
+        return mParticipants;
+    }
+
     /*private void populateListView(){
 >>>>>>> List awesome
         //Elements
@@ -813,12 +495,4 @@ public class MainActivity extends AppCompatActivity
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(new CustomAdapter(this, array, image, count));
     }*/
-
-    public void showList(View v){
-        newOverlayController.setListVisible(true);
-
-    }
-    public void hideList(View v){
-        newOverlayController.setListVisible(false);
-    }
 }

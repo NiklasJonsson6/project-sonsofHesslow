@@ -56,6 +56,7 @@ public class Controller implements GL_TouchListener {
     }
 
     public void handle(GL_TouchEvent event) {
+        System.out.println("handle gl event");
         if (event.touchedRegion) {
             Territory touchedTerritory = getTerritoryById(event.regionId);
             if (self_id == riskModel.getPlayers()[currentPlayerIndex].getParticipantId()) {

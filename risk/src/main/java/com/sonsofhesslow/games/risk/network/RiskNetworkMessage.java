@@ -11,13 +11,15 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
 
-public class NetworkMessage implements Serializable{
+public class RiskNetworkMessage implements Serializable{
     private static final long serialVersionUID = 1L;
-    static NetworkMessage deSerialize(byte[] arr) throws StreamCorruptedException,IOException,ClassNotFoundException {
+
+    static RiskNetworkMessage deSerialize(byte[] arr) throws StreamCorruptedException,IOException,ClassNotFoundException {
         ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(arr));
-        NetworkMessage message = (NetworkMessage) ois.readObject();
+        RiskNetworkMessage message = (RiskNetworkMessage) ois.readObject();
         return message;
     }
+
     byte[] serialize() throws IOException
     {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -33,7 +35,7 @@ public class NetworkMessage implements Serializable{
         occupierChange,
     }
 
-    public NetworkMessage(NetworkAction action, int troups, int participantId, int regionId) {
+    public RiskNetworkMessage(NetworkAction action, int troups, int participantId, int regionId) {
         this.action = action;
         this.troups = troups;
         this.participantId = participantId;
@@ -45,16 +47,16 @@ public class NetworkMessage implements Serializable{
     public int participantId;
     public int regionId;
 
-    public static NetworkMessage territoryChangedMessageBuilder(Territory territory, int newTroops){
-        return new NetworkMessage(NetworkAction.armyAmountChange,newTroops,-1,territory.getId());
+    public static RiskNetworkMessage territoryChangedMessageBuilder(Territory territory, int newTroops){
+        return new RiskNetworkMessage(NetworkAction.armyAmountChange,newTroops,-1,territory.getId());
     }
 
-    public static NetworkMessage ownerChangedMessageBuilder(Territory territory, Player newOccupier){
-        return new NetworkMessage(NetworkAction.occupierChange,-1,newOccupier.getParticipantId(),territory.getId());
+    public static RiskNetworkMessage ownerChangedMessageBuilder(Territory territory, Player newOccupier){
+        return new RiskNetworkMessage(NetworkAction.occupierChange,-1,newOccupier.getParticipantId(),territory.getId());
     }
 
-    public static NetworkMessage turnChangedMessageBuilder(Player currentPlayerDone){
-        return new NetworkMessage(NetworkAction.turnChange,-1,currentPlayerDone.getParticipantId(),-1);
+    public static RiskNetworkMessage turnChangedMessageBuilder(Player currentPlayerDone){
+        return new RiskNetworkMessage(NetworkAction.turnChange,-1,currentPlayerDone.getParticipantId(),-1);
     }
 }
 

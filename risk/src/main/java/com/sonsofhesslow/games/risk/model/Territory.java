@@ -98,7 +98,7 @@ public class Territory extends Observable {
     public static class ArmyChangeEvent {
         Territory territory;
         int oldValue;
-        //public for NetworkManager...
+        //public for RiskNetworkManager...
         public int newValue;
 
         public ArmyChangeEvent(Territory territory, int oldValue, int newValue) {
@@ -123,7 +123,7 @@ public class Territory extends Observable {
     public static class OccupierChangeEvent {
         Territory territory;
         Player oldValue;
-        //public for NetworkManager...
+        //public for RiskNetworkManager...
         public Player newValue;
 
         public OccupierChangeEvent(Territory territory, Player oldValue, Player newValue) {

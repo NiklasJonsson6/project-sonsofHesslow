@@ -8,13 +8,10 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.images.ImageManager;
-import com.sonsofhesslow.games.risk.MainActivity;
-import com.sonsofhesslow.games.risk.R;
 
 import java.util.ArrayList;
 
