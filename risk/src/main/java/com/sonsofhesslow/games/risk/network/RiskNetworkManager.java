@@ -1,10 +1,7 @@
 package com.sonsofhesslow.games.risk.network;
 
-import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
-import com.google.example.games.basegameutils.BaseGameUtils;
 import com.sonsofhesslow.games.risk.Controller;
 import com.sonsofhesslow.games.risk.MainActivity;
-import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
 import com.sonsofhesslow.games.risk.model.Territory;
@@ -53,7 +50,7 @@ public class RiskNetworkManager implements /* PlayerChangeEventListener,*/ Obser
                  */
                 Player event = (Player) arg;
                 if (!selfModified) {
-                    RiskNetworkMessage message = RiskNetworkMessage.ownerChangedMessageBuilder(territory, event);
+                    RiskNetworkMessage message = RiskNetworkMessage.occupierChangedMessageBuilder(territory, event);
                     try {
                         riskNetwork.broadcast(message.serialize());
                     } catch (Exception ex) {

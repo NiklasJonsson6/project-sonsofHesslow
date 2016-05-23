@@ -22,7 +22,6 @@ import com.google.example.games.basegameutils.BaseGameUtils;
 import com.sonsofhesslow.games.risk.Controller;
 import com.sonsofhesslow.games.risk.MainActivity;
 import com.sonsofhesslow.games.risk.R;
-import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
 import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Territory;
@@ -367,7 +366,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
                     System.out.println("rtmr region changed");
                     Territory changedTerritory = Controller.getTerritoryById(recievedNetworkData.regionId);
                     if(changedTerritory!=null) {
-                        changedTerritory.setArmyCount(recievedNetworkData.troups);
+                        changedTerritory.setArmyCount(recievedNetworkData.armies);
                     }
                     else {
                         System.out.println("illegal region index");

@@ -284,7 +284,7 @@ public class Controller implements GL_TouchListener {
             //multiplayer
             for (Player player: riskModel.getPlayers()) {
                 if (player.getParticipantId()== self_id) {
-                    System.out.println("giving starting troups");
+                    System.out.println("giving starting armies");
                     player.giveArmies(50 - (5*riskModel.getPlayers().length));
                 }
             }

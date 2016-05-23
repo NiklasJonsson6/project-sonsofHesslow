@@ -35,15 +35,15 @@ public class RiskNetworkMessage implements Serializable{
         occupierChange,
     }
 
-    public RiskNetworkMessage(NetworkAction action, int troups, int participantId, int regionId) {
+    public RiskNetworkMessage(NetworkAction action, int armies, int participantId, int regionId) {
         this.action = action;
-        this.troups = troups;
+        this.armies = armies;
         this.participantId = participantId;
         this.regionId = regionId;
     }
 
     public NetworkAction action;
-    public int troups;
+    public int armies;
     public int participantId;
     public int regionId;
 
@@ -51,7 +51,7 @@ public class RiskNetworkMessage implements Serializable{
         return new RiskNetworkMessage(NetworkAction.armyAmountChange,newTroops,-1,territory.getId());
     }
 
-    public static RiskNetworkMessage ownerChangedMessageBuilder(Territory territory, Player newOccupier){
+    public static RiskNetworkMessage occupierChangedMessageBuilder(Territory territory, Player newOccupier){
         return new RiskNetworkMessage(NetworkAction.occupierChange,-1,newOccupier.getParticipantId(),territory.getId());
     }
 
