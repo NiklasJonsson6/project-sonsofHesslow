@@ -68,7 +68,6 @@ public class MyGLSurfaceView extends GLSurfaceView {
             egl.eglChooseConfig(display, attribs, configs, 1, configCounts);
 
             if (configCounts[0] == 0) {
-                // Failed! Error handling.
                 return null;
             } else {
                 return configs[0];
@@ -95,37 +94,15 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
     public MyGLSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        // Create an OpenGL ES 2.0 context.
         setEGLContextClientVersion(2);
-        super.setEGLConfigChooser(new MyConfigChooser());
+        //super.setEGLConfigChooser(new MyConfigChooser());
         super.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        // Set the Renderer for drawing on the GLSurfaceView
         mRenderer = new MyGLRenderer();
         setRenderer(mRenderer);
         SGD = new ScaleGestureDetector(getContext(), new ScaleListener());
 
-        // Render the view only when there is a change in the drawing data
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
-
-
-    /*public MyGLSurfaceView(Context context) {
-        super(context);
-
-        // Create an OpenGL ES 2.0 context.
-        setEGLContextClientVersion(2);
-        super.setEGLConfigChooser(new MyConfigChooser());
-        super.setEGLConfigChooser(8,8,8,8,16,0);
-        // Set the Renderer for drawing on the GLSurfaceView
-        mRenderer = new MyGLRenderer();
-        setRenderer(mRenderer);
-
-        // Render the view only when there is a change in the drawing data
-        setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-    }*/
-
-    private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
-    private Vector2 prevPos;
 
 
     private final ConcurrentLinkedQueue<GL_TouchListener> listeners = new ConcurrentLinkedQueue<>();
@@ -188,13 +165,8 @@ public class MyGLSurfaceView extends GLSurfaceView {
             scale *= 1 + (1 - detector.getScaleFactor());
             System.out.println(detector.getScaleFactor());
             scale = Math.min(-1.1f, Math.max(scale, -6.0f));
-            System.out.println(scale + "kalle");
-
-            //matrix.setScale(scale, scale);
-            //this.setImageMatrix(matrix);
             invalidate();
             return true;
-
         }
 
         @Override

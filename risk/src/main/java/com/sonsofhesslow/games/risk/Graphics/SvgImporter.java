@@ -53,7 +53,7 @@ public class SvgImporter {
         SvgReader sr = new SvgReader(svgStream);
         //parse all paths in the svg. add them into the appropriate category.
         while(true) {
-            ReadRet new_read = sr.readPath();
+            SVGPath new_read = sr.readPath();
             if(new_read != null) {
                 BeizierPath readBeiz = new_read.path;
 
@@ -67,8 +67,8 @@ public class SvgImporter {
                 else {
                     if(new_read.isDashed)
                         connections.add(readBeiz);
-                    else if(new_read.isCont)continentConnections.add(readBeiz);
-                    else if(new_read.isReg)regionConnections.add(readBeiz);
+                    else if(new_read.isContinent)continentConnections.add(readBeiz);
+                    else if(new_read.isRegion)regionConnections.add(readBeiz);
                     else splits.add(readBeiz);
                 }
             }
@@ -295,21 +295,6 @@ public class SvgImporter {
     }
 
 
-    public static class ReadRet
-    {
-        public ReadRet(BeizierPath path, boolean isDashed, boolean isReg, boolean isCont) {
-            this.path = path;
-            this.isDashed = isDashed;
-            this.isReg = isReg;
-            this.isCont = isCont;
-        }
-
-        final BeizierPath path;
-        final boolean isDashed;
-        final boolean isReg;
-        final boolean isCont;
-
-    }
 }
 
 

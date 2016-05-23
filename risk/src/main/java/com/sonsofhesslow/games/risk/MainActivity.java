@@ -24,7 +24,7 @@ import com.sonsofhesslow.games.risk.graphics.GL_TouchEvent;
 import com.sonsofhesslow.games.risk.graphics.GL_TouchListener;
 import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
 import com.sonsofhesslow.games.risk.graphics.Geometry.Vector3;
-import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.Camera;
+import com.sonsofhesslow.games.risk.graphics.Camera;
 import com.sonsofhesslow.games.risk.graphics.MyGLRenderer;
 import com.sonsofhesslow.games.risk.graphics.MyGLSurfaceView;
 import com.sonsofhesslow.games.risk.model.Player;

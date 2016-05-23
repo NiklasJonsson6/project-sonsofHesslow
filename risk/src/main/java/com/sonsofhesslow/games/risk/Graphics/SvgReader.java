@@ -144,7 +144,7 @@ class SvgReader
     //todo attributes may come in any order.
     //don't assuse that d is last.... it's not.
 
-    public SvgImporter.ReadRet readPath() throws IOException
+    public SVGPath readPath() throws IOException
     {
         // parsing a path,
         // [starts here] ...noise... <path  ...data... /> [ends here]
@@ -220,7 +220,7 @@ class SvgReader
             if(peek()==-1)break;
         }
         advancePast("/>");
-        return new SvgImporter.ReadRet(ret,isDashed,isReg,isCont);
+        return new SVGPath(ret,isDashed,isReg,isCont);
     }
 
     private int peek() throws IOException{

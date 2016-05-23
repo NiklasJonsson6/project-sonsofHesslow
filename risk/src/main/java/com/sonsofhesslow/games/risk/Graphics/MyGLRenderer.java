@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.Camera;
 import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
 import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.Renderer;
 
@@ -37,11 +36,15 @@ import java.util.concurrent.*;
 
 public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
 
-    private static final float[] MVPMatrix = new float[16];
-    private static final float[] projectionMatrix = new float[16];
-    private static final float[] viewMatrix = new float[16];
-
     private static final List<GLObject> gameObjects = new ArrayList<>();
+    private static final ConcurrentLinkedQueue<GLObject> objectsToBeAdded = new ConcurrentLinkedQueue<>();
+    public void delayedInit(GLObject m) {
+        objectsToBeAdded.add(m);
+    }
+    private static final ConcurrentLinkedQueue<GLObject> objectsToBeRemoved = new ConcurrentLinkedQueue<>();
+    public void remove(GLObject object) {
+        objectsToBeRemoved.add(object);
+    }
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
@@ -50,22 +53,12 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
         GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    private static final ConcurrentLinkedQueue<GLObject> objectsToBeAdded = new ConcurrentLinkedQueue<>();
-    private static final ConcurrentLinkedQueue<GLObject> objectsToBeRemoved = new ConcurrentLinkedQueue<>();
-
-    public void delayedInit(GLObject m) {
-        objectsToBeAdded.add(m);
-    }
-
-    public void remove(GLObject object) {
-        objectsToBeRemoved.add(object);
-    }
-
     @Override
     public void onDrawFrame(GL10 unused) {
         frameInit();
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         Camera cam = Camera.getInstance();
+        float[] viewMatrix = new float[16];
         Matrix.setLookAtM(viewMatrix, 0, cam.pos.x, cam.pos.y, cam.pos.z, cam.lookAt.x, cam.lookAt.y, cam.lookAt.z, cam.up.x, cam.up.y, cam.up.z);
 
         if (cam.stitchPosition > 0 && cam.stitchPosition < 1) {
@@ -100,6 +93,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
 
         float[] viewMatrix = camera.getViewMatrix();
         float[] projectionMatrix = calculateProjectionMatrix(height, width);
+        float[] MVPMatrix= new float[16];
         Matrix.multiplyMM(MVPMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
         Collections.sort(gameObjects, new Comparator<GLObject>() {
             @Override
@@ -128,9 +122,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         MyGLRenderer.width = width;
         MyGLRenderer.height = height;
-
-        float ratio = (float) width / height;
-        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1, 1, 1, 20);
     }
 
     private static Vector2 viewPortToWorldCoord(Vector2 point, float z_out, float[] projectionMatrix, float[] viewMatrix) {
@@ -157,7 +148,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
     }
 
     public static Vector2 viewPortToWorldCoord(Vector2 point, float z_out) {
-        return viewPortToWorldCoord(point, z_out, projectionMatrix, viewMatrix);
+        return viewPortToWorldCoord(point, z_out, calculateProjectionMatrix(height, width), Camera.getInstance().getViewMatrix());
     }
 
     private static Vector2 screenToWorldCoords(Vector2 point, float z_out, int width, int height, float[] viewMatrix) {
@@ -167,7 +158,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
     }
 
     public static Vector2 screenToWorldCoords(Vector2 point, float z_out) {
-        return screenToWorldCoords(point, z_out, width, height, viewMatrix);
+        return screenToWorldCoords(point, z_out, width, height, Camera.getInstance().getViewMatrix());
     }
 
     public static Vector2 screenToWorldCoors_stitched(Vector2 point, float z_out) {
