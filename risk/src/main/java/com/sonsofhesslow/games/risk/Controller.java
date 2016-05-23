@@ -12,6 +12,20 @@ import com.sonsofhesslow.games.risk.model.Territory;
 import java.util.Random;
 
 public class Controller implements GL_TouchListener {
+    private static final int TERRITORIES_IN_ASIA = 12;
+    private static final int TERRITORIES_IN_NORTH_AMERICA = 9;
+    private static final int TERRITORIES_IN_EUROPE = 7;
+    private static final int TERRITORIES_IN_AFRICA = 6;
+    private static final int TERRITORIES_IN_OCEANIA = 4;
+    private static final int TERRITORIES_IN_SOUTH_AMERICA = 4;
+
+    private static final int EXTRA_TROOPS_ASIA = 7;
+    private static final int EXTRA_TROOPS_NORTH_AMERICA = 5;
+    private static final int EXTRA_TROOPS_EUROPE = 5;
+    private static final int EXTRA_TROOPS_AFRICA = 3;
+    private static final int EXTRA_TROOPS_OCEANIA = 2;
+    private static final int EXTRA_TROOPS_SOUTH_AMERICA = 2;
+
     private static Risk riskModel;
     private View riskView;
 
@@ -244,6 +258,11 @@ public class Controller implements GL_TouchListener {
             playerWon(riskModel.getPlayers()[currentPlayerIndex]);
         }
 
+        //gives armies for placement phase
+        if(riskModel.getGamePhase() != Risk.GamePhase.PICK_TERRITORIES && riskModel.getGamePhase() != Risk.GamePhase.PLACE_STARTING_ARMIES) {
+            setArmiesToPlace(riskModel.getPlayers()[currentPlayerIndex]);
+        }
+
         //set next player
         currentPlayerIndex = playerSearchIndex;
 
@@ -296,7 +315,7 @@ public class Controller implements GL_TouchListener {
         }
     }
 
-    public void setArmiesToPlace() {
+    public void setArmiesToPlace(Player player) {
         int armies = riskModel.getCurrentPlayer().getTerritoriesOwned() / 3;
 
         int territoriesFoundAsia = 0;
@@ -309,54 +328,53 @@ public class Controller implements GL_TouchListener {
         for (Territory territory : riskModel.getTerritories()) {
             switch (territory.getContinent()) {
                 case ASIA:
-                    if (territory.getOccupier() == riskModel.getCurrentPlayer())
+                    if (territory.getOccupier().equals(player))
                         territoriesFoundAsia++;
                     break;
                 case NORTH_AMERICA:
-                    if (territory.getOccupier() == riskModel.getCurrentPlayer())
+                    if (territory.getOccupier().equals(player))
                         territoriesFoundNorthAmerica++;
                     break;
                 case EUROPE:
-                    if (territory.getOccupier() == riskModel.getCurrentPlayer())
+                    if (territory.getOccupier().equals(player))
                         territoriesFoundEurope++;
                     break;
                 case AFRICA:
-                    if (territory.getOccupier() == riskModel.getCurrentPlayer())
+                    if (territory.getOccupier().equals(player))
                         territoriesFoundAfrica++;
                     break;
                 case OCEANIA:
-                    if (territory.getOccupier() == riskModel.getCurrentPlayer())
+                    if (territory.getOccupier().equals(player))
                         territoriesFoundOceania++;
                     break;
                 case SOUTH_AMERICA:
-                    if (territory.getOccupier() == riskModel.getCurrentPlayer())
+                    if (territory.getOccupier().equals(player))
                         territoriesFoundSouthAmerica++;
                     break;
             }
         }
 
         //if owning a whole continent, add corresponding  armies amounts:
-        if (territoriesFoundAsia == 12) {
-            armies += 7;
+        if (territoriesFoundAsia == TERRITORIES_IN_ASIA) {
+            armies += EXTRA_TROOPS_ASIA;
         }
-        if (territoriesFoundNorthAmerica == 9) {
-            armies += 5;
+        if (territoriesFoundNorthAmerica == TERRITORIES_IN_NORTH_AMERICA) {
+            armies += EXTRA_TROOPS_NORTH_AMERICA;
         }
-        if (territoriesFoundEurope == 7) {
-            armies += 5;
+        if (territoriesFoundEurope == TERRITORIES_IN_EUROPE) {
+            armies += EXTRA_TROOPS_EUROPE;
         }
-        if (territoriesFoundAfrica == 6) {
-            armies += 3;
+        if (territoriesFoundAfrica == TERRITORIES_IN_AFRICA) {
+            armies += EXTRA_TROOPS_AFRICA;
         }
-        if (territoriesFoundOceania == 4) {
-            armies += 2;
+        if (territoriesFoundOceania == TERRITORIES_IN_OCEANIA) {
+            armies += EXTRA_TROOPS_OCEANIA;
         }
-        if (territoriesFoundSouthAmerica == 4) {
-            armies += 2;
+        if (territoriesFoundSouthAmerica == TERRITORIES_IN_SOUTH_AMERICA) {
+            armies += EXTRA_TROOPS_SOUTH_AMERICA;
         }
 
-        riskModel.getCurrentPlayer().giveArmies(armies);
-        System.out.println(armies);
+        player.giveArmies(armies);
     }
 
     public void placeButtonPressed(int seekBarValue) {
