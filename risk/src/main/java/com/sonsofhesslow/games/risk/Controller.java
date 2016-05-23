@@ -307,7 +307,7 @@ public class Controller implements GL_TouchListener {
         } else {
             overlayController.removeView(R.layout.activity_wait);
         }
-        GraphicsManager.requestRender();
+        GraphicsManager.getInstance().requestRender();
     }
 
     private void playerWon(Player player) {
