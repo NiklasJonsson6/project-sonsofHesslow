@@ -32,6 +32,7 @@ public class FilledBeizierPath extends GLObject implements Updatable {
 
     private Vector2 center;
     private float Area;
+    public static int triangles=0;
     private void calcCenter()
     {
         // from https://en.wikipedia.org/wiki/Centroid
@@ -68,7 +69,9 @@ public class FilledBeizierPath extends GLObject implements Updatable {
         if(!path.isClosed()) throw new IllegalArgumentException("the beizier path needs to be closed!");
         this.path = path;
 
-        Vector2[] verts = path.approximateBeizierPath_naive(naive_precision);
+        Vector2[] verts = path.approximateBeizierPath(0.001f);
+        //Vector2[] verts = path.approximateBeizierPath_naive(naive_precision);
+
         Vector2[] outline_verts = new Vector2[verts.length*2];
 
         //while the triangles are not guaranteed to be non-overlapping constant winding.
@@ -185,6 +188,7 @@ public class FilledBeizierPath extends GLObject implements Updatable {
         fill_mesh = new Mesh(tris, verts);
         calcCenter();
         origin = new Vector3(center,0);
+        triangles+=fill_mesh.triangles.length;
     }
     public void setColorOutline(float[] color)
     {
@@ -241,6 +245,7 @@ public class FilledBeizierPath extends GLObject implements Updatable {
 
 
     public void draw(float[] projectionMatrix){
+        System.out.println(triangles);
         float[] mvpMatrix = new float[16];
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
         flowShader.use(fill_mesh, mvpMatrix, origin, len,toColor,fromColor);

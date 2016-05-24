@@ -2,9 +2,11 @@ package com.sonsofhesslow.games.risk.graphics.Geometry;
 
 import android.util.Pair;
 
+import com.sonsofhesslow.games.risk.Util;
 import com.sonsofhesslow.games.risk.graphics.utils.ArrayUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -65,12 +67,14 @@ public class BeizierPath implements Iterable<Beizier> {
 
 
     /*
+    */
+
     //somehow we're fucking up the ordering here.. I think... or we just have floating point errors above. Idk.
     //anyway sticking with the naive method for now.
-    private static Vector2[] approximateBeizierPath(Vector2[] path, float precision)
+    public Vector2[] approximateBeizierPath(float precision)
     {
+        Vector2[] path = points;
         List<Vector2> ret = new ArrayList<>();
-
         for(int i = 0; i<path.length-2;i+=3)
         {
             Vector2[] beiz = new Vector2[]{path[i],path[i+1],path[i+2],path[(i+3)%path.length]};
@@ -82,26 +86,25 @@ public class BeizierPath implements Iterable<Beizier> {
     //slow af with all these list ideally we should pass around the same list.
     private static List<Vector2> approximateBeizier(Vector2[] beiz, float precision)
     {
-        Vector2[][] split = Util.beizSplit(beiz, 0.5f);
-        float a = Util.crossProduct(split[0][0], split[1][0], split[1][3]);
+        Beizier beizier = new Beizier(beiz);
+
+        Beizier[] split = beizier.split(0.5f);
+        float a = Math.abs(Vector2.crossProduct(beiz[0], Vector2.lerp(beiz[1], beiz[2], 0.5f), beiz[3]));
+
         List<Vector2> ret = new ArrayList<>();
-        if(Math.abs(a)<precision)
+        if(a<precision)
         {
-            for(int i = 0; i< beiz.length-1;i++)
-            {
-                ret.add(beiz[i]);
-            }
+            ret.add(new Beizier(beiz).getValue(0));
             return ret;
         }
         else
         {
-            ret.addAll(approximateBeizier(split[0],precision));
-            ret.addAll(approximateBeizier(split[1],precision));
+            ret.addAll(approximateBeizier(split[0].points,precision));
+            ret.addAll(approximateBeizier(split[1].points,precision));
             System.out.println(ret.size());
             return ret;
         }
     }
-    */
     public Vector2[] approximateBeizierPath_naive(int precision)
     {
         Vector2[] verts = new Vector2[precision*((points.length)/3)];
