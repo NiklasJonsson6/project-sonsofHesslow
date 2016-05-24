@@ -45,9 +45,6 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     // Currently resolving a connection failure?
     private boolean mResolvingConnectionFailure = false;
 
-    // Has the user clicked the sign-in button?
-    private boolean mSignInClicked = false;
-
     // Set to true to automatically start the sign in flow when the Activity starts.
     // Set to false to require the user to click the button in order to sign in.
     private boolean mAutoStartSignInFlow = false;
@@ -159,9 +156,9 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
             return;
         }
 
-        if (mSignInClicked || mAutoStartSignInFlow) {
+        if (activity.mSignInClicked || mAutoStartSignInFlow) {
             mAutoStartSignInFlow = false;
-            mSignInClicked = false;
+            activity.mSignInClicked = false;
             mResolvingConnectionFailure = BaseGameUtils.resolveConnectionFailure(activity, mGoogleApiClient,
                     connectionResult, RC_SIGN_IN, activity.getString(R.string.signin_other_error));
         }

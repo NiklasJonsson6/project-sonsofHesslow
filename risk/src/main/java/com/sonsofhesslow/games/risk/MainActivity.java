@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity
 
     // Playing in multiplayer mode?
     boolean mMultiplayer = false;
-
+    public boolean mSignInClicked = false;
     // The participants in the currently active game
     ArrayList<Participant> mParticipants = null;
 
@@ -147,6 +147,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.button_sign_in:
                 Log.d(TAG, "Sign-in button clicked");
+                mSignInClicked = true;
                 mGoogleApiClient.connect();
                 break;
             case R.id.button_sign_out:
