@@ -421,16 +421,18 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
 
     //UI SECTION. Methods that implement the game's UI.
 
+    // TODO: 2016-05-24 remove?, should only be in mainactivity
     // This array lists all the individual screens our game has.
     final static int[] SCREENS = {
-            R.id.screen_game, R.id.screen_main, R.id.screen_sign_in,
+            R.id.screen_main, R.id.screen_sign_in,
             R.id.screen_wait
     };
     int mCurScreen = -1;
 
     void switchToScreen(int screenId) {
+        activity.switchToScreen(screenId);
         // make the requested screen visible; hide all others.
-        for (int id : SCREENS) {
+        /*for (int id : SCREENS) {
             activity.findViewById(id).setVisibility(screenId == id ? View.VISIBLE : View.GONE);
         }
         mCurScreen = screenId;
@@ -448,7 +450,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
             //could change to for example (mCurScreen == R.id.screen_main && <ingame_condition>);
             //(maybe toggleable in settings)
         }
-        activity.findViewById(R.id.invitation_popup).setVisibility(showInvPopup ? View.VISIBLE : View.GONE);
+        activity.findViewById(R.id.invitation_popup).setVisibility(showInvPopup ? View.VISIBLE : View.GONE);*/
     }
 
     void switchToMainScreen() {

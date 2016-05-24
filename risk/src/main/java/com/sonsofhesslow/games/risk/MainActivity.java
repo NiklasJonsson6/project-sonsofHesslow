@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
@@ -81,6 +83,10 @@ public class MainActivity extends AppCompatActivity
 
     RiskNetworkManager riskNetworkManager = null;
 
+    private LinearLayout mainLayout;
+
+    LayoutInflater inflater = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -109,6 +115,12 @@ public class MainActivity extends AppCompatActivity
         for (int id : CLICKABLES) {
             findViewById(id).setOnClickListener(this);
         }
+
+        this.mainLayout = new LinearLayout(this);
+
+        inflater = (LayoutInflater)context.getSystemService
+                (Context.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(R.layout.activity_main, mainLayout);
     }
 
     public void handle(GL_TouchEvent event) {
@@ -220,9 +232,11 @@ public class MainActivity extends AppCompatActivity
                     //startGame(true, new int[2]);
                 } else if (responseCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                     // player indicated that they want to leave the room
+                    System.out.println("234 left room");
                     leaveRoom();
                 } else if (responseCode == Activity.RESULT_CANCELED) {
                     // Dialog was cancelled (user pressed back key, for instance). Leaving room
+                    System.out.println("234 result canceled");
                     leaveRoom();
                 }
                 break;
@@ -273,7 +287,7 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "**** got onStop");
 
         // if player in a room, leave it.
-        leaveRoom();
+        //leaveRoom();
 
         // stop trying to keep the screen on
         stopKeepingScreenOn();
@@ -284,6 +298,7 @@ public class MainActivity extends AppCompatActivity
         else {
             switchToScreen(R.id.screen_wait);
         }
+        System.out.println("234 end of onstop function");
         super.onStop();
     }
 
@@ -302,6 +317,9 @@ public class MainActivity extends AppCompatActivity
     // Handle back key to make sure player cleanly leave a game if player are in the middle of one
     public boolean onKeyDown(int keyCode, KeyEvent e) {
         if (keyCode == KeyEvent.KEYCODE_BACK && mCurScreen == R.id.screen_game) {
+            setContentView(R.layout.activity_main);
+            mCurScreen = R.id.screen_main;
+            System.out.println("onkey leave room");
             leaveRoom();
             return true;
         }
@@ -313,9 +331,9 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "Leaving room.");
         stopKeepingScreenOn();
         if (mRoomId != null) {
-            Games.RealTimeMultiplayer.leave(mGoogleApiClient, googlePlayNetwork, mRoomId);
+            //switchToScreen(R.id.screen_wait);
             mRoomId = null;
-            switchToScreen(R.id.screen_wait);
+            Games.RealTimeMultiplayer.leave(mGoogleApiClient, googlePlayNetwork, mRoomId);
         } else {
             switchToMainScreen();
         }
@@ -381,10 +399,13 @@ public class MainActivity extends AppCompatActivity
     };
 
     int mCurScreen = -1;
-    void switchToScreen(int screenId) {
+    public void switchToScreen(int screenId) {
         // make the requested screen visible; hide all others.
         for (int id : SCREENS) {
-            findViewById(id).setVisibility(screenId == id ? View.VISIBLE : View.GONE);
+            // TODO: 2016-05-24 fix for real?, not just null check
+           if(findViewById(id) != null) {
+               findViewById(id).setVisibility(screenId == id ? View.VISIBLE : View.GONE);
+           }
         }
         mCurScreen = screenId;
 
@@ -401,14 +422,21 @@ public class MainActivity extends AppCompatActivity
             //could change to for example (mCurScreen == R.id.screen_main && <ingame_condition>);
             //(maybe toggleable in settings)
         }
-        findViewById(R.id.invitation_popup).setVisibility(showInvPopup ? View.VISIBLE : View.GONE);
+        if(findViewById(R.id.invitation_popup) != null) {
+            findViewById(R.id.invitation_popup).setVisibility(showInvPopup ? View.VISIBLE : View.GONE);
+        }
+        System.out.println("end of sts function");
     }
 
     void switchToMainScreen() {
+        System.out.println("234 in switch to main screen");
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            System.out.println("234 switching to main screen");
             switchToScreen(R.id.screen_main);
         }
         else {
+            System.out.println("234 switching to sign-in screen");
+
             switchToScreen(R.id.screen_sign_in);
         }
     }
