@@ -30,8 +30,6 @@ public class FilledBeizierPath extends GLObject implements Updatable {
         outline_mesh.init();
     }
 
-
-
     private Vector2 center;
     private float Area;
     private void calcCenter()
@@ -153,15 +151,15 @@ public class FilledBeizierPath extends GLObject implements Updatable {
                     //check if there is any other vertex inside our proposed triangle
                     boolean noneInside = true;
                     if(!doRest)
-                    for(int j = 0; j<verts.length;j++)
-                    {
-                        if(j == index_a || j == index_b || j == index_c)continue;
-                        if (Vector2.isInsideTri(verts[j], a, b, c))
+                        for(int j = 0; j<verts.length;j++)
                         {
-                            noneInside = false;
-                            break;
+                            if(j == index_a || j == index_b || j == index_c)continue;
+                            if (Vector2.isInsideTri(verts[j], a, b, c))
+                            {
+                                noneInside = false;
+                                break;
+                            }
                         }
-                    }
 
                     if(noneInside||doRest)
                     {
