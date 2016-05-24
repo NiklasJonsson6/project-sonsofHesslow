@@ -14,23 +14,40 @@ public class CardTest {
     }
 
     @Test
-    public void giveTroops() throws Exception {
-        Player player = new Player();
-        player.giveArmies(4);
-        player.decArmiesToPlace();
-        assertEquals(3, player.getArmiesToPlace());
+    public void testHandInSet() throws Exception {
+        //when you have five cards you can always hand them in.
+        for(int i = 0; i< 100; i++)
+        {
+            Player player = new Player(0);
+            //as if player gained cards under a longer period
+            for(int j = 0; j < 5; j++){
+                player.giveOneCard();
+            }
+            assertEquals(5, player.getCards().size());
+            assertTrue(Card.canHandInSet(player.getCards()));
+            Card.handInSet(player.getCards());
+            assertEquals(2, player.getCards().size());
+        }
+
+        //when you have less than 3 cards you can never hand them in
+        for(int i = 0; i< 100; i++)
+        {
+            Player player = new Player(0);
+            //as if player gained cards under a longer period
+            for(int j = 0; j < 2; j++){
+                player.giveOneCard();
+            }
+            assertEquals(2, player.getCards().size());
+            assertFalse(Card.canHandInSet(player.getCards()));
+        }
     }
 
     @Test
-    public void testHandInSet() throws Exception {
-        Player player = new Player();
-        //as if player gained cards under a longer period
-        for(int i = 0; i < 5; i++){
-            player.giveOneCard();
-        }
-        assertEquals(5, player.getCards().size());
-        assertTrue(Card.canHandInSet(player.getCards()));
-        Card.handInSet(player.getCards());
-        assertEquals(2, player.getCards().size());
+    public void testEquals() throws Exception {
+        Card a = new Card();
+        Die die = new Die();
+        assertFalse(a.equals(null));
+        assertFalse(a.equals(die));
+        assertTrue(a.equals(a));
     }
 }
