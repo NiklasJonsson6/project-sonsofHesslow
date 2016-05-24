@@ -369,6 +369,7 @@ public class MainActivity extends AppCompatActivity
         //overlayController.addView(graphicsView);
         newOverlayController.addView(graphicsView);
         newOverlayController.addView(R.layout.activity_mainoverlay);
+        newOverlayController.addView(R.layout.activity_cards);
         //View overlay = factory.inflate(R.layout.activity_nextturn, null);
         //overlayController.addView(R.layout.activity_playerturn);
         //overlayController.addView(R.layout.activity_chooseterritory);
@@ -453,6 +454,7 @@ public class MainActivity extends AppCompatActivity
 
     public void showCardsPressed(View v) {
         //TODO show new layout with cards and trade in button
+        newOverlayController.setCardVisibility(true);
     }
 
     public void fightPressed(View v){
@@ -466,6 +468,10 @@ public class MainActivity extends AppCompatActivity
         controller.doneButtonPressed();
         newOverlayController.setNextTurnVisible(true);
         System.out.println("Done button pressed");
+    }
+    public void hideCards(View v){
+        newOverlayController.setCardVisibility(false);
+        newOverlayController.setNextTurnVisible(true);
     }
     //MISC SECTION. Miscellaneous methods
 
@@ -502,16 +508,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void showList(View v){
-        newOverlayController.setListVisible(true);
-
+        if(newOverlayController.listPopulated) {
+            newOverlayController.setListVisible(true);
+        }
     }
-
     public void hideList(View v){
         newOverlayController.setListVisible(false);
     }
     public ArrayList<Participant> getmParticipants() {
         return mParticipants;
     }
+
 
     /*private void populateListView(){
 >>>>>>> List awesome

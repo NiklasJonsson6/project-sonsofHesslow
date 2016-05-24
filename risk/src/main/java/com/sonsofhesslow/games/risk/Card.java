@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Card {
-    private enum CardType {
+    public enum CardType {
         INFANTRY, CAVALRY, ARTILLARY
     }
 
@@ -137,4 +137,5 @@ public class Card {
     public int hashCode() {
         return cardType.hashCode();
     }
+    public CardType getCardType(){return cardType;}
 }

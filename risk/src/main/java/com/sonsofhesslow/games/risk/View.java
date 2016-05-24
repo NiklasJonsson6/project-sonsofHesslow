@@ -127,6 +127,8 @@ public class View implements Observer {
                 Player event = (Player) arg;
                 if (playerColors.get(event) != null) {
                     overlayController.setCurrentPlayer(event, Util.getIntFromColor(playerColors.get(event)));
+                    System.out.println("Number of cards: " + risk.getCurrentPlayer().getCards().size());
+                    overlayController.populateGridView(risk.getCurrentPlayer().getCards());
                 }
                 if (risk.getGamePhase() == Risk.GamePhase.PLACE_STARTING_ARMIES) {
                     overlayController.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);

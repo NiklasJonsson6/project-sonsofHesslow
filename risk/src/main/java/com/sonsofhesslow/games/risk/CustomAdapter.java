@@ -67,7 +67,9 @@ public class CustomAdapter extends BaseAdapter{
         holder.tv=(TextView) rowView.findViewById(R.id.armiesToPlace);
         holder.tv.setText(armyCount.get(position));
         holder.tv=(TextView) rowView.findViewById(R.id.colourHax);
-        holder.tv.setBackgroundColor(Util.getIntFromColor(colours.get(position)));
+        if(colours.size() > position) {
+            holder.tv.setBackgroundColor(Util.getIntFromColor(colours.get(position)));
+        }
         if(imageId.get(position) != null) {
             System.out.println("Image uri set");
             ImageManager mrg = ImageManager.create(context);

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ public class Overlay {
     int placeArmiesGreen;
     int pickTerritoriesOrange;
     int fightRed;
+    boolean listPopulated;
 
     Overlay(Context context) {
         movementBlue = Color.parseColor("#ff0099cc");
@@ -41,6 +43,7 @@ public class Overlay {
         parent = frameLayout;
         this.context = context;
         this.factory = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        listPopulated = false;
     }
 
     public void addView(int value) {
@@ -87,6 +90,7 @@ public class Overlay {
     public void setCurrentPlayer(Player player, int colour){
         ((TextView) parent.findViewById(R.id.currentPlayer)).setText(player.getName());
         ((TextView) parent.findViewById(R.id.currentPlayer)).setBackgroundColor(colour);
+        listPopulated = true;
     }
 
     public void setListVisible(boolean state){
@@ -174,5 +178,44 @@ public class Overlay {
         listView.setAdapter(new CustomAdapter((MainActivity) context, names, images, armyCount, colour));
         ((FrameLayout) parent.findViewById(R.id.listFrame)).setLayoutParams(new FrameLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 280, context.getResources().getDisplayMetrics()),
                 (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 57*names.size() + 50, context.getResources().getDisplayMetrics())));
+    }
+
+    public void populateGridView(ArrayList<Card> cardList){
+        //Elements
+        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<Integer> images = new ArrayList<Integer>();
+        for (Card card : cardList){
+            switch (card.getCardType()){
+                case INFANTRY:
+                    images.add(R.drawable.ic_account_box_black_48dp);
+                    names.add("Infantery");
+                    break;
+                case CAVALRY:
+                    images.add(R.drawable.ic_account_box_black_48dp);
+                    names.add("Cavalry");
+                    break;
+                case ARTILLARY:
+                    images.add(R.drawable.ic_account_box_black_48dp);
+                    names.add("Artillary");
+                    break;
+            }
+        }
+        //Adapter
+        GridView gridView = (GridView) parent.findViewById(R.id.gridView);
+        gridView.setAdapter(new CardGridAdapter((MainActivity) context, names, images));
+        //((FrameLayout) parent.findViewById(R.id.gridView)).setLayoutParams(new FrameLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 280, context.getResources().getDisplayMetrics()),
+                //(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 57*names.size() + 50, context.getResources().getDisplayMetrics())));
+    }
+    public boolean isListPopulated(){
+        return listPopulated;
+    }
+
+    public void setCardVisibility(boolean state){
+        if (state == true) {
+            hideBottom();
+            parent.findViewById(R.id.cardView).setVisibility(View.VISIBLE);
+        } else {
+            parent.findViewById(R.id.cardView).setVisibility(View.GONE);
+        }
     }
 }
