@@ -4,6 +4,7 @@ import java.util.Observable;
 
 public class Territory extends Observable {
     private int armyCount = 0;
+    private int justMovedArmies = 0;
     private Player occupier;
     private Continent continent;
     private int id;
@@ -70,6 +71,19 @@ public class Territory extends Observable {
 
     public void setContinent(int continentId) {
         continent = Continent.values()[continentId];
+    }
+
+    public int getJustMovedArmies() {
+        System.out.println("justmovedarmies: " + justMovedArmies);
+        return justMovedArmies;
+    }
+
+    public void setJustMovedArmies(int justMovedArmies) {
+        this.justMovedArmies = justMovedArmies;
+    }
+
+    public void setContinent(Continent continent) {
+        this.continent = continent;
     }
 
     public Continent getContinent() {

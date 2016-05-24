@@ -34,6 +34,7 @@ public class Controller implements GL_TouchListener {
     private int self_id;
     private boolean territoryTaken = false;
     private Overlay overlayController;
+    private ArrayList<Territory> movementChangedTerritories = new ArrayList<>();
 
     public Controller(int[] playerIds, int self_id, Overlay overlayController) {
         this.self_id = self_id;
@@ -211,6 +212,7 @@ public class Controller implements GL_TouchListener {
         if (riskModel.getGamePhase() == Risk.GamePhase.MOVEMENT) {
             riskModel.setSelectedTerritory(null);
             riskModel.setSecondSelectedTerritory(null);
+            refreshMovementChangedTerritories();
             nextPlayer();
             riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
         }
@@ -425,9 +427,13 @@ public class Controller implements GL_TouchListener {
             Territory from = riskModel.getSelectedTerritory();
             Territory to = riskModel.getSecondSelectedTerritory();
             to.changeArmyCount(seekBarValue);
+            //to prevent multiple movements for troops (each troop should only be able to move 1 step)
+            to.setJustMovedArmies(seekBarValue);
+            movementChangedTerritories.add(to);
             from.changeArmyCount(-seekBarValue);
             riskModel.placeEvent();
         }
+        GraphicsManager.getInstance().requestRender();
     }
 
     public void doneButtonPressed() {
@@ -454,5 +460,12 @@ public class Controller implements GL_TouchListener {
     public static Risk getRiskModel() {
         return riskModel;
     }
+
+    private void refreshMovementChangedTerritories() {
+        for(Territory changedTerritory: movementChangedTerritories) {
+            changedTerritory.setJustMovedArmies(0);
+        }
+    }
+
 
 }

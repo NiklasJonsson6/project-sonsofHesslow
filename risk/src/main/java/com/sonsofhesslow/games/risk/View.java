@@ -112,7 +112,7 @@ public class View implements Observer {
                             manager.setOutlineColor(event.newTerritory.getId(), green);
                             manager.setHeight(event.newTerritory.getId(), 0.04f);
                             overlayController.setPlaceArmiesVisible(true);
-                            overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - 1);
+                            overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies() - 1);
                             // indication
                         }
                         if (event.newTerritory == null) {
@@ -169,7 +169,7 @@ public class View implements Observer {
                         overlayController.setGamePhase(Risk.GamePhase.FIGHT);
                     }
                 } else if (risk.getGamePhase() == Risk.GamePhase.MOVEMENT && risk.getSecondSelectedTerritory() != null) {
-                    overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - 1);
+                    overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies() - 1);
                     //add some kind of indication to how many
                 } else {
                     overlayController.setBarMaxValue(0);
