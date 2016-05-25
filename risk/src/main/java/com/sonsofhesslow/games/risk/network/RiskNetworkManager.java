@@ -80,9 +80,5 @@ public class RiskNetworkManager implements Observer {
             }
         }
     }
-
-    public GooglePlayNetworkCompatible getRiskNetwork() {
-        return riskNetwork;
-    }
 }
 

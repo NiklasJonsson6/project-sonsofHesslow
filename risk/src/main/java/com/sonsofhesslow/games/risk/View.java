@@ -33,10 +33,6 @@ public class View implements Observer {
         manager = manager.getInstance();
     }
 
-    public float[] getColor(Player p) {
-        return playerColors.get(p);
-    }
-
     public void update(Observable obs, Object arg) {
         if (obs instanceof Risk) {
             Risk risk = (Risk) obs;

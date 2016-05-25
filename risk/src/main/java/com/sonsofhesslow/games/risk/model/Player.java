@@ -1,4 +1,5 @@
 package com.sonsofhesslow.games.risk.model;
+
 import android.net.Uri;
 
 import java.util.ArrayList;
@@ -42,10 +43,6 @@ public class Player {
 
     public ArrayList<Card> getCards() {
         return cards;
-    }
-
-    public void setCards(ArrayList<Card> cards) {
-        this.cards = cards;
     }
 
     public void giveOneCard(){

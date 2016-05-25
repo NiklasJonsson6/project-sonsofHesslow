@@ -74,7 +74,6 @@ public class Card {
                 }
             }
         }
-        //cards.trimToSize();
     }
 
     public static boolean canHandInSet(ArrayList<Card> cards) {

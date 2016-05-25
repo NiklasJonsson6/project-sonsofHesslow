@@ -35,10 +35,12 @@ public class Overlay {
     boolean listPopulated;
 
     Overlay(Context context) {
+        // TODO: 2016-05-26 r.id color instead? (better to take from res)  getResources().getColor(R.color.<id>);
         movementBlue = Color.parseColor("#ff0099cc");
         placeArmiesGreen = Color.parseColor("#66CDAA");
         pickTerritoriesOrange = Color.parseColor("#F0E68C");
         fightRed = Color.parseColor("#B22222");
+
         FrameLayout frameLayout = new FrameLayout(context);
         frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.BOTTOM));
         parent = frameLayout;
@@ -206,9 +208,6 @@ public class Overlay {
         gridView.setAdapter(new CardGridAdapter((MainActivity) context, names, images));
         //((FrameLayout) parent.findViewById(R.id.gridView)).setLayoutParams(new FrameLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 280, context.getResources().getDisplayMetrics()),
                 //(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 57*names.size() + 50, context.getResources().getDisplayMetrics())));
-    }
-    public boolean isListPopulated(){
-        return listPopulated;
     }
 
     public void setCardVisibility(boolean state){

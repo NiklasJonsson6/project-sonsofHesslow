@@ -14,4 +14,10 @@
 
     <color name="MainScreenButtonBackground">#e0e0e0</color>
     <color name="MainScreenTextColor">#555555</color>
+
+    <!--Colors for overlay-->
+    <color name="overlayMovementColor">#ff0099cc</color>
+    <color name="overlayPlaceArmiesGreen">#66CDAA</color>
+    <color name="overlayPickTerritoriesColor">#F0E68C</color>
+    <color name="overlayFightColor">#F0E68C</color>
 </resources>

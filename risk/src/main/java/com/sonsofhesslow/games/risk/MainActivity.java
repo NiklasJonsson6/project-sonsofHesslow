@@ -38,17 +38,13 @@ import com.sonsofhesslow.games.risk.network.RiskNetworkManager;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements GL_TouchListener, View.OnClickListener
-        //, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        // RoomStatusUpdateListener, RoomUpdateListener, OnInvitationReceivedListener
-        {
+        implements GL_TouchListener, View.OnClickListener {
 
     public static Resources resources;
     public static Context context;
     static Overlay newOverlayController;
     MyGLSurfaceView graphicsView;
     private Controller controller;
-
 
     final static String TAG = "Risk";
 
@@ -83,10 +79,6 @@ public class MainActivity extends AppCompatActivity
 
     private RiskNetworkManager riskNetworkManager = null;
 
-    private LinearLayout mainLayout;
-
-    LayoutInflater inflater = null;
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -110,12 +102,6 @@ public class MainActivity extends AppCompatActivity
         for (int id : CLICKABLES) {
             findViewById(id).setOnClickListener(this);
         }
-
-        this.mainLayout = new LinearLayout(this);
-
-        inflater = (LayoutInflater)context.getSystemService
-                (Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.activity_main, mainLayout);
     }
 
     public void handle(GL_TouchEvent event) {
@@ -142,6 +128,7 @@ public class MainActivity extends AppCompatActivity
         prevPos = event.screenPosition;
     }
 
+    //handles the menu-button events
     public void onClick(View v) {
         Intent intent;
 
@@ -188,18 +175,17 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    //starts an online game with random players
     void startQuickGame() {
         //1-3 opponents
         final int MIN_OPPONENTS = 1, MAX_OPPONENTS = 3;
         Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(MIN_OPPONENTS,
                 MAX_OPPONENTS, 0);
-        //this.matchCriteria = autoMatchCriteria;
         RoomConfig.Builder rtmConfigBuilder = RoomConfig.builder(googlePlayNetwork);
         rtmConfigBuilder.setMessageReceivedListener(googlePlayNetwork);
         rtmConfigBuilder.setRoomStatusUpdateListener(googlePlayNetwork);
         rtmConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
         switchToScreen(R.id.screen_wait);
-        keepScreenOn();
         resetGameVars();
         Games.RealTimeMultiplayer.create(mGoogleApiClient, rtmConfigBuilder.build());
     }
@@ -247,7 +233,6 @@ public class MainActivity extends AppCompatActivity
         }
         super.onActivityResult(requestCode, responseCode, intent);
     }
-
 
     // Handle the result of the invitation inbox UI, where the player can pick an invitation to accept.
     private void handleInvitationInboxResult(int response, Intent data) {
@@ -316,7 +301,6 @@ public class MainActivity extends AppCompatActivity
                 .setMessageReceivedListener(googlePlayNetwork)
                 .setRoomStatusUpdateListener(googlePlayNetwork);
         switchToScreen(R.id.screen_wait);
-        keepScreenOn();
         resetGameVars();
         Games.RealTimeMultiplayer.join(mGoogleApiClient, roomConfigBuilder.build());
     }
@@ -337,7 +321,6 @@ public class MainActivity extends AppCompatActivity
         else {
             switchToScreen(R.id.screen_wait);
         }
-        System.out.println("234 end of onstop function");
         super.onStop();
     }
 
@@ -379,12 +362,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void startGame(boolean online, int[] ids, ArrayList<Participant> participants) {
+        //keeps screen turned on until game is finnished
+        keepScreenOn();
 
         if(online) {
             initOnlineGame(ids);
             for(Player player : controller.getRiskModel().getPlayers()){
                 for(Participant participant : participants) {
                     if(participant.getParticipantId().hashCode() == player.getParticipantId()) {
+                        //getting GooglePlay's account information, adding to player
                         player.setName(participant.getDisplayName());
                         player.setImageRefrence(participant.getIconImageUri());
                     }
@@ -394,27 +380,10 @@ public class MainActivity extends AppCompatActivity
             initOfflineGame(ids);
         }
 
-        /*for(Player p : controller.getRiskModel().getPlayers()){
-            System.out.println("par id: " + p.getParticipantId());
-        }*/
-
-        /*setContentView(R.layout.activity_overlay);
-        View C = findViewById(R.id.Test);
-        ViewGroup parent = (ViewGroup) C.getParent();
-        int index = parent.indexOfChild(C);
-        parent.removeView(C);
-        C = graphicsView;
-        parent.addView(C, index);*/
-        //overlayController.addView(graphicsView);
         newOverlayController.addView(graphicsView);
         newOverlayController.addView(R.layout.activity_mainoverlay);
         newOverlayController.addView(R.layout.activity_cards);
-        //View overlay = factory.inflate(R.layout.activity_nextturn, null);
-        //overlayController.addView(R.layout.activity_playerturn);
-        //overlayController.addView(R.layout.activity_chooseterritory);
-        //overlayController.addView(R.layout.activity_mainoverlay);
         graphicsView.addListener(controller);
-        //setContentView(overlayController.getOverlay());
         setContentView(newOverlayController.getOverlay());
         newOverlayController.setGamePhase(Risk.GamePhase.PICK_TERRITORIES);
         mCurScreen = R.id.screen_game;
@@ -422,7 +391,6 @@ public class MainActivity extends AppCompatActivity
 
 
     //UI SECTION. Methods that implement the game's UI.
-
 
     // This array lists everything that's clickable, for installing click event handlers.
     final static int[] CLICKABLES = {
@@ -468,19 +436,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     void switchToMainScreen() {
-        System.out.println("234 in switch to main screen");
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            System.out.println("234 switching to main screen");
             switchToScreen(R.id.screen_main);
         }
         else {
-            System.out.println("234 switching to sign-in screen");
 
             switchToScreen(R.id.screen_sign_in);
         }
     }
 
-    //GAME BUTTONS
+
+    //GAME BUTTONS SECTION - handle buttonevents from the buttons in game (not menu)
 
     public void nextTurnPressed(View v) {
         //controller has always been init since nextTurn button
@@ -498,19 +464,24 @@ public class MainActivity extends AppCompatActivity
     public void fightPressed(View v){
         controller.fightButtonPressed();
     }
+
     public void placePressed(View v){
         controller.placeButtonPressed(newOverlayController.getBarValue());
         System.out.println("Place button pressed");
     }
+
     public void donePressed(View v){
         controller.doneButtonPressed();
         newOverlayController.setNextTurnVisible(true);
         System.out.println("Done button pressed");
     }
+
     public void hideCards(View v){
         newOverlayController.setCardVisibility(false);
         newOverlayController.setNextTurnVisible(true);
     }
+
+
     //MISC SECTION. Miscellaneous methods
 
     // Sets the flag to keep this screen on
@@ -545,10 +516,8 @@ public class MainActivity extends AppCompatActivity
             newOverlayController.setListVisible(true);
         }
     }
+
     public void hideList(View v){
         newOverlayController.setListVisible(false);
-    }
-    public ArrayList<Participant> getmParticipants() {
-        return mParticipants;
     }
 }

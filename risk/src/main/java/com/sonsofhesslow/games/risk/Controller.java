@@ -146,17 +146,9 @@ public class Controller implements GL_TouchListener {
                     case PLACE_ARMIES:
                         System.out.println("Place Phase");
                         if (touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
-                            //armies are palced with a slider, triggered by listener
+                            // TODO: 2016-05-26 armies are placed with a slider, triggered by listener
                             riskModel.setSelectedTerritory(touchedTerritory);
                         }
-                        /*if(touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
-                            touchedTerritory.changeArmyCount(1);
-                            riskModel.getCurrentPlayer().decArmiesToPlace();
-                        }*/
-                        /*if(riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
-                            gamePhase = GamePhase.FIGHT;
-                            overlayController.addViewChange(R.layout.activity_nextturn);
-                        }*/
                         break;
 
                     case FIGHT:
@@ -271,7 +263,6 @@ public class Controller implements GL_TouchListener {
         while (!nextPlayerIndexFound){
             playerSearchIndex++;
             if (playerSearchIndex == riskModel.getPlayers().length) {
-                //give card?
                 playerSearchIndex = 0;
             }
 
@@ -307,8 +298,7 @@ public class Controller implements GL_TouchListener {
         if(riskModel.getGamePhase() != Risk.GamePhase.PICK_TERRITORIES && riskModel.getGamePhase() != Risk.GamePhase.PLACE_STARTING_ARMIES) {
             setArmiesToPlace(riskModel.getPlayers()[currentPlayerIndex]);
         }
-
-
+        
         if(territoryTaken) {
             riskModel.getCurrentPlayer().giveOneCard();
             territoryTaken = false;

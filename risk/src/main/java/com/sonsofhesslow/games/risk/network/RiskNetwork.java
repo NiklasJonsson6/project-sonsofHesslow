@@ -1,11 +1,10 @@
+//multiple parts of file taken from Google's example project - https://github.com/playgameservices/android-basic-samples
 package com.sonsofhesslow.games.risk.network;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -36,6 +35,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
 
     // Request codes for the UIs that is shown with startActivityForResult:
     final static int RC_WAITING_ROOM = 10002;
+
     // Request code used to invoke sign in user interactions.
     private static final int RC_SIGN_IN = 9001;
 
@@ -70,7 +70,6 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     //activity in use
     private MainActivity activity;
 
-
     public RiskNetwork(MainActivity activity, GoogleApiClient mGoogleApiClient, GooglePlayNetwork googlePlayNetwork) {
         setGooglePlayNetwork(googlePlayNetwork);
         googlePlayNetwork.setNetworkTarget(this);
@@ -88,7 +87,6 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
                 .setMessageReceivedListener(googlePlayNetwork)
                 .setRoomStatusUpdateListener(googlePlayNetwork);
         switchToScreen(R.id.screen_wait);
-        //keepScreenOn();
         resetGameVars();
         Games.RealTimeMultiplayer.join(mGoogleApiClient, roomConfigBuilder.build());
     }
@@ -119,6 +117,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
             switchToScreen(mCurScreen); //hide the invitation popup
         }
     }
+
 
     //CALLBACKS SECTION. (API callbacks)
 
@@ -219,6 +218,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
         // show the waiting room UI
         showWaitingRoom(room);
     }
+
     // room is fully connected.
     @Override
     public void onRoomConnected(int statusCode, Room room) {
@@ -314,7 +314,6 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
         }
     }
 
-    //removed startgame
 
     //COMMUNICATIONS SECTION. Methods that implement the game's network protocol
 
@@ -464,6 +463,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
         }
     }
 
+
     //MISC SECTION. Miscellaneous methods
 
     private void resetGameVars() {
@@ -477,7 +477,4 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     public String getmMyId() {
         return mMyId;
     }
-
-
-
 }
