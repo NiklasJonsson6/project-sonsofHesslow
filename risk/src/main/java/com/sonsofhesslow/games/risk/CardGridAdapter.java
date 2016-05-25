@@ -26,6 +26,7 @@ public class CardGridAdapter extends BaseAdapter{
     private static LayoutInflater inflater=null;
     ArrayList<Boolean> isClicked;
     ArrayList<View> rowView;
+    ArrayList<Integer> selectedView;
 
     public CardGridAdapter(MainActivity mainActivity, ArrayList<String> prgmNameList, ArrayList<Integer> prgmImages) {
         // TODO Auto-generated constructor stub
@@ -33,6 +34,7 @@ public class CardGridAdapter extends BaseAdapter{
         context=mainActivity;
         imageId=prgmImages;
         rowView = new ArrayList<View>();
+        selectedView = new ArrayList<Integer>();
         isClicked = new ArrayList<Boolean>();
         inflater = ( LayoutInflater )context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -82,15 +84,28 @@ public class CardGridAdapter extends BaseAdapter{
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 Holder holder=new Holder();
+                int tester = 0;
                 if(isClicked.get(position)){
+                    selectedView.remove((Integer) position);
                     holder.rv = (RelativeLayout) rowView.get(position).findViewById(R.id.frameColour);
                     holder.rv.setBackgroundColor(Color.parseColor("#7b7b7b"));
                     isClicked.set(position,false);
                 } else {
-                    holder.rv = (RelativeLayout) rowView.get(position).findViewById(R.id.frameColour);
-                    holder.rv.setBackgroundColor(Color.parseColor("#a58218"));
-                    isClicked.set(position,true);
+                    for(int x = 0; x<selectedView.size(); x++) {
+                        if (((TextView) rowView.get(position).findViewById(R.id.cardText)).getText() == ((TextView) rowView.get(position - x).findViewById(R.id.cardText)).getText()){
+                            tester++;
+                        } else {
+                            tester--;
+                        }
+                    }
+                    if((selectedView.size() == 0 || Math.abs(tester) == selectedView.size()) && selectedView.size()<3) {
+                        selectedView.add(position);
+                        holder.rv = (RelativeLayout) rowView.get(position).findViewById(R.id.frameColour);
+                        holder.rv.setBackgroundColor(Color.parseColor("#a58218"));
+                        isClicked.set(position, true);
+                    }
                 }
+                System.out.println("selectedView size: " + selectedView.size());
             }
 
         });

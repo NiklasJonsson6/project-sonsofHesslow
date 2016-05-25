@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import com.sonsofhesslow.games.risk.graphics.GL_TouchEvent;
 import com.sonsofhesslow.games.risk.graphics.GL_TouchListener;
 import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
+import com.sonsofhesslow.games.risk.model.Die;
 import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
 import com.sonsofhesslow.games.risk.model.Territory;

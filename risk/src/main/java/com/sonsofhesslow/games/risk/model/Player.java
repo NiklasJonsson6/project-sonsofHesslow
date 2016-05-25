@@ -1,8 +1,6 @@
 package com.sonsofhesslow.games.risk.model;
 import android.net.Uri;
 
-import com.sonsofhesslow.games.risk.Card;
-
 import java.util.ArrayList;
 import java.util.Random;
 

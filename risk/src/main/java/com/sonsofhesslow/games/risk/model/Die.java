@@ -1,4 +1,4 @@
-package com.sonsofhesslow.games.risk;
+package com.sonsofhesslow.games.risk.model;
 
 import com.sonsofhesslow.games.risk.model.Territory;
 import java.util.ArrayList;
