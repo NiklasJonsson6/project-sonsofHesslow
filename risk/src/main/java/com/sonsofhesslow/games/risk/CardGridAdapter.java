@@ -59,6 +59,10 @@ public class CardGridAdapter extends BaseAdapter{
         return position;
     }
 
+    public ArrayList<Integer> getCardIndexList(){
+        return selectedView;
+    }
+
     public class Holder
     {
         TextView tv;
@@ -91,18 +95,21 @@ public class CardGridAdapter extends BaseAdapter{
                     holder.rv.setBackgroundColor(Color.parseColor("#7b7b7b"));
                     isClicked.set(position,false);
                 } else {
-                    for(int x = 0; x<selectedView.size(); x++) {
-                        if (((TextView) rowView.get(position).findViewById(R.id.cardText)).getText() == ((TextView) rowView.get(position - x).findViewById(R.id.cardText)).getText()){
-                            tester++;
-                        } else {
-                            tester--;
+                    selectedView.add((Integer) position);
+                    for(int x = 0; x<selectedView.size(); x++){
+                        for(int y = 0; y<selectedView.size(); y++) {
+                            if (((TextView) rowView.get(selectedView.get(y)).findViewById(R.id.cardText)).getText() == ((TextView) rowView.get(selectedView.get(x)).findViewById(R.id.cardText)).getText() && x != y)
+                                tester++;
                         }
                     }
-                    if((selectedView.size() == 0 || Math.abs(tester) == selectedView.size()) && selectedView.size()<3) {
-                        selectedView.add(position);
+
+                    System.out.println("Tester size: " + tester + "Size^2: " + (selectedView.size()*selectedView.size()-selectedView.size()));
+                    if((selectedView.size() == 0 || tester == (selectedView.size()*selectedView.size()-selectedView.size()) || tester == 0) && selectedView.size()<4) {
                         holder.rv = (RelativeLayout) rowView.get(position).findViewById(R.id.frameColour);
                         holder.rv.setBackgroundColor(Color.parseColor("#a58218"));
                         isClicked.set(position, true);
+                    } else {
+                        selectedView.remove((Integer) position);
                     }
                 }
                 System.out.println("selectedView size: " + selectedView.size());
