@@ -71,7 +71,9 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     private MainActivity activity;
 
 
-    public RiskNetwork(MainActivity activity, GoogleApiClient mGoogleApiClient) {
+    public RiskNetwork(MainActivity activity, GoogleApiClient mGoogleApiClient, GooglePlayNetwork googlePlayNetwork) {
+        setGooglePlayNetwork(googlePlayNetwork);
+        googlePlayNetwork.setNetworkTarget(this);
         this.activity = activity;
         this.mGoogleApiClient = mGoogleApiClient;
     }

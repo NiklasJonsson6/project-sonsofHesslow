@@ -104,10 +104,7 @@ public class MainActivity extends AppCompatActivity
                 .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
 
-        riskNetwork = new RiskNetwork(this, this.mGoogleApiClient);
-
-        //riskNetwork.setGooglePlayNetwork(googlePlayNetwork);
-        //googlePlayNetwork.setNetworkTarget(riskNetwork);
+        riskNetwork = new RiskNetwork(this, this.mGoogleApiClient, googlePlayNetwork);
 
         // set up a click listener for everything in main menus
         for (int id : CLICKABLES) {

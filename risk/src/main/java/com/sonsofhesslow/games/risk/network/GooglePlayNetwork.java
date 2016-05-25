@@ -48,6 +48,9 @@ public class GooglePlayNetwork implements RealTimeMessageReceivedListener , Goog
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        while(networkTarget == null) {
+
+        }
         networkTarget.onConnected(bundle);
     }
 
