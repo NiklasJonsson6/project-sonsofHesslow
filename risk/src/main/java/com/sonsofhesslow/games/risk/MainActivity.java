@@ -77,11 +77,11 @@ public class MainActivity extends AppCompatActivity
 
     Vector2 prevPos;
 
-    GooglePlayNetwork googlePlayNetwork = null;
+    private GooglePlayNetwork googlePlayNetwork = null;
 
     private RiskNetwork riskNetwork = null;
 
-    RiskNetworkManager riskNetworkManager = null;
+    private RiskNetworkManager riskNetworkManager = null;
 
     private LinearLayout mainLayout;
 
@@ -95,8 +95,6 @@ public class MainActivity extends AppCompatActivity
         graphicsView = new MyGLSurfaceView(this,getResources());
         graphicsView.addListener(this);
 
-        //this.riskNetwork = new RiskNetwork(this);
-
         googlePlayNetwork = new GooglePlayNetwork();
 
         // Create the Google Api Client with access to Games
@@ -108,8 +106,8 @@ public class MainActivity extends AppCompatActivity
 
         riskNetwork = new RiskNetwork(this, this.mGoogleApiClient);
 
-        riskNetwork.setGooglePlayNetwork(googlePlayNetwork);
-        googlePlayNetwork.setNetworkTarget(riskNetwork);
+        //riskNetwork.setGooglePlayNetwork(googlePlayNetwork);
+        //googlePlayNetwork.setNetworkTarget(riskNetwork);
 
         // set up a click listener for everything in main menus
         for (int id : CLICKABLES) {
@@ -486,17 +484,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initOnlineGame(int[] ids) {
-        System.out.println("init online game");
-        System.out.println("risknetowrk_: " + riskNetwork + " \nmmyid: " + riskNetwork.getmMyId());
-        this.controller = new Controller(ids, riskNetwork.getmMyId().hashCode(), newOverlayController);
-        //this.riskNetwork = new RiskNetwork(this);
-        this.riskNetworkManager = new RiskNetworkManager(controller.getRiskModel(), this.controller, this.riskNetwork);
-        //riskNetwork.setGooglePlayNetwork(googlePlayNetwork);
-        //googlePlayNetwork.setNetworkTarget(riskNetwork);
+        this.controller = new Controller(ids, newOverlayController);
+        this.riskNetworkManager = new RiskNetworkManager(controller.getRiskModel(), this.controller, this.riskNetwork, this.googlePlayNetwork);
     }
 
     private void initOfflineGame(int[] ids) {
-        this.controller = new Controller(ids, 0, newOverlayController);
+        this.controller = new Controller(ids, newOverlayController);
     }
 
     private void resetGameVars() {

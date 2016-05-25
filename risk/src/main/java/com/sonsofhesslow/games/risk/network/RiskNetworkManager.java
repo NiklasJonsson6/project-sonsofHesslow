@@ -12,12 +12,17 @@ import java.util.Observer;
 
 public class RiskNetworkManager implements Observer {
     boolean selfModified;
-    GooglePlayNetworkCompatible riskNetwork = null;
+    RiskNetwork riskNetwork = null;
     Controller controller;
 
-    public RiskNetworkManager(Risk risk, final Controller controller, RiskNetwork riskNetwork) {
+    public RiskNetworkManager(Risk risk, final Controller controller, RiskNetwork riskNetwork, GooglePlayNetwork googlePlayNetwork) {
         this.controller = controller;
         this.riskNetwork = riskNetwork;
+
+        this.controller.setSelfId(riskNetwork.getmMyId().hashCode());
+
+        riskNetwork.setGooglePlayNetwork(googlePlayNetwork);
+        googlePlayNetwork.setNetworkTarget(riskNetwork);
 
         //add to observables
         risk.addObserver(this);

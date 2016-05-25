@@ -31,13 +31,13 @@ public class Controller implements GL_TouchListener {
     private View riskView;
 
     private int currentPlayerIndex = 0; //used to set next player
-    private int self_id;
+    private int selfId;
     private boolean territoryTaken = false;
     private Overlay overlayController;
     private ArrayList<Territory> movementChangedTerritories = new ArrayList<>();
 
-    public Controller(int[] playerIds, int self_id, Overlay overlayController) {
-        this.self_id = self_id;
+    public Controller(int[] playerIds, Overlay overlayController) {
+        this.selfId = 0;
         this.overlayController = overlayController;
         int territoryCount = GraphicsManager.getInstance().getNumberOfTerritories();
         riskModel = new Risk(playerIds, territoryCount); //somehow set number of players (2)
@@ -75,7 +75,7 @@ public class Controller implements GL_TouchListener {
         System.out.println("handle gl event");
         if (event.touchedRegion) {
             Territory touchedTerritory = getTerritoryById(event.regionId);
-            if (self_id == riskModel.getPlayers()[currentPlayerIndex].getParticipantId()) {
+            if (selfId == riskModel.getPlayers()[currentPlayerIndex].getParticipantId()) {
                 switch (riskModel.getGamePhase()) {
                     case PICK_TERRITORIES:
                         System.out.println("pick territories phase");
@@ -303,7 +303,7 @@ public class Controller implements GL_TouchListener {
         //next player, change gamephase
         riskModel.setCurrentPlayer(riskModel.getPlayers()[currentPlayerIndex]);
 
-        if(riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId() && riskModel.getCurrentPlayer().getParticipantId() != self_id) {
+        if(riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId() && riskModel.getCurrentPlayer().getParticipantId() != selfId) {
             //multiplayer & not users turn
             overlayController.addView(R.layout.activity_wait);
         } else {
@@ -332,7 +332,7 @@ public class Controller implements GL_TouchListener {
         if (riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId()) {
             //multiplayer
             for (Player player: riskModel.getPlayers()) {
-                if (player.getParticipantId()== self_id) {
+                if (player.getParticipantId()== selfId) {
                     System.out.println("giving starting armies");
                     player.giveArmies(50 - (5*riskModel.getPlayers().length));
                 }
@@ -467,5 +467,7 @@ public class Controller implements GL_TouchListener {
         }
     }
 
-
+    public void setSelfId(int selfId) {
+        this.selfId = selfId;
+    }
 }
