@@ -478,47 +478,6 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
         return mMyId;
     }
 
-    // Handle the result of the "Select players UI", launched when the user clicked the
-    // "Invite friends" button. Creating a room with selected players.
-    public void handleSelectPlayersResult(int response, Intent data) {
-        if (response != Activity.RESULT_OK) {
-            Log.w(TAG, "*** select players UI cancelled, " + response);
-            switchToMainScreen();
-            return;
-        }
 
-        Log.d(TAG, "Select players UI succeeded.");
 
-        // get the invitee list
-        final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
-        Log.d(TAG, "Invitee count: " + invitees.size());
-        //this.playersToInvite = invitees;
-
-        // get the automatch criteria
-        Bundle autoMatchCriteria = null;
-        int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
-        int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
-        if (minAutoMatchPlayers > 0 || maxAutoMatchPlayers > 0) {
-            autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
-                    minAutoMatchPlayers, maxAutoMatchPlayers, 0);
-            Log.d(TAG, "Automatch criteria: " + autoMatchCriteria);
-        }
-        //this.matchCriteria = autoMatchCriteria;
-
-        // create the room
-        Log.d(TAG, "Creating room...");
-        RoomConfig.Builder rtmConfigBuilder = RoomConfig.builder(googlePlayNetwork);
-        rtmConfigBuilder.addPlayersToInvite(invitees);
-        rtmConfigBuilder.setMessageReceivedListener(googlePlayNetwork);
-        rtmConfigBuilder.setRoomStatusUpdateListener(googlePlayNetwork);
-        if (autoMatchCriteria != null) {
-            rtmConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
-        }
-
-        switchToScreen(R.id.screen_wait);
-        resetGameVars();
-
-        Games.RealTimeMultiplayer.create(mGoogleApiClient, rtmConfigBuilder.build());
-        Log.d(TAG, "Room created, waiting for it to be ready...");
-    }
 }
