@@ -1,7 +1,6 @@
 package com.sonsofhesslow.games.risk.network;
 
 import com.sonsofhesslow.games.risk.Controller;
-import com.sonsofhesslow.games.risk.MainActivity;
 import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
 import com.sonsofhesslow.games.risk.model.Territory;

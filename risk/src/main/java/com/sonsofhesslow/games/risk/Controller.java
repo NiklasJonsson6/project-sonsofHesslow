@@ -68,8 +68,10 @@ public class Controller implements GL_TouchListener {
             riskModel.getTerritories()[i].setContinent(GraphicsManager.getInstance().getContinetId(i));
         }
 
-        //give initial armies
-        setStartingArmies();
+        if(!isOnline()){
+            //if it's an online game this will be done later, after selfId is set
+            setStartingArmies();
+        }
     }
 
     public void handle(GL_TouchEvent event) {
@@ -122,10 +124,20 @@ public class Controller implements GL_TouchListener {
                             touchedTerritory.changeArmyCount(1);
                             System.out.println(riskModel.getCurrentPlayer().getArmiesToPlace());
                             riskModel.getCurrentPlayer().decArmiesToPlace();
-                            if (riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
-                                System.out.println("current game phase: " + riskModel.getGamePhase());
-                                System.out.println("Should switch to fight phase");
+                            if (selfId != 0 && riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
+                                //multiplayer
                                 riskModel.setGamePhase(Risk.GamePhase.FIGHT);
+                            }  else {
+                                boolean playerHasArmiesLeft = false;
+                                for(Player player : riskModel.getPlayers()) {
+                                    if(player.getArmiesToPlace() > 0) {
+                                        playerHasArmiesLeft = true;
+                                        break;
+                                    }
+                                }
+                                if(!playerHasArmiesLeft) {
+                                    riskModel.setGamePhase(Risk.GamePhase.FIGHT);
+                                }
                             }
                             nextPlayer();
                         }
@@ -288,23 +300,24 @@ public class Controller implements GL_TouchListener {
             playerWon(riskModel.getPlayers()[currentPlayerIndex]);
         }
 
+        //set next player
+        currentPlayerIndex = playerSearchIndex;
+
         //gives armies for placement phase
         if(riskModel.getGamePhase() != Risk.GamePhase.PICK_TERRITORIES && riskModel.getGamePhase() != Risk.GamePhase.PLACE_STARTING_ARMIES) {
             setArmiesToPlace(riskModel.getPlayers()[currentPlayerIndex]);
         }
 
-        //set next player
-        currentPlayerIndex = playerSearchIndex;
 
         if(territoryTaken) {
             riskModel.getCurrentPlayer().giveOneCard();
             territoryTaken = false;
         }
 
-        //next player, change gamephase
+        //next player
         riskModel.setCurrentPlayer(riskModel.getPlayers()[currentPlayerIndex]);
 
-        if(riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId() && riskModel.getCurrentPlayer().getParticipantId() != selfId) {
+        if(isOnline() && riskModel.getCurrentPlayer().getParticipantId() != selfId) {
             //multiplayer & not users turn
             overlayController.addView(R.layout.activity_wait);
         } else {
@@ -330,10 +343,9 @@ public class Controller implements GL_TouchListener {
 
     private void setStartingArmies() {
         //rules from hasbro
-        if (riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId()) {
-            //multiplayer
+        if (isOnline()) {
             for (Player player: riskModel.getPlayers()) {
-                if (player.getParticipantId()== selfId) {
+                if (player.getParticipantId() == selfId) {
                     System.out.println("giving starting armies");
                     player.giveArmies(50 - (5*riskModel.getPlayers().length));
                 }
@@ -470,5 +482,12 @@ public class Controller implements GL_TouchListener {
 
     public void setSelfId(int selfId) {
         this.selfId = selfId;
+
+        //give initial armies
+        setStartingArmies();
+    }
+
+    public boolean isOnline(){
+        return riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId();
     }
 }
