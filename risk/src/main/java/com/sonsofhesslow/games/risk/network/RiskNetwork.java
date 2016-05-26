@@ -97,7 +97,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     }
 
     public void onInvitationRemoved(String invitationId) {
-        if (mIncomingInvitationId.equals(invitationId)&&mIncomingInvitationId!=null) {
+        if (mIncomingInvitationId.equals(invitationId) && mIncomingInvitationId != null) {
             mIncomingInvitationId = null;
             uiUpdate.removeInvitation();
         }

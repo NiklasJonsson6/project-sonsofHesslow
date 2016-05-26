@@ -227,10 +227,17 @@ public class Overlay {
     }
 
     public void changeGridLayout(boolean isLandscape){
-        if(isLandscape) {
-            ((GridView) parent.findViewById(R.id.gridView)).setNumColumns(5);
-        } else {
-            ((GridView) parent.findViewById(R.id.gridView)).setNumColumns(3);
+        System.out.println("gridview: " + parent.findViewById(R.id.gridView));
+
+        View tempGridView = parent.findViewById(R.id.gridView);
+
+        // TODO: 2016-05-26 prevent crash in a better way 
+        if(tempGridView != null) {
+            if (isLandscape) {
+                ((GridView) tempGridView).setNumColumns(5);
+            } else {
+                ((GridView) tempGridView).setNumColumns(3);
+            }
         }
     }
 }
