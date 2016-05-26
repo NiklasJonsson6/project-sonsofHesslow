@@ -90,9 +90,9 @@ public class BeizierPathBuilder
             {
                 for(Beizier b: beiziers)
                 {
-                    System.out.println(Arrays.deepToString(b.points));
+                    //System.out.println(Arrays.deepToString(b.points));
                 }
-                throw new RuntimeException("fucked up beiz yoo!");
+                throw new RuntimeException("screwed up beiz");
             }
             else
             {

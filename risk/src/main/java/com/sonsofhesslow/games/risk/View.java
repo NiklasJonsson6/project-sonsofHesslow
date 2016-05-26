@@ -144,7 +144,6 @@ public class View implements Observer {
                 PHASE EVENT
                  */
                 Risk.GamePhase event = (Risk.GamePhase) arg;
-                System.out.println(risk.getCurrentPlayer().getArmiesToPlace());
                 if (event == Risk.GamePhase.PICK_TERRITORIES) {
 
                 } else if (event == Risk.GamePhase.PLACE_STARTING_ARMIES) {

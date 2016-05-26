@@ -9,11 +9,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
@@ -21,7 +19,6 @@ import com.google.android.gms.games.GamesActivityResultCodes;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.Participant;
-import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.example.games.basegameutils.BaseGameUtils;
 import com.sonsofhesslow.games.risk.graphics.GL_TouchEvent;
 import com.sonsofhesslow.games.risk.graphics.GL_TouchListener;
@@ -32,8 +29,6 @@ import com.sonsofhesslow.games.risk.graphics.MyGLRenderer;
 import com.sonsofhesslow.games.risk.graphics.MyGLSurfaceView;
 import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
-import com.sonsofhesslow.games.risk.network.GooglePlayNetwork;
-import com.sonsofhesslow.games.risk.network.RiskNetwork;
 import com.sonsofhesslow.games.risk.network.RiskNetworkManager;
 
 import java.util.ArrayList;
@@ -45,7 +40,6 @@ public class MainActivity extends AppCompatActivity
     public static Context context;
     static Overlay newOverlayController;
     MyGLSurfaceView graphicsView;
-    private Controller controller;
 
     final static String TAG = "Risk";
 
@@ -65,18 +59,15 @@ public class MainActivity extends AppCompatActivity
 
     // Playing in multiplayer mode?
     boolean mMultiplayer = false;
+
     public boolean mSignInClicked = false;
-    // The participants in the currently active game
-    ArrayList<Participant> mParticipants = null;
 
     // Id of the invitation player received via the invitation listener
     String mIncomingInvitationId = null;
 
     Vector2 prevPos;
 
-    private GooglePlayNetwork googlePlayNetwork = null;
-
-    private RiskNetwork riskNetwork = null;
+    private Controller controller;
 
     private RiskNetworkManager riskNetworkManager = null;
 
@@ -88,7 +79,9 @@ public class MainActivity extends AppCompatActivity
         graphicsView = new MyGLSurfaceView(this,getResources());
         graphicsView.addListener(this);
 
-        googlePlayNetwork = new GooglePlayNetwork();
+        riskNetworkManager = new RiskNetworkManager(this);
+
+        /*googlePlayNetwork = new GooglePlayNetwork();
 
         // Create the Google Api Client with access to Games
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -97,7 +90,7 @@ public class MainActivity extends AppCompatActivity
                 .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
 
-        riskNetwork = new RiskNetwork(this, this.mGoogleApiClient, googlePlayNetwork);
+        riskNetwork = new RiskNetwork(this, this.mGoogleApiClient, googlePlayNetwork);*/
 
         // set up a click listener for everything in main menus
         for (int id : CLICKABLES) {
@@ -174,7 +167,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.button_accept_popup_invitation:
                 // user wants to accept the invitation shown on the invitation popup (from OnInvitationReceivedListener).
-                acceptInviteToRoom(mIncomingInvitationId);
+                riskNetworkManager.acceptInviteToRoom(mIncomingInvitationId);
                 mIncomingInvitationId = null;
                 break;
             case R.id.button_quick_game:
@@ -186,17 +179,9 @@ public class MainActivity extends AppCompatActivity
 
     //starts an online game with random players
     void startQuickGame() {
-        //1-3 opponents
-        final int MIN_OPPONENTS = 1, MAX_OPPONENTS = 3;
-        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(MIN_OPPONENTS,
-                MAX_OPPONENTS, 0);
-        RoomConfig.Builder rtmConfigBuilder = RoomConfig.builder(googlePlayNetwork);
-        rtmConfigBuilder.setMessageReceivedListener(googlePlayNetwork);
-        rtmConfigBuilder.setRoomStatusUpdateListener(googlePlayNetwork);
-        rtmConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
         switchToScreen(R.id.screen_wait);
         resetGameVars();
-        Games.RealTimeMultiplayer.create(mGoogleApiClient, rtmConfigBuilder.build());
+        riskNetworkManager.startQuickGame();
     }
 
     @Override
@@ -222,11 +207,9 @@ public class MainActivity extends AppCompatActivity
                     //startGame(true, new int[2]);
                 } else if (responseCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
                     // player indicated that they want to leave the room
-                    System.out.println("234 left room");
                     leaveRoom();
                 } else if (responseCode == Activity.RESULT_CANCELED) {
                     // Dialog was cancelled (user pressed back key, for instance). Leaving room
-                    System.out.println("234 result canceled");
                     leaveRoom();
                 }
                 break;
@@ -255,7 +238,9 @@ public class MainActivity extends AppCompatActivity
         Invitation inv = data.getExtras().getParcelable(Multiplayer.EXTRA_INVITATION);
 
         // accept invitation
-        acceptInviteToRoom(inv.getInvitationId());
+        switchToScreen(R.id.screen_wait);
+        resetGameVars();
+        riskNetworkManager.acceptInviteToRoom(inv.getInvitationId());
     }
 
     // Handle the result of the "Select players UI", launched when the user clicked the
@@ -266,43 +251,15 @@ public class MainActivity extends AppCompatActivity
             switchToMainScreen();
             return;
         }
-
         Log.d(TAG, "Select players UI succeeded.");
-
-        // get the invitee list
-        final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
-        Log.d(TAG, "Invitee count: " + invitees.size());
-        //this.playersToInvite = invitees;
-
-        // get the automatch criteria
-        Bundle autoMatchCriteria = null;
-        int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
-        int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
-        if (minAutoMatchPlayers > 0 || maxAutoMatchPlayers > 0) {
-            autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
-                    minAutoMatchPlayers, maxAutoMatchPlayers, 0);
-            Log.d(TAG, "Automatch criteria: " + autoMatchCriteria);
-        }
-        //this.matchCriteria = autoMatchCriteria;
-
-        // create the room
-        Log.d(TAG, "Creating room...");
-        RoomConfig.Builder rtmConfigBuilder = RoomConfig.builder(googlePlayNetwork);
-        rtmConfigBuilder.addPlayersToInvite(invitees);
-        rtmConfigBuilder.setMessageReceivedListener(googlePlayNetwork);
-        rtmConfigBuilder.setRoomStatusUpdateListener(googlePlayNetwork);
-        if (autoMatchCriteria != null) {
-            rtmConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
-        }
 
         switchToScreen(R.id.screen_wait);
         resetGameVars();
-
-        Games.RealTimeMultiplayer.create(mGoogleApiClient, rtmConfigBuilder.build());
+        riskNetworkManager.startInviteGame(data);
         Log.d(TAG, "Room created, waiting for it to be ready...");
     }
 
-    // Accept the given invitation.
+    /*// Accept the given invitation.
     void acceptInviteToRoom(String invId) {
         Log.d(TAG, "Accepting invitation: " + invId);
         RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(googlePlayNetwork);
@@ -312,7 +269,7 @@ public class MainActivity extends AppCompatActivity
         switchToScreen(R.id.screen_wait);
         resetGameVars();
         Games.RealTimeMultiplayer.join(mGoogleApiClient, roomConfigBuilder.build());
-    }
+    }*/
 
     // Activity is going to the background. Leave the current room.
     public void onStop() {
@@ -364,17 +321,18 @@ public class MainActivity extends AppCompatActivity
         if (mRoomId != null) {
             //switchToScreen(R.id.screen_wait);
             mRoomId = null;
-            Games.RealTimeMultiplayer.leave(mGoogleApiClient, googlePlayNetwork, mRoomId);
+            //Games.RealTimeMultiplayer.leave(mGoogleApiClient, googlePlayNetwork, mRoomId);
+            Games.RealTimeMultiplayer.leave(mGoogleApiClient, riskNetworkManager.getGooglePlayNetwork(), mRoomId);
         } else {
             switchToMainScreen();
         }
     }
 
-    public void startGame(boolean online, int[] ids, ArrayList<Participant> participants) {
+    public void startGame(boolean isOnline, int[] ids, ArrayList<Participant> participants) {
         //keeps screen turned on until game is finnished
         keepScreenOn();
 
-        if(online) {
+        if(isOnline) {
             initOnlineGame(ids);
             for(Player player : controller.getRiskModel().getPlayers()){
                 for(Participant participant : participants) {
@@ -397,6 +355,10 @@ public class MainActivity extends AppCompatActivity
         newOverlayController.setGamePhase(Risk.GamePhase.PICK_TERRITORIES);
         mCurScreen = R.id.screen_game;
         newOverlayController.changeGridLayout(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
+    }
+
+    public void startGame(boolean isOnline, ArrayList<Participant> participants) {
+        startGame(isOnline, getParticipantIds(), participants);
     }
 
 
@@ -436,6 +398,7 @@ public class MainActivity extends AppCompatActivity
             // if in multiplayer, only show invitation on main screen
             showInvPopup = (mCurScreen == R.id.screen_main);
         } else {
+            //always show in singleplayer
             showInvPopup = true;
             //could change to for example (mCurScreen == R.id.screen_main && <ingame_condition>);
             //(maybe toggleable in settings)
@@ -506,7 +469,7 @@ public class MainActivity extends AppCompatActivity
 
     private void initOnlineGame(int[] ids) {
         this.controller = new Controller(ids, newOverlayController);
-        this.riskNetworkManager = new RiskNetworkManager(controller.getRiskModel(), this.controller, this.riskNetwork, this.googlePlayNetwork);
+        riskNetworkManager.setController(this.controller);
     }
 
     private void initOfflineGame(int[] ids) {
@@ -515,7 +478,7 @@ public class MainActivity extends AppCompatActivity
 
 
     private void resetGameVars() {
-        // TODO: 2016-05-13
+        // TODO: 2016-05-13 if needed
     }
 
     public Controller getController() {
@@ -531,6 +494,7 @@ public class MainActivity extends AppCompatActivity
     public void hideList(View v){
         newOverlayController.setListVisible(false);
     }
+<<<<<<< HEAD
     public ArrayList<Participant> getmParticipants() {
         return mParticipants;
     }
@@ -540,4 +504,26 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+=======
+
+    public void setmGoogleApiClient(GoogleApiClient mGoogleApiClient) {
+        this.mGoogleApiClient = mGoogleApiClient;
+    }
+
+    public int[] getParticipantIds(){
+        ArrayList<Participant> participants = riskNetworkManager.getRiskNetwork().getmParticipants();
+
+        int c = 0;
+        int[] ids = new int[participants.size()];
+        for(Participant participant : participants){
+            ids[c++] = participant.getParticipantId().hashCode(); //@hash collisions
+        }
+
+        return ids;
+    }
+
+    public int getmCurScreen() {
+        return mCurScreen;
+    }
+>>>>>>> netfix
 }

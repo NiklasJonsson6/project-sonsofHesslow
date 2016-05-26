@@ -108,13 +108,13 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
         ((TextView) activity.findViewById(R.id.incoming_invitation_text)).setText(
                 invitation.getInviter().getDisplayName() + " " +
                         activity.getString(R.string.is_inviting_you));
-        switchToScreen(mCurScreen); // This will show the invitation popup
+        switchToScreen(activity.getmCurScreen()); // This will show the invitation popup
     }
 
     public void onInvitationRemoved(String invitationId) {
         if (mIncomingInvitationId.equals(invitationId)&&mIncomingInvitationId!=null) {
             mIncomingInvitationId = null;
-            switchToScreen(mCurScreen); //hide the invitation popup
+            switchToScreen(activity.getmCurScreen()); //hide the invitation popup
         }
     }
 
@@ -171,12 +171,13 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     public void onConnectedToRoom(Room room) {
         Log.d(TAG, "onConnectedToRoom.");
         //get participants and my ID:
-        mParticipants = room.getParticipants();
+        //mParticipants = room.getParticipants();
         mMyId = room.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient));
 
         // save room ID if its not initialized in onRoomCreated() so player can leave cleanly before the game starts.
-        if(mRoomId==null)
+        if(mRoomId==null) {
             mRoomId = room.getRoomId();
+        }
 
         // print out the list of participants (for debug purposes)
         Log.d(TAG, "Room ID: " + mRoomId);
@@ -205,6 +206,10 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
 
     // room has been created
     public void onRoomCreated(int statusCode, Room room) {
+        /*if(mParticipants == null) {
+            mParticipants = room.getParticipants();
+        }*/
+
         Log.d(TAG, "onRoomCreated(" + statusCode + ", " + room + ")");
         if (statusCode != GamesStatusCodes.STATUS_OK) {
             Log.e(TAG, "*** Error: onRoomCreated, status " + statusCode);
@@ -223,17 +228,13 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     @Override
     public void onRoomConnected(int statusCode, Room room) {
         Log.d(TAG, "onRoomConnected(" + statusCode + ", " + room + ")");
-        int c=0;
-        int[] ids = new int[mParticipants.size()];
-        for(Participant p : mParticipants){
-            System.out.println("id: " + p.getParticipantId() + " hc: " + p.getParticipantId().hashCode());
+        this.mParticipants = room.getParticipants();
+        System.out.println("participant lenght: " + mParticipants.size() + " paritcipants: " + mParticipants);
 
-            ids[c++] = p.getParticipantId().hashCode(); //@hash collisions
-        }
 
         mMultiplayer = true;
         System.out.println("online online");
-        activity.startGame(true, ids, mParticipants);
+        activity.startGame(true, mParticipants);
         if (statusCode != GamesStatusCodes.STATUS_OK) {
 
             Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
@@ -432,26 +433,6 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
 
     void switchToScreen(int screenId) {
         activity.switchToScreen(screenId);
-        // make the requested screen visible; hide all others.
-        /*for (int id : SCREENS) {
-            activity.findViewById(id).setVisibility(screenId == id ? View.VISIBLE : View.GONE);
-        }
-        mCurScreen = screenId;
-
-        // show invitation popup?
-        boolean showInvPopup;
-        if (mIncomingInvitationId == null) {
-            // no invitation, so no popup
-            showInvPopup = false;
-        } else if (mMultiplayer) {
-            // if in multiplayer, only show invitation on main screen
-            showInvPopup = (mCurScreen == R.id.screen_main);
-        } else {
-            showInvPopup = true;
-            //could change to for example (mCurScreen == R.id.screen_main && <ingame_condition>);
-            //(maybe toggleable in settings)
-        }
-        activity.findViewById(R.id.invitation_popup).setVisibility(showInvPopup ? View.VISIBLE : View.GONE);*/
     }
 
     void switchToMainScreen() {
@@ -476,5 +457,9 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
 
     public String getmMyId() {
         return mMyId;
+    }
+
+    public ArrayList<Participant> getmParticipants() {
+        return mParticipants;
     }
 }

@@ -163,7 +163,6 @@ public class MyGLSurfaceView extends GLSurfaceView {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             scale *= 1 + (1 - detector.getScaleFactor());
-            System.out.println(detector.getScaleFactor());
             scale = Math.min(-1.1f, Math.max(scale, -6.0f));
             invalidate();
             return true;

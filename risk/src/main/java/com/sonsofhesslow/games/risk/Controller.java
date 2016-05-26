@@ -32,7 +32,6 @@ public class Controller implements GL_TouchListener {
     private static final int EXTRA_TROOPS_SOUTH_AMERICA = 2;
 
     private static Risk riskModel;
-    private View riskView;
 
     private int currentPlayerIndex = 0; //used to set next player
     private int selfId;
@@ -45,15 +44,16 @@ public class Controller implements GL_TouchListener {
         this.overlayController = overlayController;
         int territoryCount = GraphicsManager.getInstance().getNumberOfTerritories();
         riskModel = new Risk(playerIds, territoryCount); //somehow set number of players (2)
-        riskView = new View(riskModel);
+
+        riskModel.setCurrentPlayer(riskModel.getPlayers()[0]);
+
+        View riskView = new View(riskModel);
 
         //add observers
         riskModel.addObserver(riskView);
         for(Territory territory: riskModel.getTerritories()) {
             territory.addObserver(riskView);
         }
-
-        riskModel.setCurrentPlayer(riskModel.getPlayers()[0]);
 
         //set neighbours and continent
         for (int i = 0; i < territoryCount; i++) {
@@ -125,7 +125,6 @@ public class Controller implements GL_TouchListener {
                         System.out.println("place starting armies phase");
                         if (touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
                             touchedTerritory.changeArmyCount(1);
-                            System.out.println(riskModel.getCurrentPlayer().getArmiesToPlace());
                             riskModel.getCurrentPlayer().decArmiesToPlace();
                             if (selfId != 0 && riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
                                 //multiplayer

@@ -74,7 +74,6 @@ public class Territory extends Observable {
     }
 
     public int getJustMovedArmies() {
-        System.out.println("justmovedarmies: " + justMovedArmies);
         return justMovedArmies;
     }
 
