@@ -245,7 +245,7 @@ public class FilledBeizierPath extends GLObject implements Updatable {
 
 
     public void draw(float[] projectionMatrix){
-        System.out.println(triangles);
+        //System.out.println("triangles: " + triangles);
         float[] mvpMatrix = new float[16];
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
         flowShader.use(fill_mesh, mvpMatrix, origin, len,toColor,fromColor);

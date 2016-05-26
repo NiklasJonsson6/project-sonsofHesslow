@@ -101,7 +101,7 @@ public class BeizierPath implements Iterable<Beizier> {
         {
             ret.addAll(approximateBeizier(split[0].points,precision));
             ret.addAll(approximateBeizier(split[1].points,precision));
-            System.out.println(ret.size());
+            //System.out.println("ret size:" + ret.size());
             return ret;
         }
     }
