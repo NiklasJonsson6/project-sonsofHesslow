@@ -2,43 +2,39 @@ package com.sonsofhesslow.games.risk.graphics.graphicsObjects;
 
 import android.opengl.GLES20;
 
-import java.nio.FloatBuffer;
-
 import com.sonsofhesslow.games.risk.graphics.utils.ShaderUtils;
 
-/**
- * Created by Daniel on 06/05/2016.
- */
+import java.nio.FloatBuffer;
+
 class LineShader {
 
     private static final String vertexShaderCode =
             "uniform mat4 matrix;" +
                     "attribute vec4 position;" +
                     "attribute float side;" +
-                    "varying float fside;"+
+                    "varying float fside;" +
                     "void main() {" +
                     "  gl_Position = matrix * position;" +
-                    " fside = side;"+
+                    " fside = side;" +
                     "}";
 
     private static final String fragmentShaderCode =
-                    "precision mediump float;" +
+            "precision mediump float;" +
                     "uniform vec4 color;" +
-                    "varying float fside;"+
+                    "varying float fside;" +
                     "void main() {" +
-                    "float f=0.4;"+
+                    "float f=0.4;" +
                     "gl_FragColor = color * (smoothstep(0.0,f,fside)*((smoothstep(0.0,f,1.0-fside))));" +
                     "}";
 
 
     private static int shaderID = -1;
-    public LineShader()
-    {
-        if(shaderID == -1)
-        {
+
+    public LineShader() {
+        if (shaderID == -1) {
             // prepare shaders and OpenGL program
-            int vertexShader    = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-            int fragmentShader  = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+            int vertexShader = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+            int fragmentShader = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
             shaderID = GLES20.glCreateProgram();             // create empty OpenGL Program
             GLES20.glAttachShader(shaderID, vertexShader);   // add the vertex shader to program
@@ -50,8 +46,7 @@ class LineShader {
         }
     }
 
-    void use(Mesh mesh, float[] matrix, float[] color, FloatBuffer lineSide)
-    {
+    void use(Mesh mesh, float[] matrix, float[] color, FloatBuffer lineSide) {
         GLES20.glUseProgram(shaderID);
 
         final int COORDS_PER_VERTEX = 3;

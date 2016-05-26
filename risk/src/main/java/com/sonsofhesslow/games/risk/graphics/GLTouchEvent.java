@@ -4,11 +4,7 @@ import android.view.MotionEvent;
 
 import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
 
-/**
- * Created by Daniel on 11/04/2016.
- */
-public class GLTouchEvent
-{
+public class GLTouchEvent {
     public final MotionEvent e;
     public final boolean touchedRegion;
     public final int regionId;

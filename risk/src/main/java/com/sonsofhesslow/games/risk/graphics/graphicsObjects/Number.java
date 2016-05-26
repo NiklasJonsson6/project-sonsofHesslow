@@ -11,83 +11,51 @@ import android.text.TextPaint;
 import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
 import com.sonsofhesslow.games.risk.graphics.geometry.Vector3;
 
-/**
- * Created by Daniel on 04/05/2016.
- */
+
 // renders numbers onto textures and then displays them as textured quads.
 // textures are cashed and reused.
-public class Number extends GLObject{
+public class Number extends GLObject {
     private static int[] textures = null;
-    private int num=-1;
-    private TexQuadShader shader;
     private final Mesh mesh;
-    public void setValue(int value) {
-        num = value;
-    }
-    public int getValue() {
-        return num;
-    }
+    private int num = -1;
+    private TexQuadShader shader;
+    private float[] color = new float[]{0.3f, 0.5f, 0.5f, 1f};
+
     public Number(int value, Renderer renderer) {
         super(renderer);
-        if(textures == null)
-        {
+        if (textures == null) {
             textures = new int[200];
-            for(int i = 0; i<textures.length;i++)
-            {
-                textures[i]=-1;
+            for (int i = 0; i < textures.length; i++) {
+                textures[i] = -1;
             }
         }
         {
             //setting up the matrix
-            Vector2 top_right =     new Vector2(1,1);
-            Vector2 top_left =      new Vector2(1,0);
-            Vector2 bottom_left =   new Vector2(0,0);
-            Vector2 bottom_rigth =  new Vector2(0,1);
-            Vector2[] verts = new Vector2[]{top_right,top_left,bottom_left,bottom_rigth};
-            short[] tris = new short[]{0,1,2,0,2,3};
-            mesh = new Mesh(tris,verts);
+            Vector2 top_right = new Vector2(1, 1);
+            Vector2 top_left = new Vector2(1, 0);
+            Vector2 bottom_left = new Vector2(0, 0);
+            Vector2 bottom_rigth = new Vector2(0, 1);
+            Vector2[] verts = new Vector2[]{top_right, top_left, bottom_left, bottom_rigth};
+            short[] tris = new short[]{0, 1, 2, 0, 2, 3};
+            mesh = new Mesh(tris, verts);
         }
-        num= value;
+        num = value;
     }
-    public Number(int value, Renderer renderer, float[] color)
-    {
-        this(value,renderer);
+
+    public Number(int value, Renderer renderer, float[] color) {
+        this(value, renderer);
         setColor(color);
     }
 
-    // called back from the gl thread by the renderer for init
-    public void glInit()
-    {
-        mesh.init();
-        shader = new TexQuadShader();
-    }
-
-    public void draw(float[] projectionMatrix) {
-        float[] matrix = new float[16];
-        Matrix.multiplyMM(matrix, 0, projectionMatrix, 0, modelMatrix, 0);
-        if(num==-1)return;
-        if(textures[num]==-1) {
-            textures[num] = genTexture(Integer.toString(num));
-        }
-        shader.use(mesh,matrix,color,textures[num]);
-    }
-
-    private float[] color= new float[]{0.3f,0.5f,0.5f,1f};
-    public void setColor(float[] color) {
-        this.color = color;
-    }
-
-    private static int genTexture(String s)
-    {
+    private static int genTexture(String s) {
         final int[] textureHandle = new int[1];
 
         GLES20.glGenTextures(1, textureHandle, 0);
 
-        if (textureHandle[0] != 0)
-        {
+        if (textureHandle[0] != 0) {
             final int FONT_SIZE = 200;
             // Read in the resource
-            final Bitmap bitmap = Bitmap.createBitmap(512,512,Bitmap.Config.ARGB_8888);
+            final Bitmap bitmap = Bitmap.createBitmap(512, 512, Bitmap.Config.ARGB_8888);
             bitmap.eraseColor(0x00ffffff);
             Canvas canvas = new Canvas(bitmap);
             TextPaint textPaint = new TextPaint();
@@ -126,10 +94,37 @@ public class Number extends GLObject{
         return textureHandle[0];
     }
 
+    public int getValue() {
+        return num;
+    }
+
+    public void setValue(int value) {
+        num = value;
+    }
+
+    // called back from the gl thread by the renderer for init
+    public void glInit() {
+        mesh.init();
+        shader = new TexQuadShader();
+    }
+
+    public void draw(float[] projectionMatrix) {
+        float[] matrix = new float[16];
+        Matrix.multiplyMM(matrix, 0, projectionMatrix, 0, modelMatrix, 0);
+        if (num == -1) return;
+        if (textures[num] == -1) {
+            textures[num] = genTexture(Integer.toString(num));
+        }
+        shader.use(mesh, matrix, color, textures[num]);
+    }
+
+    public void setColor(float[] color) {
+        this.color = color;
+    }
+
     @Override
-    public void setPos(Vector3 pos)
-    {
-        super.setPos(Vector3.Sub(pos,new Vector3(0.5f,0.5f,0)));
+    public void setPos(Vector3 pos) {
+        super.setPos(Vector3.Sub(pos, new Vector3(0.5f, 0.5f, 0)));
     }
 }
 

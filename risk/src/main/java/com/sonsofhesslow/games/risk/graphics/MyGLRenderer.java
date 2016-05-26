@@ -15,113 +15,36 @@
  */
 package com.sonsofhesslow.games.risk.graphics;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
 import com.sonsofhesslow.games.risk.graphics.graphicsObjects.GLObject;
+import com.sonsofhesslow.games.risk.graphics.graphicsObjects.Renderer;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
-import com.sonsofhesslow.games.risk.graphics.graphicsObjects.Renderer;
-
-import java.util.concurrent.*;
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 
 public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
 
     private static final List<GLObject> gameObjects = new ArrayList<>();
     private static final ConcurrentLinkedQueue<GLObject> objectsToBeAdded = new ConcurrentLinkedQueue<>();
-    public void delayedInit(GLObject m) {
-        objectsToBeAdded.add(m);
-    }
     private static final ConcurrentLinkedQueue<GLObject> objectsToBeRemoved = new ConcurrentLinkedQueue<>();
-    public void remove(GLObject object) {
-        objectsToBeRemoved.add(object);
-    }
-
-    @Override
-    public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-        GLES20.glClearColor(1f, 1f, 1f, 1.0f);
-        GLES20.glEnable(GLES20.GL_BLEND);
-        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
-    }
-
-    @Override
-    public void onDrawFrame(GL10 unused) {
-        frameInit();
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        Camera cam = Camera.getInstance();
-        float[] viewMatrix = new float[16];
-        Matrix.setLookAtM(viewMatrix, 0, cam.pos.x, cam.pos.y, cam.pos.z, cam.lookAt.x, cam.lookAt.y, cam.lookAt.z, cam.up.x, cam.up.y, cam.up.z);
-
-        if (cam.stitchPosition > 0 && cam.stitchPosition < 1) {
-            Camera[] cams = cam.getStitchCams();
-            int x = (int) (width * cam.stitchPosition);
-            if (x != 0 && x != width) {
-                render(0, 0, x, height, cams[0]);
-                render(x, 0, width, height, cams[1]);
-                return;
-            }
-        }
-        render(0, 0, width, height, cam);
-    }
-
-    private void frameInit() {
-        for (GLObject go : objectsToBeRemoved) {
-            objectsToBeAdded.remove(go);
-            gameObjects.remove(go);
-        }
-        objectsToBeRemoved.clear();
-        for (GLObject go : objectsToBeAdded) {
-            go.glInit();
-            gameObjects.add(go);
-        }
-        objectsToBeAdded.clear();
-    }
-
-    private void render(int left, int bottom, int right, int top, Camera camera) {
-        int width = right - left;
-        int height = top - bottom;
-        GLES20.glViewport(left, bottom, width, height);
-
-        float[] viewMatrix = camera.getViewMatrix();
-        float[] projectionMatrix = calculateProjectionMatrix(height, width);
-        float[] MVPMatrix= new float[16];
-        Matrix.multiplyMM(MVPMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
-        Collections.sort(gameObjects, new Comparator<GLObject>() {
-            @Override
-            public int compare(GLObject lhs, GLObject rhs) {
-                return Float.compare(lhs.drawOrder, rhs.drawOrder);
-            }
-        });
-        for (GLObject go : gameObjects) {
-            if (go.isActive)
-                go.draw(MVPMatrix);
-        }
-    }
-
-    private static float[] calculateProjectionMatrix(float height, float width) {
-        float[] projectionMatrix = new float[16];
-        float ratio =  width / height;
-        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1, 1, 1, 20);
-        return projectionMatrix;
-    }
-
-
     private static int width;
     private static int height;
 
-    @Override
-    public void onSurfaceChanged(GL10 unused, int width, int height) {
-        MyGLRenderer.width = width;
-        MyGLRenderer.height = height;
+    private static float[] calculateProjectionMatrix(float height, float width) {
+        float[] projectionMatrix = new float[16];
+        float ratio = width / height;
+        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1, 1, 1, 20);
+        return projectionMatrix;
     }
 
     private static Vector2 viewPortToWorldCoord(Vector2 point, float zOut, float[] projectionMatrix, float[] viewMatrix) {
@@ -185,5 +108,80 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
             }
         }
         return screenToWorldCoords(new Vector2(point.x, point.y), zOut);
+    }
+
+    public void delayedInit(GLObject m) {
+        objectsToBeAdded.add(m);
+    }
+
+    public void remove(GLObject object) {
+        objectsToBeRemoved.add(object);
+    }
+
+    @Override
+    public void onSurfaceCreated(GL10 unused, EGLConfig config) {
+        GLES20.glClearColor(1f, 1f, 1f, 1.0f);
+        GLES20.glEnable(GLES20.GL_BLEND);
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    @Override
+    public void onDrawFrame(GL10 unused) {
+        frameInit();
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+        Camera cam = Camera.getInstance();
+        float[] viewMatrix = new float[16];
+        Matrix.setLookAtM(viewMatrix, 0, cam.pos.x, cam.pos.y, cam.pos.z, cam.lookAt.x, cam.lookAt.y, cam.lookAt.z, cam.up.x, cam.up.y, cam.up.z);
+
+        if (cam.stitchPosition > 0 && cam.stitchPosition < 1) {
+            Camera[] cams = cam.getStitchCams();
+            int x = (int) (width * cam.stitchPosition);
+            if (x != 0 && x != width) {
+                render(0, 0, x, height, cams[0]);
+                render(x, 0, width, height, cams[1]);
+                return;
+            }
+        }
+        render(0, 0, width, height, cam);
+    }
+
+    private void frameInit() {
+        for (GLObject go : objectsToBeRemoved) {
+            objectsToBeAdded.remove(go);
+            gameObjects.remove(go);
+        }
+        objectsToBeRemoved.clear();
+        for (GLObject go : objectsToBeAdded) {
+            go.glInit();
+            gameObjects.add(go);
+        }
+        objectsToBeAdded.clear();
+    }
+
+    private void render(int left, int bottom, int right, int top, Camera camera) {
+        int width = right - left;
+        int height = top - bottom;
+        GLES20.glViewport(left, bottom, width, height);
+
+        float[] viewMatrix = camera.getViewMatrix();
+        float[] projectionMatrix = calculateProjectionMatrix(height, width);
+        float[] MVPMatrix = new float[16];
+        Matrix.multiplyMM(MVPMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
+        Collections.sort(gameObjects, new Comparator<GLObject>() {
+            @Override
+            public int compare(GLObject lhs, GLObject rhs) {
+                return Float.compare(lhs.drawOrder, rhs.drawOrder);
+            }
+        });
+        for (GLObject go : gameObjects) {
+            if (go.isActive)
+                go.draw(MVPMatrix);
+        }
+    }
+
+    @Override
+    public void onSurfaceChanged(GL10 unused, int width, int height) {
+        MyGLRenderer.width = width;
+        MyGLRenderer.height = height;
     }
 }

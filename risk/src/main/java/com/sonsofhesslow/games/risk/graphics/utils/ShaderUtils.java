@@ -2,12 +2,9 @@ package com.sonsofhesslow.games.risk.graphics.utils;
 
 import android.opengl.GLES20;
 
-/**
- * Created by Daniel on 12/05/2016.
- */
 public class ShaderUtils {
 
-    public static int loadShader(int type, String shaderCode){
+    public static int loadShader(int type, String shaderCode) {
         int shader = GLES20.glCreateShader(type);
         GLES20.glShaderSource(shader, shaderCode);
         GLES20.glCompileShader(shader);

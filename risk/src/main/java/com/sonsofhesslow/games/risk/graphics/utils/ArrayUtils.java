@@ -23,7 +23,7 @@ public class ArrayUtils {
     }
 
     public static <T> boolean contains(T[] a, T[] b) {
-        for (T elemA  : a) {
+        for (T elemA : a) {
             for (T elemB : b) {
                 if (elemA.equals(elemB)) {
                     return true;

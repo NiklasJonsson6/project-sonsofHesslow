@@ -1,6 +1,7 @@
 package com.sonsofhesslow.games.risk.graphics.graphicsObjects;
 
 import android.opengl.GLES20;
+
 import com.sonsofhesslow.games.risk.graphics.utils.ShaderUtils;
 
 /**
@@ -16,22 +17,23 @@ class DefaultShader {
                     "}";
 
     private static final String fragmentShaderCode =
-                    "precision mediump float;" +
+            "precision mediump float;" +
                     "uniform vec4 color;" +
                     "void main() {" +
                     "  gl_FragColor = color;" +
                     "}";
 
     private static int defaultShader = -1;
-    public DefaultShader()
-    {
-        if(defaultShader == -1)
-        {
+    private static int positionHandle;
+    private static int colorHandle;
+    private static int matrixHandle;
+    public DefaultShader() {
+        if (defaultShader == -1) {
             // prepare shaders and OpenGL program
-            int vertexShader    = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-            int fragmentShader  = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+            int vertexShader = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+            int fragmentShader = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
-            defaultShader= GLES20.glCreateProgram();
+            defaultShader = GLES20.glCreateProgram();
             GLES20.glAttachShader(defaultShader, vertexShader);
             GLES20.glAttachShader(defaultShader, fragmentShader);
             GLES20.glLinkProgram(defaultShader);
@@ -42,12 +44,8 @@ class DefaultShader {
 
         }
     }
-    private static int positionHandle;
-    private static int colorHandle;
-    private static int matrixHandle;
 
-    void use(Mesh mesh, float[] matrix, float[] color)
-    {
+    void use(Mesh mesh, float[] matrix, float[] color) {
         GLES20.glUseProgram(defaultShader);
 
         final int COORDS_PER_VERTEX = 3;

@@ -1,54 +1,50 @@
 package com.sonsofhesslow.games.risk.graphics;
 
+import com.sonsofhesslow.games.risk.graphics.geometry.Bezier;
+import com.sonsofhesslow.games.risk.graphics.geometry.BezierPath;
+import com.sonsofhesslow.games.risk.graphics.geometry.BezierPathBuilder;
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PushbackReader;
 
-import com.sonsofhesslow.games.risk.graphics.geometry.Bezier;
-import com.sonsofhesslow.games.risk.graphics.geometry.BezierPath;
-import com.sonsofhesslow.games.risk.graphics.geometry.BezierPathBuilder;
-import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
-
-/**
- * Created by Daniel on 20/04/2016.
- */
-class SvgReader
-{
-    // we need to seriously speed this up.
-    // probably using the raw input stream and byte arrays. Pretending this is c here I come!
-    public SvgReader(InputStream inputStream)
-    {
-        r = new PushbackReader(new BufferedReader(new InputStreamReader(inputStream)),100);
-    }
-    private Vector2 pos = Vector2.Zero();
+class SvgReader {
     private final PushbackReader r;
+    private Vector2 pos = Vector2.Zero();
+    public SvgReader(InputStream inputStream) {
+        r = new PushbackReader(new BufferedReader(new InputStreamReader(inputStream)), 100);
+    }
 
     private float readFloat() throws IOException {
         //fast minimal float stream parsing.
-        float ret=0;
-        final float[] table = {0.1f,0.01f,0.001f,0.0001f,0.00001f};
+        float ret = 0;
+        final float[] table = {0.1f, 0.01f, 0.001f, 0.0001f, 0.00001f};
         int decimal = -1;
-        boolean negative= false;
-        for(int i=0;i<20;++i) {
-            int c = (char)r.read();
-            if(c == -1)break;
-            if(c == '.'){decimal = 0; continue;}
-            if(c == '-'){negative = true; continue;}
-            int num = c-48;
-            if(num>=0&&num<10) { //is digit
-                if(decimal>=0)
-                {
-                    ret += num*table[decimal];
+        boolean negative = false;
+        for (int i = 0; i < 20; ++i) {
+            int c = (char) r.read();
+            if (c == -1) break;
+            if (c == '.') {
+                decimal = 0;
+                continue;
+            }
+            if (c == '-') {
+                negative = true;
+                continue;
+            }
+            int num = c - 48;
+            if (num >= 0 && num < 10) { //is digit
+                if (decimal >= 0) {
+                    ret += num * table[decimal];
                     ++decimal;
-                    if(decimal>=table.length)break;
-                }
-                else
-                {
+                    if (decimal >= table.length) break;
+                } else {
                     ret = ret * 10 + num;
                 }
-            } else{
+            } else {
                 r.unread(c);
                 break;
             }
@@ -58,11 +54,10 @@ class SvgReader
     }
 
 
-
     private void skipWhite() throws IOException {
-        for(;;) {
+        for (; ; ) {
             int c = r.read();
-            if(!Character.isWhitespace(c)|| c == -1) {
+            if (!Character.isWhitespace(c) || c == -1) {
                 r.unread(c);
                 break;
             }
@@ -71,9 +66,9 @@ class SvgReader
 
 
     private void skipDigit() throws IOException {
-        for(;;) {
+        for (; ; ) {
             int c = r.read();
-            if(!Character.isDigit(c)|| c == -1) {
+            if (!Character.isDigit(c) || c == -1) {
                 r.unread(c);
                 break;
             }
@@ -85,22 +80,26 @@ class SvgReader
         float x = readFloat();
         skipWhite();
         int comma = r.read();
-        if(comma != ',') throw new FileFormatException("file format mismatch");
+        if (comma != ',') throw new FileFormatException("file format mismatch");
         skipWhite();
         float y = readFloat();
-        if(relative)
-            return Vector2.Add(new Vector2(x,y),pos);
-        else return new Vector2(x,y);
+        if (relative)
+            return Vector2.Add(new Vector2(x, y), pos);
+        else return new Vector2(x, y);
     }
 
-    private Bezier readBeiz(char mode) throws IOException{
+    private Bezier readBeiz(char mode) throws IOException {
         switch (mode) {
             case 'm':
-                if(pos.x != 0 || pos.y != 0) {return readBeiz('l');}
+                if (pos.x != 0 || pos.y != 0) {
+                    return readBeiz('l');
+                }
                 pos = readVector2(true);
                 return null;
             case 'M':
-                if(pos.x != 0 || pos.y != 0) {return readBeiz('L');}
+                if (pos.x != 0 || pos.y != 0) {
+                    return readBeiz('L');
+                }
                 pos = readVector2(false);
                 return null;
             case 'C': {
@@ -110,22 +109,19 @@ class SvgReader
                 pos = readVector2(false);
                 return new Bezier(start, c1, c2, pos);
             }
-            case 'c':
-            {
+            case 'c': {
                 Vector2 start = pos;
                 Vector2 c1 = readVector2(true);
                 Vector2 c2 = readVector2(true);
                 pos = readVector2(true);
                 return new Bezier(start, c1, c2, pos);
             }
-            case 'L':
-            {
+            case 'L': {
                 Vector2 start = pos;
                 pos = readVector2(false);
                 return new Bezier(start, start, pos, pos);
             }
-            case 'l':
-            {
+            case 'l': {
                 Vector2 start = pos;
                 pos = readVector2(true);
                 return new Bezier(start, start, pos, pos);
@@ -135,30 +131,19 @@ class SvgReader
         }
     }
 
-    class FileFormatException extends RuntimeException{
-        FileFormatException(String message) {
-            super(message);
-        }
-    }
-
-    //todo attributes may come in any order.
-    //don't assuse that d is last.... it's not.
-
-    public SVGPath readPath() throws IOException
-    {
+    public SVGPath readPath() throws IOException {
         // parsing a path,
         // [starts here] ...noise... <path  ...data... /> [ends here]
-        if(!advancePast("<path")) return null;
-        boolean isDashed=false;
-        boolean isCont=false;
-        boolean isReg =false;
+        if (!advancePast("<path")) return null;
+        boolean isDashed = false;
+        boolean isCont = false;
+        boolean isReg = false;
 
         BezierPath ret = null;
-        for(;;)
-        {
+        for (; ; ) {
             skipWhite();
             String s = readWord();
-            if(s.length()==0)return null;
+            if (s.length() == 0) return null;
             advancePast('=');
             advancePast('"');
             switch (s) {
@@ -216,94 +201,92 @@ class SvgReader
             }
             advancePast('"');
             skipWhite();
-            if(peek(2).equals("/>"))break;
-            if(peek()==-1)break;
+            if (peek(2).equals("/>")) break;
+            if (peek() == -1) break;
         }
         advancePast("/>");
-        return new SVGPath(ret,isDashed,isReg,isCont);
+        return new SVGPath(ret, isDashed, isReg, isCont);
     }
 
-    private int peek() throws IOException{
+    private int peek() throws IOException {
         int c = r.read();
-        if(c!=-1)
-            r.unread((char)c);
+        if (c != -1)
+            r.unread((char) c);
         return c;
     }
 
-    private String peek(int length) throws IOException{
+    private String peek(int length) throws IOException {
         char buffer[] = new char[length];
-        for(int i = 0; i<length;i++) {
+        for (int i = 0; i < length; i++) {
             buffer[i] = (char) r.read();
         }
         r.unread(buffer);
-        return new String(buffer,0,length);
+        return new String(buffer, 0, length);
     }
 
-    private boolean isNextFloat() throws IOException
-    {
+    private boolean isNextFloat() throws IOException {
         skipWhite();
         char c = (char) peek();
-        return Character.isDigit(c)||c == '-'||c=='.';
+        return Character.isDigit(c) || c == '-' || c == '.';
     }
 
-    private boolean advancePast(String string) throws IOException
-    {
-        //could be waaaay faster. optimize if needed.
-        int currentChar=0;
+    private boolean advancePast(String string) throws IOException {
+        int currentChar = 0;
         char[] s = string.toCharArray();
-        for(;;)
-        {
+        for (; ; ) {
             int c = r.read();
-            if(c == s[currentChar]) {
-                if(++currentChar==s.length) return true;
-            }
-            else{
+            if (c == s[currentChar]) {
+                if (++currentChar == s.length) return true;
+            } else {
                 currentChar = 0;
             }
-            if(c ==-1) return false;
+            if (c == -1) return false;
         }
     }
 
     private boolean advancePast(char s) throws IOException {
-        for(;;)
-        {
+        for (; ; ) {
             int c = r.read();
-            if(c==-1)return false;
-            if((char )c== s)return true;
+            if (c == -1) return false;
+            if ((char) c == s) return true;
         }
     }
 
-    private String readWord() throws IOException
-    {
-        char[] s = new char[20]; // we don't need any higher precision than that.
+    private String readWord() throws IOException {
+        char[] s = new char[20]; // we don't need any longer words than that.
         int i = 0;
-        for(;i<20;++i) {
-            int c = (char)r.read();
-            if(c == -1)break;
-            if(Character.isLetter(c)) {
-                s[i] =(char) c;
-            } else{
+        for (; i < 20; ++i) {
+            int c = (char) r.read();
+            if (c == -1) break;
+            if (Character.isLetter(c)) {
+                s[i] = (char) c;
+            } else {
                 r.unread(c);
                 break;
             }
         }
-        return new String(s,0,i);
+        return new String(s, 0, i);
     }
 
-    private String readWord(String delimiter) throws IOException
-    {
-        char[] s = new char[20]; // we don't need any higher precision than that.
+    private String readWord(String delimiter) throws IOException {
+        char[] s = new char[20];
         int i = 0;
-        for(;i<20;++i) {
-            int c = (char)r.read();
-            if(c == -1)break;
-            if(delimiter.indexOf(c)==-1) {
-                s[i] =(char) c;
-            } else{
+        for (; i < 20; ++i) {
+            int c = (char) r.read();
+            if (c == -1) break;
+            if (delimiter.indexOf(c) == -1) {
+                s[i] = (char) c;
+            } else {
                 r.unread(c);
                 break;
             }
         }
-        return new String(s,0,i);
+        return new String(s, 0, i);
+    }
+
+    class FileFormatException extends RuntimeException {
+        FileFormatException(String message) {
+            super(message);
+        }
     }
 }

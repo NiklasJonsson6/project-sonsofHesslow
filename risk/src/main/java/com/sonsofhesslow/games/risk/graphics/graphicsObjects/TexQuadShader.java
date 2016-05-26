@@ -6,32 +6,32 @@ import com.sonsofhesslow.games.risk.graphics.utils.ShaderUtils;
 
 class TexQuadShader {
 
+    private static int shaderHandle = -1;
+    private static int colorHandle;
+    private static int matrixHandle;
+    private static int textureHandle;
+    private static int positionHandle;
     private final String vertexShaderCode =
             "uniform mat4 matrix;" +
                     "attribute vec4 position;" +
-                    "varying vec2 textureCoordinate;"+
+                    "varying vec2 textureCoordinate;" +
                     "void main() {" +
                     "  gl_Position = matrix * position;" +
-                    "  textureCoordinate = -vec2(position);"+
+                    "  textureCoordinate = -vec2(position);" +
                     "}";
-
     private final String fragmentShaderCode =
             "precision mediump float;" +
-                    "uniform sampler2D texture;"+
-                    "uniform vec4 color;"+
-                    "varying vec2 textureCoordinate;"+
+                    "uniform sampler2D texture;" +
+                    "uniform vec4 color;" +
+                    "varying vec2 textureCoordinate;" +
                     "void main() {" +
-                    "  gl_FragColor = color * texture2D(texture, textureCoordinate);"+
+                    "  gl_FragColor = color * texture2D(texture, textureCoordinate);" +
                     "}";
-
-    private static int shaderHandle = -1;
-    public TexQuadShader()
-    {
-        if(shaderHandle == -1)
-        {
+    public TexQuadShader() {
+        if (shaderHandle == -1) {
             // prepare shaders and OpenGL program
-            int vertexShader    = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-            int fragmentShader  = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+            int vertexShader = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+            int fragmentShader = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
             shaderHandle = GLES20.glCreateProgram();
             GLES20.glAttachShader(shaderHandle, vertexShader);
@@ -46,13 +46,7 @@ class TexQuadShader {
         }
     }
 
-    private static int colorHandle;
-    private static int matrixHandle;
-    private static int textureHandle;
-    private static int positionHandle;
-
-    void use(Mesh mesh, float[] matrix, float[] color, int texture)
-    {
+    void use(Mesh mesh, float[] matrix, float[] color, int texture) {
         GLES20.glUseProgram(shaderHandle);
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);

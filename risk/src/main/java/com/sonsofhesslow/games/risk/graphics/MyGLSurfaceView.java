@@ -22,58 +22,25 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.graphicsObjects.FilledBezierPath;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 
-import com.sonsofhesslow.games.risk.graphics.graphicsObjects.*;
-import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
-
-/**
- * A view container where OpenGL ES graphics can be drawn on screen.
- * This view can also be used to capture touch events, such as a user
- * interacting with drawn objects.
- */
 public class MyGLSurfaceView extends GLSurfaceView {
-    private final ScaleGestureDetector SGD;
-    private float scale = -3.0f;
-    private final MyGLRenderer mRenderer;
-    private boolean isZooming = false;
     static MyGLSurfaceView ref;
-
+    private final ScaleGestureDetector SGD;
+    private final MyGLRenderer mRenderer;
+    private final ConcurrentLinkedQueue<GLTouchListener> listeners = new ConcurrentLinkedQueue<>();
+    private float scale = -3.0f;
+    private boolean isZooming = false;
     //for not clicking when releasing after scrolling
     private float downX;
     private float downY;
-
-    private class MyConfigChooser implements GLSurfaceView.EGLConfigChooser {
-        @Override
-        public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
-            int attribs[] = {
-                    EGL10.EGL_LEVEL, 0,
-                    EGL10.EGL_RENDERABLE_TYPE, 4,  // EGL_OPENGL_ES2_BIT
-                    EGL10.EGL_COLOR_BUFFER_TYPE, EGL10.EGL_TRANSPARENT_RGB,
-                    EGL10.EGL_RED_SIZE, 8,
-                    EGL10.EGL_GREEN_SIZE, 8,
-                    EGL10.EGL_BLUE_SIZE, 8,
-                    EGL10.EGL_ALPHA_SIZE, 8,
-                    EGL10.EGL_DEPTH_SIZE, 16,
-                    EGL10.EGL_SAMPLE_BUFFERS, 1,
-                    EGL10.EGL_SAMPLES, 4,
-                    EGL10.EGL_STENCIL_SIZE, 2,
-            };
-            EGLConfig[] configs = new EGLConfig[1];
-            int[] configCounts = new int[1];
-            egl.eglChooseConfig(display, attribs, configs, 1, configCounts);
-
-            if (configCounts[0] == 0) {
-                return null;
-            } else {
-                return configs[0];
-            }
-        }
-    }
 
     public MyGLSurfaceView(Context context, Resources resources) {
         super(context);
@@ -103,9 +70,6 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
-
-
-    private final ConcurrentLinkedQueue<GLTouchListener> listeners = new ConcurrentLinkedQueue<>();
 
     public void addListener(GLTouchListener listener) {
         listeners.add(listener);
@@ -156,6 +120,34 @@ public class MyGLSurfaceView extends GLSurfaceView {
         }
 
         return true;
+    }
+
+    private class MyConfigChooser implements GLSurfaceView.EGLConfigChooser {
+        @Override
+        public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
+            int attribs[] = {
+                    EGL10.EGL_LEVEL, 0,
+                    EGL10.EGL_RENDERABLE_TYPE, 4,  // EGL_OPENGL_ES2_BIT
+                    EGL10.EGL_COLOR_BUFFER_TYPE, EGL10.EGL_TRANSPARENT_RGB,
+                    EGL10.EGL_RED_SIZE, 8,
+                    EGL10.EGL_GREEN_SIZE, 8,
+                    EGL10.EGL_BLUE_SIZE, 8,
+                    EGL10.EGL_ALPHA_SIZE, 8,
+                    EGL10.EGL_DEPTH_SIZE, 16,
+                    EGL10.EGL_SAMPLE_BUFFERS, 1,
+                    EGL10.EGL_SAMPLES, 4,
+                    EGL10.EGL_STENCIL_SIZE, 2,
+            };
+            EGLConfig[] configs = new EGLConfig[1];
+            int[] configCounts = new int[1];
+            egl.eglChooseConfig(display, attribs, configs, 1, configCounts);
+
+            if (configCounts[0] == 0) {
+                return null;
+            } else {
+                return configs[0];
+            }
+        }
     }
 
     private class ScaleListener extends
