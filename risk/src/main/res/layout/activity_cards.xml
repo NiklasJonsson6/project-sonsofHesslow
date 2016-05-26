@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:id="@+id/cardView"
     android:background="#ca818181"
-    android:visibility="visible">
+    android:visibility="gone">
 
     <GridView
         android:layout_width="fill_parent"
