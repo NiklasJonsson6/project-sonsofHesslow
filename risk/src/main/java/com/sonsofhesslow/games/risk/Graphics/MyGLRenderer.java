@@ -80,7 +80,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
         }
         objectsToBeRemoved.clear();
         for (GLObject go : objectsToBeAdded) {
-            go.gl_init();
+            go.glInit();
             gameObjects.add(go);
         }
         objectsToBeAdded.clear();
@@ -124,7 +124,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
         MyGLRenderer.height = height;
     }
 
-    private static Vector2 viewPortToWorldCoord(Vector2 point, float z_out, float[] projectionMatrix, float[] viewMatrix) {
+    private static Vector2 viewPortToWorldCoord(Vector2 point, float zOut, float[] projectionMatrix, float[] viewMatrix) {
         float[] transformMatrix = new float[16];
         Matrix.multiplyMM(transformMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
         float[] invTransformMatrix = new float[16];
@@ -132,11 +132,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
         if (invTransformMatrix[10] == 0) {
             return point;
         }
-        float gl_x = point.x;
-        float gl_y = point.y;
-        float gl_z = (invTransformMatrix[2] * gl_x + invTransformMatrix[6] * gl_y + invTransformMatrix[14] - z_out) / -invTransformMatrix[10];
+        float glX = point.x;
+        float glY = point.y;
+        float glZ = (invTransformMatrix[2] * glX + invTransformMatrix[6] * glY + invTransformMatrix[14] - zOut) / -invTransformMatrix[10];
 
-        float[] pointInGL = new float[]{gl_x, gl_y, gl_z, 1};
+        float[] pointInGL = new float[]{glX, glY, glZ, 1};
         float[] ret = new float[4];
         Matrix.multiplyMV(ret, 0, invTransformMatrix, 0, pointInGL, 0);
 
@@ -147,21 +147,21 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
         return new Vector2(ret[0] / ret[3], ret[1] / ret[3]);
     }
 
-    public static Vector2 viewPortToWorldCoord(Vector2 point, float z_out) {
-        return viewPortToWorldCoord(point, z_out, calculateProjectionMatrix(height, width), Camera.getInstance().getViewMatrix());
+    public static Vector2 viewPortToWorldCoord(Vector2 point, float zOut) {
+        return viewPortToWorldCoord(point, zOut, calculateProjectionMatrix(height, width), Camera.getInstance().getViewMatrix());
     }
 
-    private static Vector2 screenToWorldCoords(Vector2 point, float z_out, int width, int height, float[] viewMatrix) {
-        float gl_x = ((point.x) * 2.0f / width - 1.0f);
-        float gl_y = ((height - point.y) * 2.0f / height - 1.0f);
-        return viewPortToWorldCoord(new Vector2(gl_x, gl_y), z_out, calculateProjectionMatrix(height, width), viewMatrix);
+    private static Vector2 screenToWorldCoords(Vector2 point, float zOut, int width, int height, float[] viewMatrix) {
+        float glX = ((point.x) * 2.0f / width - 1.0f);
+        float glY = ((height - point.y) * 2.0f / height - 1.0f);
+        return viewPortToWorldCoord(new Vector2(glX, glY), zOut, calculateProjectionMatrix(height, width), viewMatrix);
     }
 
-    public static Vector2 screenToWorldCoords(Vector2 point, float z_out) {
-        return screenToWorldCoords(point, z_out, width, height, Camera.getInstance().getViewMatrix());
+    public static Vector2 screenToWorldCoords(Vector2 point, float zOut) {
+        return screenToWorldCoords(point, zOut, width, height, Camera.getInstance().getViewMatrix());
     }
 
-    public static Vector2 screenToWorldCoors_stitched(Vector2 point, float z_out) {
+    public static Vector2 ScreenToWorldCoorsStitched(Vector2 point, float zOut) {
         Camera cam = Camera.getInstance();
         if (cam.stitchPosition > 0 && cam.stitchPosition < 1) {
             Camera[] cams = cam.getStitchCams();
@@ -170,20 +170,20 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
                 if (point.x < x) {//left
                     return screenToWorldCoords(
                             new Vector2(point.x, point.y),
-                            z_out,
+                            zOut,
                             x,
                             height,
                             cams[0].getViewMatrix());
                 } else {//right
                     return screenToWorldCoords(
                             new Vector2(point.x - x, point.y),
-                            z_out,
+                            zOut,
                             width - x,
                             height,
                             cams[1].getViewMatrix());
                 }
             }
         }
-        return screenToWorldCoords(new Vector2(point.x, point.y), z_out);
+        return screenToWorldCoords(new Vector2(point.x, point.y), zOut);
     }
 }

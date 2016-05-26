@@ -249,16 +249,16 @@ class SvgReader
     private boolean advancePast(String string) throws IOException
     {
         //could be waaaay faster. optimize if needed.
-        int current_char=0;
+        int currentChar=0;
         char[] s = string.toCharArray();
         for(;;)
         {
             int c = r.read();
-            if(c == s[current_char]) {
-                if(++current_char==s.length) return true;
+            if(c == s[currentChar]) {
+                if(++currentChar==s.length) return true;
             }
             else{
-                current_char = 0;
+                currentChar = 0;
             }
             if(c ==-1) return false;
         }

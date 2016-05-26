@@ -18,16 +18,16 @@ import com.sonsofhesslow.games.risk.graphics.geometry.Vector3;
 public class FilledBezierPath extends GLObject implements Updatable {
 
 
-    public Mesh fill_mesh;
-    private Mesh outline_mesh;
+    public Mesh fillMesh;
+    private Mesh outlineMesh;
     private FlowShader flowShader;
     private LineShader lineShader;
     @Override
-    public void gl_init() {
+    public void glInit() {
         lineShader = new LineShader();
         flowShader = new FlowShader();
-        fill_mesh.init();
-        outline_mesh.init();
+        fillMesh.init();
+        outlineMesh.init();
     }
 
     private Vector2 center;
@@ -39,10 +39,10 @@ public class FilledBezierPath extends GLObject implements Updatable {
         float x=0;
         float y=0;
         float A=0;
-        for(int i = 0;i<fill_mesh.vertices.length;i++)
+        for(int i = 0;i< fillMesh.vertices.length;i++)
         {
-            Vector2 curr = fill_mesh.vertices[i];
-            Vector2 next = fill_mesh.vertices[(i+1)%fill_mesh.vertices.length];
+            Vector2 curr = fillMesh.vertices[i];
+            Vector2 next = fillMesh.vertices[(i+1)% fillMesh.vertices.length];
             float a = curr.x*next.y - next.x*curr.y;
             x+= (curr.x+next.x) * a;
             y+= (curr.y+next.y) * a;
@@ -70,14 +70,14 @@ public class FilledBezierPath extends GLObject implements Updatable {
         this.path = path;
 
         Vector2[] verts = path.approximatebezierPath(0.001f);
-        //Vector2[] verts = path.approximatebezierPath_naive(naive_precision);
+        //Vector2[] verts = path.approximatebezierPathNaive(naive_precision);
 
-        Vector2[] outline_verts = new Vector2[verts.length*2];
+        Vector2[] outlineVerts = new Vector2[verts.length*2];
 
         //while the triangles are not guaranteed to be non-overlapping constant winding.
         // the way we render the triangles we just dont care.
-        short[] outline_tris = new short[6*outline_verts.length];
-        float[] vertSide_arr = new float[outline_verts.length];
+        short[] outlineTris = new short[6*outlineVerts.length];
+        float[] VertSideArr = new float[outlineVerts.length];
         for(int i = 0;i<verts.length;i++)
         {
             Vector2 prev = verts[i];
@@ -89,43 +89,43 @@ public class FilledBezierPath extends GLObject implements Updatable {
             float scaleFactor = Math.max(Math.abs(Vector2.dot(diff,diffa)),0.8f);
             Vector2 orth = Vector2.Mul(new Vector2(-diff.y,diff.x),1/scaleFactor*0.01f);
 
-            outline_verts[i*2+0] = Vector2.Add(current, orth);
-            outline_verts[i*2+1] = Vector2.Sub(current, orth);
+            outlineVerts[i*2+0] = Vector2.Add(current, orth);
+            outlineVerts[i*2+1] = Vector2.Sub(current, orth);
 
-            vertSide_arr[i*2+0] = 0;
-            vertSide_arr[i*2+0] = 1;
+            VertSideArr[i*2+0] = 0;
+            VertSideArr[i*2+0] = 1;
 
-            outline_tris[i*6+0] =(short)(i*2+0);
-            outline_tris[i*6+1] =(short)(i*2+1);
-            outline_tris[i*6+2] =(short)((i*2+2)%outline_verts.length);
+            outlineTris[i*6+0] =(short)(i*2+0);
+            outlineTris[i*6+1] =(short)(i*2+1);
+            outlineTris[i*6+2] =(short)((i*2+2)%outlineVerts.length);
 
-            outline_tris[i*6+3] =(short)(i*2+1);
-            outline_tris[i*6+4] =(short)((i*2+2)%outline_verts.length);
-            outline_tris[i*6+5] =(short)((i*2+3)%outline_verts.length);
+            outlineTris[i*6+3] =(short)(i*2+1);
+            outlineTris[i*6+4] =(short)((i*2+2)%outlineVerts.length);
+            outlineTris[i*6+5] =(short)((i*2+3)%outlineVerts.length);
         }
 
-        ByteBuffer bb = ByteBuffer.allocateDirect(vertSide_arr.length * 4);
+        ByteBuffer bb = ByteBuffer.allocateDirect(VertSideArr.length * 4);
         bb.order(ByteOrder.nativeOrder());
         vertSide = bb.asFloatBuffer();
-        vertSide.put(vertSide_arr);
+        vertSide.put(VertSideArr);
         vertSide.position(0);
 
-        outline_mesh = new Mesh(outline_tris,outline_verts);
+        outlineMesh = new Mesh(outlineTris,outlineVerts);
 
 
         //finding out the most prominent winding order
-        float wind_ack = 0;
+        float windAck = 0;
         for(int i = 0; i<verts.length;i++)
         {
             Vector2 cur = verts[i];
             Vector2 next = verts[(i+1) % verts.length];
-            wind_ack +=(next.x-cur.x)*(next.y+cur.y);
+            windAck +=(next.x-cur.x)*(next.y+cur.y);
         }
-        float winding = Math.signum(wind_ack);
+        float winding = Math.signum(windAck);
 
         //setup the remaining vertex indices
         short[] tris = new short[(verts.length-2)*3];
-        int current_index = 0;
+        int currentIndex = 0;
         List<Integer> remainingIndices = new LinkedList<>();
         for(int i = 0; i<verts.length;i++)
         {
@@ -136,27 +136,27 @@ public class FilledBezierPath extends GLObject implements Updatable {
         {
             System.out.println("earclipping " + remainingIndices.size() + " left");
             boolean removed = false;
-            float acceptable_concavity = 0;
+            float acceptableConcavity = 0;
             for(int i = 0;i<remainingIndices.size();i++)
             {
-                int index_a = remainingIndices.get(i);
-                int index_b = remainingIndices.get((i+1) % remainingIndices.size());
-                int index_c = remainingIndices.get((i+2) % remainingIndices.size());
+                int indexA = remainingIndices.get(i);
+                int indexB = remainingIndices.get((i+1) % remainingIndices.size());
+                int indexC = remainingIndices.get((i+2) % remainingIndices.size());
 
-                Vector2 a = verts[index_a];
-                Vector2 b = verts[index_b];
-                Vector2 c = verts[index_c];
+                Vector2 a = verts[indexA];
+                Vector2 b = verts[indexB];
+                Vector2 c = verts[indexC];
 
                 //only add the tri if it's inside the polygon
                 float concavity = Vector2.crossProduct(a, b, c);
-                if (Math.signum(concavity)!=winding||Math.abs(concavity)<=acceptable_concavity||doRest)
+                if (Math.signum(concavity)!=winding||Math.abs(concavity)<=acceptableConcavity||doRest)
                 {
                     //check if there is any other vertex inside our proposed triangle
                     boolean noneInside = true;
                     if(!doRest)
                         for(int j = 0; j<verts.length;j++)
                         {
-                            if(j == index_a || j == index_b || j == index_c)continue;
+                            if(j == indexA || j == indexB || j == indexC)continue;
                             if (Vector2.isInsideTri(verts[j], a, b, c))
                             {
                                 noneInside = false;
@@ -167,9 +167,9 @@ public class FilledBezierPath extends GLObject implements Updatable {
                     if(noneInside||doRest)
                     {
                         //add the triangle and remove the middle vertex from further consideration
-                        tris[current_index++] = (short) index_a;
-                        tris[current_index++] = (short) index_b;
-                        tris[current_index++] = (short) index_c;
+                        tris[currentIndex++] = (short) indexA;
+                        tris[currentIndex++] = (short) indexB;
+                        tris[currentIndex++] = (short) indexC;
 
                         remainingIndices.remove((i+1) % remainingIndices.size());
                         removed = true;
@@ -185,10 +185,10 @@ public class FilledBezierPath extends GLObject implements Updatable {
             if(remainingIndices.size() <= 2) break;
         }
 
-        fill_mesh = new Mesh(tris, verts);
+        fillMesh = new Mesh(tris, verts);
         calcCenter();
         origin = new Vector3(center,0);
-        triangles+=fill_mesh.triangles.length;
+        triangles+= fillMesh.triangles.length;
     }
     public void setColorOutline(float[] color)
     {
@@ -197,29 +197,29 @@ public class FilledBezierPath extends GLObject implements Updatable {
 
     public void mergeWith(FilledBezierPath other)
     {
-        fill_mesh = Mesh.Add(fill_mesh,other.fill_mesh);
-        outline_mesh= Mesh.Add(outline_mesh,other.outline_mesh);
+        fillMesh = Mesh.Add(fillMesh,other.fillMesh);
+        outlineMesh = Mesh.Add(outlineMesh,other.outlineMesh);
 
         ByteBuffer bb = ByteBuffer.allocateDirect((vertSide.capacity() + other.vertSide.capacity()) * 4);
         bb.order(ByteOrder.nativeOrder());
-        FloatBuffer vertSide_new = bb.asFloatBuffer();
-        vertSide_new.put(vertSide);
-        vertSide_new.put(other.vertSide);
-        vertSide_new.position(0);
-        vertSide = vertSide_new;
+        FloatBuffer VertSideNew = bb.asFloatBuffer();
+        VertSideNew.put(vertSide);
+        VertSideNew.put(other.vertSide);
+        VertSideNew.position(0);
+        vertSide = VertSideNew;
         center = Vector2.Mul(Vector2.Add(Vector2.Mul(center, Area), Vector2.Mul(other.center, other.Area)),1f/(other.Area+Area));
     }
 
     private float[] fromColor= {0.7f,0.7f,0.7f,1f};
     private float[] toColor= {0.7f,0.7f,0.7f,1f};
     private float[] outlineColor = new float[]{0,0,0,1} ;
-    private float max_len=20;
+    private float maxLen =20;
     private float len=20;
     private Vector3 origin;
     public void setColor(float[] color, Vector2 origin)
     {
         this.origin = new Vector3(origin,0);
-        max_len = 20;
+        maxLen = 20;
         len = 0;
         fromColor = toColor;
         toColor = color;
@@ -236,8 +236,8 @@ public class FilledBezierPath extends GLObject implements Updatable {
 
     @Override
     public boolean update(float dt) {
-        if(Math.abs(max_len-len)>0.01) {
-            len += (max_len-len)/200;
+        if(Math.abs(maxLen -len)>0.01) {
+            len += (maxLen -len)/200;
             return true;
         }
         return false;
@@ -248,7 +248,7 @@ public class FilledBezierPath extends GLObject implements Updatable {
         //System.out.println("triangles: " + triangles);
         float[] mvpMatrix = new float[16];
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
-        flowShader.use(fill_mesh, mvpMatrix, origin, len,toColor,fromColor);
-        lineShader.use(outline_mesh, mvpMatrix, outlineColor,vertSide);
+        flowShader.use(fillMesh, mvpMatrix, origin, len,toColor,fromColor);
+        lineShader.use(outlineMesh, mvpMatrix, outlineColor,vertSide);
     }
 }

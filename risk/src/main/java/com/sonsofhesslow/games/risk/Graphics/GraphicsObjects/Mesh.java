@@ -56,17 +56,17 @@ public class Mesh {
         return false;
     }
 
-    private final float[] new_verts;
+    private final float[] newVerts;
     public Mesh(short[] triangles, Vector2[] vertices)
     {
         this.vertices = vertices;
         this.triangles = triangles;
-        new_verts = new float[vertices.length*COORDS_PER_VERTEX];
+        newVerts = new float[vertices.length*COORDS_PER_VERTEX];
         for(int i = 0; i<vertices.length;i++)
         {
-            new_verts[i*COORDS_PER_VERTEX]   = vertices[i].x;
-            new_verts[i*COORDS_PER_VERTEX+1] = vertices[i].y;
-            new_verts[i*COORDS_PER_VERTEX+2] = 0;
+            newVerts[i*COORDS_PER_VERTEX]   = vertices[i].x;
+            newVerts[i*COORDS_PER_VERTEX+1] = vertices[i].y;
+            newVerts[i*COORDS_PER_VERTEX+2] = 0;
         }
         calculateMetrics();
     }
@@ -97,10 +97,10 @@ public class Mesh {
             throw new IllegalArgumentException("A triangle array needs to be divisible by three");
         }
 
-        ByteBuffer bb = ByteBuffer.allocateDirect(new_verts.length * 4);
+        ByteBuffer bb = ByteBuffer.allocateDirect(newVerts.length * 4);
         bb.order(ByteOrder.nativeOrder());
         vertexBuffer = bb.asFloatBuffer();
-        vertexBuffer.put(new_verts);
+        vertexBuffer.put(newVerts);
         vertexBuffer.position(0);
 
         ByteBuffer dlb = ByteBuffer.allocateDirect(triangles.length * 2);
@@ -112,15 +112,15 @@ public class Mesh {
 
     public static Mesh Add(Mesh a, Mesh b)
     {
-        Vector2[] new_verts = ArrayUtils.concat(a.vertices,b.vertices);
-        int at_len = a.triangles.length;
-        int bt_len = b.triangles.length;
+        Vector2[] newVerts = ArrayUtils.concat(a.vertices,b.vertices);
+        int atLen = a.triangles.length;
+        int btLen = b.triangles.length;
 
-        short[] new_tris = new short[at_len + bt_len];
-        System.arraycopy(a.triangles, 0, new_tris, 0, at_len);
-        for(int i = 0;i<bt_len;i++) {
-            new_tris[at_len+i] = (short)(b.triangles[i]+a.vertices.length);
+        short[] newTris = new short[atLen + btLen];
+        System.arraycopy(a.triangles, 0, newTris, 0, atLen);
+        for(int i = 0;i<btLen;i++) {
+            newTris[atLen+i] = (short)(b.triangles[i]+a.vertices.length);
         }
-        return new Mesh(new_tris, new_verts);
+        return new Mesh(newTris, newVerts);
     }
 }

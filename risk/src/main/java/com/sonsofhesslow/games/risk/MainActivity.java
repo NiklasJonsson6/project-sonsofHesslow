@@ -23,8 +23,8 @@ import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.example.games.basegameutils.BaseGameUtils;
-import com.sonsofhesslow.games.risk.graphics.GL_TouchEvent;
-import com.sonsofhesslow.games.risk.graphics.GL_TouchListener;
+import com.sonsofhesslow.games.risk.graphics.GLTouchEvent;
+import com.sonsofhesslow.games.risk.graphics.GLTouchListener;
 import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
 import com.sonsofhesslow.games.risk.graphics.geometry.Vector3;
 import com.sonsofhesslow.games.risk.graphics.Camera;
@@ -39,7 +39,7 @@ import com.sonsofhesslow.games.risk.network.UIUpdate;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements GL_TouchListener, View.OnClickListener, UIUpdate{
+        implements GLTouchListener, View.OnClickListener, UIUpdate{
 
     public static Resources resources;
     public static Context context;
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity
             newOverlayController.changeGridLayout(false);
         }
     }
-    public void handle(GL_TouchEvent event) {
+    public void handle(GLTouchEvent event) {
 
         if (prevPos != null) {
             //sq.setPos(event.worldPosition);

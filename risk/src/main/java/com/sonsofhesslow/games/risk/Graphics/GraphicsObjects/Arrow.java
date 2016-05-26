@@ -77,7 +77,7 @@ public class Arrow extends GLObject{
     }
 
     @Override
-    public void gl_init() {
+    public void glInit() {
         mesh.init();
         outlineMesh.init();
         shader = new DefaultShader();

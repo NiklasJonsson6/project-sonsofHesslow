@@ -6,9 +6,9 @@ import java.util.List;
 
 public class Bezier
 {
-    public Bezier(Vector2 start, Vector2 control_1, Vector2 control_2, Vector2 end)
+    public Bezier(Vector2 start, Vector2 control1, Vector2 control2, Vector2 end)
     {
-        this(new Vector2[]{start,control_1,control_2,end});
+        this(new Vector2[]{start, control1, control2,end});
     }
     public Bezier(Vector2[] points)
     {
@@ -23,14 +23,14 @@ public class Bezier
         // explicit beiz split using de castillio for quadratic curves
         // could easily be extended for the generic case
 
-        Vector2[] step_0 = points;
-        Vector2[] step_1 = de_castillio_step(step_0,t);
-        Vector2[] step_2 = de_castillio_step(step_1,t);
-        Vector2[] step_3 = de_castillio_step(step_2,t);
+        Vector2[] Step0 = points;
+        Vector2[] Step1 = DeCastillioStep(Step0, t);
+        Vector2[] Step2 = DeCastillioStep(Step1, t);
+        Vector2[] step3 = DeCastillioStep(Step2, t);
 
         Bezier[] ret = new Bezier[2];
-        ret[0] = new Bezier(step_0[0],step_1[0],step_2[0],step_3[0]);
-        ret[1] = new Bezier(step_3[0],step_2[1],step_1[2],step_0[3]);
+        ret[0] = new Bezier(Step0[0],Step1[0],Step2[0],step3[0]);
+        ret[1] = new Bezier(step3[0],Step2[1],Step1[2],Step0[3]);
         return ret;
     }
 
@@ -38,15 +38,15 @@ public class Bezier
     {
         Bezier[] ret = new Bezier[ts.length];
 
-        float t_left = 1;
+        float TLeft = 1;
         Bezier current = this;
         float prev = 0;
         for(int i = 0; i< ts.length;i++)
         {
-            Bezier[] split = current.split((ts[i]-prev)/t_left);
+            Bezier[] split = current.split((ts[i]-prev)/TLeft);
             ret[i] = split[0];
             current = split[1];
-            t_left -= ts[i]-prev;
+            TLeft -= ts[i]-prev;
             prev = ts[i];
         }
         return ret;
@@ -54,23 +54,23 @@ public class Bezier
 
 
 
-    private static Vector2[] de_castillio_step(Vector2[] vectors, float t)
+    private static Vector2[] DeCastillioStep(Vector2[] vectors, float t)
     {
-        Vector2[] next_vectors = new Vector2[vectors.length-1];
+        Vector2[] NextVectors = new Vector2[vectors.length-1];
         for(int i = 0; i<vectors.length-1;i++)
         {
-            next_vectors[i] = Vector2.lerp(vectors[i], vectors[i + 1], t);
+            NextVectors[i] = Vector2.lerp(vectors[i], vectors[i + 1], t);
         }
-        return next_vectors;
+        return NextVectors;
     }
-    private Bezier de_catillio_reduce(float t)
+    private Bezier DeCatillioReduce(float t)
     {
-        return new Bezier(de_castillio_step(this.points,t));
+        return new Bezier(DeCastillioStep(this.points, t));
     }
 
     public Vector2 getValue(float t)
     {
-        Bezier nextBeiz= de_catillio_reduce(t);
+        Bezier nextBeiz= DeCatillioReduce(t);
         if(nextBeiz.points.length == 1) return nextBeiz.points[0];
         else return nextBeiz.getValue(t);
     }
@@ -93,14 +93,14 @@ public class Bezier
             ts[i] = (i+1)/((float) ts.length+1);
         }
 
-        Bezier[] splits_a = a.split(ts);
-        Bezier[] splits_b = b.split(ts);
+        Bezier[] splitsA = a.split(ts);
+        Bezier[] splitsB = b.split(ts);
 
         for(int i = 0; i<resolution;i++)
         {
             for(int j = 0; j<resolution;j++)
             {
-                if(Bezier.Intersect(splits_a[i], splits_b[j], 0.01f))
+                if(Bezier.Intersect(splitsA[i], splitsB[j], 0.01f))
                 {
                     return true;
                 }
@@ -111,75 +111,75 @@ public class Bezier
     }
 
     //todo do real bounding in the intersections. Also probably tolerance by area if we want to be somewhat fancy.
-    private static boolean Intersect(Bezier bezier_a, Bezier bezier_b, float tolerance,
-                                         List<Pair<Float,Float>> _out_tab, float ta_low, float ta_high,float tb_low, float tb_high)
+    private static boolean Intersect(Bezier bezierA, Bezier bezierB, float tolerance,
+                                         List<Pair<Float,Float>> _out_tab, float taLow, float taHigh,float tbLow, float tbHigh)
     {
-        Vector2[] a = bezier_a.points;
-        Vector2[] b = bezier_b.points;
+        Vector2[] a = bezierA.points;
+        Vector2[] b = bezierB.points;
 
         //using the bezier subdivision algorithm plus keeping track of the t intersection.
 
         // currently implementation assumes quadratic bezier curves.
         // the algorithm as such could easily be extended to higher level curves
 
-        float ta_mid = (ta_low + ta_high)/2;
-        float tb_mid = (tb_low + tb_high)/2;
+        float taMid = (taLow + taHigh)/2;
+        float tbMid = (tbLow + tbHigh)/2;
 
 
         //lazy bounding box.
-        float min_ax = a[0].x;
-        float max_ax = a[0].x;
-        float min_ay = a[0].y;
-        float max_ay = a[0].y;
+        float minAx = a[0].x;
+        float maxAx = a[0].x;
+        float minAy = a[0].y;
+        float maxAy = a[0].y;
 
         for(int i = 1; i<a.length;i++)
         {
-            if(a[i].x<min_ax)min_ax=a[i].x;
-            if(a[i].y<min_ay)min_ay=a[i].y;
-            if(a[i].x>max_ax)max_ax=a[i].x;
-            if(a[i].y>max_ay)max_ay=a[i].y;
+            if(a[i].x<minAx)minAx=a[i].x;
+            if(a[i].y<minAy)minAy=a[i].y;
+            if(a[i].x>maxAx)maxAx=a[i].x;
+            if(a[i].y>maxAy)maxAy=a[i].y;
         }
 
-        float min_bx = b[0].x;
-        float max_bx = b[0].x;
-        float min_by = b[0].y;
-        float max_by = b[0].y;
+        float minBx = b[0].x;
+        float maxBx = b[0].x;
+        float minBy = b[0].y;
+        float maxBy = b[0].y;
 
         for(int i = 1; i<a.length;i++)
         {
-            if(b[i].x<min_bx)min_bx=b[i].x;
-            if(b[i].y<min_by)min_by=b[i].y;
-            if(b[i].x>max_bx)max_bx=b[i].x;
-            if(b[i].y>max_by)max_by=b[i].y;
+            if(b[i].x<minBx)minBx=b[i].x;
+            if(b[i].y<minBy)minBy=b[i].y;
+            if(b[i].x>maxBx)maxBx=b[i].x;
+            if(b[i].y>maxBy)maxBy=b[i].y;
         }
 
-        boolean boundIntersectX = min_by < max_ay && max_by > min_ay;
-        boolean boundIntersectY = min_bx < max_ax && max_bx > min_ax;
+        boolean boundIntersectX = minBy < maxAy && maxBy > minAy;
+        boolean boundIntersectY = minBx < maxAx && maxBx > minAx;
 
         if(!(boundIntersectX && boundIntersectY))
         {
             return false;
         }
 
-        if(ta_high-ta_low < tolerance){
-            _out_tab.add(new Pair<>(ta_mid, tb_mid));
+        if(taHigh-taLow < tolerance){
+            _out_tab.add(new Pair<>(taMid,tbMid));
             return true;
         }
 
-        Bezier[] a_split = bezier_a.split(0.5f);
-        Bezier a_1 = a_split[0];
-        Bezier a_2 = a_split[1];
+        Bezier[] aSplit = bezierA.split(0.5f);
+        Bezier a1 = aSplit[0];
+        Bezier a2 = aSplit[1];
 
-        Bezier[] b_split = bezier_b.split(0.5f);
-        Bezier b_1 = b_split[0];
-        Bezier b_2 = b_split[1];
+        Bezier[] bSplit = bezierB.split(0.5f);
+        Bezier b1 = bSplit[0];
+        Bezier b2 = bSplit[1];
 
-        boolean intersect_11 = Intersect(a_1, b_1, tolerance, _out_tab, ta_low, ta_mid, tb_low, tb_mid);
-        boolean intersect_12 = Intersect(a_1, b_2, tolerance, _out_tab, ta_low, ta_mid, tb_mid, tb_high);
-        boolean intersect_21 = Intersect(a_2, b_1, tolerance, _out_tab, ta_mid, ta_high, tb_low, tb_mid);
-        boolean intersect_22 = Intersect(a_2, b_2, tolerance, _out_tab, ta_mid, ta_high, tb_mid, tb_high);
+        boolean intersect11 = Intersect(a1, b1, tolerance, _out_tab, taLow, taMid, tbLow, tbMid);
+        boolean intersect12 = Intersect(a1, b2, tolerance, _out_tab, taLow, taMid, tbMid, tbHigh);
+        boolean intersect21 = Intersect(a2, b1, tolerance, _out_tab, taMid, taHigh, tbLow, tbMid);
+        boolean intersect22 = Intersect(a2, b2, tolerance, _out_tab, taMid, taHigh, tbMid, tbHigh);
 
-        return intersect_11 || intersect_12 || intersect_21 || intersect_22;
+        return intersect11 || intersect12 || intersect21 || intersect22;
     }
 
     public boolean isOnCurve(Vector2 p, float precision)
@@ -198,71 +198,71 @@ public class Bezier
         return r[0].isOnCurve(p,precision) || r[1].isOnCurve(p, precision);
     }
 
-    private static boolean Intersect(Bezier bezier_a, Bezier bezier_b, float tolerance,
-                                     float ta_low, float ta_high,float tb_low, float tb_high)
+    private static boolean Intersect(Bezier bezierA, Bezier bezierB, float tolerance,
+                                     float taLow, float taHigh,float tbLow, float tbHigh)
     {
-        Vector2[] a = bezier_a.points;
-        Vector2[] b = bezier_b.points;
+        Vector2[] a = bezierA.points;
+        Vector2[] b = bezierB.points;
 
         //using the bezier subdivision algorithm plus keeping track of the t intersection.
 
         // currently implementation assumes quadratic bezier curves.
         // the algorithm as such could easily be extended to higher level curves
 
-        float ta_mid = (ta_low + ta_high)/2;
-        float tb_mid = (tb_low + tb_high)/2;
+        float taMid = (taLow + taHigh)/2;
+        float tbMid = (tbLow + tbHigh)/2;
 
 
         //lazy bounding box.
-        float min_ax = a[0].x;
-        float max_ax = a[0].x;
-        float min_ay = a[0].y;
-        float max_ay = a[0].y;
+        float minAx = a[0].x;
+        float maxAx = a[0].x;
+        float minAy = a[0].y;
+        float maxAy = a[0].y;
 
         for(int i = 1; i<a.length;i++)
         {
-            if(a[i].x<min_ax)min_ax=a[i].x;
-            if(a[i].y<min_ay)min_ay=a[i].y;
-            if(a[i].x>max_ax)max_ax=a[i].x;
-            if(a[i].y>max_ay)max_ay=a[i].y;
+            if(a[i].x<minAx)minAx=a[i].x;
+            if(a[i].y<minAy)minAy=a[i].y;
+            if(a[i].x>maxAx)maxAx=a[i].x;
+            if(a[i].y>maxAy)maxAy=a[i].y;
         }
 
-        float min_bx = b[0].x;
-        float max_bx = b[0].x;
-        float min_by = b[0].y;
-        float max_by = b[0].y;
+        float minBx = b[0].x;
+        float maxBx = b[0].x;
+        float minBy = b[0].y;
+        float maxBy = b[0].y;
 
         for(int i = 1; i<a.length;i++)
         {
-            if(b[i].x<min_bx)min_bx=b[i].x;
-            if(b[i].y<min_by)min_by=b[i].y;
-            if(b[i].x>max_bx)max_bx=b[i].x;
-            if(b[i].y>max_by)max_by=b[i].y;
+            if(b[i].x<minBx)minBx=b[i].x;
+            if(b[i].y<minBy)minBy=b[i].y;
+            if(b[i].x>maxBx)maxBx=b[i].x;
+            if(b[i].y>maxBy)maxBy=b[i].y;
         }
 
-        boolean boundIntersectX = min_by < max_ay && max_by > min_ay;
-        boolean boundIntersectY = min_bx < max_ax && max_bx > min_ax;
+        boolean boundIntersectX = minBy < maxAy && maxBy > minAy;
+        boolean boundIntersectY = minBx < maxAx && maxBx > minAx;
 
         if(!(boundIntersectX && boundIntersectY))
         {
             return false;
         }
 
-        if(ta_high-ta_low < tolerance){
+        if(taHigh-taLow < tolerance){
             return true;
         }
 
-        Bezier[] a_split = bezier_a.split(0.5f);
-        Bezier a_1 = a_split[0];
-        Bezier a_2 = a_split[1];
+        Bezier[] aSplit = bezierA.split(0.5f);
+        Bezier a1 = aSplit[0];
+        Bezier a2 = aSplit[1];
 
-        Bezier[] b_split = bezier_b.split(0.5f);
-        Bezier b_1 = b_split[0];
-        Bezier b_2 = b_split[1];
+        Bezier[] bSplit = bezierB.split(0.5f);
+        Bezier b1 = bSplit[0];
+        Bezier b2 = bSplit[1];
 
-        return  Intersect(a_1, b_1, tolerance, ta_low, ta_mid, tb_low, tb_mid)||
-                Intersect(a_1, b_2, tolerance, ta_low, ta_mid, tb_mid, tb_high) ||
-                Intersect(a_2, b_1, tolerance, ta_mid, ta_high, tb_low, tb_mid)||
-                Intersect(a_2, b_2, tolerance, ta_mid, ta_high, tb_mid, tb_high);
+        return  Intersect(a1, b1, tolerance, taLow, taMid, tbLow, tbMid)||
+                Intersect(a1, b2, tolerance, taLow, taMid, tbMid, tbHigh) ||
+                Intersect(a2, b1, tolerance, taMid, taHigh, tbLow, tbMid)||
+                Intersect(a2, b2, tolerance, taMid, taHigh, tbMid, tbHigh);
     }
 }

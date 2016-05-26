@@ -26,23 +26,23 @@ public class SvgImporter {
     // parsing floats that reach past some arbitrary limit of x characters breaks them up.
     // this is not acceptable beaviour.
 
-    public static class SVG_ReturnValue
+    public static class SVGReturnValue
     {
 
-        public SVG_ReturnValue(FilledBezierPath path, Integer continent_id, Integer region_id,  Set<Integer> neighbors) {
+        public SVGReturnValue(FilledBezierPath path, Integer continentId, Integer regionId, Set<Integer> neighbors) {
             this.path = path;
-            this.continent_id = continent_id;
+            this.continentId = continentId;
             this.neighbors = neighbors;
-            this.region_id = region_id;
+            this.regionId = regionId;
         }
 
         public final FilledBezierPath path;
-        public Integer continent_id;
-        public Integer region_id;
+        public Integer continentId;
+        public Integer regionId;
         public Set<Integer> neighbors;
     }
 
-    public static List<SVG_ReturnValue> read(InputStream svgStream,Renderer renderer) throws IOException
+    public static List<SVGReturnValue> read(InputStream svgStream,Renderer renderer) throws IOException
     {
         List<BezierPath> paths = new ArrayList<>();
         List<BezierPath> splits = new ArrayList<>();
@@ -53,9 +53,9 @@ public class SvgImporter {
         SvgReader sr = new SvgReader(svgStream);
         //parse all paths in the svg. add them into the appropriate category.
         while(true) {
-            SVGPath new_read = sr.readPath();
-            if(new_read != null) {
-                BezierPath readBeiz = new_read.path;
+            SVGPath newRead = sr.readPath();
+            if(newRead != null) {
+                BezierPath readBeiz = newRead.path;
 
                 for(int i = 0; i< readBeiz.points.length;i++) {
                     readBeiz.points[i]= new Vector2(-readBeiz.points[i].x/250,-readBeiz.points[i].y/250);
@@ -65,10 +65,10 @@ public class SvgImporter {
                     paths.add(readBeiz);
                 }
                 else {
-                    if(new_read.isDashed)
+                    if(newRead.isDashed)
                         connections.add(readBeiz);
-                    else if(new_read.isContinent)continentConnections.add(readBeiz);
-                    else if(new_read.isRegion)regionConnections.add(readBeiz);
+                    else if(newRead.isContinent)continentConnections.add(readBeiz);
+                    else if(newRead.isRegion)regionConnections.add(readBeiz);
                     else splits.add(readBeiz);
                 }
             }
@@ -82,11 +82,11 @@ public class SvgImporter {
 
         //split the paths with the splits.
         //keep track of which split split what
-        List<Pair<BezierPath, Integer>> paths_with_info = new ArrayList<>(paths.size());
+        List<Pair<BezierPath, Integer>> pathsWithInfo = new ArrayList<>(paths.size());
 
         int continentId = 0;
         for(BezierPath b : paths){
-            paths_with_info.add(new Pair<>(b, continentId++));
+            pathsWithInfo.add(new Pair<>(b, continentId++));
         }
 
         List<Vector2> splitPoints = new ArrayList<>();
@@ -96,21 +96,21 @@ public class SvgImporter {
             for(int i = 0;i<splits.size();i++)
             {
                 BezierPath split = splits.get(i);
-                int pathLen = paths_with_info.size();
+                int pathLen = pathsWithInfo.size();
                 for(int j = 0;j<pathLen;j++)
                 {
-                    Pair<BezierPath,Integer> path_with_info = paths_with_info.get(j);
-                    BezierPath.splitReturn new_paths = BezierPath.splitBeizPath(path_with_info.first, split);
-                    if(new_paths != null)
+                    Pair<BezierPath,Integer> pathWithInfo = pathsWithInfo.get(j);
+                    BezierPath.splitReturn newPaths = BezierPath.splitBeizPath(pathWithInfo.first, split);
+                    if(newPaths != null)
                     {
-                        paths_with_info.remove(j);
+                        pathsWithInfo.remove(j);
                         --j;
                         --pathLen;
-                        paths_with_info.add(new Pair<>(new_paths.first, path_with_info.second));
-                        paths_with_info.add(new Pair<>(new_paths.second, path_with_info.second));
+                        pathsWithInfo.add(new Pair<>(newPaths.first, pathWithInfo.second));
+                        pathsWithInfo.add(new Pair<>(newPaths.second, pathWithInfo.second));
                         removed = true;
-                        splitPoints.add(new_paths.secondSplitPoint);
-                        splitPoints.add(new_paths.firstSplitPoint);
+                        splitPoints.add(newPaths.secondSplitPoint);
+                        splitPoints.add(newPaths.firstSplitPoint);
                     }
                 }
                 if(removed)
@@ -125,11 +125,11 @@ public class SvgImporter {
             }
         }
 
-        List<SVG_ReturnValue> ret = new ArrayList<>(paths_with_info.size());
+        List<SVGReturnValue> ret = new ArrayList<>(pathsWithInfo.size());
         int c = 0;
-        for(Pair<BezierPath,Integer> p : paths_with_info) {
+        for(Pair<BezierPath,Integer> p : pathsWithInfo) {
             // using a hashset here might be slow...
-            ret.add(new SVG_ReturnValue(new FilledBezierPath(p.first,renderer),p.second, c, new HashSet<Integer>()));
+            ret.add(new SVGReturnValue(new FilledBezierPath(p.first,renderer),p.second, c, new HashSet<Integer>()));
             ++c;
         }
 
@@ -137,7 +137,7 @@ public class SvgImporter {
         for(Vector2 point : splitPoints) {
             List<Integer> neighbors = new ArrayList<>();
             int i = 0;
-            for(SVG_ReturnValue val : ret)
+            for(SVGReturnValue val : ret)
             {
                 for(Bezier b : val.path.path)
                 {
@@ -160,31 +160,31 @@ public class SvgImporter {
             Vector2 end = conn.points[conn.points.length-1];
 
             new DashedBezierLine(conn,renderer); //this should probably not be done from here..
-            SVG_ReturnValue first_val = null;
-            int first_index = -1;
+            SVGReturnValue firstVal = null;
+            int firstIndex = -1;
 
-            SVG_ReturnValue second_val = null;
-            int second_index = -1;
+            SVGReturnValue secondVal = null;
+            int secondIndex = -1;
 
             i = 0;
-            for(SVG_ReturnValue val : ret)
+            for(SVGReturnValue val : ret)
             {
-                if(val.path.fill_mesh.isOnMesh2D(start))
+                if(val.path.fillMesh.isOnMesh2D(start))
                 {
-                    first_val = val;
-                    first_index = i;
+                    firstVal = val;
+                    firstIndex = i;
                 }
 
-                if(val.path.fill_mesh.isOnMesh2D(end))
+                if(val.path.fillMesh.isOnMesh2D(end))
                 {
-                    second_val = val;
-                    second_index = i;
+                    secondVal = val;
+                    secondIndex = i;
                 }
                 ++i;
             }
-            if(first_val != null&&second_val!=null) {
-                first_val.neighbors.add(second_index);
-                second_val.neighbors.add(first_index);
+            if(firstVal != null&&secondVal!=null) {
+                firstVal.neighbors.add(secondIndex);
+                secondVal.neighbors.add(firstIndex);
             }
             else{
                 System.out.println("NULL CONNECTION FAILUER... :/ "+start + "," + end);
@@ -196,41 +196,41 @@ public class SvgImporter {
         {
             Vector2 start = conn.points[0];
             Vector2 end = conn.points[conn.points.length-1];
-            SVG_ReturnValue first_val = null;
-            SVG_ReturnValue second_val = null;
+            SVGReturnValue firstVal = null;
+            SVGReturnValue secondVal = null;
 
             i = 0;
-            for(SVG_ReturnValue val : ret) {
-                if(val.path.fill_mesh.isOnMesh2D(start)) {first_val = val;}
-                if(val.path.fill_mesh.isOnMesh2D(end)) {second_val = val;}
+            for(SVGReturnValue val : ret) {
+                if(val.path.fillMesh.isOnMesh2D(start)) {firstVal = val;}
+                if(val.path.fillMesh.isOnMesh2D(end)) {secondVal = val;}
                 ++i;
             }
 
-            if(first_val != null&&second_val!=null) {
+            if(firstVal != null&&secondVal!=null) {
                 //notify that the objects no longer need rendering.
-                first_val.path.Remove();
-                second_val.path.Remove();
+                firstVal.path.Remove();
+                secondVal.path.Remove();
                 //merge the objects
-                first_val.path.mergeWith(second_val.path);
+                firstVal.path.mergeWith(secondVal.path);
                 //add toghether the neigbors
-                first_val.neighbors.addAll(second_val.neighbors);
-                ret.remove(second_val);
+                firstVal.neighbors.addAll(secondVal.neighbors);
+                ret.remove(secondVal);
 
                 //notify that the modified shape needs to be drawn (and initialized);
-                renderer.delayedInit(first_val.path);
+                renderer.delayedInit(firstVal.path);
                 //handle the removed neigbor ids
-                for(SVG_ReturnValue val : ret)
+                for(SVGReturnValue val : ret)
                 {
                     boolean contians = false;
                     for(Integer neig: val.neighbors)
                     {
-                        if(((int)neig) == second_val.region_id){
+                        if(((int)neig) == secondVal.regionId){
                             contians = true;
                         }
                     }
                     if(contians) {
-                        val.neighbors.remove(second_val.region_id);
-                        val.neighbors.add(first_val.region_id);
+                        val.neighbors.remove(secondVal.regionId);
+                        val.neighbors.add(firstVal.regionId);
                     }
                 }
             }
@@ -245,19 +245,19 @@ public class SvgImporter {
         {
             Vector2 start = conn.points[0];
             Vector2 end = conn.points[conn.points.length-1];
-            int first_continent_id =-1;
-            int second_continent_id =-1;
+            int firstContinentId =-1;
+            int secondContinentId =-1;
 
             i = 0;
-            for(SVG_ReturnValue val : ret)
+            for(SVGReturnValue val : ret)
             {
-                if(val.path.fill_mesh.isOnMesh2D(start)){first_continent_id = val.continent_id;}
-                if(val.path.fill_mesh.isOnMesh2D(end)) {second_continent_id = val.continent_id;}
+                if(val.path.fillMesh.isOnMesh2D(start)){firstContinentId = val.continentId;}
+                if(val.path.fillMesh.isOnMesh2D(end)) {secondContinentId = val.continentId;}
                 ++i;
             }
-            if(first_continent_id !=-1 && second_continent_id != -1) {
-                for(SVG_ReturnValue val : ret) {
-                    if(val.continent_id== second_continent_id)val.continent_id = first_continent_id;
+            if(firstContinentId !=-1 && secondContinentId != -1) {
+                for(SVGReturnValue val : ret) {
+                    if(val.continentId == secondContinentId)val.continentId = firstContinentId;
                 }
             }
             else{
@@ -268,26 +268,26 @@ public class SvgImporter {
 
         //set the continent_ids & region_ids to the range 0-(n-1)
         //also make sure nobody has itself as a neighbor.
-        List<Integer> region_ids = new ArrayList<>(ret.size());
-        TreeSet<Integer> continent_ids = new TreeSet<>();
-        for(SVG_ReturnValue val : ret) {
-            region_ids.add(val.region_id);
-            continent_ids.add(val.continent_id);
+        List<Integer> regionIds = new ArrayList<>(ret.size());
+        TreeSet<Integer> continentIds = new TreeSet<>();
+        for(SVGReturnValue val : ret) {
+            regionIds.add(val.regionId);
+            continentIds.add(val.continentId);
         }
-        Collections.sort(region_ids);
+        Collections.sort(regionIds);
 
         i = 0;
-        for(SVG_ReturnValue val : ret)
+        for(SVGReturnValue val : ret)
         {
-            val.continent_id = continent_ids.headSet(val.continent_id).size();
-            val.region_id = region_ids.indexOf(val.region_id);
-            Set<Integer> new_neighs = new HashSet<>();
+            val.continentId = continentIds.headSet(val.continentId).size();
+            val.regionId = regionIds.indexOf(val.regionId);
+            Set<Integer> newNeighs = new HashSet<>();
             for(Integer neigh : val.neighbors){
-                int new_neigh = region_ids.indexOf(neigh);
-                if(new_neigh != i)
-                    new_neighs.add(new_neigh);
+                int newNeigh = regionIds.indexOf(neigh);
+                if(newNeigh != i)
+                    newNeighs.add(newNeigh);
             }
-            val.neighbors = new_neighs;
+            val.neighbors = newNeighs;
             ++i;
         }
 

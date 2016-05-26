@@ -105,9 +105,9 @@ public class MyGLSurfaceView extends GLSurfaceView {
     }
 
 
-    private final ConcurrentLinkedQueue<GL_TouchListener> listeners = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<GLTouchListener> listeners = new ConcurrentLinkedQueue<>();
 
-    public void addListener(GL_TouchListener listener) {
+    public void addListener(GLTouchListener listener) {
         listeners.add(listener);
     }
 
@@ -117,9 +117,9 @@ public class MyGLSurfaceView extends GLSurfaceView {
         // MotionEvent reports input details from the touch screen
         // and other input controls. In this case, you are only
         // interested in events where the touch position changed.
-        GL_TouchEvent event;
-        Vector2 screen_pos = new Vector2(e.getX(), e.getY());
-        Vector2 world_pos = MyGLRenderer.screenToWorldCoords(screen_pos, 0);
+        GLTouchEvent event;
+        Vector2 screenPos = new Vector2(e.getX(), e.getY());
+        Vector2 worldPos = MyGLRenderer.screenToWorldCoords(screenPos, 0);
 
         if (e.getAction() == MotionEvent.ACTION_DOWN || e.getAction() == MotionEvent.ACTION_POINTER_DOWN) {
             downX = e.getX();
@@ -130,28 +130,28 @@ public class MyGLSurfaceView extends GLSurfaceView {
                 && (Math.abs(e.getX() - downX + e.getY() - downY) <= 10)) {
             int index = 0;
             boolean hasTouchedRegion = false;
-            Vector2 world_pos_stitched = MyGLRenderer.screenToWorldCoors_stitched(screen_pos, 0);
+            Vector2 worldPosStitched = MyGLRenderer.ScreenToWorldCoorsStitched(screenPos, 0);
             for (FilledBezierPath path : GraphicsManager.getInstance().beziers) {
                 float z = path.getPos().z;
-                Vector2 adjusted_worldPos;
+                Vector2 adjustedWorldPos;
                 if (z == 0)
-                    adjusted_worldPos = world_pos_stitched;
+                    adjustedWorldPos = worldPosStitched;
                 else
-                    adjusted_worldPos = MyGLRenderer.screenToWorldCoors_stitched(screen_pos, z);
+                    adjustedWorldPos = MyGLRenderer.ScreenToWorldCoorsStitched(screenPos, z);
 
-                if (path.fill_mesh.isOnMesh2D(adjusted_worldPos)) {
+                if (path.fillMesh.isOnMesh2D(adjustedWorldPos)) {
                     hasTouchedRegion = true;
                     break;
                 }
                 ++index;
             }
             if (!hasTouchedRegion) index = -1;
-            event = new GL_TouchEvent(e, hasTouchedRegion, isZooming, index, world_pos, screen_pos, scale);
+            event = new GLTouchEvent(e, hasTouchedRegion, isZooming, index, worldPos, screenPos, scale);
 
         } else {
-            event = new GL_TouchEvent(e, false, isZooming, -1, world_pos, screen_pos, scale);
+            event = new GLTouchEvent(e, false, isZooming, -1, worldPos, screenPos, scale);
         }
-        for (GL_TouchListener listener : listeners) {
+        for (GLTouchListener listener : listeners) {
             listener.handle(event);
         }
 

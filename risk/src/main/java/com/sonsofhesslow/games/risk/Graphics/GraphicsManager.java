@@ -57,16 +57,16 @@ public class GraphicsManager {
 
         try
         {
-            List<SvgImporter.SVG_ReturnValue> tmp = SvgImporter.read(resources.openRawResource(R.raw.new_world),renderer);
+            List<SvgImporter.SVGReturnValue> tmp = SvgImporter.read(resources.openRawResource(R.raw.new_world),renderer);
             beziers = new FilledBezierPath[tmp.size()];
             beizNeighbors = new Integer[tmp.size()][];
             beizContinents = new Integer[tmp.size()];
             int c = 0;
-            for(SvgImporter.SVG_ReturnValue ret : tmp)
+            for(SvgImporter.SVGReturnValue ret : tmp)
             {
                 beziers[c] = ret.path;
                 beizNeighbors[c] = ret.neighbors.toArray(new Integer[ret.neighbors.size()]);
-                beizContinents[c] = ret.continent_id;
+                beizContinents[c] = ret.continentId;
                 updatables.add(ret.path);
                 ++c;
             }
@@ -146,15 +146,15 @@ public class GraphicsManager {
 
     public Integer[] getContinentRegions(int continentId)
     {
-        List<Integer> regions_in_continent = new ArrayList<>();
+        List<Integer> regionsInContinent = new ArrayList<>();
         int c= 0;
 
         for(Integer i : beizContinents)
         {
-            if(continentId == i) regions_in_continent.add(c);
+            if(continentId == i) regionsInContinent.add(c);
             ++c;
         }
-        return regions_in_continent.toArray(new Integer[regions_in_continent.size()]);
+        return regionsInContinent.toArray(new Integer[regionsInContinent.size()]);
     }
 
     public int getNumberOfTerritories() {

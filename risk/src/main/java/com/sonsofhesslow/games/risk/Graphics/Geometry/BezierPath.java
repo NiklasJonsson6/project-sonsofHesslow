@@ -100,7 +100,7 @@ public class BezierPath implements Iterable<Bezier> {
             return ret;
         }
     }
-    public Vector2[] approximatebezierPath_naive(int precision)
+    public Vector2[] approximatebezierPathNaive(int precision)
     {
         Vector2[] verts = new Vector2[precision*((points.length)/3)];
         int counter = 0;
@@ -144,8 +144,8 @@ public class BezierPath implements Iterable<Bezier> {
     }
     public static splitReturn splitBeizPath(BezierPath path, BezierPath line)
     {
-        List<Pair<Integer,Float>> path_splits = new ArrayList<>();
-        List<Pair<Integer,Float>> line_splits= new ArrayList<>();
+        List<Pair<Integer,Float>> pathSplits = new ArrayList<>();
+        List<Pair<Integer,Float>> lineSplits= new ArrayList<>();
 
         List<Pair<Float,Float>> intersectionPoints = new ArrayList<>();
 
@@ -162,8 +162,8 @@ public class BezierPath implements Iterable<Bezier> {
                     // tolerance of the one intersection point. Thats why we're not currently throwing any exceptions.
                     //and instead just gets the middle-most and ignores the rest.
 
-                    line_splits.add(new Pair<>(i, intersectionPoints.get(intersectionPoints.size()/2).first));
-                    path_splits.add(new Pair<>(j, intersectionPoints.get(intersectionPoints.size()/2).second));
+                    lineSplits.add(new Pair<>(i, intersectionPoints.get(intersectionPoints.size() / 2).first));
+                    pathSplits.add(new Pair<>(j, intersectionPoints.get(intersectionPoints.size() / 2).second));
                 }
                 intersectionPoints.clear();
                 ++j;
@@ -171,31 +171,31 @@ public class BezierPath implements Iterable<Bezier> {
             ++i;
         }
 
-        if(line_splits.size() != 2 || path_splits.size() != 2)
+        if(lineSplits.size() != 2 || pathSplits.size() != 2)
         {
             return null;
         }
 
-        BezierPath[] split_path = splitBeizPath(path,path_splits);
-        BezierPath[] split_line = splitBeizPath(line,line_splits);
+        BezierPath[] splitPath = splitBeizPath(path,pathSplits);
+        BezierPath[] splitLine = splitBeizPath(line,lineSplits);
 
         BezierPathBuilder b = new BezierPathBuilder();
-        b.addBeizPath(split_path[2]);
-        if(!b.fitAndAddBeizPath(split_path[0])) {
+        b.addBeizPath(splitPath[2]);
+        if(!b.fitAndAddBeizPath(splitPath[0])) {
             throw new RuntimeException("1: Bug in  split bezier Path...");
         }
-        if(!b.fitAndAddBeizPath(split_line[1]))        {
+        if(!b.fitAndAddBeizPath(splitLine[1]))        {
             throw new RuntimeException("2: Bug in  split bezier Path...");
         }
 
         splitReturn ret = new splitReturn();
         ret.first = b.get(true);
         b.clear();
-        b.addBeizPath(split_line[1]);
-        b.fitAndAddBeizPath(split_path[1]);
+        b.addBeizPath(splitLine[1]);
+        b.fitAndAddBeizPath(splitPath[1]);
         ret.second = b.get(true);
-        ret.firstSplitPoint = split_line[1].points[0];
-        ret.secondSplitPoint= split_line[1].points[split_line[1].points.length-1];
+        ret.firstSplitPoint = splitLine[1].points[0];
+        ret.secondSplitPoint= splitLine[1].points[splitLine[1].points.length-1];
         return ret;
     }
 
@@ -217,21 +217,21 @@ public class BezierPath implements Iterable<Bezier> {
 
         //does not yet support one beiz beeing split multiple times...
         List<BezierPath> tmp = new ArrayList<>();
-        int current_index = 0;
+        int currentIndex = 0;
         int i = 0;
         BezierPathBuilder builder = new BezierPathBuilder();
 
         for(Bezier currentBeiz : beizPath)
         {
 
-            if(current_index<poses.size()&&poses.get(current_index).first <= i)
+            if(currentIndex<poses.size()&&poses.get(currentIndex).first <= i)
             {
-                Bezier[] split = currentBeiz.split(poses.get(current_index).second);
+                Bezier[] split = currentBeiz.split(poses.get(currentIndex).second);
                 builder.addBeiz(split[0]);
                 tmp.add(builder.get(false));
                 builder.clear();
                 builder.addBeiz(split[1]);
-                ++current_index;
+                ++currentIndex;
             }
             else
             {

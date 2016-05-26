@@ -2,9 +2,8 @@ package com.sonsofhesslow.games.risk;
 
 import android.support.annotation.Nullable;
 
-import com.google.example.games.basegameutils.BaseGameUtils;
-import com.sonsofhesslow.games.risk.graphics.GL_TouchEvent;
-import com.sonsofhesslow.games.risk.graphics.GL_TouchListener;
+import com.sonsofhesslow.games.risk.graphics.GLTouchEvent;
+import com.sonsofhesslow.games.risk.graphics.GLTouchListener;
 import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 import com.sonsofhesslow.games.risk.model.Card;
 import com.sonsofhesslow.games.risk.model.Die;
@@ -15,11 +14,10 @@ import com.sonsofhesslow.games.risk.network.NetworkChangeEvent;
 import com.sonsofhesslow.games.risk.network.NetworkListener;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
 
-public class Controller implements GL_TouchListener, NetworkListener {
+public class Controller implements GLTouchListener, NetworkListener {
     private static final int TERRITORIES_IN_ASIA = 12;
     private static final int TERRITORIES_IN_NORTH_AMERICA = 9;
     private static final int TERRITORIES_IN_EUROPE = 7;
@@ -129,7 +127,7 @@ public class Controller implements GL_TouchListener, NetworkListener {
         GraphicsManager.getInstance().requestRender();
     }
 
-    public void handle(GL_TouchEvent event) {
+    public void handle(GLTouchEvent event) {
         System.out.println("handle gl event");
         if (event.touchedRegion) {
             Territory touchedTerritory = getTerritoryById(event.regionId);

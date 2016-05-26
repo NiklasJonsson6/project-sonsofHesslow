@@ -47,31 +47,31 @@ public class Camera {
             width = Math.abs(width);
             height = Math.abs(height);
 
-            float min_x = WORLD_MIN_X + width / 2;
-            float max_x = WORLD_MAX_X - width / 2;
-            float min_y = WORLD_MIN_Y + height / 2;
-            float max_y = WORLD_MAX_Y - height / 2;
+            float minX = WORLD_MIN_X + width / 2;
+            float maxX = WORLD_MAX_X - width / 2;
+            float minY = WORLD_MIN_Y + height / 2;
+            float maxY = WORLD_MAX_Y - height / 2;
 
             float WORLD_WIDTH = WORLD_MAX_X - WORLD_MIN_X;
-            float new_x = newPos.x;
-            float new_y = clamp(newPos.y, min_y, max_y);
+            float newX = newPos.x;
+            float newY = clamp(newPos.y, minY, maxY);
 
-            if (newPos.x < min_x) {
-                stitchPosition = (1 - (min_x - newPos.x) / width);
-            } else if (newPos.x > max_x) {
-                stitchPosition = (-((max_x - newPos.x) / width));
+            if (newPos.x < minX) {
+                stitchPosition = (1 - (minX - newPos.x) / width);
+            } else if (newPos.x > maxX) {
+                stitchPosition = (-((maxX - newPos.x) / width));
             } else {
                 stitchPosition = 0;
             }
 
             if (stitchPosition > 1f) {
-                new_x -= WORLD_WIDTH;
+                newX -= WORLD_WIDTH;
             }
             if (stitchPosition < 0.0f) {
-                new_x += WORLD_WIDTH;
+                newX += WORLD_WIDTH;
             }
 
-            pos = new Vector3(new_x, new_y, newPos.z);
+            pos = new Vector3(newX, newY, newPos.z);
             updateLookAt();
     }
 

@@ -7,7 +7,7 @@ import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
 /**
  * Created by Daniel on 11/04/2016.
  */
-public class GL_TouchEvent
+public class GLTouchEvent
 {
     public final MotionEvent e;
     public final boolean touchedRegion;
@@ -17,7 +17,7 @@ public class GL_TouchEvent
     public final float scale;
     public final boolean isZooming;
 
-    public GL_TouchEvent(MotionEvent e, boolean touchedRegion, boolean isZooming, int regionId, Vector2 worldPosition, Vector2 screenPosition, float scale) {
+    public GLTouchEvent(MotionEvent e, boolean touchedRegion, boolean isZooming, int regionId, Vector2 worldPosition, Vector2 screenPosition, float scale) {
         this.e = e;
         this.touchedRegion = touchedRegion;
         this.regionId = regionId;

@@ -56,7 +56,7 @@ public class Number extends GLObject{
     }
 
     // called back from the gl thread by the renderer for init
-    public void gl_init()
+    public void glInit()
     {
         mesh.init();
         shader = new TexQuadShader();

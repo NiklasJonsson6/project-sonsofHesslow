@@ -5,18 +5,18 @@ import java.lang.reflect.Array;
 public class ArrayUtils {
 
     public static <T> T[] concat(T[]... arrays) {
-        int len_ack = 0;
+        int lenAck = 0;
         for (T[] array : arrays) {
-            len_ack += array.length;
+            lenAck += array.length;
         }
 
         @SuppressWarnings("unchecked")
-        T[] ret = (T[]) Array.newInstance(arrays[0].getClass().getComponentType(), len_ack);
+        T[] ret = (T[]) Array.newInstance(arrays[0].getClass().getComponentType(), lenAck);
 
-        int elemenet_ack = 0;
+        int elemenetAck = 0;
         for (T[] array : arrays) {
-            System.arraycopy(array, 0, ret, elemenet_ack, array.length);
-            elemenet_ack += array.length;
+            System.arraycopy(array, 0, ret, elemenetAck, array.length);
+            elemenetAck += array.length;
         }
 
         return ret;
