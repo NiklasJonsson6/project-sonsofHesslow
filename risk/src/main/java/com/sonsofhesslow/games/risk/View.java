@@ -1,10 +1,12 @@
 package com.sonsofhesslow.games.risk;
 
 import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
+import com.sonsofhesslow.games.risk.model.Card;
 import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
 import com.sonsofhesslow.games.risk.model.Territory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -37,11 +39,11 @@ public class View implements Observer {
     public float[] getColor(Player p) {
         return playerColors.get(p);
     }
-    public void updateCardView(Risk risk){
-        overlayController.populateGridView(risk.getCurrentPlayer().getCards());
-    }
+
     public void update(Observable obs, Object arg) {
-        if (obs instanceof Risk) {
+        if (obs instanceof Player) {
+            overlayController.populateGridView((ArrayList<Card>) arg);
+        } else if (obs instanceof Risk) {
             Risk risk = (Risk) obs;
             if(overlayController.getOverlay().getChildCount() > 1){
                 overlayController.populateListView(risk.getPlayers(), playerColors.values());
@@ -131,7 +133,7 @@ public class View implements Observer {
                 if (playerColors.get(event) != null) {
                     overlayController.setCurrentPlayer(event, Util.getIntFromColor(playerColors.get(event)));
                     System.out.println("Number of cards: " + risk.getCurrentPlayer().getCards().size());
-                    updateCardView(risk);
+                    overlayController.populateGridView(risk.getCurrentPlayer().getCards());
                 }
                 if (risk.getGamePhase() == Risk.GamePhase.PLACE_STARTING_ARMIES) {
                     overlayController.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);

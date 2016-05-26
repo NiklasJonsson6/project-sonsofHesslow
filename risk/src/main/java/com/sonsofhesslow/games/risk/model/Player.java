@@ -3,9 +3,10 @@ package com.sonsofhesslow.games.risk.model;
 import android.net.Uri;
 
 import java.util.ArrayList;
+import java.util.Observable;
 import java.util.Random;
 
-public class Player {
+public class Player extends Observable {
     private String name;
     private boolean isAlive;
     private int armiesToPlace;
@@ -46,6 +47,8 @@ public class Player {
     }
     public void setCards(ArrayList<Card> cardList) {
         cards = cardList;
+        setChanged();
+        notifyObservers(cards);
     }
 
     public void giveOneCard(){

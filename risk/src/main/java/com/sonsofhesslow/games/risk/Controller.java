@@ -58,6 +58,9 @@ public class Controller implements GL_TouchListener, NetworkListener {
         for(Territory territory: riskModel.getTerritories()) {
             territory.addObserver(riskView);
         }
+        for(Player player: riskModel.getPlayers()) {
+            player.addObserver(riskView);
+        }
 
         //set neighbours and continent
         for (int i = 0; i < territoryCount; i++) {
@@ -542,7 +545,6 @@ public class Controller implements GL_TouchListener, NetworkListener {
         temp.remove(selectedCards.get(1).intValue());
         temp.remove(selectedCards.get(0).intValue());
         riskModel.getCurrentPlayer().setCards(temp);
-        riskView.updateCardView(riskModel);
     }
 
 
