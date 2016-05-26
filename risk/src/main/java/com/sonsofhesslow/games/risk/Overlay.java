@@ -33,6 +33,7 @@ public class Overlay {
     int pickTerritoriesOrange;
     int fightRed;
     boolean listPopulated;
+    CardGridAdapter gridAdapter;
 
     Overlay(Context context) {
         // TODO: 2016-05-26 r.id color instead? (better to take from res)  getResources().getColor(R.color.<id>);
@@ -205,7 +206,8 @@ public class Overlay {
         }
         //Adapter
         GridView gridView = (GridView) parent.findViewById(R.id.gridView);
-        gridView.setAdapter(new CardGridAdapter((MainActivity) context, names, images));
+        gridAdapter = new CardGridAdapter((MainActivity) context, names, images);
+        gridView.setAdapter(gridAdapter);
         //((FrameLayout) parent.findViewById(R.id.gridView)).setLayoutParams(new FrameLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 280, context.getResources().getDisplayMetrics()),
                 //(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 57*names.size() + 50, context.getResources().getDisplayMetrics())));
     }
@@ -217,5 +219,8 @@ public class Overlay {
         } else {
             parent.findViewById(R.id.cardView).setVisibility(View.GONE);
         }
+    }
+    public ArrayList<Integer> getSelectedCards(){
+        return gridAdapter.getCardIndexList();
     }
 }

@@ -5,12 +5,15 @@ import android.support.annotation.Nullable;
 import com.sonsofhesslow.games.risk.graphics.GL_TouchEvent;
 import com.sonsofhesslow.games.risk.graphics.GL_TouchListener;
 import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
+import com.sonsofhesslow.games.risk.model.Card;
 import com.sonsofhesslow.games.risk.model.Die;
 import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
 import com.sonsofhesslow.games.risk.model.Territory;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Random;
 
 public class Controller implements GL_TouchListener {
@@ -479,5 +482,18 @@ public class Controller implements GL_TouchListener {
 
     public boolean isOnline(){
         return riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId();
+    }
+    public void turnInCards(ArrayList<Integer> selectedCards){
+        Collections.sort(selectedCards);
+        for(Integer inte: selectedCards){
+            System.out.println("Index value: " + inte.intValue());
+        }
+        ArrayList<Card> temp = new ArrayList<Card>();
+        temp.addAll(riskModel.getCurrentPlayer().getCards());
+        temp.remove(selectedCards.get(2).intValue());
+        temp.remove(selectedCards.get(1).intValue());
+        temp.remove(selectedCards.get(0).intValue());
+        riskModel.getCurrentPlayer().setCards(temp);
+        riskView.updateCardView(riskModel);
     }
 }

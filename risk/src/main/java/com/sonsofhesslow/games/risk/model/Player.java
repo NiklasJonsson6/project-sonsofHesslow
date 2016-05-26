@@ -44,6 +44,9 @@ public class Player {
     public ArrayList<Card> getCards() {
         return cards;
     }
+    public void setCards(ArrayList<Card> cardList) {
+        cards = cardList;
+    }
 
     public void giveOneCard(){
         cards.add(Card.getRandomCard());

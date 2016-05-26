@@ -33,6 +33,13 @@ public class View implements Observer {
         manager = manager.getInstance();
     }
 
+
+    public float[] getColor(Player p) {
+        return playerColors.get(p);
+    }
+    public void updateCardView(Risk risk){
+        overlayController.populateGridView(risk.getCurrentPlayer().getCards());
+    }
     public void update(Observable obs, Object arg) {
         if (obs instanceof Risk) {
             Risk risk = (Risk) obs;
@@ -124,7 +131,7 @@ public class View implements Observer {
                 if (playerColors.get(event) != null) {
                     overlayController.setCurrentPlayer(event, Util.getIntFromColor(playerColors.get(event)));
                     System.out.println("Number of cards: " + risk.getCurrentPlayer().getCards().size());
-                    overlayController.populateGridView(risk.getCurrentPlayer().getCards());
+                    updateCardView(risk);
                 }
                 if (risk.getGamePhase() == Risk.GamePhase.PLACE_STARTING_ARMIES) {
                     overlayController.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
