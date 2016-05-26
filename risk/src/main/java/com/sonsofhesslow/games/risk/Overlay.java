@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -34,6 +35,7 @@ public class Overlay {
     int fightRed;
     boolean listPopulated;
     CardGridAdapter gridAdapter;
+    GridView gridView;
 
     Overlay(Context context) {
         // TODO: 2016-05-26 r.id color instead? (better to take from res)  getResources().getColor(R.color.<id>);
@@ -205,7 +207,7 @@ public class Overlay {
             }
         }
         //Adapter
-        GridView gridView = (GridView) parent.findViewById(R.id.gridView);
+        gridView = (GridView) parent.findViewById(R.id.gridView);
         gridAdapter = new CardGridAdapter((MainActivity) context, names, images);
         gridView.setAdapter(gridAdapter);
         //((FrameLayout) parent.findViewById(R.id.gridView)).setLayoutParams(new FrameLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 280, context.getResources().getDisplayMetrics()),
@@ -222,5 +224,13 @@ public class Overlay {
     }
     public ArrayList<Integer> getSelectedCards(){
         return gridAdapter.getCardIndexList();
+    }
+
+    public void changeGridLayout(boolean isLandscape){
+        if(isLandscape) {
+            ((GridView) parent.findViewById(R.id.gridView)).setNumColumns(5);
+        } else {
+            ((GridView) parent.findViewById(R.id.gridView)).setNumColumns(3);
+        }
     }
 }

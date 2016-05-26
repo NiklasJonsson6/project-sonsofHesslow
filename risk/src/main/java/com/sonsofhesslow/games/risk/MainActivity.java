@@ -3,6 +3,7 @@ package com.sonsofhesslow.games.risk;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -104,6 +105,14 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void onConfigurationChanged(Configuration newConfig){
+        super.onConfigurationChanged(newConfig);
+        if(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            newOverlayController.changeGridLayout(true);
+        } else {
+            newOverlayController.changeGridLayout(false);
+        }
+    }
     public void handle(GL_TouchEvent event) {
 
         if (prevPos != null) {
@@ -387,6 +396,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(newOverlayController.getOverlay());
         newOverlayController.setGamePhase(Risk.GamePhase.PICK_TERRITORIES);
         mCurScreen = R.id.screen_game;
+        newOverlayController.changeGridLayout(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
     }
 
 
@@ -502,6 +512,7 @@ public class MainActivity extends AppCompatActivity
     private void initOfflineGame(int[] ids) {
         this.controller = new Controller(ids, newOverlayController);
     }
+
 
     private void resetGameVars() {
         // TODO: 2016-05-13
