@@ -1,4 +1,4 @@
-package com.sonsofhesslow.games.risk.graphics.GraphicsObjects;
+package com.sonsofhesslow.games.risk.graphics.graphicsObjects;
 
 import android.opengl.Matrix;
 
@@ -8,14 +8,14 @@ import java.nio.FloatBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.sonsofhesslow.games.risk.graphics.Geometry.BeizierPath;
-import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
-import com.sonsofhesslow.games.risk.graphics.Geometry.Vector3;
+import com.sonsofhesslow.games.risk.graphics.geometry.BezierPath;
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector3;
 
 /**
  * Created by daniel on 3/31/16.
  */
-public class FilledBeizierPath extends GLObject implements Updatable {
+public class FilledBezierPath extends GLObject implements Updatable {
 
 
     public Mesh fill_mesh;
@@ -56,21 +56,21 @@ public class FilledBeizierPath extends GLObject implements Updatable {
 
     private final int naive_precision = 2; //higher is more detailed
 
-    public BeizierPath path;
+    public BezierPath path;
     public Vector2 getCenter()
     {
         return  center;
     }
     private FloatBuffer vertSide;
     boolean doRest=false;
-    public FilledBeizierPath(BeizierPath path, Renderer renderer) // start ctl ctl point ctl ctl point ctl ctl (start)
+    public FilledBezierPath(BezierPath path, Renderer renderer) // start ctl ctl point ctl ctl point ctl ctl (start)
     {
         super(renderer);
-        if(!path.isClosed()) throw new IllegalArgumentException("the beizier path needs to be closed!");
+        if(!path.isClosed()) throw new IllegalArgumentException("the bezier path needs to be closed!");
         this.path = path;
 
-        Vector2[] verts = path.approximateBeizierPath(0.001f);
-        //Vector2[] verts = path.approximateBeizierPath_naive(naive_precision);
+        Vector2[] verts = path.approximatebezierPath(0.001f);
+        //Vector2[] verts = path.approximatebezierPath_naive(naive_precision);
 
         Vector2[] outline_verts = new Vector2[verts.length*2];
 
@@ -195,7 +195,7 @@ public class FilledBeizierPath extends GLObject implements Updatable {
         outlineColor = color;
     }
 
-    public void mergeWith(FilledBeizierPath other)
+    public void mergeWith(FilledBezierPath other)
     {
         fill_mesh = Mesh.Add(fill_mesh,other.fill_mesh);
         outline_mesh= Mesh.Add(outline_mesh,other.outline_mesh);

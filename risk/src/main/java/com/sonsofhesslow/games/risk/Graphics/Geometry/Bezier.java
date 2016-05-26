@@ -1,28 +1,25 @@
-package com.sonsofhesslow.games.risk.graphics.Geometry;
+package com.sonsofhesslow.games.risk.graphics.geometry;
 
 import android.util.Pair;
 
 import java.util.List;
 
-/**
- * Created by Daniel on 06/04/2016.
- */
-public class Beizier
+public class Bezier
 {
-    public Beizier(Vector2 start,Vector2 control_1,Vector2 control_2, Vector2 end)
+    public Bezier(Vector2 start, Vector2 control_1, Vector2 control_2, Vector2 end)
     {
         this(new Vector2[]{start,control_1,control_2,end});
     }
-    public Beizier(Vector2[] points)
+    public Bezier(Vector2[] points)
     {
         this.points = points;
     }
     public final Vector2[] points;
 
 
-    public Beizier[] split(float t)
+    public Bezier[] split(float t)
     {
-        if(points.length!=4)throw new IllegalArgumentException("expected quadratic beizier curve!");
+        if(points.length!=4)throw new IllegalArgumentException("expected quadratic bezier curve!");
         // explicit beiz split using de castillio for quadratic curves
         // could easily be extended for the generic case
 
@@ -31,22 +28,22 @@ public class Beizier
         Vector2[] step_2 = de_castillio_step(step_1,t);
         Vector2[] step_3 = de_castillio_step(step_2,t);
 
-        Beizier[] ret = new Beizier[2];
-        ret[0] = new Beizier(step_0[0],step_1[0],step_2[0],step_3[0]);
-        ret[1] = new Beizier(step_3[0],step_2[1],step_1[2],step_0[3]);
+        Bezier[] ret = new Bezier[2];
+        ret[0] = new Bezier(step_0[0],step_1[0],step_2[0],step_3[0]);
+        ret[1] = new Bezier(step_3[0],step_2[1],step_1[2],step_0[3]);
         return ret;
     }
 
-    private Beizier[] split(float[] ts)
+    private Bezier[] split(float[] ts)
     {
-        Beizier[] ret = new Beizier[ts.length];
+        Bezier[] ret = new Bezier[ts.length];
 
         float t_left = 1;
-        Beizier current = this;
+        Bezier current = this;
         float prev = 0;
         for(int i = 0; i< ts.length;i++)
         {
-            Beizier[] split = current.split((ts[i]-prev)/t_left);
+            Bezier[] split = current.split((ts[i]-prev)/t_left);
             ret[i] = split[0];
             current = split[1];
             t_left -= ts[i]-prev;
@@ -66,29 +63,29 @@ public class Beizier
         }
         return next_vectors;
     }
-    private Beizier de_catillio_reduce(float t)
+    private Bezier de_catillio_reduce(float t)
     {
-        return new Beizier(de_castillio_step(this.points,t));
+        return new Bezier(de_castillio_step(this.points,t));
     }
 
     public Vector2 getValue(float t)
     {
-        Beizier nextBeiz= de_catillio_reduce(t);
+        Bezier nextBeiz= de_catillio_reduce(t);
         if(nextBeiz.points.length == 1) return nextBeiz.points[0];
         else return nextBeiz.getValue(t);
     }
 
-    public static boolean Intersect(Beizier a, Beizier b, float tolerance, List<Pair<Float,Float>> _out_tab)
+    public static boolean Intersect(Bezier a, Bezier b, float tolerance, List<Pair<Float,Float>> _out_tab)
     {
         return Intersect(a, b, tolerance, _out_tab, 0f, 1f, 0f, 1f);
     }
 
-    private static boolean Intersect(Beizier a, Beizier b, float tolerance)
+    private static boolean Intersect(Bezier a, Bezier b, float tolerance)
     {
         return Intersect(a, b, tolerance, 0f, 1f, 0f, 1f);
     }
 
-    public static boolean IsPartOf(Beizier a, Beizier b, int resolution)
+    public static boolean IsPartOf(Bezier a, Bezier b, int resolution)
     {
         float[] ts = new float[resolution];
         for(int i = 0; i<ts.length;i++)
@@ -96,14 +93,14 @@ public class Beizier
             ts[i] = (i+1)/((float) ts.length+1);
         }
 
-        Beizier[] splits_a = a.split(ts);
-        Beizier[] splits_b = b.split(ts);
+        Bezier[] splits_a = a.split(ts);
+        Bezier[] splits_b = b.split(ts);
 
         for(int i = 0; i<resolution;i++)
         {
             for(int j = 0; j<resolution;j++)
             {
-                if(Beizier.Intersect(splits_a[i],splits_b[j], 0.01f))
+                if(Bezier.Intersect(splits_a[i], splits_b[j], 0.01f))
                 {
                     return true;
                 }
@@ -114,15 +111,15 @@ public class Beizier
     }
 
     //todo do real bounding in the intersections. Also probably tolerance by area if we want to be somewhat fancy.
-    private static boolean Intersect(Beizier beizier_a, Beizier beizier_b, float tolerance,
+    private static boolean Intersect(Bezier bezier_a, Bezier bezier_b, float tolerance,
                                          List<Pair<Float,Float>> _out_tab, float ta_low, float ta_high,float tb_low, float tb_high)
     {
-        Vector2[] a = beizier_a.points;
-        Vector2[] b = beizier_b.points;
+        Vector2[] a = bezier_a.points;
+        Vector2[] b = bezier_b.points;
 
-        //using the beizier subdivision algorithm plus keeping track of the t intersection.
+        //using the bezier subdivision algorithm plus keeping track of the t intersection.
 
-        // currently implementation assumes quadratic beizier curves.
+        // currently implementation assumes quadratic bezier curves.
         // the algorithm as such could easily be extended to higher level curves
 
         float ta_mid = (ta_low + ta_high)/2;
@@ -169,13 +166,13 @@ public class Beizier
             return true;
         }
 
-        Beizier[] a_split = beizier_a.split(0.5f);
-        Beizier a_1 = a_split[0];
-        Beizier a_2 = a_split[1];
+        Bezier[] a_split = bezier_a.split(0.5f);
+        Bezier a_1 = a_split[0];
+        Bezier a_2 = a_split[1];
 
-        Beizier[] b_split = beizier_b.split(0.5f);
-        Beizier b_1 = b_split[0];
-        Beizier b_2 = b_split[1];
+        Bezier[] b_split = bezier_b.split(0.5f);
+        Bezier b_1 = b_split[0];
+        Bezier b_2 = b_split[1];
 
         boolean intersect_11 = Intersect(a_1, b_1, tolerance, _out_tab, ta_low, ta_mid, tb_low, tb_mid);
         boolean intersect_12 = Intersect(a_1, b_2, tolerance, _out_tab, ta_low, ta_mid, tb_mid, tb_high);
@@ -197,19 +194,19 @@ public class Beizier
             return false;
         }
 
-        Beizier[] r = split(0.5f);
+        Bezier[] r = split(0.5f);
         return r[0].isOnCurve(p,precision) || r[1].isOnCurve(p, precision);
     }
 
-    private static boolean Intersect(Beizier beizier_a, Beizier beizier_b, float tolerance,
+    private static boolean Intersect(Bezier bezier_a, Bezier bezier_b, float tolerance,
                                      float ta_low, float ta_high,float tb_low, float tb_high)
     {
-        Vector2[] a = beizier_a.points;
-        Vector2[] b = beizier_b.points;
+        Vector2[] a = bezier_a.points;
+        Vector2[] b = bezier_b.points;
 
-        //using the beizier subdivision algorithm plus keeping track of the t intersection.
+        //using the bezier subdivision algorithm plus keeping track of the t intersection.
 
-        // currently implementation assumes quadratic beizier curves.
+        // currently implementation assumes quadratic bezier curves.
         // the algorithm as such could easily be extended to higher level curves
 
         float ta_mid = (ta_low + ta_high)/2;
@@ -255,13 +252,13 @@ public class Beizier
             return true;
         }
 
-        Beizier[] a_split = beizier_a.split(0.5f);
-        Beizier a_1 = a_split[0];
-        Beizier a_2 = a_split[1];
+        Bezier[] a_split = bezier_a.split(0.5f);
+        Bezier a_1 = a_split[0];
+        Bezier a_2 = a_split[1];
 
-        Beizier[] b_split = beizier_b.split(0.5f);
-        Beizier b_1 = b_split[0];
-        Beizier b_2 = b_split[1];
+        Bezier[] b_split = bezier_b.split(0.5f);
+        Bezier b_1 = b_split[0];
+        Bezier b_2 = b_split[1];
 
         return  Intersect(a_1, b_1, tolerance, ta_low, ta_mid, tb_low, tb_mid)||
                 Intersect(a_1, b_2, tolerance, ta_low, ta_mid, tb_mid, tb_high) ||

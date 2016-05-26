@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sonsofhesslow.games.risk.graphics.GraphicsObjects;
+package com.sonsofhesslow.games.risk.graphics.graphicsObjects;
 
 import com.sonsofhesslow.games.risk.graphics.utils.ArrayUtils;
 
@@ -22,7 +22,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
 
 /**
  * A Mesh based on developer.android.com's Square.

@@ -1,8 +1,4 @@
-package com.sonsofhesslow.games.risk.graphics.Geometry;
-
-/**
- * Created by daniel on 3/31/16.
- */
+package com.sonsofhesslow.games.risk.graphics.geometry;
 
 public class Vector2
 {

@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.sonsofhesslow.games.risk.graphics.Geometry.Beizier;
-import com.sonsofhesslow.games.risk.graphics.Geometry.BeizierPath;
-import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
-import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.DashedBeizierLine;
-import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.FilledBeizierPath;
-import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.Renderer;
+import com.sonsofhesslow.games.risk.graphics.geometry.Bezier;
+import com.sonsofhesslow.games.risk.graphics.geometry.BezierPath;
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.graphicsObjects.DashedBezierLine;
+import com.sonsofhesslow.games.risk.graphics.graphicsObjects.FilledBezierPath;
+import com.sonsofhesslow.games.risk.graphics.graphicsObjects.Renderer;
 
 /**
  * Created by daniel on 4/1/16.
@@ -29,14 +29,14 @@ public class SvgImporter {
     public static class SVG_ReturnValue
     {
 
-        public SVG_ReturnValue(FilledBeizierPath path, Integer continent_id, Integer region_id,  Set<Integer> neighbors) {
+        public SVG_ReturnValue(FilledBezierPath path, Integer continent_id, Integer region_id,  Set<Integer> neighbors) {
             this.path = path;
             this.continent_id = continent_id;
             this.neighbors = neighbors;
             this.region_id = region_id;
         }
 
-        public final FilledBeizierPath path;
+        public final FilledBezierPath path;
         public Integer continent_id;
         public Integer region_id;
         public Set<Integer> neighbors;
@@ -44,18 +44,18 @@ public class SvgImporter {
 
     public static List<SVG_ReturnValue> read(InputStream svgStream,Renderer renderer) throws IOException
     {
-        List<BeizierPath> paths = new ArrayList<>();
-        List<BeizierPath> splits = new ArrayList<>();
-        List<BeizierPath> connections = new ArrayList<>();
-        List<BeizierPath> regionConnections= new ArrayList<>();
-        List<BeizierPath> continentConnections= new ArrayList<>();
+        List<BezierPath> paths = new ArrayList<>();
+        List<BezierPath> splits = new ArrayList<>();
+        List<BezierPath> connections = new ArrayList<>();
+        List<BezierPath> regionConnections= new ArrayList<>();
+        List<BezierPath> continentConnections= new ArrayList<>();
 
         SvgReader sr = new SvgReader(svgStream);
         //parse all paths in the svg. add them into the appropriate category.
         while(true) {
             SVGPath new_read = sr.readPath();
             if(new_read != null) {
-                BeizierPath readBeiz = new_read.path;
+                BezierPath readBeiz = new_read.path;
 
                 for(int i = 0; i< readBeiz.points.length;i++) {
                     readBeiz.points[i]= new Vector2(-readBeiz.points[i].x/250,-readBeiz.points[i].y/250);
@@ -82,10 +82,10 @@ public class SvgImporter {
 
         //split the paths with the splits.
         //keep track of which split split what
-        List<Pair<BeizierPath, Integer>> paths_with_info = new ArrayList<>(paths.size());
+        List<Pair<BezierPath, Integer>> paths_with_info = new ArrayList<>(paths.size());
 
         int continentId = 0;
-        for(BeizierPath b : paths){
+        for(BezierPath b : paths){
             paths_with_info.add(new Pair<>(b, continentId++));
         }
 
@@ -95,12 +95,12 @@ public class SvgImporter {
             boolean removed = false;
             for(int i = 0;i<splits.size();i++)
             {
-                BeizierPath split = splits.get(i);
+                BezierPath split = splits.get(i);
                 int pathLen = paths_with_info.size();
                 for(int j = 0;j<pathLen;j++)
                 {
-                    Pair<BeizierPath,Integer> path_with_info = paths_with_info.get(j);
-                    BeizierPath.splitReturn new_paths = BeizierPath.splitBeizPath(path_with_info.first, split);
+                    Pair<BezierPath,Integer> path_with_info = paths_with_info.get(j);
+                    BezierPath.splitReturn new_paths = BezierPath.splitBeizPath(path_with_info.first, split);
                     if(new_paths != null)
                     {
                         paths_with_info.remove(j);
@@ -127,9 +127,9 @@ public class SvgImporter {
 
         List<SVG_ReturnValue> ret = new ArrayList<>(paths_with_info.size());
         int c = 0;
-        for(Pair<BeizierPath,Integer> p : paths_with_info) {
+        for(Pair<BezierPath,Integer> p : paths_with_info) {
             // using a hashset here might be slow...
-            ret.add(new SVG_ReturnValue(new FilledBeizierPath(p.first,renderer),p.second, c, new HashSet<Integer>()));
+            ret.add(new SVG_ReturnValue(new FilledBezierPath(p.first,renderer),p.second, c, new HashSet<Integer>()));
             ++c;
         }
 
@@ -139,7 +139,7 @@ public class SvgImporter {
             int i = 0;
             for(SVG_ReturnValue val : ret)
             {
-                for(Beizier b : val.path.path)
+                for(Bezier b : val.path.path)
                 {
                     if(b.isOnCurve(point,0.1f))
                     {
@@ -154,12 +154,12 @@ public class SvgImporter {
             }
         }
         int i;
-        for(BeizierPath conn:connections)
+        for(BezierPath conn:connections)
         {
             Vector2 start = conn.points[0];
             Vector2 end = conn.points[conn.points.length-1];
 
-            new DashedBeizierLine(conn,renderer); //this should probably not be done from here..
+            new DashedBezierLine(conn,renderer); //this should probably not be done from here..
             SVG_ReturnValue first_val = null;
             int first_index = -1;
 
@@ -192,7 +192,7 @@ public class SvgImporter {
         }
 
         // hadling the region fusion
-        for(BeizierPath conn:regionConnections)
+        for(BezierPath conn:regionConnections)
         {
             Vector2 start = conn.points[0];
             Vector2 end = conn.points[conn.points.length-1];
@@ -241,7 +241,7 @@ public class SvgImporter {
 
 
         // hadling the continent fusion
-        for(BeizierPath conn:continentConnections)
+        for(BezierPath conn:continentConnections)
         {
             Vector2 start = conn.points[0];
             Vector2 end = conn.points[conn.points.length-1];

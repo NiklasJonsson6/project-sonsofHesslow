@@ -1,8 +1,5 @@
-package com.sonsofhesslow.games.risk.graphics.Geometry;
+package com.sonsofhesslow.games.risk.graphics.geometry;
 
-/**
- * Created by Daniel on 09/04/2016.
- */
 public class Vector3 {
     public final float x;
     public final float y;

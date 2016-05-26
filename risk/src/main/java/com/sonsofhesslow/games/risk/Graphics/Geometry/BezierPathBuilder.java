@@ -1,22 +1,18 @@
-package com.sonsofhesslow.games.risk.graphics.Geometry;
+package com.sonsofhesslow.games.risk.graphics.geometry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by Daniel on 07/04/2016.
- */
-
-public class BeizierPathBuilder
+public class BezierPathBuilder
 {
-    private final List<Beizier> beiziers = new ArrayList<>();
+    private final List<Bezier> beziers = new ArrayList<>();
 
-    public boolean addBeiz(Beizier beizier)
+    public boolean addBeiz(Bezier bezier)
     {
-        if(beiziers.isEmpty() || Vector2.AlmostEqual(beizier.points[0], (beiziers.get(beiziers.size() - 1).points[3])))
+        if(beziers.isEmpty() || Vector2.AlmostEqual(bezier.points[0], (beziers.get(beziers.size() - 1).points[3])))
         {
-            beiziers.add(beizier);
+            beziers.add(bezier);
             return true;
         }
         else
@@ -24,19 +20,19 @@ public class BeizierPathBuilder
             return false;
         }
     }
-    public void addBeizPath(BeizierPath beizPath)
+    public void addBeizPath(BezierPath beizPath)
     {
-        for (Beizier b:beizPath)
+        for (Bezier b:beizPath)
         {
             if(!addBeiz(b))throw new RuntimeException("fuck me");
         }
     }
 
-    public boolean fitAndAddBeizPath(BeizierPath addition)
+    public boolean fitAndAddBeizPath(BezierPath addition)
     {
-        if(addition.isClosed()) throw new RuntimeException("self intersecting beizierpaths is not supported");
-        Vector2 currentFirst = beiziers.get(0).points[0];
-        Vector2 currentLast = beiziers.get(beiziers.size()-1).points[3];
+        if(addition.isClosed()) throw new RuntimeException("self intersecting bezierpaths is not supported");
+        Vector2 currentFirst = beziers.get(0).points[0];
+        Vector2 currentLast = beziers.get(beziers.size()-1).points[3];
         Vector2 addedFirst = addition.points[0];
         Vector2 addedLast = addition.points[addition.points.length-1];
 
@@ -54,7 +50,7 @@ public class BeizierPathBuilder
 
         if(Vector2.AlmostEqual(currentFirst,addedLast))
         {
-            BeizierPath old = get(false);
+            BezierPath old = get(false);
             clear();
             addBeizPath(addition);
             addBeizPath(old);
@@ -63,7 +59,7 @@ public class BeizierPathBuilder
 
         if(Vector2.AlmostEqual(currentFirst,addedFirst))
         {
-            BeizierPath old = get(false);
+            BezierPath old = get(false);
             clear();
             addBeizPath(old.reverse());
             addBeizPath(addition);
@@ -79,16 +75,16 @@ public class BeizierPathBuilder
 
     public void clear()
     {
-        beiziers.clear();
+        beziers.clear();
     }
 
-    public BeizierPath get(boolean close)
+    public BezierPath get(boolean close)
     {
         if(close)
         {
-            if(!Vector2.AlmostEqual(beiziers.get(0).points[0],(beiziers.get(beiziers.size()-1).points[3])))
+            if(!Vector2.AlmostEqual(beziers.get(0).points[0],(beziers.get(beziers.size()-1).points[3])))
             {
-                for(Beizier b: beiziers)
+                for(Bezier b: beziers)
                 {
                     //System.out.println(Arrays.deepToString(b.points));
                 }
@@ -96,32 +92,32 @@ public class BeizierPathBuilder
             }
             else
             {
-                Vector2[] points = new Vector2[beiziers.size()*3];
+                Vector2[] points = new Vector2[beziers.size()*3];
                 int i = 0;
-                for(Beizier b : beiziers)
+                for(Bezier b : beziers)
                 {
                     points[i++] =b.points[0];
                     points[i++] =b.points[1];
                     points[i++] =b.points[2];
                 }
-                return new BeizierPath(points);
+                return new BezierPath(points);
             }
         }
         else
         {
-            Vector2[] points = new Vector2[beiziers.size()*3+1];
+            Vector2[] points = new Vector2[beziers.size()*3+1];
             int i = 0;
-            for(Beizier b : beiziers)
+            for(Bezier b : beziers)
             {
                 points[i++] =b.points[0];
                 points[i++] =b.points[1];
                 points[i++] =b.points[2];
             }
-            Vector2 endPoint = beiziers.get(beiziers.size()-1).points[3];
+            Vector2 endPoint = beziers.get(beziers.size()-1).points[3];
 
             points[i] = endPoint;
 
-            return new BeizierPath(points);
+            return new BezierPath(points);
         }
     }
 }

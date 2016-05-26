@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.sonsofhesslow.games.risk.graphics.Geometry.Vector3;
-import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.*;
-import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.Number;
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector3;
+import com.sonsofhesslow.games.risk.graphics.graphicsObjects.*;
+import com.sonsofhesslow.games.risk.graphics.graphicsObjects.Number;
 
 public class GraphicsManager {
 
-    FilledBeizierPath[] beiziers;
+    FilledBezierPath[] beziers;
     private Integer[][] beizNeighbors;
     private Integer[] beizContinents;
     private Number[] numbers;
@@ -58,13 +58,13 @@ public class GraphicsManager {
         try
         {
             List<SvgImporter.SVG_ReturnValue> tmp = SvgImporter.read(resources.openRawResource(R.raw.new_world),renderer);
-            beiziers = new FilledBeizierPath[tmp.size()];
+            beziers = new FilledBezierPath[tmp.size()];
             beizNeighbors = new Integer[tmp.size()][];
             beizContinents = new Integer[tmp.size()];
             int c = 0;
             for(SvgImporter.SVG_ReturnValue ret : tmp)
             {
-                beiziers[c] = ret.path;
+                beziers[c] = ret.path;
                 beizNeighbors[c] = ret.neighbors.toArray(new Integer[ret.neighbors.size()]);
                 beizContinents[c] = ret.continent_id;
                 updatables.add(ret.path);
@@ -75,7 +75,7 @@ public class GraphicsManager {
             for(int i = 0; i<numbers.length;i++)
             {
                 numbers[i] = new Number(-1,renderer);
-                numbers[i].setPos(beiziers[i].getCenter());
+                numbers[i].setPos(beziers[i].getCenter());
                 numbers[i].drawOrder = 1000;
             }
         } catch (IOException ex)
@@ -87,14 +87,14 @@ public class GraphicsManager {
 
     public void setHeight(int regionId, float height)
     {
-        beiziers[regionId].setPos(new Vector3(0, 0, -height));
+        beziers[regionId].setPos(new Vector3(0, 0, -height));
     }
     private final Map<Pair<Integer,Integer>,NumberedArrow> arrows = new HashMap<>();
     public void addArrow(int territoryIdFrom, int territoyIdTo, int value,float[] color)
     {
         arrows.put(new Pair<>(territoryIdFrom,territoyIdTo),
-                new NumberedArrow(renderer,beiziers[territoryIdFrom].getCenter(),
-                        beiziers[territoyIdTo].getCenter(),color,value));
+                new NumberedArrow(renderer,beziers[territoryIdFrom].getCenter(),
+                        beziers[territoyIdTo].getCenter(),color,value));
     }
     public void removeArrow(int territoryIdFrom, int territoyIdTo)
     {
@@ -112,17 +112,17 @@ public class GraphicsManager {
 
     public void setColor(int regionId, float[] Color)
     {
-        beiziers[regionId].setColor(Color);
+        beziers[regionId].setColor(Color);
     }
 
     public void setColor(int regionId, float[] Color, int originId)
     {
-        beiziers[regionId].setColor(Color,beiziers[originId].getCenter());
+        beziers[regionId].setColor(Color,beziers[originId].getCenter());
     }
 
     public void setOutlineColor(int regionId, float[] Color)
     {
-        beiziers[regionId].setColorOutline(Color);
+        beziers[regionId].setColorOutline(Color);
     }
 
     public void setArmies(int regionId, int numberOfArmies)
@@ -158,7 +158,7 @@ public class GraphicsManager {
     }
 
     public int getNumberOfTerritories() {
-        return beiziers.length;
+        return beziers.length;
     }
     public void  requestRender(){MyGLSurfaceView.ref.requestRender();}
 }

@@ -22,15 +22,15 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 
-import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.GLObject;
+import com.sonsofhesslow.games.risk.graphics.graphicsObjects.GLObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
-import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.Renderer;
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.graphicsObjects.Renderer;
 
 import java.util.concurrent.*;
 

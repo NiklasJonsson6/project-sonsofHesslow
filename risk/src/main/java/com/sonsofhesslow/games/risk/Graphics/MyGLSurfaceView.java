@@ -28,8 +28,8 @@ import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 
-import com.sonsofhesslow.games.risk.graphics.GraphicsObjects.*;
-import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.graphicsObjects.*;
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
 
 /**
  * A view container where OpenGL ES graphics can be drawn on screen.
@@ -131,7 +131,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
             int index = 0;
             boolean hasTouchedRegion = false;
             Vector2 world_pos_stitched = MyGLRenderer.screenToWorldCoors_stitched(screen_pos, 0);
-            for (FilledBeizierPath path : GraphicsManager.getInstance().beiziers) {
+            for (FilledBezierPath path : GraphicsManager.getInstance().beziers) {
                 float z = path.getPos().z;
                 Vector2 adjusted_worldPos;
                 if (z == 0)

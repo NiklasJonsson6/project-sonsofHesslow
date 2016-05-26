@@ -1,4 +1,4 @@
-package com.sonsofhesslow.games.risk.graphics.GraphicsObjects;
+package com.sonsofhesslow.games.risk.graphics.graphicsObjects;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -8,8 +8,8 @@ import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.text.TextPaint;
 
-import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
-import com.sonsofhesslow.games.risk.graphics.Geometry.Vector3;
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector3;
 
 /**
  * Created by Daniel on 04/05/2016.

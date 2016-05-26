@@ -1,10 +1,10 @@
-package com.sonsofhesslow.games.risk.graphics.GraphicsObjects;
+package com.sonsofhesslow.games.risk.graphics.graphicsObjects;
 
 import android.opengl.Matrix;
-import com.sonsofhesslow.games.risk.graphics.Geometry.BeizierPath;
-import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.geometry.BezierPath;
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
 
-public class DashedBeizierLine extends GLObject{
+public class DashedBezierLine extends GLObject{
     private final Mesh mesh;
     private DefaultShader shader;
     @Override
@@ -15,10 +15,10 @@ public class DashedBeizierLine extends GLObject{
 
     private final int naive_precision = 30; //higher is more detailed
 
-    public DashedBeizierLine(BeizierPath path, Renderer renderer) // start ctl ctl point ctl ctl point ctl ctl (start)
+    public DashedBezierLine(BezierPath path, Renderer renderer) // start ctl ctl point ctl ctl point ctl ctl (start)
     {
         super(renderer);
-        Vector2[] verts = path.approximateBeizierPath_naive(naive_precision);
+        Vector2[] verts = path.approximatebezierPath_naive(naive_precision);
         Vector2[] outline_verts = new Vector2[verts.length*2];
 
         //while the triangles are not guaranteed to be non-overlapping constant winding.

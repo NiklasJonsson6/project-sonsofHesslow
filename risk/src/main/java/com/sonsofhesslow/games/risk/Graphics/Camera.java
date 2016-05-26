@@ -2,8 +2,8 @@ package com.sonsofhesslow.games.risk.graphics;
 
 import android.opengl.Matrix;
 
-import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
-import com.sonsofhesslow.games.risk.graphics.Geometry.Vector3;
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector3;
 
 /**
  * Created by daniel on 3/31/16.

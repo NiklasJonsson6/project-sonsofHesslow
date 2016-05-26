@@ -6,10 +6,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PushbackReader;
 
-import com.sonsofhesslow.games.risk.graphics.Geometry.Beizier;
-import com.sonsofhesslow.games.risk.graphics.Geometry.BeizierPath;
-import com.sonsofhesslow.games.risk.graphics.Geometry.BeizierPathBuilder;
-import com.sonsofhesslow.games.risk.graphics.Geometry.Vector2;
+import com.sonsofhesslow.games.risk.graphics.geometry.Bezier;
+import com.sonsofhesslow.games.risk.graphics.geometry.BezierPath;
+import com.sonsofhesslow.games.risk.graphics.geometry.BezierPathBuilder;
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
 
 /**
  * Created by Daniel on 20/04/2016.
@@ -93,7 +93,7 @@ class SvgReader
         else return new Vector2(x,y);
     }
 
-    private Beizier readBeiz(char mode) throws IOException{
+    private Bezier readBeiz(char mode) throws IOException{
         switch (mode) {
             case 'm':
                 if(pos.x != 0 || pos.y != 0) {return readBeiz('l');}
@@ -108,7 +108,7 @@ class SvgReader
                 Vector2 c1 = readVector2(false);
                 Vector2 c2 = readVector2(false);
                 pos = readVector2(false);
-                return new Beizier(start, c1, c2, pos);
+                return new Bezier(start, c1, c2, pos);
             }
             case 'c':
             {
@@ -116,19 +116,19 @@ class SvgReader
                 Vector2 c1 = readVector2(true);
                 Vector2 c2 = readVector2(true);
                 pos = readVector2(true);
-                return new Beizier(start, c1, c2, pos);
+                return new Bezier(start, c1, c2, pos);
             }
             case 'L':
             {
                 Vector2 start = pos;
                 pos = readVector2(false);
-                return new Beizier(start, start, pos, pos);
+                return new Bezier(start, start, pos, pos);
             }
             case 'l':
             {
                 Vector2 start = pos;
                 pos = readVector2(true);
-                return new Beizier(start, start, pos, pos);
+                return new Bezier(start, start, pos, pos);
             }
             default:
                 throw new RuntimeException("unknown/unimplemented mode:\'" + mode + "\'");
@@ -153,7 +153,7 @@ class SvgReader
         boolean isCont=false;
         boolean isReg =false;
 
-        BeizierPath ret = null;
+        BezierPath ret = null;
         for(;;)
         {
             skipWhite();
@@ -164,7 +164,7 @@ class SvgReader
             switch (s) {
                 case "d":
                     pos = Vector2.Zero();
-                    BeizierPathBuilder b = new BeizierPathBuilder();
+                    BezierPathBuilder b = new BezierPathBuilder();
 
                     for (; ; ) {
                         skipWhite();
@@ -180,7 +180,7 @@ class SvgReader
                             break;
                         }
                         while (isNextFloat()) {
-                            Beizier beiz = readBeiz((char) c);
+                            Bezier beiz = readBeiz((char) c);
                             if (beiz != null)
                                 b.addBeiz(beiz);
                         }
