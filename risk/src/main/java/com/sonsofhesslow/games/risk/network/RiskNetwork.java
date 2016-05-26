@@ -18,19 +18,16 @@ import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
 import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.example.games.basegameutils.BaseGameUtils;
-import com.sonsofhesslow.games.risk.Controller;
-import com.sonsofhesslow.games.risk.MainActivity;
 import com.sonsofhesslow.games.risk.R;
-import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
-import com.sonsofhesslow.games.risk.model.Player;
-import com.sonsofhesslow.games.risk.model.Territory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RiskNetwork implements GooglePlayNetworkCompatible {
     public static Resources resources;
+    public boolean signInClicked = false;
 
+    UIUpdate uiUpdate;
     final static String TAG = "Risk";
 
     // Request codes for the UIs that is shown with startActivityForResult:
@@ -67,14 +64,13 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     //google network in use
     private GooglePlayNetwork googlePlayNetwork = null;
 
-    //activity in use
-    private MainActivity activity;
 
-    public RiskNetwork(MainActivity activity, GoogleApiClient mGoogleApiClient, GooglePlayNetwork googlePlayNetwork) {
+
+    public RiskNetwork(UIUpdate uiUpdate, GoogleApiClient mGoogleApiClient, GooglePlayNetwork googlePlayNetwork) {
         setGooglePlayNetwork(googlePlayNetwork);
         googlePlayNetwork.setNetworkTarget(this);
-        this.activity = activity;
         this.mGoogleApiClient = mGoogleApiClient;
+        this.uiUpdate = uiUpdate;
     }
 
     private boolean selfModified = false;
@@ -86,35 +82,24 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
         roomConfigBuilder.setInvitationIdToAccept(invId)
                 .setMessageReceivedListener(googlePlayNetwork)
                 .setRoomStatusUpdateListener(googlePlayNetwork);
-        switchToScreen(R.id.screen_wait);
+        uiUpdate.showWaitScreen();
         resetGameVars();
         Games.RealTimeMultiplayer.join(mGoogleApiClient, roomConfigBuilder.build());
-    }
+}
 
     // Show the waiting room UI
     void showWaitingRoom(Room room) {
-        // minimum number of players required for our game
-        // For simplicity, it's required for everyone to join the game before it's started
-        final int MIN_PLAYERS = Integer.MAX_VALUE;
-        Intent i = Games.RealTimeMultiplayer.getWaitingRoomIntent(mGoogleApiClient, room, MIN_PLAYERS);
-
-        // show waiting room UI
-        activity.startActivityForResult(i, RC_WAITING_ROOM);
+        uiUpdate.showWaitingRoom(room);
     }
 
     public void onInvitationReceived(Invitation invitation) {
-        //invitation to play a game, store it in mIncomingInvitationId and show popup on screen
-        mIncomingInvitationId = invitation.getInvitationId();
-        ((TextView) activity.findViewById(R.id.incoming_invitation_text)).setText(
-                invitation.getInviter().getDisplayName() + " " +
-                        activity.getString(R.string.is_inviting_you));
-        switchToScreen(activity.getmCurScreen()); // This will show the invitation popup
+        uiUpdate.displayInvitation(invitation.getInviter().getDisplayName());
     }
 
     public void onInvitationRemoved(String invitationId) {
         if (mIncomingInvitationId.equals(invitationId)&&mIncomingInvitationId!=null) {
             mIncomingInvitationId = null;
-            switchToScreen(activity.getmCurScreen()); //hide the invitation popup
+            uiUpdate.removeInvitation();
         }
     }
 
@@ -157,14 +142,13 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
             return;
         }
 
-        if (activity.mSignInClicked || mAutoStartSignInFlow) {
+        if (signInClicked || mAutoStartSignInFlow) {
             mAutoStartSignInFlow = false;
-            activity.mSignInClicked = false;
-            mResolvingConnectionFailure = BaseGameUtils.resolveConnectionFailure(activity, mGoogleApiClient,
-                    connectionResult, RC_SIGN_IN, activity.getString(R.string.signin_other_error));
+            signInClicked = false;
+            mResolvingConnectionFailure = uiUpdate.resolveConnection(connectionResult);
         }
-
-        switchToScreen(R.id.screen_sign_in);
+        uiUpdate.showSignInScreen();
+        //switchToScreen(R.id.screen_sign_in);
     }
 
     //connected to the room, (not playing yet)
@@ -200,8 +184,8 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
 
     // Show error message about game being cancelled and return to main screen.
     void showGameError() {
-        BaseGameUtils.makeSimpleDialog(activity, activity.getString(R.string.game_problem));
-        switchToMainScreen();
+        uiUpdate.displayError();
+
     }
 
     // room has been created
@@ -234,9 +218,8 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
 
         mMultiplayer = true;
         System.out.println("online online");
-        activity.startGame(true, mParticipants);
+        uiUpdate.startGame(mParticipants);
         if (statusCode != GamesStatusCodes.STATUS_OK) {
-
             Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
             showGameError();
             return;
@@ -317,84 +300,30 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
 
 
     //COMMUNICATIONS SECTION. Methods that implement the game's network protocol
-
+    private ArrayList<NetworkListener> listeners = new ArrayList<>();
+    public void addListener( NetworkListener listener){
+        listeners.add(listener);
+    }
+    public void removeListener(NetworkListener listener) {
+        listeners.remove(listener);
+    }
+    private void notifyListners(NetworkChangeEvent event) {
+        for(NetworkListener listener: listeners){
+            listener.handleNetworkChange(event);
+        }
+    }
     @Override
     public void onRealTimeMessageReceived(RealTimeMessage rtm) {
         byte[] messageBuffer = rtm.getMessageData();
-        String sender = rtm.getSenderParticipantId();
-
         selfModified = true;
-
         try {
             RiskNetworkMessage recievedNetworkData = RiskNetworkMessage.deSerialize(messageBuffer);
-
-
-            activity.getController().refreshGamePhase();
-
-            switch (recievedNetworkData.action) {
-                case armyAmountChange: {
-                    System.out.println("rtmr region changed");
-                    Territory changedTerritory = Controller.getTerritoryById(recievedNetworkData.regionId);
-                    if(changedTerritory!=null) {
-                        changedTerritory.setArmyCount(recievedNetworkData.armies);
-                    }
-                    else {
-                        System.out.println("illegal region index");
-                    }
-                }
-                break;
-                case occupierChange: {
-                    System.out.println("rtmr in owner changed");
-                    Territory changedTerritory = Controller.getTerritoryById(recievedNetworkData.regionId);
-                    Player newOccupier = null;
-
-                    for(Player p : Controller.getRiskModel().getPlayers()) {
-                        if(p.getParticipantId() == recievedNetworkData.participantId) {
-                            System.out.println("found owner");
-                            newOccupier = p;
-                            break;
-                        }
-                    }
-                    if(changedTerritory!=null) {
-                        changedTerritory.setOccupier(newOccupier);
-                    }
-                    else {
-                        System.out.println("illegal region index");
-                    }
-                }
-                break;
-                case turnChange: {
-                    System.out.println("rtmr turnchange");
-                    activity.getController().nextPlayer();
-                    /*int playerIndex = 0;
-                    int amountOfPlayers = Controller.riskModel.getPlayers().length;
-                    for(int i = 0; i < amountOfPlayers; i++) {
-                        if(recievedNetworkData.participantId == Controller.riskModel.getPlayers()[i].getParticipantId()){
-                            playerIndex = i;
-                        }
-                    }
-                    if(playerIndex == amountOfPlayers - 1){
-                        System.out.printf("new players turn (wrap turn)");
-                        Controller.riskModel.setCurrentPlayer(Controller.riskModel.getPlayers()[0]);
-                    } else {
-                        System.out.println("new players turn");
-                        Controller.riskModel.setCurrentPlayer(Controller.riskModel.getPlayers()[playerIndex + 1]);
-                    }*/
-                }
-                break;
-                default:{
-                    System.out.println("network failure");
-                    BaseGameUtils.makeSimpleDialog(activity, "Unknown network failure.\n(Please send an email to onetapchap@gmail.com and tell us how this happend, thank you!)");
-                }
-            }
+            notifyListners(new NetworkChangeEvent(recievedNetworkData));
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
-
         selfModified = false;
-
-        GraphicsManager.getInstance().requestRender();
     }
 
     // Broadcast to everybody else.
@@ -431,16 +360,14 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     };
     int mCurScreen = -1;
 
-    void switchToScreen(int screenId) {
-        activity.switchToScreen(screenId);
-    }
-
     void switchToMainScreen() {
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            switchToScreen(R.id.screen_main);
+            uiUpdate.showMainScreen();
+            //switchToScreen(R.id.screen_main);
         }
         else {
-            switchToScreen(R.id.screen_sign_in);
+            uiUpdate.showSignInScreen();
+            //switchToScreen(R.id.screen_sign_in);
         }
     }
 

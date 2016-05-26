@@ -28,13 +28,6 @@ public class RiskNetworkMessage implements Serializable{
         return bos.toByteArray();
     }
 
-    enum NetworkAction
-    {
-        turnChange,
-        armyAmountChange,
-        occupierChange,
-    }
-
     public RiskNetworkMessage(NetworkAction action, int armies, int participantId, int regionId) {
         this.action = action;
         this.armies = armies;

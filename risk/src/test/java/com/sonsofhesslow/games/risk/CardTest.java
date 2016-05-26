@@ -1,6 +1,7 @@
 package com.sonsofhesslow.games.risk;
 
 import com.sonsofhesslow.games.risk.model.Card;
+import com.sonsofhesslow.games.risk.model.Die;
 import com.sonsofhesslow.games.risk.model.Player;
 
 import org.junit.Test;

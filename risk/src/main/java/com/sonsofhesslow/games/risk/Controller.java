@@ -2,6 +2,7 @@ package com.sonsofhesslow.games.risk;
 
 import android.support.annotation.Nullable;
 
+import com.google.example.games.basegameutils.BaseGameUtils;
 import com.sonsofhesslow.games.risk.graphics.GL_TouchEvent;
 import com.sonsofhesslow.games.risk.graphics.GL_TouchListener;
 import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
@@ -10,13 +11,15 @@ import com.sonsofhesslow.games.risk.model.Die;
 import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
 import com.sonsofhesslow.games.risk.model.Territory;
+import com.sonsofhesslow.games.risk.network.NetworkChangeEvent;
+import com.sonsofhesslow.games.risk.network.NetworkListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
 
-public class Controller implements GL_TouchListener {
+public class Controller implements GL_TouchListener, NetworkListener {
     private static final int TERRITORIES_IN_ASIA = 12;
     private static final int TERRITORIES_IN_NORTH_AMERICA = 9;
     private static final int TERRITORIES_IN_EUROPE = 7;
@@ -76,6 +79,51 @@ public class Controller implements GL_TouchListener {
             //if it's an online game this will be done later, after selfId is set
             setStartingArmies();
         }
+    }
+
+    @Override
+    public void handleNetworkChange(NetworkChangeEvent event) {
+        refreshGamePhase();
+
+        switch (event.action) {
+            case armyAmountChange: {
+                System.out.println("rtmr region changed");
+                Territory changedTerritory = Controller.getTerritoryById(event.getRegionId());
+                if(changedTerritory!=null) {
+                    changedTerritory.setArmyCount(event.getArmies());
+                }
+                else {
+                    System.out.println("illegal region index");
+                }
+            }
+            break;
+            case occupierChange: {
+                System.out.println("rtmr in owner changed");
+                Territory changedTerritory = Controller.getTerritoryById(event.getRegionId());
+                Player newOccupier = null;
+
+                for(Player p : Controller.getRiskModel().getPlayers()) {
+                    if(p.getParticipantId() == event.getParticipantId()) {
+                        System.out.println("found owner");
+                        newOccupier = p;
+                        break;
+                    }
+                }
+                if(changedTerritory!=null) {
+                    changedTerritory.setOccupier(newOccupier);
+                }
+                else {
+                    System.out.println("illegal region index");
+                }
+            }
+            break;
+            case turnChange: {
+                System.out.println("rtmr turnchange");
+                nextPlayer();
+            }
+            break;
+        }
+        GraphicsManager.getInstance().requestRender();
     }
 
     public void handle(GL_TouchEvent event) {
@@ -496,4 +544,6 @@ public class Controller implements GL_TouchListener {
         riskModel.getCurrentPlayer().setCards(temp);
         riskView.updateCardView(riskModel);
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.sonsofhesslow.games.risk.network;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -7,8 +8,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
-import com.sonsofhesslow.games.risk.Controller;
-import com.sonsofhesslow.games.risk.MainActivity;
 import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
 import com.sonsofhesslow.games.risk.model.Territory;
@@ -21,29 +20,32 @@ import java.util.Observer;
 public class RiskNetworkManager implements Observer {
     boolean selfModified;
     RiskNetwork riskNetwork = null;
-    Controller controller;
     GoogleApiClient googleApiClient;
     GooglePlayNetwork googlePlayNetwork;
-    Risk riskModel = null;
-    MainActivity activity = null;
 
-    public RiskNetworkManager(MainActivity activity) {
-        this.activity = activity;
+    public RiskNetworkManager(Context context,UIUpdate uiUpdate) {
         this.googlePlayNetwork = new GooglePlayNetwork();
 
         // Create the Google Api Client with access to Games
-        this.googleApiClient = new GoogleApiClient.Builder(activity)
+        this.googleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(googlePlayNetwork)
                 .addOnConnectionFailedListener(googlePlayNetwork)
                 .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
 
-        activity.setmGoogleApiClient(googleApiClient);
 
-        riskNetwork = new RiskNetwork(activity, this.googleApiClient, googlePlayNetwork);
+        riskNetwork = new RiskNetwork(uiUpdate,this.googleApiClient, googlePlayNetwork);
 
         riskNetwork.setGooglePlayNetwork(googlePlayNetwork);
         googlePlayNetwork.setNetworkTarget(riskNetwork);
+    }
+    public GoogleApiClient getGoogleApiClient()
+    {
+        return googleApiClient;
+    }
+    public RiskNetwork getRiskNetwork()
+    {
+        return riskNetwork;
     }
 
     public void update(Observable obs, Object arg) {
@@ -99,12 +101,6 @@ public class RiskNetworkManager implements Observer {
         }
     }
 
-    public void setController(Controller controller) {
-        this.controller = controller;
-        this.controller.setSelfId(riskNetwork.getmMyId().hashCode());
-
-        setRiskModel(this.controller.getRiskModel());
-    }
 
     public void startQuickGame() {
         //1-3 opponents
@@ -149,21 +145,6 @@ public class RiskNetworkManager implements Observer {
                 .setMessageReceivedListener(googlePlayNetwork)
                 .setRoomStatusUpdateListener(googlePlayNetwork);
         Games.RealTimeMultiplayer.join(googleApiClient, roomConfigBuilder.build());
-    }
-
-    public RiskNetwork getRiskNetwork() {
-        return riskNetwork;
-    }
-
-    private void setRiskModel(Risk riskModel) {
-        System.out.println("setting risk model");
-        this.riskModel = riskModel;
-
-        //add to observables
-        riskModel.addObserver(this);
-        for(Territory territory: riskModel.getTerritories()) {
-            territory.addObserver(this);
-        }
     }
 
     public GooglePlayNetwork getGooglePlayNetwork() {
