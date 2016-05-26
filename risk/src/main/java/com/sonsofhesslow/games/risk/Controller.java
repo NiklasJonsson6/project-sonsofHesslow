@@ -38,6 +38,7 @@ public class Controller implements GL_TouchListener {
     private boolean territoryTaken = false;
     private Overlay overlayController;
     private ArrayList<Territory> movementChangedTerritories = new ArrayList<>();
+    private View riskView = null;
 
     public Controller(int[] playerIds, Overlay overlayController) {
         this.selfId = 0;
@@ -47,7 +48,7 @@ public class Controller implements GL_TouchListener {
 
         riskModel.setCurrentPlayer(riskModel.getPlayers()[0]);
 
-        View riskView = new View(riskModel);
+        riskView = new View(riskModel);
 
         //add observers
         riskModel.addObserver(riskView);

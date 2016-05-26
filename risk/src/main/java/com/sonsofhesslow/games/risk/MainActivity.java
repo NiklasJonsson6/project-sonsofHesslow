@@ -494,17 +494,12 @@ public class MainActivity extends AppCompatActivity
     public void hideList(View v){
         newOverlayController.setListVisible(false);
     }
-<<<<<<< HEAD
-    public ArrayList<Participant> getmParticipants() {
-        return mParticipants;
-    }
+
     public void getCardsPressed(View v){
         if(newOverlayController.getSelectedCards().size() == 3) {
             controller.turnInCards(newOverlayController.getSelectedCards());
         }
     }
-
-=======
 
     public void setmGoogleApiClient(GoogleApiClient mGoogleApiClient) {
         this.mGoogleApiClient = mGoogleApiClient;
@@ -525,5 +520,4 @@ public class MainActivity extends AppCompatActivity
     public int getmCurScreen() {
         return mCurScreen;
     }
->>>>>>> netfix
 }
