@@ -32,6 +32,7 @@ import com.sonsofhesslow.games.risk.graphics.MyGLRenderer;
 import com.sonsofhesslow.games.risk.graphics.MyGLSurfaceView;
 import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
+import com.sonsofhesslow.games.risk.model.Territory;
 import com.sonsofhesslow.games.risk.network.RiskNetworkManager;
 import com.sonsofhesslow.games.risk.network.UIUpdate;
 
@@ -472,12 +473,20 @@ public class MainActivity extends AppCompatActivity
 
     private void initOnlineGame(int[] ids) {
         this.controller = new Controller(ids, newOverlayController);
+        controller.setSelfId(riskNetworkManager.getRiskNetwork().getmMyId().hashCode());
+        //add to observables
+        Risk riskModel = controller.getRiskModel();
+        riskModel.addObserver(riskNetworkManager);
+        for(Territory territory: riskModel.getTerritories()) {
+                territory.addObserver(riskNetworkManager);
+        }
+
+        riskNetworkManager.getRiskNetwork().addListener(controller);
     }
 
     private void initOfflineGame(int[] ids) {
         this.controller = new Controller(ids, newOverlayController);
     }
-
 
     private void resetGameVars() {
         // TODO: 2016-05-13 if needed

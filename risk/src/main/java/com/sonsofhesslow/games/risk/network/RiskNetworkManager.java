@@ -33,7 +33,6 @@ public class RiskNetworkManager implements Observer {
                 .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
 
-
         riskNetwork = new RiskNetwork(uiUpdate,this.googleApiClient, googlePlayNetwork);
 
         riskNetwork.setGooglePlayNetwork(googlePlayNetwork);
