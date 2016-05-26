@@ -181,7 +181,7 @@ public class Overlay {
         }
         //Adapter
         ListView listView = (ListView) parent.findViewById(R.id.listView);
-        listView.setAdapter(new CustomAdapter((MainActivity) context, names, images, armyCount, colour));
+        listView.setAdapter(new CustomAdapter(context, names, images, armyCount, colour));
         ((FrameLayout) parent.findViewById(R.id.listFrame)).setLayoutParams(new FrameLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 280, context.getResources().getDisplayMetrics()),
                 (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 57*names.size() + 50, context.getResources().getDisplayMetrics())));
     }
@@ -208,7 +208,7 @@ public class Overlay {
         }
         //Adapter
         gridView = (GridView) parent.findViewById(R.id.gridView);
-        gridAdapter = new CardGridAdapter((MainActivity) context, names, images);
+        gridAdapter = new CardGridAdapter(context, names, images);
         gridView.setAdapter(gridAdapter);
         //((FrameLayout) parent.findViewById(R.id.gridView)).setLayoutParams(new FrameLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 280, context.getResources().getDisplayMetrics()),
                 //(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 57*names.size() + 50, context.getResources().getDisplayMetrics())));

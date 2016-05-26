@@ -29,9 +29,9 @@ public class View implements Observer {
     Overlay overlayController;
 
     GraphicsManager manager;
-    public View(final Risk risk) {
+    public View(final Risk risk, Overlay overlayController) {
         this.risk = risk;
-        overlayController = MainActivity.newOverlayController;
+        this.overlayController = overlayController;
         manager = manager.getInstance();
     }
 

@@ -22,7 +22,7 @@ public class CustomAdapter extends BaseAdapter{
     Context context;
     ArrayList<Uri> imageId;
     private static LayoutInflater inflater=null;
-    public CustomAdapter(MainActivity mainActivity, ArrayList<String> playerName, ArrayList<Uri> playerImage, ArrayList<String> armyCount, ArrayList<float[]> colours) {
+    public CustomAdapter(Context mainActivity, ArrayList<String> playerName, ArrayList<Uri> playerImage, ArrayList<String> armyCount, ArrayList<float[]> colours) {
         // TODO Auto-generated constructor stub
         this.playerName=playerName;
         this.armyCount=armyCount;

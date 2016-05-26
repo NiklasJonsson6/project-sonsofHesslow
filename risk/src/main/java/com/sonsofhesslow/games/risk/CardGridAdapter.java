@@ -28,7 +28,7 @@ public class CardGridAdapter extends BaseAdapter{
     ArrayList<View> rowView;
     ArrayList<Integer> selectedView;
 
-    public CardGridAdapter(MainActivity mainActivity, ArrayList<String> prgmNameList, ArrayList<Integer> prgmImages) {
+    public CardGridAdapter(Context mainActivity, ArrayList<String> prgmNameList, ArrayList<Integer> prgmImages) {
         // TODO Auto-generated constructor stub
         result=prgmNameList;
         context=mainActivity;

@@ -51,7 +51,7 @@ public class Controller implements GL_TouchListener, NetworkListener {
 
         riskModel.setCurrentPlayer(riskModel.getPlayers()[0]);
 
-        riskView = new View(riskModel);
+        riskView = new View(riskModel, overlayController);
 
         //add observers
         riskModel.addObserver(riskView);
