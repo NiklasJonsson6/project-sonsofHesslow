@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -65,8 +64,6 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     //google network in use
     private GooglePlayNetwork googlePlayNetwork = null;
 
-
-
     public RiskNetwork(UIUpdate uiUpdate, GoogleApiClient mGoogleApiClient, GooglePlayNetwork googlePlayNetwork) {
         setGooglePlayNetwork(googlePlayNetwork);
         googlePlayNetwork.setNetworkTarget(this);
@@ -90,7 +87,8 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
 
     // Show the waiting room UI
     void showWaitingRoom(Room room) {
-        uiUpdate.showWaitingRoom(room);
+        Intent i = Games.RealTimeMultiplayer.getWaitingRoomIntent(mGoogleApiClient, room, Integer.MAX_VALUE);
+        uiUpdate.showWaitingRoom(i);
     }
 
     public void onInvitationReceived(Invitation invitation) {
@@ -127,7 +125,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
                 return;
             }
         }
-        switchToMainScreen();
+        switchToMainOrSignIn();
     }
 
     public void onConnectionSuspended(int i) {
@@ -146,19 +144,18 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
         if (signInClicked || mAutoStartSignInFlow) {
             mAutoStartSignInFlow = false;
             signInClicked = false;
-            mResolvingConnectionFailure = uiUpdate.resolveConnection(connectionResult);
+            BaseGameUtils.resolveConnectionFailure(uiUpdate.getActivity(), mGoogleApiClient,
+                    connectionResult, RC_SIGN_IN, uiUpdate.getActivity().getString(R.string.signin_other_error));
         }
         uiUpdate.showSignInScreen();
         //switchToScreen(R.id.screen_sign_in);
     }
-
     //connected to the room, (not playing yet)
     public void onConnectedToRoom(Room room) {
         Log.d(TAG, "onConnectedToRoom.");
         //get participants and my ID:
         //mParticipants = room.getParticipants();
         mMyId = room.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient));
-
         // save room ID if its not initialized in onRoomCreated() so player can leave cleanly before the game starts.
         if(mRoomId==null) {
             mRoomId = room.getRoomId();
@@ -169,12 +166,15 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
         Log.d(TAG, "My ID " + mMyId);
         Log.d(TAG, "<< CONNECTED TO ROOM>>");
     }
+    public void leaveRoom() {
+        Games.RealTimeMultiplayer.leave(mGoogleApiClient, googlePlayNetwork, mRoomId);
+    }
 
     // Called when player successfully left the room (this happens a result of voluntarily leaving via a call to leaveRoom().
     public void onLeftRoom(int statusCode, String roomId) {
         // player have left the room; return to main screen.
         Log.d(TAG, "onLeftRoom, code " + statusCode);
-        switchToMainScreen();
+        switchToMainOrSignIn();
     }
 
     // Called when player  get disconnected from the room. User returns to the main screen.
@@ -219,7 +219,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
 
         mMultiplayer = true;
         System.out.println("online online");
-        uiUpdate.startGame(mParticipants);
+        uiUpdate.startGame();
         if (statusCode != GamesStatusCodes.STATUS_OK) {
             Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
             showGameError();
@@ -227,6 +227,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
         }
         updateRoom(room);
     }
+
 
     @Override
     public void onJoinedRoom(int statusCode, Room room) {
@@ -359,16 +360,13 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
             R.id.screen_main, R.id.screen_sign_in,
             R.id.screen_wait
     };
-    int mCurScreen = -1;
 
-    void switchToMainScreen() {
+    void switchToMainOrSignIn() {
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             uiUpdate.showMainScreen();
-            //switchToScreen(R.id.screen_main);
         }
         else {
             uiUpdate.showSignInScreen();
-            //switchToScreen(R.id.screen_sign_in);
         }
     }
 

@@ -2,11 +2,14 @@ package com.sonsofhesslow.games.risk.network;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
+import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
@@ -14,6 +17,7 @@ import com.sonsofhesslow.games.risk.model.Territory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -22,7 +26,7 @@ public class RiskNetworkManager implements Observer {
     RiskNetwork riskNetwork = null;
     GoogleApiClient googleApiClient;
     GooglePlayNetwork googlePlayNetwork;
-
+    public static final int RESULT_LEFT_ROOM = 10005;
     public RiskNetworkManager(Context context,UIUpdate uiUpdate) {
         this.googlePlayNetwork = new GooglePlayNetwork();
 
@@ -46,7 +50,6 @@ public class RiskNetworkManager implements Observer {
     {
         return riskNetwork;
     }
-
     public void update(Observable obs, Object arg) {
         System.out.println("in update risknetworkmanager");
         if (obs instanceof Territory) {
@@ -148,6 +151,65 @@ public class RiskNetworkManager implements Observer {
 
     public GooglePlayNetwork getGooglePlayNetwork() {
         return googlePlayNetwork;
+    }
+    public void connect() {
+        googleApiClient.connect();
+    }
+    public void signOut() {
+        Games.signOut(googleApiClient);
+    }
+    public void disconnect() {
+        googleApiClient.disconnect();
+    }
+    public Intent getOpponentIntent() {
+        return Games.RealTimeMultiplayer.getSelectOpponentsIntent(googleApiClient, 1, 3);
+    }
+    public Intent getInvitationIntent(){
+        return Games.Invitations.getInvitationInboxIntent(googleApiClient);
+    }
+    public void leaveRoom() {
+        riskNetwork.leaveRoom();
+    }
+    public boolean isConnected()
+    {
+        return googleApiClient.isConnected();
+    }
+    public void acceptInvitation(Intent intent)
+    {
+        Invitation inv = intent.getExtras().getParcelable(Multiplayer.EXTRA_INVITATION);
+        acceptInviteToRoom(inv.getInvitationId());
+    }
+
+    public int[] getParticipantIds(){
+        ArrayList<Participant> participants = getRiskNetwork().getmParticipants();
+
+        int c = 0;
+        int[] ids = new int[participants.size()];
+        for(Participant participant : participants){
+            ids[c++] = participant.getParticipantId().hashCode(); //@hash collisions
+        }
+        return ids;
+    }
+    public List<String> getParticipantNames()
+    {
+        List<String> ret = new ArrayList<>();
+        ArrayList<Participant> participants = getRiskNetwork().getmParticipants();
+        for(Participant participant : participants)
+        {
+            ret.add(participant.getDisplayName());
+        }
+        return ret;
+    }
+
+    public List<Uri> getParticipantImages()
+    {
+        List<Uri> ret = new ArrayList<>();
+        ArrayList<Participant> participants = getRiskNetwork().getmParticipants();
+        for(Participant participant : participants)
+        {
+            ret.add(participant.getIconImageUri());
+        }
+        return ret;
     }
 }
 

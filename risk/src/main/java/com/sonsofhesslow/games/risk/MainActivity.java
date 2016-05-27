@@ -5,29 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.games.Games;
-import com.google.android.gms.games.GamesActivityResultCodes;
-import com.google.android.gms.games.multiplayer.Invitation;
-import com.google.android.gms.games.multiplayer.Multiplayer;
-import com.google.android.gms.games.multiplayer.Participant;
-import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.example.games.basegameutils.BaseGameUtils;
 import com.sonsofhesslow.games.risk.graphics.GLTouchEvent;
 import com.sonsofhesslow.games.risk.graphics.GLTouchListener;
-import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
 import com.sonsofhesslow.games.risk.graphics.geometry.Vector3;
 import com.sonsofhesslow.games.risk.graphics.Camera;
@@ -39,7 +29,8 @@ import com.sonsofhesslow.games.risk.model.Territory;
 import com.sonsofhesslow.games.risk.network.RiskNetworkManager;
 import com.sonsofhesslow.games.risk.network.UIUpdate;
 
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements GLTouchListener, View.OnClickListener, UIUpdate{
@@ -58,12 +49,6 @@ public class MainActivity extends AppCompatActivity
 
     // Request code used to invoke sign in user interactions.
     private static final int RC_SIGN_IN = 9001;
-
-    // Client used to interact with Google APIs.
-    private GoogleApiClient mGoogleApiClient;
-
-    // Room ID where the currently active game is taking place
-    String mRoomId = null;
 
     // Playing in multiplayer mode?
     boolean mMultiplayer = false;
@@ -87,7 +72,6 @@ public class MainActivity extends AppCompatActivity
         graphicsView.addListener(this);
 
         riskNetworkManager = new RiskNetworkManager(this,this);
-        this.mGoogleApiClient = riskNetworkManager.getGoogleApiClient();
 
         // set up a click listener for everything in main menus
         for (int id : CLICKABLES) {
@@ -138,29 +122,29 @@ public class MainActivity extends AppCompatActivity
             case R.id.button_single_player_2:
                 // play a single-player game
                 System.out.println("online singleplayer");
-                startGame(false, new int[2], null);
+                startGame(false, new int[2]);
                 break;
             case R.id.button_sign_in:
                 Log.d(TAG, "Sign-in button clicked");
                 riskNetworkManager.getRiskNetwork().signInClicked = true;
-                mGoogleApiClient.connect();
+                riskNetworkManager.connect();
                 break;
             case R.id.button_sign_out:
                 // user wants to sign out
                 Log.d(TAG, "Sign-out button clicked");
-                Games.signOut(mGoogleApiClient);
-                mGoogleApiClient.disconnect();
+                riskNetworkManager.signOut();
+                riskNetworkManager.disconnect();
                 switchToScreen(R.id.screen_sign_in);
                 break;
             case R.id.button_invite_players:
                 // show list of invitable players
-                intent = Games.RealTimeMultiplayer.getSelectOpponentsIntent(mGoogleApiClient, 1, 3);
+                intent = riskNetworkManager.getOpponentIntent();
                 switchToScreen(R.id.screen_wait);
                 startActivityForResult(intent, RC_SELECT_PLAYERS);
                 break;
             case R.id.button_see_invitations:
                 // show list of pending invitations
-                intent = Games.Invitations.getInvitationInboxIntent(mGoogleApiClient);
+                intent = riskNetworkManager.getInvitationIntent();
                 switchToScreen(R.id.screen_wait);
                 startActivityForResult(intent, RC_INVITATION_INBOX);
                 break;
@@ -204,7 +188,7 @@ public class MainActivity extends AppCompatActivity
 
                     // TODO: 2016-05-13 implement start game
                     //startGame(true, new int[2]);
-                } else if (responseCode == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
+                } else if (responseCode == riskNetworkManager.RESULT_LEFT_ROOM) {
                     // player indicated that they want to leave the room
                     leaveRoom();
                 } else if (responseCode == Activity.RESULT_CANCELED) {
@@ -216,7 +200,7 @@ public class MainActivity extends AppCompatActivity
                 Log.d(TAG, "onActivityResult with requestCode == RC_SIGN_IN, responseCode="
                         + responseCode + ", intent=" + intent);
                 if (responseCode == Activity.RESULT_OK) {
-                    mGoogleApiClient.connect();
+                    riskNetworkManager.connect();
                 } else {
                     BaseGameUtils.showActivityResultError(this, requestCode,responseCode, R.string.signin_other_error);
                 }
@@ -234,12 +218,11 @@ public class MainActivity extends AppCompatActivity
         }
 
         Log.d(TAG, "Invitation inbox UI succeeded.");
-        Invitation inv = data.getExtras().getParcelable(Multiplayer.EXTRA_INVITATION);
 
         // accept invitation
         switchToScreen(R.id.screen_wait);
         resetGameVars();
-        riskNetworkManager.acceptInviteToRoom(inv.getInvitationId());
+        riskNetworkManager.acceptInvitation(data);
     }
 
     // Handle the result of the "Select players UI", launched when the user clicked the
@@ -268,7 +251,7 @@ public class MainActivity extends AppCompatActivity
         // stop trying to keep the screen on
         stopKeepingScreenOn();
 
-        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()){
+        if (riskNetworkManager == null || !riskNetworkManager.isConnected()){
             switchToScreen(R.id.screen_sign_in);
         }
         else {
@@ -279,12 +262,12 @@ public class MainActivity extends AppCompatActivity
 
     public void onStart() {
         switchToScreen(R.id.screen_wait);
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+        if (riskNetworkManager != null && riskNetworkManager.isConnected()) {
             Log.w(TAG,
                     "GameHelper: client was already connected on onStart()");
         } else {
             Log.d(TAG,"Connecting client.");
-            mGoogleApiClient.connect();
+            riskNetworkManager.connect();
         }
         super.onStart();
     }
@@ -305,17 +288,13 @@ public class MainActivity extends AppCompatActivity
     public void leaveRoom() {
         Log.d(TAG, "Leaving room.");
         stopKeepingScreenOn();
-        if (mRoomId != null) {
-            //switchToScreen(R.id.screen_wait);
-            mRoomId = null;
-            //Games.RealTimeMultiplayer.leave(mGoogleApiClient, googlePlayNetwork, mRoomId);
-            Games.RealTimeMultiplayer.leave(mGoogleApiClient, riskNetworkManager.getGooglePlayNetwork(), mRoomId);
-        } else {
-            switchToMainScreen();
+        if (riskNetworkManager!=null) {
+            riskNetworkManager.leaveRoom();
         }
+        switchToMainScreen();
     }
 
-    public void startGame(boolean isOnline, int[] ids, ArrayList<Participant> participants) {
+    public void startGame(boolean isOnline, int[] ids) {
 
         if(graphicsView.getParent() != null) {
             setContentView(R.layout.activity_main);
@@ -331,14 +310,13 @@ public class MainActivity extends AppCompatActivity
 
         if(isOnline) {
             initOnlineGame(ids);
-            for(Player player : controller.getRiskModel().getPlayers()){
-                for(Participant participant : participants) {
-                    if(participant.getParticipantId().hashCode() == player.getParticipantId()) {
-                        //getting GooglePlay's account information, adding to player
-                        player.setName(participant.getDisplayName());
-                        player.setImageRefrence(participant.getIconImageUri());
-                    }
-                }
+            List<Uri> images = riskNetworkManager.getParticipantImages();
+            List<String> names = riskNetworkManager.getParticipantNames();
+            Iterator<Uri> imageIterator = images.iterator();
+            Iterator<String> namesIt = names.iterator();
+            for(Player player : Controller.getRiskModel().getPlayers()){
+                player.setName(namesIt.next());
+                player.setImageRefrence(imageIterator.next());
             }
         } else {
             initOfflineGame(ids);
@@ -381,10 +359,9 @@ public class MainActivity extends AppCompatActivity
         System.out.println("after 5");
     }
 
-    public void startGame(boolean isOnline, ArrayList<Participant> participants) {
-        startGame(isOnline, getParticipantIds(), participants);
+    public void startGame(boolean isOnline) {
+        startGame(isOnline, riskNetworkManager.getParticipantIds());
     }
-
 
     //UI SECTION. Methods that implement the game's UI.
 
@@ -433,7 +410,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     void switchToMainScreen() {
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+        if (riskNetworkManager != null && riskNetworkManager.isConnected()) {
             for (int id : CLICKABLES) {
                 findViewById(id).setOnClickListener(this);
             }
@@ -534,20 +511,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void setmGoogleApiClient(GoogleApiClient mGoogleApiClient) {
-        this.mGoogleApiClient = mGoogleApiClient;
-    }
 
-    public int[] getParticipantIds(){
-        ArrayList<Participant> participants = riskNetworkManager.getRiskNetwork().getmParticipants();
 
-        int c = 0;
-        int[] ids = new int[participants.size()];
-        for(Participant participant : participants){
-            ids[c++] = participant.getParticipantId().hashCode(); //@hash collisions
-        }
-        return ids;
-    }
 
 //setting up the callbacks for the network.
     @Override
@@ -565,10 +530,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void showWaitingRoom(Room room) {
-        final int MIN_PLAYERS = Integer.MAX_VALUE;
-        Intent i = Games.RealTimeMultiplayer.getWaitingRoomIntent(mGoogleApiClient, room, MIN_PLAYERS);
-        startActivityForResult(i, RC_WAITING_ROOM);
+    public void showWaitingRoom(Intent intent) {
+        startActivityForResult(intent, RC_WAITING_ROOM);
     }
 
     @Override
@@ -578,8 +541,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void startGame(ArrayList<Participant> participants) {
-        startGame(true, participants);
+    public void startGame() {
+        startGame(true);
     }
 
     @Override
@@ -598,9 +561,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean resolveConnection(ConnectionResult result) {
-        return BaseGameUtils.resolveConnectionFailure(this, mGoogleApiClient,
-                result, RC_SIGN_IN, getString(R.string.signin_other_error));
+    public Activity getActivity() {
+        return this;
     }
 
     public int getmCurScreen() {

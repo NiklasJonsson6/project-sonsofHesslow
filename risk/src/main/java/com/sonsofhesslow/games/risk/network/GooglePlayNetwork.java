@@ -38,10 +38,6 @@ public class GooglePlayNetwork implements RealTimeMessageReceivedListener , Goog
         }
     }
 
-    public GooglePlayNetworkCompatible getNetworkTarget() {
-        return networkTarget;
-    }
-
     public void setNetworkTarget(GooglePlayNetworkCompatible networkAdapter) {
         this.networkTarget = networkAdapter;
     }
@@ -136,7 +132,6 @@ public class GooglePlayNetwork implements RealTimeMessageReceivedListener , Goog
 
     @Override
     public void onRoomCreated(int i, Room room) {
-        System.out.println("networktarget onroomcreated: " + networkTarget);
         networkTarget.onRoomCreated(i ,room);
     }
 
