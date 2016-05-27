@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity
     public void leaveRoom() {
         Log.d(TAG, "Leaving room.");
         stopKeepingScreenOn();
-        if (riskNetworkManager!=null) {
+        if (riskNetworkManager != null) {
             riskNetworkManager.leaveRoom();
         }
         switchToMainScreen();

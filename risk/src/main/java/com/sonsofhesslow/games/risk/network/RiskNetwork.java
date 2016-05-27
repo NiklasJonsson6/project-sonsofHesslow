@@ -169,7 +169,9 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     }
     
     public void leaveRoom() {
-        Games.RealTimeMultiplayer.leave(mGoogleApiClient, googlePlayNetwork, mRoomId);
+        if(mRoomId != null) {
+            Games.RealTimeMultiplayer.leave(mGoogleApiClient, googlePlayNetwork, mRoomId);
+        }
     }
 
     // Called when player successfully left the room (this happens a result of voluntarily leaving via a call to leaveRoom().
