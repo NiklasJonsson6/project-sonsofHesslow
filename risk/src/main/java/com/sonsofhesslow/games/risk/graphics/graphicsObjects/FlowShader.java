@@ -31,32 +31,30 @@ class FlowShader {
                     "gl_FragColor = mix(color_from,color_to,f);" +
                     "}";
 
-    private static int flowShader = -1;
+    private int flowShader = -1;
     private static int positionHandle;
     private static int fromColorHandle;
     private static int toColorHandle;
     private static int maxDistHandle;
     private static int matrixHandle;
     public FlowShader() {
-        if (flowShader == -1) {
-            // prepare shaders and OpenGL program
-            int vertexShader = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-            int fragmentShader = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+        // prepare shaders and OpenGL program
+        int vertexShader = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+        int fragmentShader = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
-            flowShader = GLES20.glCreateProgram();             // create empty OpenGL Program
-            GLES20.glAttachShader(flowShader, vertexShader);   // add the vertex shader to program
-            //System.out.println(GLES20.glGetShaderInfoLog(vertexShader));
-            GLES20.glAttachShader(flowShader, fragmentShader); // add the fragment shader to program
-            //System.out.println(GLES20.glGetShaderInfoLog(fragmentShader));
-            GLES20.glLinkProgram(flowShader);                  // create OpenGL program executables
-            //System.out.println(GLES20.glGetProgramInfoLog(flowShader));
+        flowShader = GLES20.glCreateProgram();             // create empty OpenGL Program
+        GLES20.glAttachShader(flowShader, vertexShader);   // add the vertex shader to program
+        //System.out.println(GLES20.glGetShaderInfoLog(vertexShader));
+        GLES20.glAttachShader(flowShader, fragmentShader); // add the fragment shader to program
+        //System.out.println(GLES20.glGetShaderInfoLog(fragmentShader));
+        GLES20.glLinkProgram(flowShader);                  // create OpenGL program executables
+        //System.out.println(GLES20.glGetProgramInfoLog(flowShader));
 
-            positionHandle = GLES20.glGetAttribLocation(flowShader, "position");
-            fromColorHandle = GLES20.glGetUniformLocation(flowShader, "color_from");
-            toColorHandle = GLES20.glGetUniformLocation(flowShader, "color_to");
-            maxDistHandle = GLES20.glGetUniformLocation(flowShader, "max_dist_sq");
-            matrixHandle = GLES20.glGetUniformLocation(flowShader, "matrix");
-        }
+        positionHandle = GLES20.glGetAttribLocation(flowShader, "position");
+        fromColorHandle = GLES20.glGetUniformLocation(flowShader, "color_from");
+        toColorHandle = GLES20.glGetUniformLocation(flowShader, "color_to");
+        maxDistHandle = GLES20.glGetUniformLocation(flowShader, "max_dist_sq");
+        matrixHandle = GLES20.glGetUniformLocation(flowShader, "matrix");
     }
 
     void use(Mesh mesh, float[] matrix, Vector3 origin, float maxDistance, float[] fromColor, float[] toColor) {

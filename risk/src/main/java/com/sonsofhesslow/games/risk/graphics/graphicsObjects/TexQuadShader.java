@@ -6,7 +6,7 @@ import com.sonsofhesslow.games.risk.graphics.utils.ShaderUtils;
 
 class TexQuadShader {
 
-    private static int shaderHandle = -1;
+    private int shaderHandle = -1;
     private static int colorHandle;
     private static int matrixHandle;
     private static int textureHandle;
@@ -27,23 +27,21 @@ class TexQuadShader {
                     "void main() {" +
                     "  gl_FragColor = color * texture2D(texture, textureCoordinate);" +
                     "}";
+
     public TexQuadShader() {
-        if (shaderHandle == -1) {
-            // prepare shaders and OpenGL program
-            int vertexShader = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-            int fragmentShader = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+        // prepare shaders and OpenGL program
+        int vertexShader = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+        int fragmentShader = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
-            shaderHandle = GLES20.glCreateProgram();
-            GLES20.glAttachShader(shaderHandle, vertexShader);
-            GLES20.glAttachShader(shaderHandle, fragmentShader);
-            GLES20.glLinkProgram(shaderHandle);
+        shaderHandle = GLES20.glCreateProgram();
+        GLES20.glAttachShader(shaderHandle, vertexShader);
+        GLES20.glAttachShader(shaderHandle, fragmentShader);
+        GLES20.glLinkProgram(shaderHandle);
 
-            positionHandle = GLES20.glGetAttribLocation(shaderHandle, "position");
-            textureHandle = GLES20.glGetUniformLocation(shaderHandle, "texture");
-            matrixHandle = GLES20.glGetUniformLocation(shaderHandle, "matrix");
-            colorHandle = GLES20.glGetUniformLocation(shaderHandle, "color");
-
-        }
+        positionHandle = GLES20.glGetAttribLocation(shaderHandle, "position");
+        textureHandle = GLES20.glGetUniformLocation(shaderHandle, "texture");
+        matrixHandle = GLES20.glGetUniformLocation(shaderHandle, "matrix");
+        colorHandle = GLES20.glGetUniformLocation(shaderHandle, "color");
     }
 
     void use(Mesh mesh, float[] matrix, float[] color, int texture) {

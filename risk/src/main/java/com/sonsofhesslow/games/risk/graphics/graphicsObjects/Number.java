@@ -126,5 +126,13 @@ public class Number extends GLObject {
     public void setPos(Vector3 pos) {
         super.setPos(Vector3.Sub(pos, new Vector3(0.5f, 0.5f, 0)));
     }
+
+    public static int[] getTextures() {
+        return textures;
+    }
+
+    public static void setTextures(int[] textures) {
+        Number.textures = textures;
+    }
 }
 

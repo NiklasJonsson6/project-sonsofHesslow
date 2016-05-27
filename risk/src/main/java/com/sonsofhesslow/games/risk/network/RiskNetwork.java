@@ -28,6 +28,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     public boolean signInClicked = false;
 
     UIUpdate uiUpdate;
+
     final static String TAG = "Risk";
 
     // Request codes for the UIs that is shown with startActivityForResult:

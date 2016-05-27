@@ -28,22 +28,20 @@ class LineShader {
                     "}";
 
 
-    private static int shaderID = -1;
+    private int shaderID = -1;
 
     public LineShader() {
-        if (shaderID == -1) {
-            // prepare shaders and OpenGL program
-            int vertexShader = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-            int fragmentShader = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+        // prepare shaders and OpenGL program
+        int vertexShader = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+        int fragmentShader = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
-            shaderID = GLES20.glCreateProgram();             // create empty OpenGL Program
-            GLES20.glAttachShader(shaderID, vertexShader);   // add the vertex shader to program
-            //System.out.println(GLES20.glGetShaderInfoLog(vertexShader));
-            GLES20.glAttachShader(shaderID, fragmentShader); // add the fragment shader to program
-            //System.out.println(GLES20.glGetShaderInfoLog(fragmentShader));
-            GLES20.glLinkProgram(shaderID);                  // create OpenGL program executables
-            //System.out.println(GLES20.glGetProgramInfoLog(shaderID));
-        }
+        shaderID = GLES20.glCreateProgram();             // create empty OpenGL Program
+        GLES20.glAttachShader(shaderID, vertexShader);   // add the vertex shader to program
+        //System.out.println(GLES20.glGetShaderInfoLog(vertexShader));
+        GLES20.glAttachShader(shaderID, fragmentShader); // add the fragment shader to program
+        //System.out.println(GLES20.glGetShaderInfoLog(fragmentShader));
+        GLES20.glLinkProgram(shaderID);                  // create OpenGL program executables
+        //System.out.println(GLES20.glGetProgramInfoLog(shaderID));
     }
 
     void use(Mesh mesh, float[] matrix, float[] color, FloatBuffer lineSide) {

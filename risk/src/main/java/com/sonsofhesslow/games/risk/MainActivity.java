@@ -10,7 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -25,6 +27,7 @@ import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.example.games.basegameutils.BaseGameUtils;
 import com.sonsofhesslow.games.risk.graphics.GLTouchEvent;
 import com.sonsofhesslow.games.risk.graphics.GLTouchListener;
+import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
 import com.sonsofhesslow.games.risk.graphics.geometry.Vector3;
 import com.sonsofhesslow.games.risk.graphics.Camera;
@@ -79,23 +82,13 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
-        newOverlayController = new Overlay(this);
         graphicsView = new MyGLSurfaceView(this,getResources());
+        newOverlayController = new Overlay(this);
         graphicsView.addListener(this);
 
         riskNetworkManager = new RiskNetworkManager(this,this);
         this.mGoogleApiClient = riskNetworkManager.getGoogleApiClient();
 
-        /*googlePlayNetwork = new GooglePlayNetwork();
-
-        // Create the Google Api Client with access to Games
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(googlePlayNetwork)
-                .addOnConnectionFailedListener(googlePlayNetwork)
-                .addApi(Games.API).addScope(Games.SCOPE_GAMES)
-                .build();
-
-        riskNetwork = new RiskNetwork(this, this.mGoogleApiClient, googlePlayNetwork);*/
         // set up a click listener for everything in main menus
         for (int id : CLICKABLES) {
             findViewById(id).setOnClickListener(this);
@@ -110,6 +103,7 @@ public class MainActivity extends AppCompatActivity
             newOverlayController.changeGridLayout(false);
         }
     }
+
     public void handle(GLTouchEvent event) {
 
         if (prevPos != null) {
@@ -136,6 +130,7 @@ public class MainActivity extends AppCompatActivity
 
     //handles the menu-button events
     public void onClick(View v) {
+        System.out.println("on click");
         Intent intent;
 
         switch (v.getId()) {
@@ -263,18 +258,6 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "Room created, waiting for it to be ready...");
     }
 
-    /*// Accept the given invitation.
-    void acceptInviteToRoom(String invId) {
-        Log.d(TAG, "Accepting invitation: " + invId);
-        RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(googlePlayNetwork);
-        roomConfigBuilder.setInvitationIdToAccept(invId)
-                .setMessageReceivedListener(googlePlayNetwork)
-                .setRoomStatusUpdateListener(googlePlayNetwork);
-        switchToScreen(R.id.screen_wait);
-        resetGameVars();
-        Games.RealTimeMultiplayer.join(mGoogleApiClient, roomConfigBuilder.build());
-    }*/
-
     // Activity is going to the background. Leave the current room.
     public void onStop() {
         Log.d(TAG, "**** got onStop");
@@ -309,9 +292,9 @@ public class MainActivity extends AppCompatActivity
     // Handle back key to make sure player cleanly leave a game if player are in the middle of one
     public boolean onKeyDown(int keyCode, KeyEvent e) {
         if (keyCode == KeyEvent.KEYCODE_BACK && mCurScreen == R.id.screen_game) {
+            //switchToScreen(mCurScreen);
             setContentView(R.layout.activity_main);
             mCurScreen = R.id.screen_main;
-            System.out.println("onkey leave room");
             leaveRoom();
             return true;
         }
@@ -333,6 +316,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void startGame(boolean isOnline, int[] ids, ArrayList<Participant> participants) {
+
+        if(graphicsView.getParent() != null) {
+            setContentView(R.layout.activity_main);
+            context = this;
+            newOverlayController = new Overlay(this);
+            graphicsView = new MyGLSurfaceView(this,getResources());
+            graphicsView.addListener(this);
+
+        }
+
         //keeps screen turned on until game is finnished
         keepScreenOn();
 
@@ -351,14 +344,41 @@ public class MainActivity extends AppCompatActivity
             initOfflineGame(ids);
         }
 
-        newOverlayController.addView(graphicsView);
-        newOverlayController.addView(R.layout.activity_mainoverlay);
-        newOverlayController.addView(R.layout.activity_cards);
-        graphicsView.addListener(controller);
+        //((ViewGroup)graphicsView.getParent()).removeView(newOverlayController);
+
+        System.out.println("graphicsview: " + graphicsView + " getparent: " + graphicsView.getParent());
+        System.out.println("viewgroup: " +  graphicsView.getParent());
+        if (graphicsView.getParent() != null) {
+            //((ViewGroup)graphicsView.getParent()).removeAllViews();
+            //newOverlayController.removeView(graphicsView.getId());
+            System.out.println("after remove views");
+        }
+
+        //reset if returning after a game
+        //newOverlayController.removeView(graphicsView.getId());
+
+        System.out.println("poverlay234: " +newOverlayController.getOverlay());
+        System.out.println("graview getpa: " + graphicsView.getParent());
+
+        if(graphicsView.getParent() == null ) {
+            newOverlayController.addView(graphicsView);
+            System.out.println("after add graphics");
+            newOverlayController.addView(R.layout.activity_mainoverlay);
+            System.out.println("after activity mainoverlay");
+            newOverlayController.addView(R.layout.activity_cards);
+            System.out.println("after activity activity cards");
+
+            graphicsView.addListener(controller);
+        }
+        System.out.println("after 1");
         setContentView(newOverlayController.getOverlay());
+        System.out.println("after 2");
         newOverlayController.setGamePhase(Risk.GamePhase.PICK_TERRITORIES);
+        System.out.println("after 3");
         mCurScreen = R.id.screen_game;
+        System.out.println("after 4");
         newOverlayController.changeGridLayout(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
+        System.out.println("after 5");
     }
 
     public void startGame(boolean isOnline, ArrayList<Participant> participants) {
@@ -414,10 +434,12 @@ public class MainActivity extends AppCompatActivity
 
     void switchToMainScreen() {
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            for (int id : CLICKABLES) {
+                findViewById(id).setOnClickListener(this);
+            }
             switchToScreen(R.id.screen_main);
         }
         else {
-
             switchToScreen(R.id.screen_sign_in);
         }
     }

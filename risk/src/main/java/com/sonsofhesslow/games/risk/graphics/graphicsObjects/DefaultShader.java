@@ -23,26 +23,23 @@ class DefaultShader {
                     "  gl_FragColor = color;" +
                     "}";
 
-    private static int defaultShader = -1;
+    private int defaultShader = -1;
     private static int positionHandle;
     private static int colorHandle;
     private static int matrixHandle;
     public DefaultShader() {
-        if (defaultShader == -1) {
-            // prepare shaders and OpenGL program
-            int vertexShader = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-            int fragmentShader = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+        // prepare shaders and OpenGL program
+        int vertexShader = ShaderUtils.loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+        int fragmentShader = ShaderUtils.loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
-            defaultShader = GLES20.glCreateProgram();
-            GLES20.glAttachShader(defaultShader, vertexShader);
-            GLES20.glAttachShader(defaultShader, fragmentShader);
-            GLES20.glLinkProgram(defaultShader);
+        defaultShader = GLES20.glCreateProgram();
+        GLES20.glAttachShader(defaultShader, vertexShader);
+        GLES20.glAttachShader(defaultShader, fragmentShader);
+        GLES20.glLinkProgram(defaultShader);
 
-            positionHandle = GLES20.glGetAttribLocation(defaultShader, "position");
-            colorHandle = GLES20.glGetUniformLocation(defaultShader, "color");
-            matrixHandle = GLES20.glGetUniformLocation(defaultShader, "matrix");
-
-        }
+        positionHandle = GLES20.glGetAttribLocation(defaultShader, "position");
+        colorHandle = GLES20.glGetUniformLocation(defaultShader, "color");
+        matrixHandle = GLES20.glGetUniformLocation(defaultShader, "matrix");
     }
 
     void use(Mesh mesh, float[] matrix, float[] color) {

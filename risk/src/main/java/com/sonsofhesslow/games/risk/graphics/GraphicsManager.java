@@ -39,6 +39,16 @@ public class GraphicsManager {
 
     public void init(Resources resources, Renderer renderer) {
         this.renderer = renderer;
+
+
+        Number.setTextures(null);
+
+        if(numbers != null) {
+            for(Number number : numbers) {
+                number.setValue(-1);
+            }
+        }
+
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             long last;
@@ -150,6 +160,10 @@ public class GraphicsManager {
 
     public void requestRender() {
         MyGLSurfaceView.ref.requestRender();
+    }
+
+    public void setRenderer(Renderer renderer) {
+        this.renderer = renderer;
     }
 }
 
