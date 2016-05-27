@@ -27,6 +27,7 @@ public class RiskNetworkManager implements Observer {
     GoogleApiClient googleApiClient;
     GooglePlayNetwork googlePlayNetwork;
     public static final int RESULT_LEFT_ROOM = 10005;
+
     public RiskNetworkManager(Context context,UIUpdate uiUpdate) {
         this.googlePlayNetwork = new GooglePlayNetwork();
 
@@ -42,14 +43,12 @@ public class RiskNetworkManager implements Observer {
         riskNetwork.setGooglePlayNetwork(googlePlayNetwork);
         googlePlayNetwork.setNetworkTarget(riskNetwork);
     }
-    public GoogleApiClient getGoogleApiClient()
-    {
-        return googleApiClient;
-    }
+
     public RiskNetwork getRiskNetwork()
     {
         return riskNetwork;
     }
+
     public void update(Observable obs, Object arg) {
         System.out.println("in update risknetworkmanager");
         if (obs instanceof Territory) {
@@ -103,7 +102,6 @@ public class RiskNetworkManager implements Observer {
         }
     }
 
-
     public void startQuickGame() {
         //1-3 opponents
         final int MIN_OPPONENTS = 1, MAX_OPPONENTS = 3;
@@ -153,38 +151,41 @@ public class RiskNetworkManager implements Observer {
         acceptInviteToRoom(riskNetwork.mIncomingInvitationId);
     }
 
-    public GooglePlayNetwork getGooglePlayNetwork() {
-        return googlePlayNetwork;
-    }
     public void connect() {
         googleApiClient.connect();
     }
+
     public void signOut() {
         Games.signOut(googleApiClient);
     }
+
     public void disconnect() {
         googleApiClient.disconnect();
     }
+
     public Intent getOpponentIntent() {
         return Games.RealTimeMultiplayer.getSelectOpponentsIntent(googleApiClient, 1, 3);
     }
+
     public Intent getInvitationIntent(){
         return Games.Invitations.getInvitationInboxIntent(googleApiClient);
     }
+
     public void leaveRoom() {
         riskNetwork.leaveRoom();
     }
+
     public boolean isConnected()
     {
         return googleApiClient.isConnected();
     }
-    public void acceptInvitation(Intent intent)
-    {
+
+    public void acceptInvitation(Intent intent) {
         Invitation inv = intent.getExtras().getParcelable(Multiplayer.EXTRA_INVITATION);
         acceptInviteToRoom(inv.getInvitationId());
     }
 
-    public int[] getParticipantIds(){
+    public int[] getParticipantIds() {
         ArrayList<Participant> participants = getRiskNetwork().getmParticipants();
 
         int c = 0;
@@ -194,8 +195,8 @@ public class RiskNetworkManager implements Observer {
         }
         return ids;
     }
-    public List<String> getParticipantNames()
-    {
+
+    public List<String> getParticipantNames() {
         List<String> ret = new ArrayList<>();
         ArrayList<Participant> participants = getRiskNetwork().getmParticipants();
         for(Participant participant : participants)
@@ -205,8 +206,7 @@ public class RiskNetworkManager implements Observer {
         return ret;
     }
 
-    public List<Uri> getParticipantImages()
-    {
+    public List<Uri> getParticipantImages() {
         List<Uri> ret = new ArrayList<>();
         ArrayList<Participant> participants = getRiskNetwork().getmParticipants();
         for(Participant participant : participants)

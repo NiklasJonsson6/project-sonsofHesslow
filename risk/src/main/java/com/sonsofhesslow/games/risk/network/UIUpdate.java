@@ -9,9 +9,6 @@ import com.google.android.gms.games.multiplayer.realtime.Room;
 
 import java.util.ArrayList;
 
-/**
- * Created by Daniel on 26/05/2016.
- */
 public interface UIUpdate {
     void displayInvitation(String caller);
     void removeInvitation();

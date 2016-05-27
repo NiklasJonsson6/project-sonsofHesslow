@@ -1,6 +1,5 @@
 package com.sonsofhesslow.games.risk.model;
 
-import com.sonsofhesslow.games.risk.model.Territory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;

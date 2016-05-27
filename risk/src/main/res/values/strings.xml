@@ -21,5 +21,12 @@
     <string name="is_inviting_you">is challenging you to a game!</string>
     <string name="signin_other_error">There was an issue with sign in. Please try again later.</string>
     <string name="please_wait_text">Please wait for you turn</string>
+    <string name="doneButtonText">Done</string>
+    <string name="placeButtonText">Place</string>
+    <string name="fightButtonText">FIGHT</string>
+    <string name="cardsButtonText">Cards</string>
+    <string name="nextTurnButtonText">Next Turn</string>
+    <string name="showListButtonText">Show List</string>
+    <string name="hideListButtonText">Hide List</string>
 
 </resources>

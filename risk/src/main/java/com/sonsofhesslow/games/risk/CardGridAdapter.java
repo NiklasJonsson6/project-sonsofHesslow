@@ -1,9 +1,5 @@
 package com.sonsofhesslow.games.risk;
 
-/**
- * Created by fredr on 2016-05-24.
- */
-
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;

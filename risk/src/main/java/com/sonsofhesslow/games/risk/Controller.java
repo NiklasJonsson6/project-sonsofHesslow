@@ -88,7 +88,6 @@ public class Controller implements GLTouchListener, NetworkListener {
 
         switch (event.action) {
             case armyAmountChange: {
-                System.out.println("rtmr region changed");
                 Territory changedTerritory = Controller.getTerritoryById(event.getRegionId());
                 if(changedTerritory!=null) {
                     changedTerritory.setArmyCount(event.getArmies());
@@ -99,13 +98,11 @@ public class Controller implements GLTouchListener, NetworkListener {
             }
             break;
             case occupierChange: {
-                System.out.println("rtmr in owner changed");
                 Territory changedTerritory = Controller.getTerritoryById(event.getRegionId());
                 Player newOccupier = null;
 
                 for(Player p : Controller.getRiskModel().getPlayers()) {
                     if(p.getParticipantId() == event.getParticipantId()) {
-                        System.out.println("found owner");
                         newOccupier = p;
                         break;
                     }
@@ -119,7 +116,6 @@ public class Controller implements GLTouchListener, NetworkListener {
             }
             break;
             case turnChange: {
-                System.out.println("rtmr turnchange");
                 nextPlayer();
             }
             break;
@@ -369,7 +365,7 @@ public class Controller implements GLTouchListener, NetworkListener {
     }
 
     private void playerWon(Player player) {
-        System.out.println("player won@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        System.out.println("player won");
         // TODO: 2016-05-20
     }
 
@@ -388,7 +384,6 @@ public class Controller implements GLTouchListener, NetworkListener {
         if (isOnline()) {
             for (Player player: riskModel.getPlayers()) {
                 if (player.getParticipantId() == selfId) {
-                    System.out.println("giving starting armies");
                     player.giveArmies(50 - (5*riskModel.getPlayers().length));
                 }
             }
@@ -471,7 +466,6 @@ public class Controller implements GLTouchListener, NetworkListener {
             riskModel.getCurrentPlayer().decArmiesToPlace(seekBarValue);
             if (riskModel.getCurrentPlayer().getArmiesToPlace() == 0
                     && riskModel.getGamePhase() == Risk.GamePhase.PLACE_ARMIES) {
-                System.out.println("In fight");
                 riskModel.setGamePhase(Risk.GamePhase.FIGHT);
                 riskModel.setSelectedTerritory(null);
             }
@@ -544,6 +538,4 @@ public class Controller implements GLTouchListener, NetworkListener {
         temp.remove(selectedCards.get(0).intValue());
         riskModel.getCurrentPlayer().setCards(temp);
     }
-
-
 }

@@ -13,9 +13,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
 
-/**
- * Created by Daniel on 27/04/2016.
- */
 public class View implements Observer {
 
     final float[] red = {1, 0, 0, 1};
@@ -154,7 +151,6 @@ public class View implements Observer {
                     overlayController.setInformation("Armies to place: " + risk.getCurrentPlayer().getArmiesToPlace(), true);
                 } else if (event == Risk.GamePhase.PLACE_ARMIES) {
                     // Hide all
-                    System.out.println("Fight Phase view");
                     overlayController.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
                     overlayController.setPlaceArmiesVisible(true);
                     overlayController.setBarMaxValue(risk.getCurrentPlayer().getArmiesToPlace());

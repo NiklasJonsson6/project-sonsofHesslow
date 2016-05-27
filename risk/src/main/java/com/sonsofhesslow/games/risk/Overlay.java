@@ -22,9 +22,6 @@ import com.sonsofhesslow.games.risk.model.Risk;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * Created by fredr on 2016-05-18.
- */
 public class Overlay {
     ViewGroup parent;
     LayoutInflater factory;

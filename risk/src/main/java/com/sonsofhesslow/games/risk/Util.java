@@ -1,8 +1,5 @@
 package com.sonsofhesslow.games.risk;
 
-/**
- * Created by fredr on 2016-05-08.
- */
 public class Util {
     public static int getIntFromColor(float Red, float Green, float Blue){
         int R = Math.round(255 * Red);

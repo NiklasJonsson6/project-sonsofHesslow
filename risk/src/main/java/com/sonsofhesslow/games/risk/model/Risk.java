@@ -33,7 +33,6 @@ public class Risk extends Observable {
     }
 
     public void setAttackingTerritory(Territory territory) {
-        System.out.println("attacking contry set");
         RiskChangeEvent riskChangeEvent = new RiskChangeEvent(RiskChangeEvent.EventType.ATTACK, this, territory, this.attackingTerritory);
 
         setChanged();
@@ -47,7 +46,6 @@ public class Risk extends Observable {
     }
 
     public void setDefendingTerritory(Territory territory) {
-        System.out.println("defending contry set");
         RiskChangeEvent riskChangeEvent = new RiskChangeEvent(RiskChangeEvent.EventType.DEFENCE, this, territory, this.defendingTerritory);
 
         setChanged();

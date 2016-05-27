@@ -1,6 +1,5 @@
 package com.sonsofhesslow.games.risk.model;
 
-
 import java.util.ArrayList;
 import java.util.Random;
 

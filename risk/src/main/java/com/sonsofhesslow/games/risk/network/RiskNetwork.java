@@ -113,7 +113,6 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
         Log.d(TAG, "Sign-in succeeded.");
 
         //to be notified when invited to play
-        System.out.println("mgapiclient: " + mGoogleApiClient + " googlePlayNetwork: " + googlePlayNetwork);
         Games.Invitations.registerInvitationListener(mGoogleApiClient, googlePlayNetwork);
 
         if (connectionHint != null) {
@@ -168,6 +167,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
         Log.d(TAG, "My ID " + mMyId);
         Log.d(TAG, "<< CONNECTED TO ROOM>>");
     }
+    
     public void leaveRoom() {
         Games.RealTimeMultiplayer.leave(mGoogleApiClient, googlePlayNetwork, mRoomId);
     }
@@ -216,10 +216,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     public void onRoomConnected(int statusCode, Room room) {
         Log.d(TAG, "onRoomConnected(" + statusCode + ", " + room + ")");
         this.mParticipants = room.getParticipants();
-        System.out.println("participant lenght: " + mParticipants.size() + " paritcipants: " + mParticipants);
 
-
-        System.out.println("online online");
         uiUpdate.startGame();
         if (statusCode != GamesStatusCodes.STATUS_OK) {
             Log.e(TAG, "*** Error: onRoomConnected, status " + statusCode);
@@ -332,7 +329,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     // Broadcast to everybody else.
     public void broadcast(byte[] messageArray) {
         if(!selfModified && googlePlayNetwork != null) {
-            System.out.println("broadbast risknetwork");
+            System.out.println("broadcast risknetwork");
             ArrayList<Participant> targetParticipants = new ArrayList<Participant>();
 
             for(Participant participant : mParticipants) {
@@ -354,13 +351,6 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
 
 
     //UI SECTION. Methods that implement the game's UI.
-
-    // TODO: 2016-05-24 remove?, should only be in mainactivity
-    // This array lists all the individual screens our game has.
-    final static int[] SCREENS = {
-            R.id.screen_main, R.id.screen_sign_in,
-            R.id.screen_wait
-    };
 
     void switchToMainOrSignIn() {
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {

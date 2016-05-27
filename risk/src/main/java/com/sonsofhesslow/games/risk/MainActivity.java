@@ -91,7 +91,6 @@ public class MainActivity extends AppCompatActivity
             } else {
                 delta = new Vector2(0, 0);
             }
-            //System.out.println("delta:" + delta);
             switch (event.e.getAction()) {
                 case MotionEvent.ACTION_MOVE:
                     Camera cam = Camera.getInstance();
@@ -100,21 +99,18 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        //System.out.println("Screen grej" + event.screenPosition.y);
         graphicsView.requestRender();
         prevPos = event.screenPosition;
     }
 
     //handles the menu-button events
     public void onClick(View v) {
-        System.out.println("on click");
         Intent intent;
 
         switch (v.getId()) {
             case R.id.button_single_player:
             case R.id.button_single_player_2:
                 // play a single-player game
-                System.out.println("online singleplayer");
                 startGame(false, new int[2]);
                 break;
             case R.id.button_sign_in:
@@ -318,41 +314,17 @@ public class MainActivity extends AppCompatActivity
             initOfflineGame(ids);
         }
 
-        //((ViewGroup)graphicsView.getParent()).removeView(newOverlayController);
-
-        System.out.println("graphicsview: " + graphicsView + " getparent: " + graphicsView.getParent());
-        System.out.println("viewgroup: " +  graphicsView.getParent());
-        if (graphicsView.getParent() != null) {
-            //((ViewGroup)graphicsView.getParent()).removeAllViews();
-            //newOverlayController.removeView(graphicsView.getId());
-            System.out.println("after remove views");
-        }
-
-        //reset if returning after a game
-        //newOverlayController.removeView(graphicsView.getId());
-
-        System.out.println("poverlay234: " +newOverlayController.getOverlay());
-        System.out.println("graview getpa: " + graphicsView.getParent());
-
         if(graphicsView.getParent() == null ) {
             newOverlayController.addView(graphicsView);
-            System.out.println("after add graphics");
             newOverlayController.addView(R.layout.activity_mainoverlay);
-            System.out.println("after activity mainoverlay");
             newOverlayController.addView(R.layout.activity_cards);
-            System.out.println("after activity activity cards");
 
             graphicsView.addListener(controller);
         }
-        System.out.println("after 1");
         setContentView(newOverlayController.getOverlay());
-        System.out.println("after 2");
         newOverlayController.setGamePhase(Risk.GamePhase.PICK_TERRITORIES);
-        System.out.println("after 3");
         mCurScreen = R.id.screen_game;
-        System.out.println("after 4");
         newOverlayController.changeGridLayout(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
-        System.out.println("after 5");
     }
 
     public void startGame(boolean isOnline) {
