@@ -27,8 +27,8 @@ public class NumberedArrow {
     }
 
     public void remove() {
-        number.Remove();
-        arrow.Remove();
+        number.remove();
+        arrow.remove();
     }
 
     public int getValue() {

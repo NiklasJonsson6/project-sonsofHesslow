@@ -12,7 +12,7 @@ public class Bezier {
     }
 
     public Bezier(Vector2[] points) {
-        this.points = points;
+        this.points = points; //no copy for performance reasons
     }
 
     private static Vector2[] DeCastillioStep(Vector2[] vectors, float t) {
@@ -31,7 +31,7 @@ public class Bezier {
         return intersect(a, b, tolerance, 0f, 1f, 0f, 1f);
     }
 
-    public static boolean IsPartOf(Bezier a, Bezier b, int resolution) {
+    public static boolean isPartOf(Bezier a, Bezier b, int resolution) {
         float[] ts = new float[resolution];
         for (int i = 0; i < ts.length; i++) {
             ts[i] = (i + 1) / ((float) ts.length + 1);
@@ -228,7 +228,7 @@ public class Bezier {
 
     public boolean isOnCurve(Vector2 p, float precision) {
 
-        float dist = Math.min(Vector2.Sub(p, points[0]).magnitude(), Vector2.Sub(p, points[3]).magnitude());
+        float dist = Math.min(Vector2.sub(p, points[0]).magnitude(), Vector2.sub(p, points[3]).magnitude());
         if (dist < precision) return true;
         //the control points are a bounding box of the curve.
         if (!Vector2.isInsideTri(p, points[0], points[1], points[2]) &&

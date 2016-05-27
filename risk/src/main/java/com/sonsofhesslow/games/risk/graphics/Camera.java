@@ -8,10 +8,10 @@ import com.sonsofhesslow.games.risk.graphics.geometry.Vector3;
 public class Camera {
     private static Camera instance;
     public final Vector3 up = new Vector3(0, 1, 0);
-    private final float WORLD_MIN_X = -16;
-    private final float WORLD_MAX_X = 0;
-    private final float WORLD_MIN_Y = -12;
-    private final float WORLD_MAX_Y = 5;
+    private static final float WORLD_MIN_X = -16;
+    private static final float WORLD_MAX_X = 0;
+    private static final float WORLD_MIN_Y = -12;
+    private static final float WORLD_MAX_Y = 5;
     public float stitchPosition;
     public Vector3 pos = new Vector3(-5, -5, -3); //-5-5 is about the current center..
     public Vector3 lookAt;

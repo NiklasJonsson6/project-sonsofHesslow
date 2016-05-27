@@ -10,7 +10,7 @@ public class Vector2 {
     }
 
     public static Vector2 lerp(Vector2 start, Vector2 end, float t) {
-        return Add(Mul(start, 1 - t), Mul(end, t));
+        return add(mul(start, 1 - t), mul(end, t));
     }
 
     public static boolean isInsideTri(Vector2 pt, Vector2 v1, Vector2 v2, Vector2 v3) {
@@ -27,7 +27,7 @@ public class Vector2 {
         return ((b.x - rel.x) * (c.y - rel.y) - (b.y - rel.y) * (c.x - rel.x));
     }
 
-    public static float Angle(Vector2 a, Vector2 b) {
+    public static float angle(Vector2 a, Vector2 b) {
         return dot(a, b) / (a.magnitude() * b.magnitude());
     }
 
@@ -35,23 +35,23 @@ public class Vector2 {
         return a.x * b.x + a.y * b.y;
     }
 
-    public static Vector2 Add(Vector2 a, Vector2 b) {
+    public static Vector2 add(Vector2 a, Vector2 b) {
         return new Vector2(a.x + b.x, a.y + b.y);
     }
 
-    public static Vector2 Sub(Vector2 a, Vector2 b) {
+    public static Vector2 sub(Vector2 a, Vector2 b) {
         return new Vector2(a.x - b.x, a.y - b.y);
     }
 
-    public static Vector2 Mul(Vector2 vec, float scalar) {
+    public static Vector2 mul(Vector2 vec, float scalar) {
         return new Vector2(vec.x * scalar, vec.y * scalar);
     }
 
-    public static boolean AlmostEqual(Vector2 a, Vector2 b) {
-        return Vector2.Sub(a, b).magnitude() < 0.01f;
+    public static boolean almostEqual(Vector2 a, Vector2 b) {
+        return Vector2.sub(a, b).magnitude() < 0.01f;
     }
 
-    public static Vector2 Zero() {
+    public static Vector2 zero() {
         return new Vector2(0, 0);
     }
 
@@ -90,7 +90,7 @@ public class Vector2 {
     }
 
     public Vector2 projectOnto(Vector2 u) {
-        return Mul(u, dot(u, this) / (dot(u, u)));
+        return mul(u, dot(u, this) / (dot(u, u)));
     }
 
 }

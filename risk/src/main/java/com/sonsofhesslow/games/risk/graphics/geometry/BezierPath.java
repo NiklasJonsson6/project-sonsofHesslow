@@ -14,9 +14,9 @@ public class BezierPath implements Iterable<Bezier> {
 
     public Vector2[] points;
 
-    public BezierPath(Vector2[] points) // on the form start c1 c2 p c1 c2 (explicit end)(or implicit start)
-    {
-        this.points = points;
+    public BezierPath(Vector2[] points) {
+        // on the form start c1 c2 p c1 c2 (explicit end)(or implicit start)
+        this.points = points; // no copy for performance reasons
     }
 
     //slow af with all these list ideally we should pass around the same list.
@@ -38,7 +38,7 @@ public class BezierPath implements Iterable<Bezier> {
         }
     }
 
-    public static splitReturn splitBeizPath(BezierPath path, BezierPath line) {
+    public static SplitReturn splitBeizPath(BezierPath path, BezierPath line) {
         List<Pair<Integer, Float>> pathSplits = new ArrayList<>();
         List<Pair<Integer, Float>> lineSplits = new ArrayList<>();
 
@@ -79,7 +79,7 @@ public class BezierPath implements Iterable<Bezier> {
             throw new RuntimeException("2: Bug in  split bezier Path...");
         }
 
-        splitReturn ret = new splitReturn();
+        SplitReturn ret = new SplitReturn();
         ret.first = b.get(true);
         b.clear();
         b.addBeizPath(splitLine[1]);
@@ -183,14 +183,14 @@ public class BezierPath implements Iterable<Bezier> {
         return this;
     }
 
-    public static class splitReturn {
+    public static class SplitReturn {
         public BezierPath first;
         public BezierPath second;
         public Vector2 firstSplitPoint;
         public Vector2 secondSplitPoint;
     }
 
-    public class BeizIterator implements Iterator<Bezier> {
+    public static class BeizIterator implements Iterator<Bezier> {
         final BezierPath path;
         public int index = 0;
 

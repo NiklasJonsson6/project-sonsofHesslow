@@ -49,8 +49,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     // Room ID where the currently active game is taking place
     String mRoomId = null;
 
-    // Playing in multiplayer mode?
-    boolean mMultiplayer = false;
+
 
     // The participants in the currently active game
     ArrayList<Participant> mParticipants = null;
@@ -72,10 +71,12 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     }
 
     private boolean selfModified = false;
-
+    void acceptInviteToRoom() {
+        acceptInviteToRoom(mIncomingInvitationId);
+    }
     // Accept the given invitation.
     void acceptInviteToRoom(String invId) {
-        Log.d(TAG, "Accepting invitation: " + invId);
+        Log.d(TAG, "Accepting invitation: " + mIncomingInvitationId);
         RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(googlePlayNetwork);
         roomConfigBuilder.setInvitationIdToAccept(invId)
                 .setMessageReceivedListener(googlePlayNetwork)
@@ -83,7 +84,7 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
         uiUpdate.showWaitScreen();
         resetGameVars();
         Games.RealTimeMultiplayer.join(mGoogleApiClient, roomConfigBuilder.build());
-}
+    }
 
     // Show the waiting room UI
     void showWaitingRoom(Room room) {
@@ -92,11 +93,12 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     }
 
     public void onInvitationReceived(Invitation invitation) {
+        mIncomingInvitationId = invitation.getInvitationId();
         uiUpdate.displayInvitation(invitation.getInviter().getDisplayName());
     }
 
     public void onInvitationRemoved(String invitationId) {
-        if (mIncomingInvitationId.equals(invitationId) && mIncomingInvitationId != null) {
+        if (mIncomingInvitationId != null && mIncomingInvitationId.equals(invitationId) ) {
             mIncomingInvitationId = null;
             uiUpdate.removeInvitation();
         }
@@ -217,7 +219,6 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
         System.out.println("participant lenght: " + mParticipants.size() + " paritcipants: " + mParticipants);
 
 
-        mMultiplayer = true;
         System.out.println("online online");
         uiUpdate.startGame();
         if (statusCode != GamesStatusCodes.STATUS_OK) {

@@ -84,7 +84,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
         return screenToWorldCoords(point, zOut, width, height, Camera.getInstance().getViewMatrix());
     }
 
-    public static Vector2 ScreenToWorldCoorsStitched(Vector2 point, float zOut) {
+    public static Vector2 screenToWorldCoorsStitched(Vector2 point, float zOut) {
         Camera cam = Camera.getInstance();
         if (cam.stitchPosition > 0 && cam.stitchPosition < 1) {
             Camera[] cams = cam.getStitchCams();
@@ -181,7 +181,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
 
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
-        MyGLRenderer.width = width;
-        MyGLRenderer.height = height;
+        MyGLRenderer.width = width;     // the screen can only ever be of one size
+        MyGLRenderer.height = height;   // statics are fine.
     }
 }

@@ -7,7 +7,7 @@ import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
 
 public class DashedBezierLine extends GLObject {
     private final Mesh mesh;
-    private final int naivePrecision = 30; //higher is more detailed
+    private static final int naivePrecision = 30; //higher is more detailed
     private DefaultShader shader;
 
     public DashedBezierLine(BezierPath path, Renderer renderer) // start ctl ctl point ctl ctl point ctl ctl (start)
@@ -23,11 +23,11 @@ public class DashedBezierLine extends GLObject {
             Vector2 prev = verts[i];
             Vector2 current = verts[(i + 1) % verts.length];
             Vector2 next = verts[Math.min((i + 2), verts.length - 1)];
-            Vector2 diff = Vector2.Sub(next, prev);
-            Vector2 orth = Vector2.Mul(new Vector2(-diff.y, diff.x).normalized(), 0.01f); //think about this.
+            Vector2 diff = Vector2.sub(next, prev);
+            Vector2 orth = Vector2.mul(new Vector2(-diff.y, diff.x).normalized(), 0.01f); //think about this.
 
-            outlineVerts[i * 2 + 0] = Vector2.Add(current, orth);
-            outlineVerts[i * 2 + 1] = Vector2.Sub(current, orth);
+            outlineVerts[i * 2 + 0] = Vector2.add(current, orth);
+            outlineVerts[i * 2 + 1] = Vector2.sub(current, orth);
 
             if (i % 2 == 0) {
                 outlineTris[i * 6 + 0] = (short) (i * 2 + 0);

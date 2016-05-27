@@ -32,7 +32,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 
 public class MyGLSurfaceView extends GLSurfaceView {
-    static MyGLSurfaceView ref;
     private final ScaleGestureDetector SGD;
     private final MyGLRenderer mRenderer;
     private final ConcurrentLinkedQueue<GLTouchListener> listeners = new ConcurrentLinkedQueue<>();
@@ -44,14 +43,13 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
     public MyGLSurfaceView(Context context, Resources resources) {
         super(context);
-        ref = this;
         // Create an OpenGL ES 2.0 context.
         setEGLContextClientVersion(2);
         super.setEGLConfigChooser(new MyConfigChooser());
         super.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         // Set the Renderer for drawing on the GLSurfaceView
         mRenderer = new MyGLRenderer();
-        GraphicsManager.getInstance().init(resources, mRenderer);
+        GraphicsManager.getInstance().init(resources, mRenderer,this);
         setRenderer(mRenderer);
         SGD = new ScaleGestureDetector(getContext(), new ScaleListener());
 
@@ -83,7 +81,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         // interested in events where the touch position changed.
         GLTouchEvent event;
         Vector2 screenPos = new Vector2(e.getX(), e.getY());
-        Vector2 worldPos = MyGLRenderer.screenToWorldCoords(screenPos, 0);
+        Vector2 worldPos = mRenderer.screenToWorldCoords(screenPos, 0);
 
         if (e.getAction() == MotionEvent.ACTION_DOWN || e.getAction() == MotionEvent.ACTION_POINTER_DOWN) {
             downX = e.getX();
@@ -94,14 +92,14 @@ public class MyGLSurfaceView extends GLSurfaceView {
                 && (Math.abs(e.getX() - downX + e.getY() - downY) <= 10)) {
             int index = 0;
             boolean hasTouchedRegion = false;
-            Vector2 worldPosStitched = MyGLRenderer.ScreenToWorldCoorsStitched(screenPos, 0);
+            Vector2 worldPosStitched = mRenderer.screenToWorldCoorsStitched(screenPos, 0);
             for (FilledBezierPath path : GraphicsManager.getInstance().beziers) {
                 float z = path.getPos().z;
                 Vector2 adjustedWorldPos;
                 if (z == 0)
                     adjustedWorldPos = worldPosStitched;
                 else
-                    adjustedWorldPos = MyGLRenderer.ScreenToWorldCoorsStitched(screenPos, z);
+                    adjustedWorldPos = mRenderer.screenToWorldCoorsStitched(screenPos, z);
 
                 if (path.fillMesh.isOnMesh2D(adjustedWorldPos)) {
                     hasTouchedRegion = true;
@@ -122,7 +120,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         return true;
     }
 
-    private class MyConfigChooser implements GLSurfaceView.EGLConfigChooser {
+    private static class MyConfigChooser implements GLSurfaceView.EGLConfigChooser {
         @Override
         public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
             int attribs[] = {

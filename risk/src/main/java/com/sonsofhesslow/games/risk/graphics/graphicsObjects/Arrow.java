@@ -12,7 +12,7 @@ public class Arrow extends GLObject {
 
     public Arrow(Vector2 from, Vector2 to, float[] color, Renderer renderer) {
         super(renderer);
-        this.color = color;
+        this.color = color.clone();
 
         // verts
         //   0
@@ -27,39 +27,39 @@ public class Arrow extends GLObject {
         float width = 0.02f;
         float headRatio = 4f;
         float outline = 0.01f;
-        Vector2 dir = Vector2.Sub(from, to).normalized();
-        Vector2 orth = Vector2.Mul(new Vector2(-dir.y, dir.x), width);
-        Vector2 orthHead = Vector2.Mul(orth, headRatio);
-        Vector2 bottomHead = Vector2.Sub(to, Vector2.Mul(dir, -(width * headRatio)));
+        Vector2 dir = Vector2.sub(from, to).normalized();
+        Vector2 orth = Vector2.mul(new Vector2(-dir.y, dir.x), width);
+        Vector2 orthHead = Vector2.mul(orth, headRatio);
+        Vector2 bottomHead = Vector2.sub(to, Vector2.mul(dir, -(width * headRatio)));
 
         short[] tris = new short[]{0, 1, 4, 3, 2, 5, 5, 6, 3};
 
         Vector2[] verts = new Vector2[]
                 {
-                        Vector2.Add(to, Vector2.Mul(dir, outline)),
-                        Vector2.Sub(bottomHead, orthHead),   // left left
-                        Vector2.Sub(bottomHead, orth),      // left center
-                        Vector2.Add(bottomHead, orth),      // right center
-                        Vector2.Add(bottomHead, orthHead),   // right right
-                        Vector2.Sub(from, orth),            // left bottom
-                        Vector2.Add(from, orth),             // right bottom
+                        Vector2.add(to, Vector2.mul(dir, outline)),
+                        Vector2.sub(bottomHead, orthHead),   // left left
+                        Vector2.sub(bottomHead, orth),      // left center
+                        Vector2.add(bottomHead, orth),      // right center
+                        Vector2.add(bottomHead, orthHead),   // right right
+                        Vector2.sub(from, orth),            // left bottom
+                        Vector2.add(from, orth),             // right bottom
                 };
         mesh = new Mesh(tris, verts);
 
-        orth = Vector2.Mul(new Vector2(-dir.y, dir.x), width + outline);
-        orthHead = Vector2.Mul(new Vector2(-dir.y, dir.x), headRatio * width + outline * 2f);
-        bottomHead = Vector2.Sub(to, Vector2.Mul(dir, -(width * headRatio + outline)));
+        orth = Vector2.mul(new Vector2(-dir.y, dir.x), width + outline);
+        orthHead = Vector2.mul(new Vector2(-dir.y, dir.x), headRatio * width + outline * 2f);
+        bottomHead = Vector2.sub(to, Vector2.mul(dir, -(width * headRatio + outline)));
 
         tris = new short[]{0, 1, 4, 3, 2, 5, 5, 6, 3};
         verts = new Vector2[]
                 {
                         to,
-                        Vector2.Sub(bottomHead, orthHead),   // left left
-                        Vector2.Sub(bottomHead, orth),      // left center
-                        Vector2.Add(bottomHead, orth),      // right center
-                        Vector2.Add(bottomHead, orthHead),   // right right
-                        Vector2.Sub(from, orth),            // left bottom
-                        Vector2.Add(from, orth),             // right bottom
+                        Vector2.sub(bottomHead, orthHead),   // left left
+                        Vector2.sub(bottomHead, orth),      // left center
+                        Vector2.add(bottomHead, orth),      // right center
+                        Vector2.add(bottomHead, orthHead),   // right right
+                        Vector2.sub(from, orth),            // left bottom
+                        Vector2.add(from, orth),             // right bottom
                 };
         outlineMesh = new Mesh(tris, verts);
     }

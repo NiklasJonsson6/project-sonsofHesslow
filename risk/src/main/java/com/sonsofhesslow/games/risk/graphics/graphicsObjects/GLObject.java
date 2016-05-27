@@ -23,11 +23,11 @@ public abstract class GLObject {
         renderer.delayedInit(this);
     }
 
-    public float[] getMatrix() {
+    public float[] getMatrix() { //exposes the matrix, which intentionally allows for changes to it.
         return modelMatrix;
     }
 
-    public void Remove() {
+    public void remove() {
         renderer.remove(this);
     }
 

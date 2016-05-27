@@ -23,7 +23,7 @@ public class Number extends GLObject {
 
     public Number(int value, Renderer renderer) {
         super(renderer);
-        if (textures == null) {
+        if (textures == null) { //@multithread unsafe (which is fine for now)
             textures = new int[200];
             for (int i = 0; i < textures.length; i++) {
                 textures[i] = -1;
@@ -119,7 +119,7 @@ public class Number extends GLObject {
     }
 
     public void setColor(float[] color) {
-        this.color = color;
+        this.color = color.clone();
     }
 
     @Override
@@ -127,12 +127,9 @@ public class Number extends GLObject {
         super.setPos(Vector3.Sub(pos, new Vector3(0.5f, 0.5f, 0)));
     }
 
-    public static int[] getTextures() {
-        return textures;
-    }
-
-    public static void setTextures(int[] textures) {
-        Number.textures = textures;
+    public static void invalidateGLMemory()
+    {
+        textures = null;
     }
 }
 

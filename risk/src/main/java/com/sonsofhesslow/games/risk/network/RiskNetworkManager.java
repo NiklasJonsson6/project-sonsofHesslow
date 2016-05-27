@@ -149,6 +149,10 @@ public class RiskNetworkManager implements Observer {
         Games.RealTimeMultiplayer.join(googleApiClient, roomConfigBuilder.build());
     }
 
+    public void acceptInviteToRoom() {
+        acceptInviteToRoom(riskNetwork.mIncomingInvitationId);
+    }
+
     public GooglePlayNetwork getGooglePlayNetwork() {
         return googlePlayNetwork;
     }

@@ -9,12 +9,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.io.StreamCorruptedException;
 
 public class RiskNetworkMessage implements Serializable{
     private static final long serialVersionUID = 1L;
 
-    static RiskNetworkMessage deSerialize(byte[] arr) throws StreamCorruptedException,IOException,ClassNotFoundException {
+    static RiskNetworkMessage deSerialize(byte[] arr) throws IOException, ClassNotFoundException {
         ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(arr));
         RiskNetworkMessage message = (RiskNetworkMessage) ois.readObject();
         return message;
@@ -43,7 +42,6 @@ public class RiskNetworkMessage implements Serializable{
     public static RiskNetworkMessage territoryChangedMessageBuilder(Territory territory, int newTroops){
         return new RiskNetworkMessage(NetworkAction.armyAmountChange,newTroops,-1,territory.getId());
     }
-
     public static RiskNetworkMessage occupierChangedMessageBuilder(Territory territory, Player newOccupier){
         return new RiskNetworkMessage(NetworkAction.occupierChange,-1,newOccupier.getParticipantId(),territory.getId());
     }

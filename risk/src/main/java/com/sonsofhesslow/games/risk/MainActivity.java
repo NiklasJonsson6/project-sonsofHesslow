@@ -50,13 +50,6 @@ public class MainActivity extends AppCompatActivity
     // Request code used to invoke sign in user interactions.
     private static final int RC_SIGN_IN = 9001;
 
-    // Playing in multiplayer mode?
-    boolean mMultiplayer = false;
-
-
-    // Id of the invitation player received via the invitation listener
-    String mIncomingInvitationId = null;
-
     Vector2 prevPos;
 
     private Controller controller;
@@ -94,7 +87,7 @@ public class MainActivity extends AppCompatActivity
             //sq.setPos(event.worldPosition);
             Vector2 delta;
             if (!event.isZooming) {
-                delta = Vector2.Sub(MyGLRenderer.screenToWorldCoords(prevPos, 0), event.worldPosition);
+                delta = Vector2.sub(MyGLRenderer.screenToWorldCoords(prevPos, 0), event.worldPosition);
             } else {
                 delta = new Vector2(0, 0);
             }
@@ -150,8 +143,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.button_accept_popup_invitation:
                 // user wants to accept the invitation shown on the invitation popup (from OnInvitationReceivedListener).
-                riskNetworkManager.acceptInviteToRoom(mIncomingInvitationId);
-                mIncomingInvitationId = null;
+                riskNetworkManager.acceptInviteToRoom();
                 break;
             case R.id.button_quick_game:
                 // user wants to play against a random opponent right now
@@ -262,13 +254,17 @@ public class MainActivity extends AppCompatActivity
 
     public void onStart() {
         switchToScreen(R.id.screen_wait);
-        if (riskNetworkManager != null && riskNetworkManager.isConnected()) {
-            Log.w(TAG,
-                    "GameHelper: client was already connected on onStart()");
-        } else {
-            Log.d(TAG,"Connecting client.");
-            riskNetworkManager.connect();
+        if(riskNetworkManager != null)
+        {
+            if (riskNetworkManager.isConnected()) {
+                Log.w(TAG,
+                        "GameHelper: client was already connected on onStart()");
+            } else {
+                Log.d(TAG,"Connecting client.");
+                riskNetworkManager.connect();
+            }
         }
+
         super.onStart();
     }
 
@@ -390,23 +386,7 @@ public class MainActivity extends AppCompatActivity
         }
         mCurScreen = screenId;
 
-        // show invitation popup?
-        boolean showInvPopup;
-        if (mIncomingInvitationId == null) {
-            // no invitation, so no popup
-            showInvPopup = false;
-        } else if (mMultiplayer) {
-            // if in multiplayer, only show invitation on main screen
-            showInvPopup = (mCurScreen == R.id.screen_main);
-        } else {
-            //always show in singleplayer
-            showInvPopup = true;
-            //could change to for example (mCurScreen == R.id.screen_main && <ingame_condition>);
-            //(maybe toggleable in settings)
-        }
-        if(findViewById(R.id.invitation_popup) != null) {
-            findViewById(R.id.invitation_popup).setVisibility(showInvPopup ? View.VISIBLE : View.GONE);
-        }
+        findViewById(R.id.invitation_popup).setVisibility(View.GONE);
     }
 
     void switchToMainScreen() {

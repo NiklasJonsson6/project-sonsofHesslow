@@ -18,8 +18,6 @@ import java.util.List;
 public class FilledBezierPath extends GLObject implements Updatable {
 
 
-    public static int triangles = 0;
-    private final int naive_precision = 2; //higher is more detailed
     public Mesh fillMesh;
     public BezierPath path;
     boolean doRest = false;
@@ -56,14 +54,14 @@ public class FilledBezierPath extends GLObject implements Updatable {
             Vector2 prev = verts[i];
             Vector2 current = verts[(i + 1) % verts.length];
             Vector2 next = verts[(i + 2) % verts.length];
-            Vector2 diffa = Vector2.Sub(next, current).normalized();
-            Vector2 diffb = Vector2.Sub(current, prev).normalized();
-            Vector2 diff = Vector2.Add(diffa, diffb).normalized();
+            Vector2 diffa = Vector2.sub(next, current).normalized();
+            Vector2 diffb = Vector2.sub(current, prev).normalized();
+            Vector2 diff = Vector2.add(diffa, diffb).normalized();
             float scaleFactor = Math.max(Math.abs(Vector2.dot(diff, diffa)), 0.8f);
-            Vector2 orth = Vector2.Mul(new Vector2(-diff.y, diff.x), 1 / scaleFactor * 0.01f);
+            Vector2 orth = Vector2.mul(new Vector2(-diff.y, diff.x), 1 / scaleFactor * 0.01f);
 
-            outlineVerts[i * 2 + 0] = Vector2.Add(current, orth);
-            outlineVerts[i * 2 + 1] = Vector2.Sub(current, orth);
+            outlineVerts[i * 2 + 0] = Vector2.add(current, orth);
+            outlineVerts[i * 2 + 1] = Vector2.sub(current, orth);
 
             VertSideArr[i * 2 + 0] = 0;
             VertSideArr[i * 2 + 0] = 1;
@@ -152,7 +150,6 @@ public class FilledBezierPath extends GLObject implements Updatable {
         fillMesh = new Mesh(tris, verts);
         calcCenter();
         origin = new Vector3(center, 0);
-        triangles += fillMesh.triangles.length;
     }
 
     @Override
@@ -186,12 +183,12 @@ public class FilledBezierPath extends GLObject implements Updatable {
     }
 
     public void setColorOutline(float[] color) {
-        outlineColor = color;
+        outlineColor = color.clone();
     }
 
     public void mergeWith(FilledBezierPath other) {
-        fillMesh = Mesh.Add(fillMesh, other.fillMesh);
-        outlineMesh = Mesh.Add(outlineMesh, other.outlineMesh);
+        fillMesh = Mesh.add(fillMesh, other.fillMesh);
+        outlineMesh = Mesh.add(outlineMesh, other.outlineMesh);
 
         ByteBuffer bb = ByteBuffer.allocateDirect((vertSide.capacity() + other.vertSide.capacity()) * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -200,7 +197,7 @@ public class FilledBezierPath extends GLObject implements Updatable {
         VertSideNew.put(other.vertSide);
         VertSideNew.position(0);
         vertSide = VertSideNew;
-        center = Vector2.Mul(Vector2.Add(Vector2.Mul(center, Area), Vector2.Mul(other.center, other.Area)), 1f / (other.Area + Area));
+        center = Vector2.mul(Vector2.add(Vector2.mul(center, Area), Vector2.mul(other.center, other.Area)), 1f / (other.Area + Area));
     }
 
     public void setColor(float[] color, Vector2 origin) {
@@ -208,7 +205,7 @@ public class FilledBezierPath extends GLObject implements Updatable {
         maxLen = 20;
         len = 0;
         fromColor = toColor;
-        toColor = color;
+        toColor = color.clone();
     }
 
     public void setColor(float[] color) {

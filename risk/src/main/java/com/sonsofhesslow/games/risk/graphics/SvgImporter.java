@@ -75,7 +75,7 @@ public class SvgImporter {
                 int pathLen = pathsWithInfo.size();
                 for (int j = 0; j < pathLen; j++) {
                     Pair<BezierPath, Integer> pathWithInfo = pathsWithInfo.get(j);
-                    BezierPath.splitReturn newPaths = BezierPath.splitBeizPath(pathWithInfo.first, split);
+                    BezierPath.SplitReturn newPaths = BezierPath.splitBeizPath(pathWithInfo.first, split);
                     if (newPaths != null) {
                         pathsWithInfo.remove(j);
                         --j;
@@ -176,8 +176,8 @@ public class SvgImporter {
 
             if (firstVal != null && secondVal != null) {
                 //notify that the objects no longer need rendering.
-                firstVal.path.Remove();
-                secondVal.path.Remove();
+                firstVal.path.remove();
+                secondVal.path.remove();
                 //merge the objects
                 firstVal.path.mergeWith(secondVal.path);
                 //add toghether the neigbors

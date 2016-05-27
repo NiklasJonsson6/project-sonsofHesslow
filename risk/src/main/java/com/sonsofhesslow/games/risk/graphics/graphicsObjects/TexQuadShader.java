@@ -11,7 +11,7 @@ class TexQuadShader {
     private static int matrixHandle;
     private static int textureHandle;
     private static int positionHandle;
-    private final String vertexShaderCode =
+    private static final String vertexShaderCode =
             "uniform mat4 matrix;" +
                     "attribute vec4 position;" +
                     "varying vec2 textureCoordinate;" +
@@ -19,7 +19,7 @@ class TexQuadShader {
                     "  gl_Position = matrix * position;" +
                     "  textureCoordinate = -vec2(position);" +
                     "}";
-    private final String fragmentShaderCode =
+    private static final String fragmentShaderCode =
             "precision mediump float;" +
                     "uniform sampler2D texture;" +
                     "uniform vec4 color;" +

@@ -8,7 +8,7 @@ public class BezierPathBuilder {
     private final List<Bezier> beziers = new ArrayList<>();
 
     public boolean addBeiz(Bezier bezier) {
-        if (beziers.isEmpty() || Vector2.AlmostEqual(bezier.points[0], (beziers.get(beziers.size() - 1).points[3]))) {
+        if (beziers.isEmpty() || Vector2.almostEqual(bezier.points[0], (beziers.get(beziers.size() - 1).points[3]))) {
             beziers.add(bezier);
             return true;
         } else {
@@ -30,17 +30,17 @@ public class BezierPathBuilder {
         Vector2 addedFirst = addition.points[0];
         Vector2 addedLast = addition.points[addition.points.length - 1];
 
-        if (Vector2.AlmostEqual(currentLast, addedFirst)) {
+        if (Vector2.almostEqual(currentLast, addedFirst)) {
             addBeizPath(addition);
             return true;
         }
 
-        if (Vector2.AlmostEqual(currentLast, addedLast)) {
+        if (Vector2.almostEqual(currentLast, addedLast)) {
             addBeizPath(addition.reverse());
             return true;
         }
 
-        if (Vector2.AlmostEqual(currentFirst, addedLast)) {
+        if (Vector2.almostEqual(currentFirst, addedLast)) {
             BezierPath old = get(false);
             clear();
             addBeizPath(addition);
@@ -48,7 +48,7 @@ public class BezierPathBuilder {
             return true;
         }
 
-        if (Vector2.AlmostEqual(currentFirst, addedFirst)) {
+        if (Vector2.almostEqual(currentFirst, addedFirst)) {
             BezierPath old = get(false);
             clear();
             addBeizPath(old.reverse());
@@ -68,7 +68,7 @@ public class BezierPathBuilder {
 
     public BezierPath get(boolean close) {
         if (close) {
-            if (!Vector2.AlmostEqual(beziers.get(0).points[0], (beziers.get(beziers.size() - 1).points[3]))) {
+            if (!Vector2.almostEqual(beziers.get(0).points[0], (beziers.get(beziers.size() - 1).points[3]))) {
                 throw new RuntimeException("screwed up beiz");
             } else {
                 Vector2[] points = new Vector2[beziers.size() * 3];

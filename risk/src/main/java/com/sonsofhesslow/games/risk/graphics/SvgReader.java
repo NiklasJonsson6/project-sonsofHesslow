@@ -10,12 +10,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PushbackReader;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 class SvgReader {
-    private final PushbackReader r;
-    private Vector2 pos = Vector2.Zero();
+    private final PushbackReader pushbackReader;
+    private Vector2 pos = Vector2.zero();
     public SvgReader(InputStream inputStream) {
-        r = new PushbackReader(new BufferedReader(new InputStreamReader(inputStream)), 100);
+        // relying on default encoding here is find. The input file is treated as raw
+        // and supported by the developers.
+        pushbackReader = new PushbackReader(new BufferedReader(new InputStreamReader(inputStream)),100);
     }
 
     private float readFloat() throws IOException {
@@ -25,7 +29,7 @@ class SvgReader {
         int decimal = -1;
         boolean negative = false;
         for (int i = 0; i < 20; ++i) {
-            int c = (char) r.read();
+            int c = pushbackReader.read();
             if (c == -1) break;
             if (c == '.') {
                 decimal = 0;
@@ -45,7 +49,7 @@ class SvgReader {
                     ret = ret * 10 + num;
                 }
             } else {
-                r.unread(c);
+                pushbackReader.unread(c);
                 break;
             }
         }
@@ -56,9 +60,9 @@ class SvgReader {
 
     private void skipWhite() throws IOException {
         for (; ; ) {
-            int c = r.read();
+            int c = pushbackReader.read();
             if (!Character.isWhitespace(c) || c == -1) {
-                r.unread(c);
+                pushbackReader.unread(c);
                 break;
             }
         }
@@ -67,9 +71,9 @@ class SvgReader {
 
     private void skipDigit() throws IOException {
         for (; ; ) {
-            int c = r.read();
+            int c = pushbackReader.read();
             if (!Character.isDigit(c) || c == -1) {
-                r.unread(c);
+                pushbackReader.unread(c);
                 break;
             }
         }
@@ -79,12 +83,12 @@ class SvgReader {
         skipWhite();
         float x = readFloat();
         skipWhite();
-        int comma = r.read();
+        int comma = pushbackReader.read();
         if (comma != ',') throw new FileFormatException("file format mismatch");
         skipWhite();
         float y = readFloat();
         if (relative)
-            return Vector2.Add(new Vector2(x, y), pos);
+            return Vector2.add(new Vector2(x, y), pos);
         else return new Vector2(x, y);
     }
 
@@ -148,16 +152,16 @@ class SvgReader {
             advancePast('"');
             switch (s) {
                 case "d":
-                    pos = Vector2.Zero();
+                    pos = Vector2.zero();
                     BezierPathBuilder b = new BezierPathBuilder();
 
                     for (; ; ) {
                         skipWhite();
-                        int c = (char) r.read();
+                        int c = pushbackReader.read();
                         if (c == -1) break;
                         if (c == '\"') {
                             ret = b.get(false);
-                            r.unread('\"'); //we'll advance past later on. need to keep our return state consitant.
+                            pushbackReader.unread('\"'); //we'll advance past later on. need to keep our return state consitant.
                             break;
                         }
                         if (c == 'z' || c == 'Z') {
@@ -184,7 +188,7 @@ class SvgReader {
                         skipWhite();
                         String attr = readWord(":\"");
                         if (attr.equals("stroke-dasharray")) {
-                            r.read();//reads the :
+                            pushbackReader.read();//reads the :
                             skipWhite();
                             if (isNextFloat()) {
                                 isDashed = true;
@@ -195,7 +199,7 @@ class SvgReader {
                         readWord(";\"");
                         int p = peek();
                         if (p == -1 || p == '\"') break;
-                        r.read(); // reads the ;
+                        pushbackReader.read(); // reads the ;
                     }
                     break;
             }
@@ -209,18 +213,18 @@ class SvgReader {
     }
 
     private int peek() throws IOException {
-        int c = r.read();
+        int c = pushbackReader.read();
         if (c != -1)
-            r.unread((char) c);
+            pushbackReader.unread((char) c);
         return c;
     }
 
     private String peek(int length) throws IOException {
         char buffer[] = new char[length];
         for (int i = 0; i < length; i++) {
-            buffer[i] = (char) r.read();
+            buffer[i] = (char) pushbackReader.read();
         }
-        r.unread(buffer);
+        pushbackReader.unread(buffer);
         return new String(buffer, 0, length);
     }
 
@@ -234,7 +238,7 @@ class SvgReader {
         int currentChar = 0;
         char[] s = string.toCharArray();
         for (; ; ) {
-            int c = r.read();
+            int c = pushbackReader.read();
             if (c == s[currentChar]) {
                 if (++currentChar == s.length) return true;
             } else {
@@ -246,7 +250,7 @@ class SvgReader {
 
     private boolean advancePast(char s) throws IOException {
         for (; ; ) {
-            int c = r.read();
+            int c = pushbackReader.read();
             if (c == -1) return false;
             if ((char) c == s) return true;
         }
@@ -256,12 +260,12 @@ class SvgReader {
         char[] s = new char[20]; // we don't need any longer words than that.
         int i = 0;
         for (; i < 20; ++i) {
-            int c = (char) r.read();
+            int c = pushbackReader.read();
             if (c == -1) break;
             if (Character.isLetter(c)) {
                 s[i] = (char) c;
             } else {
-                r.unread(c);
+                pushbackReader.unread(c);
                 break;
             }
         }
@@ -272,19 +276,19 @@ class SvgReader {
         char[] s = new char[20];
         int i = 0;
         for (; i < 20; ++i) {
-            int c = (char) r.read();
+            int c = pushbackReader.read();
             if (c == -1) break;
             if (delimiter.indexOf(c) == -1) {
                 s[i] = (char) c;
             } else {
-                r.unread(c);
+                pushbackReader.unread(c);
                 break;
             }
         }
         return new String(s, 0, i);
     }
 
-    class FileFormatException extends RuntimeException {
+    static class FileFormatException extends RuntimeException {
         FileFormatException(String message) {
             super(message);
         }

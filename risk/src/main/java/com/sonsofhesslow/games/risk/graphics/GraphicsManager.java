@@ -31,17 +31,17 @@ public class GraphicsManager {
     private Integer[] beizContinents;
     private Number[] numbers;
     private Renderer renderer;
-
+    MyGLSurfaceView surfaceView;
     public static GraphicsManager getInstance() {
-        if (instance == null) instance = new GraphicsManager();
+        if (instance == null) instance = new GraphicsManager(); //@multithread unsafe
         return instance;
     }
 
-    public void init(Resources resources, Renderer renderer) {
+    public void init(Resources resources, Renderer renderer, final MyGLSurfaceView surfaceView) {
         this.renderer = renderer;
+        this.surfaceView = surfaceView;
 
-
-        Number.setTextures(null);
+        Number.invalidateGLMemory();
 
         if(numbers != null) {
             for(Number number : numbers) {
@@ -61,7 +61,7 @@ public class GraphicsManager {
                 for (Updatable updatable : updatables) {
                     if (updatable.update(dt)) reqRender = true;
                 }
-                if (reqRender) MyGLSurfaceView.ref.requestRender();
+                if (reqRender) surfaceView.requestRender();
                 handler.postDelayed(this, 16);
                 last = current;
             }
@@ -159,7 +159,7 @@ public class GraphicsManager {
     }
 
     public void requestRender() {
-        MyGLSurfaceView.ref.requestRender();
+        surfaceView.requestRender();
     }
 
     public void setRenderer(Renderer renderer) {

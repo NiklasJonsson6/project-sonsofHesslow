@@ -29,7 +29,7 @@ public class Mesh {
     static final int COORDS_PER_VERTEX = 3;
     final short[] triangles;
     final Vector2[] vertices;
-    final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex (coord right? //daniel)
+    final static int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex (coord right? //daniel)
     private final float[] newVerts;
     FloatBuffer vertexBuffer;
     ShortBuffer drawListBuffer;
@@ -38,8 +38,8 @@ public class Mesh {
     private float minY;
     private float maxY;
     public Mesh(short[] triangles, Vector2[] vertices) {
-        this.vertices = vertices;
-        this.triangles = triangles;
+        this.vertices = vertices; // no copy for performance reasons
+        this.triangles = triangles; // no copy for performance reasons
         newVerts = new float[vertices.length * COORDS_PER_VERTEX];
         for (int i = 0; i < vertices.length; i++) {
             newVerts[i * COORDS_PER_VERTEX] = vertices[i].x;
@@ -49,7 +49,7 @@ public class Mesh {
         calculateMetrics();
     }
 
-    public static Mesh Add(Mesh a, Mesh b) {
+    public static Mesh add(Mesh a, Mesh b) {
         Vector2[] newVerts = ArrayUtils.concat(a.vertices, b.vertices);
         int atLen = a.triangles.length;
         int btLen = b.triangles.length;
