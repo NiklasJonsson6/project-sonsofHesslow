@@ -396,7 +396,7 @@ public class Controller implements GLTouchListener, NetworkListener {
     }
 
     public void setArmiesToPlace(Player player) {
-        int armies = riskModel.getCurrentPlayer().getTerritoriesOwned() / 3;
+        int armies = Math.max(player.getTerritoriesOwned() / 3,3);
 
         int territoriesFoundAsia = 0;
         int territoriesFoundNorthAmerica = 0;
