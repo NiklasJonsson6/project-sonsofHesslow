@@ -43,6 +43,9 @@ public class Controller implements GLTouchListener, NetworkListener {
     private ArrayList<Territory> movementChangedTerritories = new ArrayList<>();
     private View riskView = null;
 
+    //to prevent adding multiple wait screens
+    private boolean activeWaitScreen = false;
+
     public Controller(int[] playerIds, Overlay overlayController, Resources resources) {
         this.selfId = 0;
         this.overlayController = overlayController;
@@ -135,7 +138,7 @@ public class Controller implements GLTouchListener, NetworkListener {
                             touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
 
                             //for debugging only (picks more territories at once)
-                            final int EXTRA_TRIES = 0;
+                            final int EXTRA_TRIES = 13;
 
                             Random r = new Random();
                             for (int i = 0; i < EXTRA_TRIES; i++) {
@@ -145,8 +148,22 @@ public class Controller implements GLTouchListener, NetworkListener {
                                     randomTerritory.setArmyCount(1);
                                     randomTerritory.setOccupier(riskModel.getCurrentPlayer());
                                     riskModel.getCurrentPlayer().decArmiesToPlace();
+<<<<<<< 787c7a7d26dd2efda55e8947283a7904a2d48aed
                                 } else {
                                     i--;    //find a new territory to place
+=======
+                                } else{
+                                    int terrotoriesOccupied = 0;
+                                    for (Territory territory : riskModel.getTerritories()) {
+                                        if (territory.getOccupier() != null) {
+                                            terrotoriesOccupied++;
+                                        }
+                                    }
+                                    //if >20 prevent freeze
+                                    if (terrotoriesOccupied != 42) {
+                                        i--;    //find a new territory to place
+                                    }
+>>>>>>> wait screen working with more than 2 people playing
                                 }
                             }
 
@@ -338,7 +355,12 @@ public class Controller implements GLTouchListener, NetworkListener {
             }
         }
 
+<<<<<<< 787c7a7d26dd2efda55e8947283a7904a2d48aed
         if (playerSearchIndex == currentPlayerIndex) {
+=======
+        if(playerSearchIndex == currentPlayerIndex) {
+            System.out.println("player won@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+>>>>>>> wait screen working with more than 2 people playing
             //player won
             playerWon(riskModel.getPlayers()[currentPlayerIndex]);
         }
@@ -351,7 +373,11 @@ public class Controller implements GLTouchListener, NetworkListener {
             setArmiesToPlace(riskModel.getPlayers()[currentPlayerIndex]);
         }
 
+<<<<<<< 787c7a7d26dd2efda55e8947283a7904a2d48aed
         if (territoryTaken) {
+=======
+        if(territoryTaken) {
+>>>>>>> wait screen working with more than 2 people playing
             riskModel.getCurrentPlayer().giveOneCard();
             territoryTaken = false;
         }
@@ -361,9 +387,15 @@ public class Controller implements GLTouchListener, NetworkListener {
 
         if (isOnline() && riskModel.getCurrentPlayer().getParticipantId() != selfId) {
             //multiplayer & not users turn
-            overlayController.addView(R.layout.activity_wait);
+            if(!activeWaitScreen) {
+                overlayController.addView(R.layout.activity_wait);
+                activeWaitScreen = true;
+            }
         } else {
-            overlayController.removeView(R.layout.activity_wait);
+            if(activeWaitScreen){
+                overlayController.removeView(R.layout.activity_wait);
+                activeWaitScreen = false;
+            }
         }
         GraphicsManager.getInstance().requestRender();
     }
@@ -438,7 +470,7 @@ public class Controller implements GLTouchListener, NetworkListener {
             Territory territory = riskModel.getSelectedTerritory();
             territory.changeArmyCount(seekBarValue);
             riskModel.getCurrentPlayer().decArmiesToPlace(seekBarValue);
-            if (riskModel.getCurrentPlayer().getArmiesToPlace() == 0
+            if (riskModel.getCurrentPlayer().getArmiesToPlace() < 1
                     && riskModel.getGamePhase() == Risk.GamePhase.PLACE_ARMIES) {
                 riskModel.setGamePhase(Risk.GamePhase.FIGHT);
                 riskModel.setSelectedTerritory(null);
@@ -517,8 +549,12 @@ public class Controller implements GLTouchListener, NetworkListener {
     public boolean isOnline() {
         return riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId();
     }
+<<<<<<< 787c7a7d26dd2efda55e8947283a7904a2d48aed
 
     public void turnInCards(ArrayList<Integer> selectedCards) {
+=======
+    public void turnInCards(ArrayList<Integer> selectedCards){
+>>>>>>> wait screen working with more than 2 people playing
         Collections.sort(selectedCards);
         for (Integer inte : selectedCards) {
             System.out.println("Index value: " + inte.intValue());
