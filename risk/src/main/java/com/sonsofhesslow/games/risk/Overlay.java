@@ -80,6 +80,7 @@ public class Overlay {
                 break;
             case FIGHT:
                 ((TextView) parent.findViewById(R.id.currentPhase)).setText("Fight");
+                setPlaceArmiesVisible(false);
                 setNextTurnVisible(true);
                 ((TextView) parent.findViewById(R.id.currentPhase)).setBackgroundColor(fightRed);
                 break;
@@ -129,7 +130,9 @@ public class Overlay {
     public void  setInformationColour(int colour){
         parent.findViewById(R.id.information).setBackgroundColor(colour);
     }
-
+    public void setNextTurnName(String s){
+        ((TextView)parent.findViewById(R.id.nextTurn)).setText(s);
+    }
     public void setNextTurnVisible(boolean state){
         if(state == true){
             hideBottom();

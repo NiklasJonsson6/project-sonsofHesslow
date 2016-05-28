@@ -96,7 +96,7 @@ public class View implements Observer {
                         if (event.newTerritory == null) {
                             if (risk.getGamePhase() == Risk.GamePhase.MOVEMENT) {
                                 overlayController.setGamePhase(Risk.GamePhase.MOVEMENT);
-                            } else {
+                            } else if(risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES){
                                 overlayController.setPlaceArmiesVisible(true);
                                 overlayController.setBarMaxValue(risk.getCurrentPlayer().getArmiesToPlace());
                                 //Indication
@@ -117,7 +117,7 @@ public class View implements Observer {
                             overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies() - 1);
                             // indication
                         }
-                        if (event.newTerritory == null) {
+                        if (event.newTerritory == null && risk.getGamePhase() == Risk.GamePhase.MOVEMENT) {
                             overlayController.setGamePhase(Risk.GamePhase.MOVEMENT);
                         }
                         break;
@@ -149,16 +149,20 @@ public class View implements Observer {
                     // Hide all
                     overlayController.setGamePhase(Risk.GamePhase.PLACE_STARTING_ARMIES);
                     overlayController.setInformation("Armies to place: " + risk.getCurrentPlayer().getArmiesToPlace(), true);
+                    overlayController.setNextTurnName("Next Phase");
                 } else if (event == Risk.GamePhase.PLACE_ARMIES) {
                     // Hide all
                     overlayController.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
                     overlayController.setPlaceArmiesVisible(true);
                     overlayController.setBarMaxValue(risk.getCurrentPlayer().getArmiesToPlace());
+                    overlayController.setNextTurnName("Next Phase");
                     //add some kind of indication to how many
                 } else if (event == Risk.GamePhase.FIGHT) {
                     overlayController.setGamePhase(Risk.GamePhase.FIGHT);
+                    overlayController.setNextTurnVisible(true);
                 } else if (event == Risk.GamePhase.MOVEMENT) {
                     overlayController.setGamePhase(Risk.GamePhase.MOVEMENT);
+                    overlayController.setNextTurnName("Next Turn");
                 }
             } else {
                 /*
