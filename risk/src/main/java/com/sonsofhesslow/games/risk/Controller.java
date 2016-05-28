@@ -138,7 +138,7 @@ public class Controller implements GLTouchListener, NetworkListener {
                             touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
 
                             //for debugging only (picks more territories at once)
-                            final int EXTRA_TRIES = 13;
+                            final int EXTRA_TRIES = 20;
 
                             Random r = new Random();
                             for (int i = 0; i < EXTRA_TRIES; i++) {
@@ -320,6 +320,33 @@ public class Controller implements GLTouchListener, NetworkListener {
     }
 
     public void nextPlayer() {
+        int newPlayerIndex = getNewPlayerIndex();
+
+        if(newPlayerIndex == currentPlayerIndex) {
+            //previous player won
+            playerWon(riskModel.getPlayers()[currentPlayerIndex]);
+        }
+
+        //set next player
+        currentPlayerIndex = newPlayerIndex;
+
+        //gives armies for placement phase
+        if (riskModel.getGamePhase() != Risk.GamePhase.PICK_TERRITORIES && riskModel.getGamePhase() != Risk.GamePhase.PLACE_STARTING_ARMIES) {
+            setArmiesToPlace(riskModel.getPlayers()[currentPlayerIndex]);
+        }
+
+        if(territoryTaken) {
+            riskModel.getCurrentPlayer().giveOneCard();
+            territoryTaken = false;
+        }
+
+        //next player
+        riskModel.setCurrentPlayer(riskModel.getPlayers()[currentPlayerIndex]);
+
+        handleWaitingScreen();
+    }
+
+    public int getNewPlayerIndex() {
         int playerSearchIndex = currentPlayerIndex;
 
         boolean nextPlayerIndexFound = false;
@@ -337,7 +364,7 @@ public class Controller implements GLTouchListener, NetworkListener {
                 nextPlayerIndexFound = true;
             } else if (playerToTest.isAlive()) {
                 for (Territory territory : riskModel.getTerritories()) {
-                    if (territory.getOccupier().getParticipantId() == playerToTest.getParticipantId()) {
+                    if (territory.getOccupier() == playerToTest) {
                         //player is occupier of atleast one territory, is alive
                         nextPlayerIndexFound = true;
                         break;
@@ -349,47 +376,12 @@ public class Controller implements GLTouchListener, NetworkListener {
                 }
             }
         }
-
-        if(playerSearchIndex == currentPlayerIndex) {
-            System.out.println("player won@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-            //player won
-            playerWon(riskModel.getPlayers()[currentPlayerIndex]);
-        }
-
-        //set next player
-        currentPlayerIndex = playerSearchIndex;
-
-        //gives armies for placement phase
-        if (riskModel.getGamePhase() != Risk.GamePhase.PICK_TERRITORIES && riskModel.getGamePhase() != Risk.GamePhase.PLACE_STARTING_ARMIES) {
-            setArmiesToPlace(riskModel.getPlayers()[currentPlayerIndex]);
-        }
-
-        if(territoryTaken) {
-            riskModel.getCurrentPlayer().giveOneCard();
-            territoryTaken = false;
-        }
-
-        //next player
-        riskModel.setCurrentPlayer(riskModel.getPlayers()[currentPlayerIndex]);
-
-        if (isOnline() && riskModel.getCurrentPlayer().getParticipantId() != selfId) {
-            //multiplayer & not users turn
-            if(!activeWaitScreen) {
-                overlayController.addView(R.layout.activity_wait);
-                activeWaitScreen = true;
-            }
-        } else {
-            if(activeWaitScreen){
-                overlayController.removeView(R.layout.activity_wait);
-                activeWaitScreen = false;
-            }
-        }
-        GraphicsManager.getInstance().requestRender();
+        return playerSearchIndex;
     }
 
     private void playerWon(Player player) {
         System.out.println("player won");
-        // TODO: 2016-05-20
+        // TODO: 2016-05-29
     }
 
     @Nullable
@@ -548,5 +540,21 @@ public class Controller implements GLTouchListener, NetworkListener {
         temp.remove(selectedCards.get(1).intValue());
         temp.remove(selectedCards.get(0).intValue());
         riskModel.getCurrentPlayer().setCards(temp);
+    }
+
+    public void handleWaitingScreen() {
+        if (isOnline() && riskModel.getCurrentPlayer().getParticipantId() != selfId) {
+            //multiplayer & not users turn
+            if(!activeWaitScreen) {
+                overlayController.addView(R.layout.activity_wait);
+                activeWaitScreen = true;
+            }
+        } else {
+            if(activeWaitScreen){
+                overlayController.removeView(R.layout.activity_wait);
+                activeWaitScreen = false;
+            }
+        }
+        GraphicsManager.getInstance().requestRender();
     }
 }
