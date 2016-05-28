@@ -98,6 +98,10 @@ public class GraphicsManager {
     }
 
     public void addArrow(int territoryIdFrom, int territoyIdTo, int value, float[] color) {
+        if(arrows.containsKey(new Pair<>(territoryIdFrom,territoyIdTo)))
+        {
+            arrows.get(new Pair<>(territoryIdFrom,territoyIdTo)).remove();
+        }
         arrows.put(new Pair<>(territoryIdFrom, territoyIdTo),
                 new NumberedArrow(renderer, beziers[territoryIdFrom].getCenter(),
                         beziers[territoyIdTo].getCenter(), color, value));

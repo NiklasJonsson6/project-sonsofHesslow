@@ -25,7 +25,6 @@ public class NumberedArrow {
         arrow.drawOrder = 10000;
         number.drawOrder = 10001;
     }
-
     public void remove() {
         number.remove();
         arrow.remove();
