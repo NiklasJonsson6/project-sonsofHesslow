@@ -88,7 +88,7 @@ public class CardGridAdapter extends BaseAdapter{
                 if(isClicked.get(position)){
                     selectedView.remove((Integer) position);
                     holder.rv = (RelativeLayout) rowView.get(position).findViewById(R.id.frameColour);
-                    holder.rv.setBackgroundColor(Color.parseColor("#7b7b7b"));
+                    holder.rv.setBackgroundColor(Color.parseColor("#cbbba0"));
                     isClicked.set(position,false);
                 } else {
                     selectedView.add((Integer) position);

@@ -190,15 +190,15 @@ public class Overlay {
         for (Card card : cardList){
             switch (card.getCardType()){
                 case INFANTRY:
-                    images.add(R.drawable.ic_account_box_black_48dp);
+                    images.add(R.drawable.donegun);
                     names.add("Infantery");
                     break;
                 case CAVALRY:
-                    images.add(R.drawable.ic_account_box_black_48dp);
+                    images.add(R.drawable.donesword);
                     names.add("Cavalry");
                     break;
                 case ARTILLARY:
-                    images.add(R.drawable.ic_account_box_black_48dp);
+                    images.add(R.drawable.donecan);
                     names.add("Artillary");
                     break;
             }
