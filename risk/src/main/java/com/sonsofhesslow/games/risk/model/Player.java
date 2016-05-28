@@ -18,10 +18,10 @@ public class Player extends Observable {
 
     public Player(int participantId) {
         Random rand = new Random();
-        String[] name = {"Bilbo Baggins","Filibert Bolger","Fredegar Bolger","Mrs. Bracegirdle","Melilot Brandybuck","Rosie Cotton","Elanor Gamgee","Frodo Gamgee","Hamfast Gamgee","Farmer Maggot","Old Noakes","Mrs. Proudfoot","Odo Proudfoot","Otho Sackville-Baggins","Lobelia Sackville-Baggins","Ted Sandyman", "Diamond Took"};
+        String[] name = {"Bilbo Baggins", "Filibert Bolger", "Fredegar Bolger", "Mrs. Bracegirdle", "Melilot Brandybuck", "Rosie Cotton", "Elanor Gamgee", "Frodo Gamgee", "Hamfast Gamgee", "Farmer Maggot", "Old Noakes", "Mrs. Proudfoot", "Odo Proudfoot", "Otho Sackville-Baggins", "Lobelia Sackville-Baggins", "Ted Sandyman", "Diamond Took"};
         int n = rand.nextInt(name.length);
         this.name = name[n]; //TODO get name input somehow
-        this.participantId  = participantId;
+        this.participantId = participantId;
         this.isAlive = true;
         imageRefrence = null;
     }
@@ -45,13 +45,14 @@ public class Player extends Observable {
     public ArrayList<Card> getCards() {
         return cards;
     }
+
     public void setCards(ArrayList<Card> cardList) {
         cards = cardList;
         setChanged();
         notifyObservers(cards);
     }
 
-    public void giveOneCard(){
+    public void giveOneCard() {
         cards.add(Card.getRandomCard());
     }
 
@@ -76,7 +77,7 @@ public class Player extends Observable {
     }
 
     public void decArmiesToPlace(int amount) {
-        armiesToPlace-=amount;
+        armiesToPlace -= amount;
     }
 
     public int getParticipantId() {

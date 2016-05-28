@@ -15,23 +15,25 @@ import com.google.android.gms.common.images.ImageManager;
 
 import java.util.ArrayList;
 
-public class CustomAdapter extends BaseAdapter{
+public class CustomAdapter extends BaseAdapter {
     ArrayList<String> playerName;
     ArrayList<String> armyCount;
     ArrayList<float[]> colours;
     Context context;
     ArrayList<Uri> imageId;
-    private static LayoutInflater inflater=null;
+    private static LayoutInflater inflater = null;
+
     public CustomAdapter(Context mainActivity, ArrayList<String> playerName, ArrayList<Uri> playerImage, ArrayList<String> armyCount, ArrayList<float[]> colours) {
         // TODO Auto-generated constructor stub
-        this.playerName=playerName;
-        this.armyCount=armyCount;
-        this.colours=colours;
-        context=mainActivity;
-        imageId=playerImage;
-        inflater = ( LayoutInflater )context.
+        this.playerName = playerName;
+        this.armyCount = armyCount;
+        this.colours = colours;
+        context = mainActivity;
+        imageId = playerImage;
+        inflater = (LayoutInflater) context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
+
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
@@ -50,30 +52,30 @@ public class CustomAdapter extends BaseAdapter{
         return position;
     }
 
-    public class Holder
-    {
+    public class Holder {
         TextView tv;
         ImageView img;
     }
+
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         // TODO Auto-generated method stub
-        Holder holder=new Holder();
+        Holder holder = new Holder();
         View rowView;
         rowView = inflater.inflate(R.layout.activity_playerinfo, null);
-        holder.tv=(TextView) rowView.findViewById(R.id.playerName);
-        holder.img=(ImageView) rowView.findViewById(R.id.playerImage);
+        holder.tv = (TextView) rowView.findViewById(R.id.playerName);
+        holder.img = (ImageView) rowView.findViewById(R.id.playerImage);
         holder.tv.setText(playerName.get(position));
-        holder.tv=(TextView) rowView.findViewById(R.id.armiesToPlace);
+        holder.tv = (TextView) rowView.findViewById(R.id.armiesToPlace);
         holder.tv.setText(armyCount.get(position));
-        holder.tv=(TextView) rowView.findViewById(R.id.colourHax);
-        if(colours.size() > position) {
+        holder.tv = (TextView) rowView.findViewById(R.id.colourHax);
+        if (colours.size() > position) {
             holder.tv.setBackgroundColor(Util.getIntFromColor(colours.get(position)));
         }
-        if(imageId.get(position) != null) {
+        if (imageId.get(position) != null) {
             System.out.println("Image uri set");
             ImageManager mrg = ImageManager.create(context);
-            mrg.loadImage(holder.img,imageId.get(position));
+            mrg.loadImage(holder.img, imageId.get(position));
         } else {
             holder.img.setImageResource(R.drawable.ic_account_box_black_48dp);
         }
@@ -81,7 +83,7 @@ public class CustomAdapter extends BaseAdapter{
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                Toast.makeText(context, "You Clicked "+playerName.get(position), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "You Clicked " + playerName.get(position), Toast.LENGTH_LONG).show();
             }
         });
         return rowView;

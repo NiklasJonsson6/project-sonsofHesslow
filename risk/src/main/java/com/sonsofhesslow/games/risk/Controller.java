@@ -51,14 +51,14 @@ public class Controller implements GLTouchListener, NetworkListener {
 
         riskModel.setCurrentPlayer(riskModel.getPlayers()[0]);
 
-        riskView = new View(riskModel, overlayController,resources);
+        riskView = new View(riskModel, overlayController, resources);
 
         //add observers
         riskModel.addObserver(riskView);
-        for(Territory territory: riskModel.getTerritories()) {
+        for (Territory territory : riskModel.getTerritories()) {
             territory.addObserver(riskView);
         }
-        for(Player player: riskModel.getPlayers()) {
+        for (Player player : riskModel.getPlayers()) {
             player.addObserver(riskView);
         }
 
@@ -78,7 +78,7 @@ public class Controller implements GLTouchListener, NetworkListener {
             riskModel.getTerritories()[i].setContinent(GraphicsManager.getInstance().getContinetId(i));
         }
 
-        if(!isOnline()){
+        if (!isOnline()) {
             //if it's an online game this will be done later, after selfId is set
             setStartingArmies();
         }
@@ -91,10 +91,9 @@ public class Controller implements GLTouchListener, NetworkListener {
         switch (event.action) {
             case armyAmountChange: {
                 Territory changedTerritory = Controller.getTerritoryById(event.getRegionId());
-                if(changedTerritory!=null) {
+                if (changedTerritory != null) {
                     changedTerritory.setArmyCount(event.getArmies());
-                }
-                else {
+                } else {
                     System.out.println("illegal region index");
                 }
             }
@@ -103,16 +102,15 @@ public class Controller implements GLTouchListener, NetworkListener {
                 Territory changedTerritory = Controller.getTerritoryById(event.getRegionId());
                 Player newOccupier = null;
 
-                for(Player p : Controller.getRiskModel().getPlayers()) {
-                    if(p.getParticipantId() == event.getParticipantId()) {
+                for (Player p : Controller.getRiskModel().getPlayers()) {
+                    if (p.getParticipantId() == event.getParticipantId()) {
                         newOccupier = p;
                         break;
                     }
                 }
-                if(changedTerritory!=null) {
+                if (changedTerritory != null) {
                     changedTerritory.setOccupier(newOccupier);
-                }
-                else {
+                } else {
                     System.out.println("illegal region index");
                 }
             }
@@ -140,14 +138,14 @@ public class Controller implements GLTouchListener, NetworkListener {
                             final int EXTRA_TRIES = 0;
 
                             Random r = new Random();
-                            for(int i = 0; i < EXTRA_TRIES; i++) {
+                            for (int i = 0; i < EXTRA_TRIES; i++) {
                                 int randomNumber = r.nextInt(42);
                                 Territory randomTerritory = getTerritoryById(randomNumber);
-                                if(randomTerritory.getOccupier() == null) {
+                                if (randomTerritory.getOccupier() == null) {
                                     randomTerritory.setArmyCount(1);
                                     randomTerritory.setOccupier(riskModel.getCurrentPlayer());
                                     riskModel.getCurrentPlayer().decArmiesToPlace();
-                                } else{
+                                } else {
                                     i--;    //find a new territory to place
                                 }
                             }
@@ -156,8 +154,8 @@ public class Controller implements GLTouchListener, NetworkListener {
                             riskModel.getCurrentPlayer().decArmiesToPlace();
                             // TODO: 2016-05-16 better solution?
                             boolean canContinueToPlacePhase = true;
-                            for(Territory territory : riskModel.getTerritories()){
-                                if(territory.getOccupier() == null){
+                            for (Territory territory : riskModel.getTerritories()) {
+                                if (territory.getOccupier() == null) {
                                     canContinueToPlacePhase = false;        //one territory with no occupier found
                                     break;
                                 }
@@ -178,15 +176,15 @@ public class Controller implements GLTouchListener, NetworkListener {
                             if (selfId != 0 && riskModel.getCurrentPlayer().getArmiesToPlace() == 0) {
                                 //multiplayer
                                 riskModel.setGamePhase(Risk.GamePhase.FIGHT);
-                            }  else {
+                            } else {
                                 boolean playerHasArmiesLeft = false;
-                                for(Player player : riskModel.getPlayers()) {
-                                    if(player.getArmiesToPlace() > 0) {
+                                for (Player player : riskModel.getPlayers()) {
+                                    if (player.getArmiesToPlace() > 0) {
                                         playerHasArmiesLeft = true;
                                         break;
                                     }
                                 }
-                                if(!playerHasArmiesLeft) {
+                                if (!playerHasArmiesLeft) {
                                     riskModel.setGamePhase(Risk.GamePhase.FIGHT);
                                 }
                             }
@@ -292,14 +290,14 @@ public class Controller implements GLTouchListener, NetworkListener {
 
     private boolean playerCanMove(Player player) {
         ArrayList<Territory> playersTerritories = new ArrayList<>();
-        for(Territory territory : riskModel.getTerritories()) {
-            if(territory.getOccupier().equals(player)){
+        for (Territory territory : riskModel.getTerritories()) {
+            if (territory.getOccupier().equals(player)) {
                 playersTerritories.add(territory);
             }
         }
 
-        for(Territory territory : playersTerritories) {
-            if(territory.getArmyCount() > 1){
+        for (Territory territory : playersTerritories) {
+            if (territory.getArmyCount() > 1) {
                 //cannot move
                 return false;
             }
@@ -311,10 +309,10 @@ public class Controller implements GLTouchListener, NetworkListener {
 
     public void nextPlayer() {
         int playerSearchIndex = currentPlayerIndex;
-        
+
         boolean nextPlayerIndexFound = false;
 
-        while (!nextPlayerIndexFound){
+        while (!nextPlayerIndexFound) {
             playerSearchIndex++;
             if (playerSearchIndex == riskModel.getPlayers().length) {
                 playerSearchIndex = 0;
@@ -323,9 +321,9 @@ public class Controller implements GLTouchListener, NetworkListener {
             Player playerToTest = riskModel.getPlayers()[playerSearchIndex];
 
             //check if player is alive
-            if(riskModel.getGamePhase() == Risk.GamePhase.PICK_TERRITORIES) {
+            if (riskModel.getGamePhase() == Risk.GamePhase.PICK_TERRITORIES) {
                 nextPlayerIndexFound = true;
-            } else if(playerToTest.isAlive() ) {
+            } else if (playerToTest.isAlive()) {
                 for (Territory territory : riskModel.getTerritories()) {
                     if (territory.getOccupier().getParticipantId() == playerToTest.getParticipantId()) {
                         //player is occupier of atleast one territory, is alive
@@ -333,14 +331,14 @@ public class Controller implements GLTouchListener, NetworkListener {
                         break;
                     }
                 }
-                if(!nextPlayerIndexFound) {
+                if (!nextPlayerIndexFound) {
                     //player is no longer alive
                     riskModel.getPlayers()[playerSearchIndex].setAlive(false);
                 }
             }
         }
 
-        if(playerSearchIndex == currentPlayerIndex) {
+        if (playerSearchIndex == currentPlayerIndex) {
             //player won
             playerWon(riskModel.getPlayers()[currentPlayerIndex]);
         }
@@ -349,11 +347,11 @@ public class Controller implements GLTouchListener, NetworkListener {
         currentPlayerIndex = playerSearchIndex;
 
         //gives armies for placement phase
-        if(riskModel.getGamePhase() != Risk.GamePhase.PICK_TERRITORIES && riskModel.getGamePhase() != Risk.GamePhase.PLACE_STARTING_ARMIES) {
+        if (riskModel.getGamePhase() != Risk.GamePhase.PICK_TERRITORIES && riskModel.getGamePhase() != Risk.GamePhase.PLACE_STARTING_ARMIES) {
             setArmiesToPlace(riskModel.getPlayers()[currentPlayerIndex]);
         }
-        
-        if(territoryTaken) {
+
+        if (territoryTaken) {
             riskModel.getCurrentPlayer().giveOneCard();
             territoryTaken = false;
         }
@@ -361,7 +359,7 @@ public class Controller implements GLTouchListener, NetworkListener {
         //next player
         riskModel.setCurrentPlayer(riskModel.getPlayers()[currentPlayerIndex]);
 
-        if(isOnline() && riskModel.getCurrentPlayer().getParticipantId() != selfId) {
+        if (isOnline() && riskModel.getCurrentPlayer().getParticipantId() != selfId) {
             //multiplayer & not users turn
             overlayController.addView(R.layout.activity_wait);
         } else {
@@ -388,25 +386,25 @@ public class Controller implements GLTouchListener, NetworkListener {
     private void setStartingArmies() {
         //rules from hasbro
         if (isOnline()) {
-            for (Player player: riskModel.getPlayers()) {
+            for (Player player : riskModel.getPlayers()) {
                 if (player.getParticipantId() == selfId) {
-                    player.giveArmies(50 - (5*riskModel.getPlayers().length));
+                    player.giveArmies(50 - (5 * riskModel.getPlayers().length));
                 }
             }
         } else {
             //singleplayer
-            for (Player player: riskModel.getPlayers()) {
-                player.giveArmies(50 - (5*riskModel.getPlayers().length));
+            for (Player player : riskModel.getPlayers()) {
+                player.giveArmies(50 - (5 * riskModel.getPlayers().length));
             }
         }
     }
 
     public void setArmiesToPlace(Player player) {
-        int armies = Math.max(player.getTerritoriesOwned() / 3,3);
+        int armies = Math.max(player.getTerritoriesOwned() / 3, 3);
 
         int[] foundInContinet = new int[6];
         for (Territory territory : riskModel.getTerritories()) {
-            if(territory.getOccupier().equals(player))
+            if (territory.getOccupier().equals(player))
                 ++foundInContinet[territory.getContinent().ordinal()];
         }
 
@@ -454,14 +452,14 @@ public class Controller implements GLTouchListener, NetworkListener {
             Territory to = riskModel.getSecondSelectedTerritory();
             to.changeArmyCount(seekBarValue);
             //to prevent multiple movements for troops (each troop should only be able to move 1 step)
-            if(riskModel.getGamePhase() == Risk.GamePhase.MOVEMENT) {
+            if (riskModel.getGamePhase() == Risk.GamePhase.MOVEMENT) {
                 to.setJustMovedArmies(seekBarValue);
                 movementChangedTerritories.add(to);
             }
             from.changeArmyCount(-seekBarValue);
             riskModel.placeEvent();
             if (from.getArmyCount() - 1 == 0 || from.getArmyCount() - from.getJustMovedArmies() == 0) {
-                if(riskModel.getGamePhase() == Risk.GamePhase.FIGHT) {
+                if (riskModel.getGamePhase() == Risk.GamePhase.FIGHT) {
                     riskModel.setGamePhase(Risk.GamePhase.FIGHT);
                 } else {
                     riskModel.setGamePhase(Risk.GamePhase.MOVEMENT);
@@ -469,7 +467,7 @@ public class Controller implements GLTouchListener, NetworkListener {
                 riskModel.setSelectedTerritory(null);
                 riskModel.setSecondSelectedTerritory(null);
             }
-            if(riskModel.getGamePhase() == Risk.GamePhase.FIGHT) {
+            if (riskModel.getGamePhase() == Risk.GamePhase.FIGHT) {
                 riskModel.setGamePhase(Risk.GamePhase.FIGHT);
                 riskModel.setSelectedTerritory(null);
                 riskModel.setSecondSelectedTerritory(null);
@@ -504,7 +502,7 @@ public class Controller implements GLTouchListener, NetworkListener {
     }
 
     private void refreshMovementChangedTerritories() {
-        for(Territory changedTerritory: movementChangedTerritories) {
+        for (Territory changedTerritory : movementChangedTerritories) {
             changedTerritory.setJustMovedArmies(0);
         }
     }
@@ -516,13 +514,13 @@ public class Controller implements GLTouchListener, NetworkListener {
         setStartingArmies();
     }
 
-    public boolean isOnline(){
+    public boolean isOnline() {
         return riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId();
     }
 
-    public void turnInCards(ArrayList<Integer> selectedCards){
+    public void turnInCards(ArrayList<Integer> selectedCards) {
         Collections.sort(selectedCards);
-        for(Integer inte: selectedCards){
+        for (Integer inte : selectedCards) {
             System.out.println("Index value: " + inte.intValue());
         }
         ArrayList<Card> temp = new ArrayList<Card>();

@@ -29,11 +29,12 @@ public class View implements Observer {
 
     GraphicsManager manager;
     Resources resources;
+
     public View(final Risk risk, Overlay overlayController, Resources resources) {
         this.risk = risk;
         this.overlayController = overlayController;
         manager = manager.getInstance();
-        this.resources =resources;
+        this.resources = resources;
     }
 
 
@@ -46,7 +47,7 @@ public class View implements Observer {
             overlayController.populateGridView((ArrayList<Card>) arg);
         } else if (obs instanceof Risk) {
             Risk risk = (Risk) obs;
-            if(overlayController.getOverlay().getChildCount() > 1){
+            if (overlayController.getOverlay().getChildCount() > 1) {
                 overlayController.populateListView(risk.getPlayers(), playerColors.values());
             }
             if (arg instanceof Risk.RiskChangeEvent) {
@@ -54,7 +55,7 @@ public class View implements Observer {
                 RISK CHANGE EVENT
                  */
                 Risk.RiskChangeEvent event = (Risk.RiskChangeEvent) arg;
-                switch(event.eventType) {
+                switch (event.eventType) {
                     case ATTACK:
                         if (event.oldTerritory != null) {
                             manager.setOutlineColor(event.oldTerritory.getId(), black);
@@ -76,11 +77,10 @@ public class View implements Observer {
                             manager.setHeight(event.oldTerritory.getId(), 0);
                         }
                         if (event.newTerritory != null) {
-                            if(risk.getAttackingTerritory()!=null)
-                            {
+                            if (risk.getAttackingTerritory() != null) {
                                 int overlayColorInt = resources.getColor(R.color.overlayFightColor);
                                 float[] overlayColorF = Util.getFloatFromIntColor(overlayColorInt);
-                                manager.addArrow(risk.getAttackingTerritory().getId(),event.newTerritory.getId(),-1,overlayColorF);
+                                manager.addArrow(risk.getAttackingTerritory().getId(), event.newTerritory.getId(), -1, overlayColorF);
                             }
                             manager.setOutlineColor(event.newTerritory.getId(), red);
                             manager.setHeight(event.newTerritory.getId(), 0.04f);
@@ -107,7 +107,7 @@ public class View implements Observer {
                         if (event.newTerritory == null) {
                             if (risk.getGamePhase() == Risk.GamePhase.MOVEMENT) {
                                 overlayController.setGamePhase(Risk.GamePhase.MOVEMENT);
-                            } else if(risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES){
+                            } else if (risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES) {
                                 overlayController.setPlaceArmiesVisible(true);
                                 overlayController.setBarMaxValue(risk.getCurrentPlayer().getArmiesToPlace());
                             }
@@ -122,8 +122,7 @@ public class View implements Observer {
                         }
 
                         if (event.newTerritory != null) {
-                            if(risk.getSelectedTerritory()!=null)
-                            {
+                            if (risk.getSelectedTerritory() != null) {
                                 int overlayColorInt = resources.getColor(R.color.overlayMovementColor);
                                 float[] overlayColorF = Util.getFloatFromIntColor(overlayColorInt);
                                 manager.addArrow(risk.getSelectedTerritory().getId(), event.newTerritory.getId(), -1, overlayColorF);
@@ -131,7 +130,7 @@ public class View implements Observer {
                             manager.setOutlineColor(event.newTerritory.getId(), green);
                             manager.setHeight(event.newTerritory.getId(), 0.04f);
                             overlayController.setPlaceArmiesVisible(true);
-                            if(risk.getSelectedTerritory().getJustMovedArmies() == 0) {
+                            if (risk.getSelectedTerritory().getJustMovedArmies() == 0) {
                                 overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies() - 1);
                             } else {
                                 overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies());

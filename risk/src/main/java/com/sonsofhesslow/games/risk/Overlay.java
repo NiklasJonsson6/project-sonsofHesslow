@@ -51,17 +51,18 @@ public class Overlay {
 
     public void addView(int value) {
         parent.addView(factory.inflate(value, null));
-        if(value == R.layout.activity_mainoverlay){
+        if (value == R.layout.activity_mainoverlay) {
             seekBar = (SeekBar) parent.findViewById(R.id.troopSeekBar);
             seekBar.setOnSeekBarChangeListener(
                     new SeekBar.OnSeekBarChangeListener() {
                         int progress = 0;
+
                         @Override
                         public void onProgressChanged(SeekBar seekBar,
                                                       int progresValue, boolean fromUser) {
                             progress = progresValue;
                             System.out.println("It's progress hehe <3 " + progress);
-                            ((TextView)parent.findViewById(R.id.armiesToPlaceText)).setText(progress + "/" + seekBar.getMax());
+                            ((TextView) parent.findViewById(R.id.armiesToPlaceText)).setText(progress + "/" + seekBar.getMax());
                         }
 
                         @Override
@@ -84,10 +85,12 @@ public class Overlay {
         parent.addView(view);
     }
 
-    public void removeView(int value) {parent.removeView(parent.findViewById(R.id.waitTurn));}
+    public void removeView(int value) {
+        parent.removeView(parent.findViewById(R.id.waitTurn));
+    }
 
-    public void setGamePhase(Risk.GamePhase phase){
-        switch (phase){
+    public void setGamePhase(Risk.GamePhase phase) {
+        switch (phase) {
             case PICK_TERRITORIES:
                 ((TextView) parent.findViewById(R.id.currentPhase)).setText("Pick Territories");
                 ((TextView) parent.findViewById(R.id.currentPhase)).setBackgroundColor(pickTerritoriesOrange);
@@ -118,14 +121,14 @@ public class Overlay {
         }
     }
 
-    public void setCurrentPlayer(Player player, int colour){
+    public void setCurrentPlayer(Player player, int colour) {
         ((TextView) parent.findViewById(R.id.currentPlayer)).setText(player.getName());
         ((TextView) parent.findViewById(R.id.currentPlayer)).setBackgroundColor(colour);
         listPopulated = true;
     }
 
-    public void setListVisible(boolean state){
-        if(state == true){
+    public void setListVisible(boolean state) {
+        if (state == true) {
             parent.findViewById(R.id.listView).setVisibility(View.VISIBLE);
             parent.findViewById(R.id.showList).setVisibility(View.GONE);
             parent.findViewById(R.id.hideList).setVisibility(View.VISIBLE);
@@ -135,8 +138,9 @@ public class Overlay {
             parent.findViewById(R.id.hideList).setVisibility(View.GONE);
         }
     }
-    public void setFightVisible(boolean state){
-        if(state == true){
+
+    public void setFightVisible(boolean state) {
+        if (state == true) {
             hideBottom();
             parent.findViewById(R.id.fightButton).setVisibility(View.VISIBLE);
         } else {
@@ -144,8 +148,8 @@ public class Overlay {
         }
     }
 
-    public void setInformation(String Text, boolean state){
-        if(state == true){
+    public void setInformation(String Text, boolean state) {
+        if (state == true) {
             hideBottom();
             parent.findViewById(R.id.information).setVisibility(View.VISIBLE);
             ((TextView) parent.findViewById(R.id.information)).setText(Text);
@@ -154,14 +158,16 @@ public class Overlay {
         }
     }
 
-    public void  setInformationColour(int colour){
+    public void setInformationColour(int colour) {
         parent.findViewById(R.id.information).setBackgroundColor(colour);
     }
-    public void setNextTurnName(String s){
-        ((TextView)parent.findViewById(R.id.nextTurn)).setText(s);
+
+    public void setNextTurnName(String s) {
+        ((TextView) parent.findViewById(R.id.nextTurn)).setText(s);
     }
-    public void setNextTurnVisible(boolean state){
-        if(state == true){
+
+    public void setNextTurnVisible(boolean state) {
+        if (state == true) {
             hideBottom();
             parent.findViewById(R.id.nextTurn).setVisibility(View.VISIBLE);
             parent.findViewById(R.id.cards).setVisibility(View.VISIBLE);
@@ -170,15 +176,19 @@ public class Overlay {
             parent.findViewById(R.id.cards).setVisibility(View.GONE);
         }
     }
-    public ViewGroup getOverlay(){
+
+    public ViewGroup getOverlay() {
         return parent;
     }
-    public int getBarValue(){
-        return ((SeekBar)parent.findViewById(R.id.troopSeekBar)).getProgress();
+
+    public int getBarValue() {
+        return ((SeekBar) parent.findViewById(R.id.troopSeekBar)).getProgress();
     }
-    public void setBarMaxValue(int max){
-        ((SeekBar)parent.findViewById(R.id.troopSeekBar)).setMax(max);
+
+    public void setBarMaxValue(int max) {
+        ((SeekBar) parent.findViewById(R.id.troopSeekBar)).setMax(max);
     }
+
     public void setPlaceArmiesVisible(boolean state) {
         if (state == true) {
             hideBottom();
@@ -188,20 +198,20 @@ public class Overlay {
         }
     }
 
-    public void hideBottom(){
+    public void hideBottom() {
         setNextTurnVisible(false);
         setPlaceArmiesVisible(false);
         setFightVisible(false);
         setInformation("", false);
     }
 
-    public void populateListView(Player[] players, Collection<float[]> colours){
+    public void populateListView(Player[] players, Collection<float[]> colours) {
         //Elements
         ArrayList<float[]> colour = new ArrayList<float[]>(colours);
         ArrayList<String> names = new ArrayList<String>();
         ArrayList<String> armyCount = new ArrayList<String>();
         ArrayList<Uri> images = new ArrayList<Uri>();
-        for (Player player : players){
+        for (Player player : players) {
             names.add(player.getName());
             armyCount.add("Territory count: " + player.getTerritoriesOwned());
             images.add(player.getImageRefrence());
@@ -210,15 +220,15 @@ public class Overlay {
         ListView listView = (ListView) parent.findViewById(R.id.listView);
         listView.setAdapter(new CustomAdapter(context, names, images, armyCount, colour));
         ((FrameLayout) parent.findViewById(R.id.listFrame)).setLayoutParams(new FrameLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 280, context.getResources().getDisplayMetrics()),
-                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 57*names.size() + 50, context.getResources().getDisplayMetrics())));
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 57 * names.size() + 50, context.getResources().getDisplayMetrics())));
     }
 
-    public void populateGridView(ArrayList<Card> cardList){
+    public void populateGridView(ArrayList<Card> cardList) {
         //Elements
         ArrayList<String> names = new ArrayList<String>();
         ArrayList<Integer> images = new ArrayList<Integer>();
-        for (Card card : cardList){
-            switch (card.getCardType()){
+        for (Card card : cardList) {
+            switch (card.getCardType()) {
                 case INFANTRY:
                     images.add(R.drawable.donegun);
                     names.add("Infantery");
@@ -238,10 +248,10 @@ public class Overlay {
         gridAdapter = new CardGridAdapter(context, names, images);
         gridView.setAdapter(gridAdapter);
         //((FrameLayout) parent.findViewById(R.id.gridView)).setLayoutParams(new FrameLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 280, context.getResources().getDisplayMetrics()),
-                //(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 57*names.size() + 50, context.getResources().getDisplayMetrics())));
+        //(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 57*names.size() + 50, context.getResources().getDisplayMetrics())));
     }
 
-    public void setCardVisibility(boolean state){
+    public void setCardVisibility(boolean state) {
         if (state == true) {
             hideBottom();
             parent.findViewById(R.id.cardView).setVisibility(View.VISIBLE);
@@ -249,17 +259,18 @@ public class Overlay {
             parent.findViewById(R.id.cardView).setVisibility(View.GONE);
         }
     }
-    public ArrayList<Integer> getSelectedCards(){
+
+    public ArrayList<Integer> getSelectedCards() {
         return gridAdapter.getCardIndexList();
     }
 
-    public void changeGridLayout(boolean isLandscape){
+    public void changeGridLayout(boolean isLandscape) {
         System.out.println("gridview: " + parent.findViewById(R.id.gridView));
 
         View tempGridView = parent.findViewById(R.id.gridView);
 
         // TODO: 2016-05-26 prevent crash in a better way 
-        if(tempGridView != null) {
+        if (tempGridView != null) {
             if (isLandscape) {
                 ((GridView) tempGridView).setNumColumns(5);
             } else {

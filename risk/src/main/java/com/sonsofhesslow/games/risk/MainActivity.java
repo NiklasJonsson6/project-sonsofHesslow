@@ -33,7 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements GLTouchListener, View.OnClickListener, UIUpdate{
+        implements GLTouchListener, View.OnClickListener, UIUpdate {
 
     public static Resources resources;
     public static Context context;
@@ -60,11 +60,11 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
-        graphicsView = new MyGLSurfaceView(this,getResources());
+        graphicsView = new MyGLSurfaceView(this, getResources());
         overlayController = new Overlay(this);
         graphicsView.addListener(this);
 
-        riskNetworkManager = new RiskNetworkManager(this,this);
+        riskNetworkManager = new RiskNetworkManager(this, this);
 
         // set up a click listener for everything in main menus
         for (int id : CLICKABLES) {
@@ -72,9 +72,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void onConfigurationChanged(Configuration newConfig){
+    public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             overlayController.changeGridLayout(true);
         } else {
             overlayController.changeGridLayout(false);
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity
                 if (responseCode == Activity.RESULT_OK) {
                     riskNetworkManager.connect();
                 } else {
-                    BaseGameUtils.showActivityResultError(this, requestCode,responseCode, R.string.signin_other_error);
+                    BaseGameUtils.showActivityResultError(this, requestCode, responseCode, R.string.signin_other_error);
                 }
                 break;
         }
@@ -239,10 +239,9 @@ public class MainActivity extends AppCompatActivity
         // stop trying to keep the screen on
         stopKeepingScreenOn();
 
-        if (riskNetworkManager == null || !riskNetworkManager.isConnected()){
+        if (riskNetworkManager == null || !riskNetworkManager.isConnected()) {
             switchToScreen(R.id.screen_sign_in);
-        }
-        else {
+        } else {
             switchToScreen(R.id.screen_wait);
         }
         super.onStop();
@@ -250,13 +249,12 @@ public class MainActivity extends AppCompatActivity
 
     public void onStart() {
         switchToScreen(R.id.screen_wait);
-        if(riskNetworkManager != null)
-        {
+        if (riskNetworkManager != null) {
             if (riskNetworkManager.isConnected()) {
                 Log.w(TAG,
                         "GameHelper: client was already connected on onStart()");
             } else {
-                Log.d(TAG,"Connecting client.");
+                Log.d(TAG, "Connecting client.");
                 riskNetworkManager.connect();
             }
         }
@@ -288,11 +286,11 @@ public class MainActivity extends AppCompatActivity
 
     public void startGame(boolean isOnline, int[] ids) {
 
-        if(graphicsView.getParent() != null) {
+        if (graphicsView.getParent() != null) {
             setContentView(R.layout.activity_main);
             context = this;
             overlayController = new Overlay(this);
-            graphicsView = new MyGLSurfaceView(this,getResources());
+            graphicsView = new MyGLSurfaceView(this, getResources());
             graphicsView.addListener(this);
 
         }
@@ -300,13 +298,13 @@ public class MainActivity extends AppCompatActivity
         //keeps screen turned on until game is finnished
         keepScreenOn();
 
-        if(isOnline) {
+        if (isOnline) {
             initOnlineGame(ids);
             List<Uri> images = riskNetworkManager.getParticipantImages();
             List<String> names = riskNetworkManager.getParticipantNames();
             Iterator<Uri> imageIterator = images.iterator();
             Iterator<String> namesIt = names.iterator();
-            for(Player player : Controller.getRiskModel().getPlayers()){
+            for (Player player : Controller.getRiskModel().getPlayers()) {
                 player.setName(namesIt.next());
                 player.setImageRefrence(imageIterator.next());
             }
@@ -314,7 +312,7 @@ public class MainActivity extends AppCompatActivity
             initOfflineGame(ids);
         }
 
-        if(graphicsView.getParent() == null ) {
+        if (graphicsView.getParent() == null) {
             overlayController.addView(graphicsView);
             overlayController.addView(R.layout.activity_mainoverlay);
             overlayController.addView(R.layout.activity_cards);
@@ -348,17 +346,18 @@ public class MainActivity extends AppCompatActivity
     };
 
     int mCurScreen = -1;
+
     public void switchToScreen(int screenId) {
         // make the requested screen visible; hide all others.
         for (int id : SCREENS) {
             // TODO: 2016-05-24 fix for real?, not just null check
-           if(findViewById(id) != null) {
-               findViewById(id).setVisibility(screenId == id ? View.VISIBLE : View.GONE);
-           }
+            if (findViewById(id) != null) {
+                findViewById(id).setVisibility(screenId == id ? View.VISIBLE : View.GONE);
+            }
         }
         mCurScreen = screenId;
 
-        if(findViewById(R.id.invitation_popup) != null) {
+        if (findViewById(R.id.invitation_popup) != null) {
             findViewById(R.id.invitation_popup).setVisibility(View.GONE);
         }
     }
@@ -369,12 +368,10 @@ public class MainActivity extends AppCompatActivity
                 findViewById(id).setOnClickListener(this);
             }
             switchToScreen(R.id.screen_main);
-        }
-        else {
+        } else {
             switchToScreen(R.id.screen_sign_in);
         }
     }
-
 
     //GAME BUTTONS SECTION - handle buttonevents from the buttons in game (not menu)
 
@@ -391,20 +388,20 @@ public class MainActivity extends AppCompatActivity
         overlayController.setCardVisibility(true);
     }
 
-    public void fightPressed(View v){
+    public void fightPressed(View v) {
         controller.fightButtonPressed();
     }
 
-    public void placePressed(View v){
+    public void placePressed(View v) {
         controller.placeButtonPressed(overlayController.getBarValue());
     }
 
-    public void donePressed(View v){
+    public void donePressed(View v) {
         controller.doneButtonPressed();
         overlayController.setNextTurnVisible(true);
     }
 
-    public void hideCards(View v){
+    public void hideCards(View v) {
         overlayController.setCardVisibility(false);
         overlayController.setNextTurnVisible(true);
     }
@@ -423,20 +420,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initOnlineGame(int[] ids) {
-        this.controller = new Controller(ids, overlayController,getResources());
+        this.controller = new Controller(ids, overlayController, getResources());
         controller.setSelfId(riskNetworkManager.getRiskNetwork().getmMyId().hashCode());
         //add to observables
         Risk riskModel = controller.getRiskModel();
         riskModel.addObserver(riskNetworkManager);
-        for(Territory territory: riskModel.getTerritories()) {
-                territory.addObserver(riskNetworkManager);
+        for (Territory territory : riskModel.getTerritories()) {
+            territory.addObserver(riskNetworkManager);
         }
 
         riskNetworkManager.getRiskNetwork().addListener(controller);
     }
 
     private void initOfflineGame(int[] ids) {
-        this.controller = new Controller(ids, overlayController,getResources());
+        this.controller = new Controller(ids, overlayController, getResources());
     }
 
     private void resetGameVars() {
@@ -447,28 +444,26 @@ public class MainActivity extends AppCompatActivity
         return controller;
     }
 
-    public void showList(View v){
-        if(overlayController.listPopulated) {
+    public void showList(View v) {
+        if (overlayController.listPopulated) {
             overlayController.setListVisible(true);
         }
     }
 
-    public void hideList(View v){
+    public void hideList(View v) {
         overlayController.setListVisible(false);
     }
 
-    public void getCardsPressed(View v){
-        if(overlayController.getSelectedCards().size() == 3) {
+    public void getCardsPressed(View v) {
+        if (overlayController.getSelectedCards().size() == 3) {
             controller.turnInCards(overlayController.getSelectedCards());
         }
     }
 
 
-
-
-//setting up the callbacks for the network.
+    //setting up the callbacks for the network.
     @Override
-    public void displayInvitation(String caller ) {
+    public void displayInvitation(String caller) {
         //invitation to play a game, store it in mIncomingInvitationId and show popup on screen
         ((TextView) findViewById(R.id.incoming_invitation_text)).setText(
                 caller + " " +

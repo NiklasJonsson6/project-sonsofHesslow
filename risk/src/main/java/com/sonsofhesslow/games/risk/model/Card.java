@@ -20,7 +20,7 @@ public class Card {
         //random card type
         Random random = new Random();
         int randNum = random.nextInt(3);
-        switch(randNum){
+        switch (randNum) {
             case 0:
                 cardType = CardType.INFANTRY;
                 break;
@@ -37,14 +37,14 @@ public class Card {
         this.cardType = cardType;
     }
 
-    public static Card getRandomCard(){
+    public static Card getRandomCard() {
         Card randomCard = new Card();
         return randomCard;
     }
 
     public static void handInSet(ArrayList<Card> cards) {
         //3 different cards
-        if(cards.contains(INFANTRY_CARD) && cards.contains(CAVALRY_CARD) && cards.contains(ARTILLARY_CARD)){
+        if (cards.contains(INFANTRY_CARD) && cards.contains(CAVALRY_CARD) && cards.contains(ARTILLARY_CARD)) {
             cards.remove(INFANTRY_CARD);
             cards.remove(CAVALRY_CARD);
             cards.remove(ARTILLARY_CARD);
@@ -56,7 +56,7 @@ public class Card {
             testCards.add(ARTILLARY_CARD);
 
             //loop to test if there are 3 of any of the cards
-            for(Card testCard: testCards) {
+            for (Card testCard : testCards) {
                 int identicalFound = 0;
 
                 for (int i = 0; i < cards.size() && identicalFound != 3; i++) {
@@ -77,7 +77,7 @@ public class Card {
 
     public static boolean canHandInSet(ArrayList<Card> cards) {
         //3 different cards test
-        if(cards.contains(INFANTRY_CARD) && cards.contains(CAVALRY_CARD) && cards.contains(ARTILLARY_CARD)){
+        if (cards.contains(INFANTRY_CARD) && cards.contains(CAVALRY_CARD) && cards.contains(ARTILLARY_CARD)) {
             return true;
         } else {
             ArrayList<Card> testCards = new ArrayList<>();
@@ -86,7 +86,7 @@ public class Card {
             testCards.add(ARTILLARY_CARD);
 
             //3 identical cards test
-            for(Card testCard: testCards) {
+            for (Card testCard : testCards) {
                 int identicalFound = 0;
 
                 for (int i = 0; i < cards.size(); i++) {
@@ -102,9 +102,9 @@ public class Card {
         return false;
     }
 
-    public static int cardAmountToGet(){
+    public static int cardAmountToGet() {
         int amountToGet = 0;
-        if(setsHandedIn < 6){
+        if (setsHandedIn < 6) {
             amountToGet = 4 + setsHandedIn * 2;
         } else {
             amountToGet = -15 + setsHandedIn * 5;
@@ -135,5 +135,8 @@ public class Card {
     public int hashCode() {
         return cardType.hashCode();
     }
-    public CardType getCardType(){return cardType;}
+
+    public CardType getCardType() {
+        return cardType;
+    }
 }
