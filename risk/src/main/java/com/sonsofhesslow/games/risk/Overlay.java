@@ -26,6 +26,7 @@ public class Overlay {
     ViewGroup parent;
     LayoutInflater factory;
     Context context;
+    SeekBar seekBar;
     int movementBlue;
     int placeArmiesGreen;
     int pickTerritoriesOrange;
@@ -40,7 +41,6 @@ public class Overlay {
         placeArmiesGreen = Color.parseColor("#66CDAA");
         pickTerritoriesOrange = Color.parseColor("#F0E68C");
         fightRed = Color.parseColor("#B22222");
-
         FrameLayout frameLayout = new FrameLayout(context);
         frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.BOTTOM));
         parent = frameLayout;
@@ -51,6 +51,33 @@ public class Overlay {
 
     public void addView(int value) {
         parent.addView(factory.inflate(value, null));
+        if(value == R.layout.activity_mainoverlay){
+            seekBar = (SeekBar) parent.findViewById(R.id.troopSeekBar);
+            seekBar.setOnSeekBarChangeListener(
+                    new SeekBar.OnSeekBarChangeListener() {
+                        int progress = 0;
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar,
+                                                      int progresValue, boolean fromUser) {
+                            progress = progresValue;
+                            System.out.println("It's progress hehe <3 " + progress);
+                            ((TextView)parent.findViewById(R.id.armiesToPlaceText)).setText(progress + "/" + seekBar.getMax());
+                        }
+
+                        @Override
+                        public void onStartTrackingTouch(SeekBar seekBar) {
+                            // Do something here,
+                            //if you want to do anything at the start of
+                            // touching the seekbar
+                        }
+
+                        @Override
+                        public void onStopTrackingTouch(SeekBar seekBar) {
+                            // Display the value in textview
+                        }
+                    });
+        }
+
     }
 
     public void addView(android.view.View view) {

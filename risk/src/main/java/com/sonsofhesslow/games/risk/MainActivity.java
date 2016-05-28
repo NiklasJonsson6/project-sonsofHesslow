@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity
 
     public static Resources resources;
     public static Context context;
-    static Overlay newOverlayController;
+    static Overlay overlayController;
     MyGLSurfaceView graphicsView;
 
     final static String TAG = "Risk";
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         context = this;
         graphicsView = new MyGLSurfaceView(this,getResources());
-        newOverlayController = new Overlay(this);
+        overlayController = new Overlay(this);
         graphicsView.addListener(this);
 
         riskNetworkManager = new RiskNetworkManager(this,this);
@@ -75,9 +75,9 @@ public class MainActivity extends AppCompatActivity
     public void onConfigurationChanged(Configuration newConfig){
         super.onConfigurationChanged(newConfig);
         if(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){
-            newOverlayController.changeGridLayout(true);
+            overlayController.changeGridLayout(true);
         } else {
-            newOverlayController.changeGridLayout(false);
+            overlayController.changeGridLayout(false);
         }
     }
 
@@ -291,7 +291,7 @@ public class MainActivity extends AppCompatActivity
         if(graphicsView.getParent() != null) {
             setContentView(R.layout.activity_main);
             context = this;
-            newOverlayController = new Overlay(this);
+            overlayController = new Overlay(this);
             graphicsView = new MyGLSurfaceView(this,getResources());
             graphicsView.addListener(this);
 
@@ -315,16 +315,16 @@ public class MainActivity extends AppCompatActivity
         }
 
         if(graphicsView.getParent() == null ) {
-            newOverlayController.addView(graphicsView);
-            newOverlayController.addView(R.layout.activity_mainoverlay);
-            newOverlayController.addView(R.layout.activity_cards);
+            overlayController.addView(graphicsView);
+            overlayController.addView(R.layout.activity_mainoverlay);
+            overlayController.addView(R.layout.activity_cards);
 
             graphicsView.addListener(controller);
         }
-        setContentView(newOverlayController.getOverlay());
-        newOverlayController.setGamePhase(Risk.GamePhase.PICK_TERRITORIES);
+        setContentView(overlayController.getOverlay());
+        overlayController.setGamePhase(Risk.GamePhase.PICK_TERRITORIES);
         mCurScreen = R.id.screen_game;
-        newOverlayController.changeGridLayout(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
+        overlayController.changeGridLayout(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
     }
 
     public void startGame(boolean isOnline) {
@@ -386,7 +386,7 @@ public class MainActivity extends AppCompatActivity
 
     public void showCardsPressed(View v) {
         //TODO show new layout with cards and trade in button
-        newOverlayController.setCardVisibility(true);
+        overlayController.setCardVisibility(true);
     }
 
     public void fightPressed(View v){
@@ -394,19 +394,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void placePressed(View v){
-        controller.placeButtonPressed(newOverlayController.getBarValue());
+        controller.placeButtonPressed(overlayController.getBarValue());
         System.out.println("Place button pressed");
     }
 
     public void donePressed(View v){
         controller.doneButtonPressed();
-        newOverlayController.setNextTurnVisible(true);
+        overlayController.setNextTurnVisible(true);
         System.out.println("Done button pressed");
     }
 
     public void hideCards(View v){
-        newOverlayController.setCardVisibility(false);
-        newOverlayController.setNextTurnVisible(true);
+        overlayController.setCardVisibility(false);
+        overlayController.setNextTurnVisible(true);
     }
 
 
@@ -423,7 +423,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initOnlineGame(int[] ids) {
-        this.controller = new Controller(ids, newOverlayController);
+        this.controller = new Controller(ids, overlayController);
         controller.setSelfId(riskNetworkManager.getRiskNetwork().getmMyId().hashCode());
         //add to observables
         Risk riskModel = controller.getRiskModel();
@@ -436,7 +436,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initOfflineGame(int[] ids) {
-        this.controller = new Controller(ids, newOverlayController);
+        this.controller = new Controller(ids, overlayController);
     }
 
     private void resetGameVars() {
@@ -448,18 +448,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void showList(View v){
-        if(newOverlayController.listPopulated) {
-            newOverlayController.setListVisible(true);
+        if(overlayController.listPopulated) {
+            overlayController.setListVisible(true);
         }
     }
 
     public void hideList(View v){
-        newOverlayController.setListVisible(false);
+        overlayController.setListVisible(false);
     }
 
     public void getCardsPressed(View v){
-        if(newOverlayController.getSelectedCards().size() == 3) {
-            controller.turnInCards(newOverlayController.getSelectedCards());
+        if(overlayController.getSelectedCards().size() == 3) {
+            controller.turnInCards(overlayController.getSelectedCards());
         }
     }
 
