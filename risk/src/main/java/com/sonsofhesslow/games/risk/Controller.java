@@ -148,10 +148,6 @@ public class Controller implements GLTouchListener, NetworkListener {
                                     randomTerritory.setArmyCount(1);
                                     randomTerritory.setOccupier(riskModel.getCurrentPlayer());
                                     riskModel.getCurrentPlayer().decArmiesToPlace();
-<<<<<<< 787c7a7d26dd2efda55e8947283a7904a2d48aed
-                                } else {
-                                    i--;    //find a new territory to place
-=======
                                 } else{
                                     int terrotoriesOccupied = 0;
                                     for (Territory territory : riskModel.getTerritories()) {
@@ -163,7 +159,6 @@ public class Controller implements GLTouchListener, NetworkListener {
                                     if (terrotoriesOccupied != 42) {
                                         i--;    //find a new territory to place
                                     }
->>>>>>> wait screen working with more than 2 people playing
                                 }
                             }
 
@@ -355,12 +350,8 @@ public class Controller implements GLTouchListener, NetworkListener {
             }
         }
 
-<<<<<<< 787c7a7d26dd2efda55e8947283a7904a2d48aed
-        if (playerSearchIndex == currentPlayerIndex) {
-=======
         if(playerSearchIndex == currentPlayerIndex) {
             System.out.println("player won@@@@@@@@@@@@@@@@@@@@@@@@@@@");
->>>>>>> wait screen working with more than 2 people playing
             //player won
             playerWon(riskModel.getPlayers()[currentPlayerIndex]);
         }
@@ -373,11 +364,7 @@ public class Controller implements GLTouchListener, NetworkListener {
             setArmiesToPlace(riskModel.getPlayers()[currentPlayerIndex]);
         }
 
-<<<<<<< 787c7a7d26dd2efda55e8947283a7904a2d48aed
-        if (territoryTaken) {
-=======
         if(territoryTaken) {
->>>>>>> wait screen working with more than 2 people playing
             riskModel.getCurrentPlayer().giveOneCard();
             territoryTaken = false;
         }
@@ -549,12 +536,8 @@ public class Controller implements GLTouchListener, NetworkListener {
     public boolean isOnline() {
         return riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId();
     }
-<<<<<<< 787c7a7d26dd2efda55e8947283a7904a2d48aed
 
     public void turnInCards(ArrayList<Integer> selectedCards) {
-=======
-    public void turnInCards(ArrayList<Integer> selectedCards){
->>>>>>> wait screen working with more than 2 people playing
         Collections.sort(selectedCards);
         for (Integer inte : selectedCards) {
             System.out.println("Index value: " + inte.intValue());
