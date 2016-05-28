@@ -423,7 +423,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initOnlineGame(int[] ids) {
-        this.controller = new Controller(ids, overlayController);
+        this.controller = new Controller(ids, overlayController,getResources());
         controller.setSelfId(riskNetworkManager.getRiskNetwork().getmMyId().hashCode());
         //add to observables
         Risk riskModel = controller.getRiskModel();
@@ -436,7 +436,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initOfflineGame(int[] ids) {
-        this.controller = new Controller(ids, overlayController);
+        this.controller = new Controller(ids, overlayController,getResources());
     }
 
     private void resetGameVars() {

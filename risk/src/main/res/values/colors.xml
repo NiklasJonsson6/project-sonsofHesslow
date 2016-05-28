@@ -19,5 +19,5 @@
     <color name="overlayMovementColor">#ff0099cc</color>
     <color name="overlayPlaceArmiesGreen">#66CDAA</color>
     <color name="overlayPickTerritoriesColor">#F0E68C</color>
-    <color name="overlayFightColor">#F0E68C</color>
+    <color name="overlayFightColor">#B22222</color>
 </resources>

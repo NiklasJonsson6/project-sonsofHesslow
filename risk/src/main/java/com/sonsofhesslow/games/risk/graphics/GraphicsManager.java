@@ -114,6 +114,16 @@ public class GraphicsManager {
             }
         }
     }
+    public void removeAllArrows()
+    {
+        Iterator<Map.Entry<Pair<Integer, Integer>, NumberedArrow>> iter = arrows.entrySet().iterator();
+        while (iter.hasNext())  // because foreach loops can't handle them removes...
+        {
+            Map.Entry<Pair<Integer, Integer>, NumberedArrow> entry = iter.next();
+            entry.getValue().remove();
+            iter.remove();
+        }
+    }
 
     public void setColor(int regionId, float[] Color) {
         beziers[regionId].setColor(Color);

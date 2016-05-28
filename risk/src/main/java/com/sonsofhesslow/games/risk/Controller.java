@@ -1,5 +1,6 @@
 package com.sonsofhesslow.games.risk;
 
+import android.content.res.Resources;
 import android.support.annotation.Nullable;
 
 import com.sonsofhesslow.games.risk.graphics.GLTouchEvent;
@@ -42,7 +43,7 @@ public class Controller implements GLTouchListener, NetworkListener {
     private ArrayList<Territory> movementChangedTerritories = new ArrayList<>();
     private View riskView = null;
 
-    public Controller(int[] playerIds, Overlay overlayController) {
+    public Controller(int[] playerIds, Overlay overlayController, Resources resources) {
         this.selfId = 0;
         this.overlayController = overlayController;
         int territoryCount = GraphicsManager.getInstance().getNumberOfTerritories();
@@ -50,7 +51,7 @@ public class Controller implements GLTouchListener, NetworkListener {
 
         riskModel.setCurrentPlayer(riskModel.getPlayers()[0]);
 
-        riskView = new View(riskModel, overlayController);
+        riskView = new View(riskModel, overlayController,resources);
 
         //add observers
         riskModel.addObserver(riskView);

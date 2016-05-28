@@ -15,4 +15,12 @@ public class Util {
     public static int getIntFromColor(float[] c){
         return getIntFromColor(c[0], c[1], c[2]);
     }
+
+    public static float[] getFloatFromIntColor(int color)
+    {
+        int R = (color >> 16) & 0x0000ff;
+        int G = (color >> 8) & 0x000000ff;
+        int B = color & 0x000000FF;
+        return new float[]{(float)R/255f,(float)G/255f,(float)B/255f,1};
+    }
 }

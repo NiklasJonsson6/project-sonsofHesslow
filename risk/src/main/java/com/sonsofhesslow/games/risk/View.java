@@ -1,5 +1,7 @@
 package com.sonsofhesslow.games.risk;
 
+import android.content.res.Resources;
+
 import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 import com.sonsofhesslow.games.risk.model.Card;
 import com.sonsofhesslow.games.risk.model.Player;
@@ -26,10 +28,12 @@ public class View implements Observer {
     Overlay overlayController;
 
     GraphicsManager manager;
-    public View(final Risk risk, Overlay overlayController) {
+    Resources resources;
+    public View(final Risk risk, Overlay overlayController, Resources resources) {
         this.risk = risk;
         this.overlayController = overlayController;
         manager = manager.getInstance();
+        this.resources =resources;
     }
 
 
@@ -67,10 +71,17 @@ public class View implements Observer {
 
                     case DEFENCE:
                         if (event.oldTerritory != null) {
+                            manager.removeAllArrows();
                             manager.setOutlineColor(event.oldTerritory.getId(), black);
                             manager.setHeight(event.oldTerritory.getId(), 0);
                         }
                         if (event.newTerritory != null) {
+                            if(risk.getAttackingTerritory()!=null)
+                            {
+                                int overlayColorInt = resources.getColor(R.color.overlayFightColor);
+                                float[] overlayColorF = Util.getFloatFromIntColor(overlayColorInt);
+                                manager.addArrow(risk.getAttackingTerritory().getId(),event.newTerritory.getId(),-1,overlayColorF);
+                            }
                             manager.setOutlineColor(event.newTerritory.getId(), red);
                             manager.setHeight(event.newTerritory.getId(), 0.04f);
                             overlayController.setFightVisible(true);
@@ -99,18 +110,24 @@ public class View implements Observer {
                             } else if(risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES){
                                 overlayController.setPlaceArmiesVisible(true);
                                 overlayController.setBarMaxValue(risk.getCurrentPlayer().getArmiesToPlace());
-                                //Indication
                             }
                         }
                         break;
 
                     case SECOND_SELECTED:
                         if (event.oldTerritory != null) {
+                            manager.removeAllArrows();
                             manager.setOutlineColor(event.oldTerritory.getId(), black);
                             manager.setHeight(event.oldTerritory.getId(), 0);
                         }
 
                         if (event.newTerritory != null) {
+                            if(risk.getSelectedTerritory()!=null)
+                            {
+                                int overlayColorInt = resources.getColor(R.color.overlayMovementColor);
+                                float[] overlayColorF = Util.getFloatFromIntColor(overlayColorInt);
+                                manager.addArrow(risk.getSelectedTerritory().getId(), event.newTerritory.getId(), -1, overlayColorF);
+                            }
                             manager.setOutlineColor(event.newTerritory.getId(), green);
                             manager.setHeight(event.newTerritory.getId(), 0.04f);
                             overlayController.setPlaceArmiesVisible(true);
@@ -170,16 +187,13 @@ public class View implements Observer {
                  */
                 if (risk.getGamePhase() == Risk.GamePhase.PLACE_ARMIES) {
                     overlayController.setBarMaxValue(risk.getCurrentPlayer().getArmiesToPlace());
-                    //add some kind of indication to how many
                     if (risk.getCurrentPlayer().getArmiesToPlace() == 0) {
                         overlayController.setGamePhase(Risk.GamePhase.FIGHT);
                     }
                 } else if (risk.getGamePhase() == Risk.GamePhase.MOVEMENT && risk.getSecondSelectedTerritory() != null) {
                     overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies() - 1);
-                    //add some kind of indication to how many
                 } else {
                     overlayController.setBarMaxValue(0);
-                    //add some kind of indication to how many
                 }
             }
 

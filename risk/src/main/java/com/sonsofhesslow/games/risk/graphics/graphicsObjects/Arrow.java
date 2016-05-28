@@ -68,7 +68,7 @@ public class Arrow extends GLObject {
     public void draw(float[] projectionMatrix) {
         float[] mvpMatrix = new float[16];
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
-        shader.use(outlineMesh, projectionMatrix, new float[]{0, 0, 0, 1});
+        shader.use(outlineMesh, projectionMatrix, new float[]{0, 0, 0, 0.6f});
         shader.use(mesh, projectionMatrix, color);
     }
 
