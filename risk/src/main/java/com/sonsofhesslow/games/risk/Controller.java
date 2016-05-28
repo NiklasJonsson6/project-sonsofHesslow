@@ -6,6 +6,7 @@ import com.sonsofhesslow.games.risk.graphics.GLTouchEvent;
 import com.sonsofhesslow.games.risk.graphics.GLTouchListener;
 import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 import com.sonsofhesslow.games.risk.model.Card;
+import com.sonsofhesslow.games.risk.model.Continent;
 import com.sonsofhesslow.games.risk.model.Die;
 import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
@@ -398,59 +399,29 @@ public class Controller implements GLTouchListener, NetworkListener {
     public void setArmiesToPlace(Player player) {
         int armies = Math.max(player.getTerritoriesOwned() / 3,3);
 
-        int territoriesFoundAsia = 0;
-        int territoriesFoundNorthAmerica = 0;
-        int territoriesFoundEurope = 0;
-        int territoriesFoundAfrica = 0;
-        int territoriesFoundOceania = 0;
-        int territoriesFoundSouthAmerica = 0;
-
+        int[] foundInContinet = new int[6];
         for (Territory territory : riskModel.getTerritories()) {
-            switch (territory.getContinent()) {
-                case ASIA:
-                    if (territory.getOccupier().equals(player))
-                        territoriesFoundAsia++;
-                    break;
-                case NORTH_AMERICA:
-                    if (territory.getOccupier().equals(player))
-                        territoriesFoundNorthAmerica++;
-                    break;
-                case EUROPE:
-                    if (territory.getOccupier().equals(player))
-                        territoriesFoundEurope++;
-                    break;
-                case AFRICA:
-                    if (territory.getOccupier().equals(player))
-                        territoriesFoundAfrica++;
-                    break;
-                case OCEANIA:
-                    if (territory.getOccupier().equals(player))
-                        territoriesFoundOceania++;
-                    break;
-                case SOUTH_AMERICA:
-                    if (territory.getOccupier().equals(player))
-                        territoriesFoundSouthAmerica++;
-                    break;
-            }
+            if(territory.getOccupier().equals(player))
+                ++foundInContinet[territory.getContinent().ordinal()];
         }
 
         //if owning a whole continent, add corresponding  armies amounts:
-        if (territoriesFoundAsia == TERRITORIES_IN_ASIA) {
+        if (foundInContinet[Continent.ASIA.ordinal()] == TERRITORIES_IN_ASIA) {
             armies += EXTRA_TROOPS_ASIA;
         }
-        if (territoriesFoundNorthAmerica == TERRITORIES_IN_NORTH_AMERICA) {
+        if (foundInContinet[Continent.NORTH_AMERICA.ordinal()] == TERRITORIES_IN_NORTH_AMERICA) {
             armies += EXTRA_TROOPS_NORTH_AMERICA;
         }
-        if (territoriesFoundEurope == TERRITORIES_IN_EUROPE) {
+        if (foundInContinet[Continent.EUROPE.ordinal()] == TERRITORIES_IN_EUROPE) {
             armies += EXTRA_TROOPS_EUROPE;
         }
-        if (territoriesFoundAfrica == TERRITORIES_IN_AFRICA) {
+        if (foundInContinet[Continent.AFRICA.ordinal()] == TERRITORIES_IN_AFRICA) {
             armies += EXTRA_TROOPS_AFRICA;
         }
-        if (territoriesFoundOceania == TERRITORIES_IN_OCEANIA) {
+        if (foundInContinet[Continent.OCEANIA.ordinal()] == TERRITORIES_IN_OCEANIA) {
             armies += EXTRA_TROOPS_OCEANIA;
         }
-        if (territoriesFoundSouthAmerica == TERRITORIES_IN_SOUTH_AMERICA) {
+        if (foundInContinet[Continent.SOUTH_AMERICA.ordinal()] == TERRITORIES_IN_SOUTH_AMERICA) {
             armies += EXTRA_TROOPS_SOUTH_AMERICA;
         }
 
