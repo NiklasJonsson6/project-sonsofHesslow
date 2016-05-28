@@ -254,11 +254,14 @@ public class Controller implements GLTouchListener, NetworkListener {
             territoryTaken = true;
             riskModel.getAttackingTerritory().changeArmyCount(-1);
             riskModel.getDefendingTerritory().changeArmyCount(+1);
+            riskModel.setSelectedTerritory(riskModel.getAttackingTerritory());
+            riskModel.setSecondSelectedTerritory(riskModel.getDefendingTerritory());
             riskModel.setAttackingTerritory(null);
             riskModel.setDefendingTerritory(null);
         } else if (riskModel.getAttackingTerritory().getArmyCount() < 2) {
             riskModel.setAttackingTerritory(null);
             riskModel.setDefendingTerritory(null);
+            riskModel.setGamePhase(Risk.GamePhase.FIGHT);
         }
         GraphicsManager.getInstance().requestRender();
     }
@@ -442,17 +445,34 @@ public class Controller implements GLTouchListener, NetworkListener {
                 riskModel.setSelectedTerritory(null);
             }
             riskModel.placeEvent();
-        } else if (riskModel.getGamePhase() == Risk.GamePhase.MOVEMENT
+        } else if ((riskModel.getGamePhase() == Risk.GamePhase.MOVEMENT
+                || riskModel.getGamePhase() == Risk.GamePhase.FIGHT)
                 && riskModel.getSelectedTerritory() != null
                 && riskModel.getSecondSelectedTerritory() != null) {
             Territory from = riskModel.getSelectedTerritory();
             Territory to = riskModel.getSecondSelectedTerritory();
             to.changeArmyCount(seekBarValue);
             //to prevent multiple movements for troops (each troop should only be able to move 1 step)
-            to.setJustMovedArmies(seekBarValue);
-            movementChangedTerritories.add(to);
+            if(riskModel.getGamePhase() == Risk.GamePhase.MOVEMENT) {
+                to.setJustMovedArmies(seekBarValue);
+                movementChangedTerritories.add(to);
+            }
             from.changeArmyCount(-seekBarValue);
             riskModel.placeEvent();
+            if (from.getArmyCount() - 1 == 0 || from.getArmyCount() - from.getJustMovedArmies() == 0) {
+                if(riskModel.getGamePhase() == Risk.GamePhase.FIGHT) {
+                    riskModel.setGamePhase(Risk.GamePhase.FIGHT);
+                } else {
+                    riskModel.setGamePhase(Risk.GamePhase.MOVEMENT);
+                }
+                riskModel.setSelectedTerritory(null);
+                riskModel.setSecondSelectedTerritory(null);
+            }
+            if(riskModel.getGamePhase() == Risk.GamePhase.FIGHT) {
+                riskModel.setGamePhase(Risk.GamePhase.FIGHT);
+                riskModel.setSelectedTerritory(null);
+                riskModel.setSecondSelectedTerritory(null);
+            }
         }
         GraphicsManager.getInstance().requestRender();
     }

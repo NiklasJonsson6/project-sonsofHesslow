@@ -65,7 +65,7 @@ public class View implements Observer {
                             manager.setHeight(event.newTerritory.getId(), 0.04f);
                         }
                         if (event.newTerritory == null) {
-                            overlayController.setGamePhase(Risk.GamePhase.FIGHT);
+                            //overlayController.setGamePhase(Risk.GamePhase.FIGHT);
                         }
                         break;
 
@@ -87,7 +87,7 @@ public class View implements Observer {
                             overlayController.setFightVisible(true);
                         }
                         if (event.newTerritory == null) {
-                            overlayController.setNextTurnVisible(true);
+
                         }
                         break;
 
@@ -131,7 +131,12 @@ public class View implements Observer {
                             manager.setOutlineColor(event.newTerritory.getId(), green);
                             manager.setHeight(event.newTerritory.getId(), 0.04f);
                             overlayController.setPlaceArmiesVisible(true);
-                            overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies() - 1);
+                            if(risk.getSelectedTerritory().getJustMovedArmies() == 0) {
+                                overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies() - 1);
+                            } else {
+                                overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies());
+                            }
+                            System.out.println("Added selected territory");
                             // indication
                         }
                         if (event.newTerritory == null && risk.getGamePhase() == Risk.GamePhase.MOVEMENT) {
@@ -179,6 +184,7 @@ public class View implements Observer {
                     overlayController.setNextTurnVisible(true);
                 } else if (event == Risk.GamePhase.MOVEMENT) {
                     overlayController.setGamePhase(Risk.GamePhase.MOVEMENT);
+                    overlayController.setNextTurnVisible(true);
                     overlayController.setNextTurnName("Next Turn");
                 }
             } else {

@@ -93,19 +93,17 @@ public class Risk extends Observable {
     public void setSelectedTerritory(Territory touchedTerritory) {
         RiskChangeEvent riskChangeEvent = new RiskChangeEvent(RiskChangeEvent.EventType.SELECTED, this, touchedTerritory, this.selectedTerritory);
 
+        selectedTerritory = touchedTerritory;
         setChanged();
         notifyObservers(riskChangeEvent);
-
-        selectedTerritory = touchedTerritory;
     }
 
     public void setSecondSelectedTerritory(Territory touchedTerritory) {
         RiskChangeEvent riskChangeEvent = new RiskChangeEvent(RiskChangeEvent.EventType.SECOND_SELECTED, this, touchedTerritory, this.secondSelectedTerritory);
 
+        secondSelectedTerritory = touchedTerritory;
         setChanged();
         notifyObservers(riskChangeEvent);
-
-        secondSelectedTerritory = touchedTerritory;
     }
 
     public Territory getSecondSelectedTerritory() {
