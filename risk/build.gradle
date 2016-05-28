@@ -13,10 +13,12 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file("C:\\keystore\\sonsofhesslow.jks")
-            storePassword "ctk191py"
-            keyAlias "sonsofhesslowkey"
-            keyPassword "smnfg78a"
+            /* is used when generating a signed apk for google play (and required to play multiplayer game), only developer should have password
+            storeFile file("path")
+            storePassword "password"
+            keyAlias "key"
+            keyPassword "password"
+            */
         }
     }
 
@@ -37,8 +39,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile project(path: ':libraries:BaseGameUtils')
-    //compile project(':BaseGameUtils')
-    //compile fileTree(include: ['BaseGameUtils'], dir: 'libraries')
     compile 'com.google.android.gms:play-services-ads:8.4.0'
     compile 'com.google.android.gms:play-services-identity:8.4.0'
     compile 'com.google.android.gms:play-services-gcm:8.4.0'

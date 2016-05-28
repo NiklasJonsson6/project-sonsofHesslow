@@ -108,7 +108,6 @@ public class CardGridAdapter extends BaseAdapter{
                         selectedView.remove((Integer) position);
                     }
                 }
-                System.out.println("selectedView size: " + selectedView.size());
             }
 
         });

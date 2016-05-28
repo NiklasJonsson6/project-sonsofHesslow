@@ -136,9 +136,10 @@ public class Controller implements GLTouchListener, NetworkListener {
                         if (touchedTerritory.getOccupier() == null) {
                             touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
 
-                            //for debugging only
+                            //for debugging only (picks more territories at once)
+                            final int EXTRA_TRIES = 0;
+
                             Random r = new Random();
-                            final int EXTRA_TRIES = 20;
                             for(int i = 0; i < EXTRA_TRIES; i++) {
                                 int randomNumber = r.nextInt(42);
                                 Territory randomTerritory = getTerritoryById(randomNumber);
@@ -518,6 +519,7 @@ public class Controller implements GLTouchListener, NetworkListener {
     public boolean isOnline(){
         return riskModel.getPlayers()[0].getParticipantId() != riskModel.getPlayers()[1].getParticipantId();
     }
+
     public void turnInCards(ArrayList<Integer> selectedCards){
         Collections.sort(selectedCards);
         for(Integer inte: selectedCards){

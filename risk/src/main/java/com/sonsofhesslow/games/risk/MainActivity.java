@@ -358,7 +358,9 @@ public class MainActivity extends AppCompatActivity
         }
         mCurScreen = screenId;
 
-        findViewById(R.id.invitation_popup).setVisibility(View.GONE);
+        if(findViewById(R.id.invitation_popup) != null) {
+            findViewById(R.id.invitation_popup).setVisibility(View.GONE);
+        }
     }
 
     void switchToMainScreen() {
@@ -377,8 +379,8 @@ public class MainActivity extends AppCompatActivity
     //GAME BUTTONS SECTION - handle buttonevents from the buttons in game (not menu)
 
     public void nextTurnPressed(View v) {
-        //controller has always been init since nextTurn button
-        //is not visible before startGame has been pressed
+        //controller has always been initialized since nextTurn button
+        //is not visible before startGame button has been pressed
         //TODO give territories continents, setArmiesToPlace gives nullpointerexception when pressed
         Log.d(TAG, "nextturn pressed");
         controller.nextTurn();
@@ -395,13 +397,11 @@ public class MainActivity extends AppCompatActivity
 
     public void placePressed(View v){
         controller.placeButtonPressed(overlayController.getBarValue());
-        System.out.println("Place button pressed");
     }
 
     public void donePressed(View v){
         controller.doneButtonPressed();
         overlayController.setNextTurnVisible(true);
-        System.out.println("Done button pressed");
     }
 
     public void hideCards(View v){

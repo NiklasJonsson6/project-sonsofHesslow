@@ -18,6 +18,7 @@ allprojects {
     }
 
     ext {
+        //versions
         android_compile_version = 23
         android_version = '23.0.2'
         android_min_sdk_version = 15
