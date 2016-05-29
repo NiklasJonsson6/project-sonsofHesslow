@@ -161,15 +161,15 @@ public class Overlay {
     public void setInformation(String Text, boolean state) {
         if (state == true) {
             hideBottom();
-            parent.findViewById(R.id.information).setVisibility(View.VISIBLE);
+            parent.findViewById(R.id.informationframe).setVisibility(View.VISIBLE);
             ((TextView) parent.findViewById(R.id.information)).setText(Text);
         } else {
-            parent.findViewById(R.id.information).setVisibility(View.GONE);
+            parent.findViewById(R.id.informationframe).setVisibility(View.GONE);
         }
     }
 
     public void setInformationColour(int colour) {
-        parent.findViewById(R.id.information).setBackgroundColor(colour);
+        parent.findViewById(R.id.informationframe).setBackgroundColor(colour);
     }
 
     public void setNextTurnName(String s) {
