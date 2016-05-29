@@ -143,7 +143,7 @@ public class Controller implements GLTouchListener, NetworkListener {
                             touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
 
                             //for debugging only (picks more territories at once)
-                            final int EXTRA_TRIES = 20;
+                            final int EXTRA_TRIES = 13;
 
                             Random r = new Random();
                             for (int i = 0; i < EXTRA_TRIES; i++) {

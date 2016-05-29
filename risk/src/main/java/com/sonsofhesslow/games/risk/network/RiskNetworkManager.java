@@ -103,7 +103,7 @@ public class RiskNetworkManager implements Observer {
 
     public void startQuickGame() {
         //1-3 opponents
-        final int MIN_OPPONENTS = 1, MAX_OPPONENTS = 3;
+        final int MIN_OPPONENTS = 1, MAX_OPPONENTS = 1;
         Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(MIN_OPPONENTS,
                 MAX_OPPONENTS, 0);
         RoomConfig.Builder rtmConfigBuilder = RoomConfig.builder(googlePlayNetwork);
