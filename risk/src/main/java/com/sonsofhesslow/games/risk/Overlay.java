@@ -202,7 +202,9 @@ public class Overlay {
     public void setPlaceArmiesVisible(boolean state) {
         if (state == true) {
             hideBottom();
-            parent.findViewById(R.id.placeArmies).setVisibility(View.VISIBLE);
+            if(parent.findViewById(R.id.waitingForPlayer).getVisibility() != View.VISIBLE) {
+                parent.findViewById(R.id.placeArmies).setVisibility(View.VISIBLE);
+            }
         } else {
             parent.findViewById(R.id.placeArmies).setVisibility(View.GONE);
         }
