@@ -285,16 +285,16 @@ public class Controller implements GLTouchListener, NetworkListener {
             riskModel.setSelectedTerritory(null);
             riskModel.setSecondSelectedTerritory(null);
             refreshMovementChangedTerritories();
-            riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
             nextPlayer();
+            riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
         }
         if (riskModel.getGamePhase() == Risk.GamePhase.FIGHT) {
             if (!playerCanMove(riskModel.getCurrentPlayer())) {
                 riskModel.setGamePhase(Risk.GamePhase.MOVEMENT);
             } else {
-                riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
                 nextPlayer();
-                // TODO: 2016-05-24 notify player 
+                riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
+                // TODO: 2016-05-24 notify player
             }
 
             riskModel.setAttackingTerritory(null);
