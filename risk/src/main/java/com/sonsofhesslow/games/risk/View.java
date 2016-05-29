@@ -8,6 +8,7 @@ import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
 import com.sonsofhesslow.games.risk.model.Territory;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,7 @@ public class View implements Observer {
 
     private final Risk risk;
     Map<Player, float[]> playerColors = new HashMap<>();
+    ArrayList<float[]> availablePlayerColors;
     Overlay overlayController;
 
     GraphicsManager manager;
@@ -35,6 +37,8 @@ public class View implements Observer {
         this.overlayController = overlayController;
         manager = manager.getInstance();
         this.resources = resources;
+
+        setColors(playerColors, risk.getPlayers());
     }
 
 
@@ -212,19 +216,40 @@ public class View implements Observer {
                 OCCUPIER CHANGE EVENT
                  */
                 Player event = (Player) arg;
-                if (!playerColors.containsKey(event)) {
-                    Player[] players = risk.getPlayers();
-                    Random random = new Random(players[playerColors.size()].getParticipantId() +
-                            (players[0].getParticipantId() == players[1].getParticipantId() ?
-                                    new Random().nextInt(1000) :         //multiplayer - have same color across all units
-                                    playerColors.size()));             //singleplayer - have different color every time
-                    float[] rndColor = {random.nextFloat(), random.nextFloat(), random.nextFloat(), 1};
-                    playerColors.put(event, rndColor);
-                }
+
                 if (risk.getAttackingTerritory() != null) {
                     manager.setColor(territory.getId(), playerColors.get(event), risk.getAttackingTerritory().getId());
                 } else {
                     manager.setColor(territory.getId(), playerColors.get(event));
+                }
+            }
+        }
+    }
+
+    private void setColors(Map<Player, float[]> playerColors, Player[] players){
+        //colors that match together, instead of choosing random
+        float[][] colors = {
+            //cyan
+            {67/255f, 179/255f, 143/255f, 1},
+            //orange
+            {254/255f, 215/255f, 96/255f, 1},
+            //red/pink
+            {235/255f, 109/255f, 123/255f, 1},
+            //blue/purple
+            {92/255f, 117/255f, 181/255f, 1}
+        };
+
+        //set random seed
+        Random random = new Random(players[playerColors.size()].getParticipantId() +
+                (players[0].getParticipantId() == players[1].getParticipantId() ?
+                        new Random().nextInt(1000) :         //multiplayer - have same color across all units
+                        playerColors.size()));             //singleplayer - have different color every time
+
+        for(Player player: players) {
+            while(!playerColors.containsKey(player)) {
+                int colorIndex = random.nextInt(4);
+                if (!playerColors.containsValue(colors[colorIndex])) {
+                    playerColors.put(player, colors[colorIndex]);
                 }
             }
         }
