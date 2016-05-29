@@ -41,7 +41,7 @@ public class Overlay {
         movementBlue = Color.parseColor("#ff0099cc");
         placeArmiesGreen = Color.parseColor("#66CDAA");
         pickTerritoriesOrange = Color.parseColor("#F0E68C");
-        fightRed = Color.parseColor("#B22222");
+        fightRed = Color.parseColor("#ff4e4e");
         FrameLayout frameLayout = new FrameLayout(context);
         frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.BOTTOM));
         parent = frameLayout;
