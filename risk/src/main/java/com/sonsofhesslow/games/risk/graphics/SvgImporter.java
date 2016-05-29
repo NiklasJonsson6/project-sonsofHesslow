@@ -56,8 +56,6 @@ public class SvgImporter {
             }
         }
 
-        System.out.println("number of connections: " + connections.size());
-
         //split the paths with the splits.
         //keep track of which split split what
         List<Pair<BezierPath, Integer>> pathsWithInfo = new ArrayList<>(paths.size());

@@ -312,13 +312,14 @@ public class Controller implements GLTouchListener, NetworkListener {
         }
 
         for (Territory territory : playersTerritories) {
-            if (territory.getArmyCount() > 1) {
+            int armiesToMove = territory.getArmyCount() - territory.getJustMovedArmies();
+            if (armiesToMove > 1) {
                 //cannot move
                 return false;
             }
         }
 
-        //can move, there is atleast one territory with more than 1 army
+        //can move, there is atleast one territory with more than 1 army to move
         return true;
     }
 
