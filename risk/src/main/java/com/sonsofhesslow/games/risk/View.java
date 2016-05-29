@@ -137,8 +137,10 @@ public class View implements Observer {
                             overlayController.setPlaceArmiesVisible(true);
                             if (risk.getSelectedTerritory().getJustMovedArmies() == 0) {
                                 overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies() - 1);
+                                overlayController.setBarProgress(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies() - 1);
                             } else {
                                 overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies());
+                                overlayController.setBarProgress(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies());
                             }
                             // indication
                         }

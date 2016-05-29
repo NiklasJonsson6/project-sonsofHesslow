@@ -296,6 +296,10 @@ public class Overlay {
     public void toastMaker(String s){
         Toast.makeText(context, s, Toast.LENGTH_LONG).show();
     }
+
+    public void setBarProgress(int value){
+        ((SeekBar) parent.findViewById(R.id.troopSeekBar)).setProgress(value);
+    }
 }
 
 
