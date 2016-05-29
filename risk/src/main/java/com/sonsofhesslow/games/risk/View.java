@@ -27,7 +27,6 @@ public class View implements Observer {
 
     private final Risk risk;
     Map<Player, float[]> playerColors = new HashMap<>();
-    ArrayList<float[]> availablePlayerColors;
     Overlay overlayController;
 
     GraphicsManager manager;
@@ -54,7 +53,7 @@ public class View implements Observer {
         } else if (obs instanceof Risk) {
             Risk risk = (Risk) obs;
             if (overlayController.getOverlay().getChildCount() > 1) {
-                overlayController.populateListView(risk.getPlayers(), playerColors.values());
+                overlayController.populateListView(playerColors);
             }
             if (arg instanceof Risk.RiskChangeEvent) {
                 /*
@@ -138,8 +137,10 @@ public class View implements Observer {
                             overlayController.setPlaceArmiesVisible(true);
                             if (risk.getSelectedTerritory().getJustMovedArmies() == 0) {
                                 overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies() - 1);
+                                overlayController.setBarProgress(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies() - 1);
                             } else {
                                 overlayController.setBarMaxValue(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies());
+                                overlayController.setBarProgress(risk.getSelectedTerritory().getArmyCount() - risk.getSelectedTerritory().getJustMovedArmies());
                             }
                             // indication
                         }

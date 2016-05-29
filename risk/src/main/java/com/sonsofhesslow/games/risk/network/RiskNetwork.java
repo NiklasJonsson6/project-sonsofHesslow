@@ -71,9 +71,11 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     }
 
     private boolean selfModified = false;
+
     void acceptInviteToRoom() {
         acceptInviteToRoom(mIncomingInvitationId);
     }
+
     // Accept the given invitation.
     void acceptInviteToRoom(String invId) {
         Log.d(TAG, "Accepting invitation: " + mIncomingInvitationId);

@@ -137,7 +137,7 @@ public class Controller implements GLTouchListener, NetworkListener {
                             touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
 
                             //for debugging only (picks more territories at once)
-                            final int EXTRA_TRIES = 13;
+                            final int EXTRA_TRIES = 0;
 
                             Random r = new Random();
                             for (int i = 0; i < EXTRA_TRIES; i++) {
@@ -148,14 +148,14 @@ public class Controller implements GLTouchListener, NetworkListener {
                                     randomTerritory.setOccupier(riskModel.getCurrentPlayer());
                                     riskModel.getCurrentPlayer().decArmiesToPlace();
                                 } else{
-                                    int terrotoriesOccupied = 0;
+                                    int territoriesOccupied = 0;
                                     for (Territory territory : riskModel.getTerritories()) {
                                         if (territory.getOccupier() != null) {
-                                            terrotoriesOccupied++;
+                                            territoriesOccupied++;
                                         }
                                     }
                                     //if >20 prevent freeze
-                                    if (terrotoriesOccupied != 42) {
+                                    if (territoriesOccupied != 42) {
                                         i--;    //find a new territory to place
                                     }
                                 }
@@ -188,6 +188,7 @@ public class Controller implements GLTouchListener, NetworkListener {
                                 riskModel.setGamePhase(Risk.GamePhase.FIGHT);
                             } else {
                                 boolean playerHasArmiesLeft = false;
+                                //skipping phase if player
                                 for (Player player : riskModel.getPlayers()) {
                                     if (player.getArmiesToPlace() > 0) {
                                         playerHasArmiesLeft = true;
@@ -285,16 +286,16 @@ public class Controller implements GLTouchListener, NetworkListener {
             riskModel.setSelectedTerritory(null);
             riskModel.setSecondSelectedTerritory(null);
             refreshMovementChangedTerritories();
-            riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
             nextPlayer();
+            riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
         }
         if (riskModel.getGamePhase() == Risk.GamePhase.FIGHT) {
-            if (!playerCanMove(riskModel.getCurrentPlayer())) {
+            if (playerCanMove(riskModel.getCurrentPlayer())) {
                 riskModel.setGamePhase(Risk.GamePhase.MOVEMENT);
             } else {
-                riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
                 nextPlayer();
-                // TODO: 2016-05-24 notify player 
+                riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
+                // TODO: 2016-05-24 notify player
             }
 
             riskModel.setAttackingTerritory(null);
@@ -314,13 +315,13 @@ public class Controller implements GLTouchListener, NetworkListener {
         for (Territory territory : playersTerritories) {
             int armiesToMove = territory.getArmyCount() - territory.getJustMovedArmies();
             if (armiesToMove > 1) {
-                //cannot move
-                return false;
+                //can move
+                return true;
             }
         }
 
-        //can move, there is atleast one territory with more than 1 army to move
-        return true;
+        //can move, there is no one territory with more than 1 army to move
+        return false;
     }
 
     public void nextPlayer() {
@@ -565,18 +566,17 @@ public class Controller implements GLTouchListener, NetworkListener {
     public void handleWaitingScreen() {
         if (isOnline() && riskModel.getCurrentPlayer().getParticipantId() != selfId) {
             //multiplayer & not users turn
-            overlayController.hideBottom();
-            overlayController.setWaitingVisible(true);
             if(!activeWaitScreen) {
                 overlayController.addView(R.layout.activity_wait);
+                overlayController.setWaitingVisible(true);
                 activeWaitScreen = true;
             }
         } else {
             if(activeWaitScreen){
                 activeWaitScreen = false;
+                overlayController.removeView(R.layout.activity_wait);
+                overlayController.setWaitingVisible(false);
             }
-            overlayController.removeView(R.layout.activity_wait);
-            overlayController.setWaitingVisible(false);
         }
         GraphicsManager.getInstance().requestRender();
     }

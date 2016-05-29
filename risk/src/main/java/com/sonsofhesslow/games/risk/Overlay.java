@@ -22,6 +22,8 @@ import com.sonsofhesslow.games.risk.model.Risk;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Overlay {
     ViewGroup parent;
@@ -217,16 +219,18 @@ public class Overlay {
         setInformation("", false);
     }
 
-    public void populateListView(Player[] players, Collection<float[]> colours) {
+    public void populateListView(Map<Player, float[]> playerColors) {
         //Elements
-        ArrayList<float[]> colour = new ArrayList<float[]>(colours);
+        ArrayList<float[]> colour = new ArrayList<float[]>();
         ArrayList<String> names = new ArrayList<String>();
         ArrayList<String> armyCount = new ArrayList<String>();
         ArrayList<Uri> images = new ArrayList<Uri>();
-        for (Player player : players) {
+        for (Player player : playerColors.keySet()) {
             names.add(player.getName());
             armyCount.add("Territory count: " + player.getTerritoriesOwned());
             images.add(player.getImageRefrence());
+            //get color
+            colour.add(playerColors.get(player));
         }
         //Adapter
         ListView listView = (ListView) parent.findViewById(R.id.listView);
@@ -288,8 +292,13 @@ public class Overlay {
             }
         }
     }
+
     public void toastMaker(String s){
         Toast.makeText(context, s, Toast.LENGTH_LONG).show();
+    }
+
+    public void setBarProgress(int value){
+        ((SeekBar) parent.findViewById(R.id.troopSeekBar)).setProgress(value);
     }
 }
 
