@@ -6,6 +6,7 @@ import android.os.SystemClock;
 import android.util.Pair;
 
 import com.sonsofhesslow.games.risk.R;
+import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
 import com.sonsofhesslow.games.risk.graphics.geometry.Vector3;
 import com.sonsofhesslow.games.risk.graphics.graphicsObjects.FilledBezierPath;
 import com.sonsofhesslow.games.risk.graphics.graphicsObjects.Number;
@@ -91,10 +92,15 @@ public class GraphicsManager {
             ex.printStackTrace();
             throw new RuntimeException(ex.toString());
         }
+        updatables.add(Camera.getInstance());
     }
 
     public void setHeight(int regionId, float height) {
         beziers[regionId].setPos(new Vector3(0, 0, -height));
+    }
+    public void moveCameraTowardsTerritory(int territoyId)
+    {
+        Camera.getInstance().moveCameraTowards(beziers[territoyId].getCenter());
     }
 
     public void addArrow(int territoryIdFrom, int territoyIdTo, int value, float[] color) {

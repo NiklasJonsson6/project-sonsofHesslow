@@ -4,8 +4,9 @@ import android.opengl.Matrix;
 
 import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
 import com.sonsofhesslow.games.risk.graphics.geometry.Vector3;
+import com.sonsofhesslow.games.risk.graphics.graphicsObjects.Updatable;
 
-public class Camera {
+public class Camera implements Updatable{
     private static Camera instance;
     public final Vector3 up = new Vector3(0, 1, 0);
     private static final float WORLD_MIN_X = -16;
@@ -28,8 +29,13 @@ public class Camera {
     private float clamp(float f, float min, float max) {
         return Math.min(Math.max(min, f), max);
     }
-
-    private void setPos(Vector3 newPos) {
+    public void setPos(Vector3 newPos)
+    {
+        startPos = null;
+        endPos = null;
+        setPos_internal(newPos);
+    }
+    private void setPos_internal(Vector3 newPos) {
 
         float width = GLRenderer.viewPortToWorldCoord(new Vector2(-1, 0), 0).x
                 - GLRenderer.viewPortToWorldCoord(new Vector2(+1, 0), 0).x;
@@ -83,11 +89,20 @@ public class Camera {
         right.updateLookAt();
         return new Camera[]{left, right};
     }
-
+    private Vector2 startPos = null;
+    private Vector2 endPos = null;
     public void setPosRel(Vector3 newPos) {
         setPos(Vector3.Add(newPos, pos));
         updateLookAt();
     }
+
+    public void moveCameraTowards(Vector2 pos)
+    {
+        startPos = this.pos.ToVector2();
+        endPos = pos;
+        currentTime = 0;
+    }
+
 
     private void updateLookAt() {
         lookAt = new Vector3(pos.x, pos.y, 0);
@@ -97,5 +112,25 @@ public class Camera {
         float[] viewMatrix = new float[16];
         Matrix.setLookAtM(viewMatrix, 0, pos.x, pos.y, pos.z, lookAt.x, lookAt.y, lookAt.z, up.x, up.y, up.z);
         return viewMatrix;
+    }
+
+    public float currentTime=0;
+    public float interpolationTime = 500f;
+
+    @Override
+    public boolean update(float dt) {
+        if(startPos != null && endPos != null)
+        {
+            currentTime+=dt;
+            float lerpT=Math.min(currentTime/interpolationTime,1);
+            setPos(new Vector3(Vector2.lerp(startPos,endPos,lerpT),pos.z));
+            if(currentTime >=interpolationTime)
+            {
+                startPos = null;
+                endPos = null;
+            }
+            return true;
+        }
+        return false;
     }
 }

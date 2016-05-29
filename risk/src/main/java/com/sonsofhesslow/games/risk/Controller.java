@@ -97,8 +97,10 @@ public class Controller implements GLTouchListener, NetworkListener {
         switch (event.action) {
             case armyAmountChange: {
                 Territory changedTerritory = Controller.getTerritoryById(event.getRegionId());
+                GraphicsManager.getInstance().moveCameraTowardsTerritory(changedTerritory.getId());
                 if (changedTerritory != null) {
                     changedTerritory.setArmyCount(event.getArmies());
+
                 } else {
                     System.out.println("illegal region index");
                 }
@@ -107,7 +109,7 @@ public class Controller implements GLTouchListener, NetworkListener {
             case occupierChange: {
                 Territory changedTerritory = Controller.getTerritoryById(event.getRegionId());
                 Player newOccupier = null;
-
+                GraphicsManager.getInstance().moveCameraTowardsTerritory(changedTerritory.getId());
                 for (Player p : Controller.getRiskModel().getPlayers()) {
                     if (p.getParticipantId() == event.getParticipantId()) {
                         newOccupier = p;
@@ -234,6 +236,7 @@ public class Controller implements GLTouchListener, NetworkListener {
                             riskModel.setDefendingTerritory(touchedTerritory);
                             //TODO show attack button
                         }
+
                         break;
 
                     case MOVEMENT:
