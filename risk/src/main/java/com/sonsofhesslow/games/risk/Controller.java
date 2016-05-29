@@ -285,8 +285,8 @@ public class Controller implements GLTouchListener, NetworkListener {
             riskModel.setSelectedTerritory(null);
             riskModel.setSecondSelectedTerritory(null);
             refreshMovementChangedTerritories();
-            nextPlayer();
             riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
+            nextPlayer();
         }
         if (riskModel.getGamePhase() == Risk.GamePhase.FIGHT) {
             if (!playerCanMove(riskModel.getCurrentPlayer())) {
