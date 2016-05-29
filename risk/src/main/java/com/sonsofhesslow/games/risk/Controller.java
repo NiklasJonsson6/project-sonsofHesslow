@@ -137,7 +137,7 @@ public class Controller implements GLTouchListener, NetworkListener {
                             touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
 
                             //for debugging only (picks more territories at once)
-                            final int EXTRA_TRIES = 13;
+                            final int EXTRA_TRIES = 20;
 
                             Random r = new Random();
                             for (int i = 0; i < EXTRA_TRIES; i++) {
@@ -188,6 +188,7 @@ public class Controller implements GLTouchListener, NetworkListener {
                                 riskModel.setGamePhase(Risk.GamePhase.FIGHT);
                             } else {
                                 boolean playerHasArmiesLeft = false;
+                                //skipping phase if player
                                 for (Player player : riskModel.getPlayers()) {
                                     if (player.getArmiesToPlace() > 0) {
                                         playerHasArmiesLeft = true;
@@ -289,7 +290,7 @@ public class Controller implements GLTouchListener, NetworkListener {
             riskModel.setGamePhase(Risk.GamePhase.PLACE_ARMIES);
         }
         if (riskModel.getGamePhase() == Risk.GamePhase.FIGHT) {
-            if (!playerCanMove(riskModel.getCurrentPlayer())) {
+            if (playerCanMove(riskModel.getCurrentPlayer())) {
                 riskModel.setGamePhase(Risk.GamePhase.MOVEMENT);
             } else {
                 nextPlayer();
@@ -314,13 +315,13 @@ public class Controller implements GLTouchListener, NetworkListener {
         for (Territory territory : playersTerritories) {
             int armiesToMove = territory.getArmyCount() - territory.getJustMovedArmies();
             if (armiesToMove > 1) {
-                //cannot move
-                return false;
+                //can move
+                return true;
             }
         }
 
-        //can move, there is atleast one territory with more than 1 army to move
-        return true;
+        //can move, there is no one territory with more than 1 army to move
+        return false;
     }
 
     public void nextPlayer() {
@@ -415,23 +416,22 @@ public class Controller implements GLTouchListener, NetworkListener {
         if (isOnline()) {
             for (Player player : riskModel.getPlayers()) {
                 if (player.getParticipantId() == selfId) {
-                    player.giveArmies(calculateStartingArmiesPresentation());
+                    player.giveArmies(calculateStartingArmies());
                 }
             }
         } else {
             //singleplayer
             for (Player player : riskModel.getPlayers()) {
-                player.giveArmies(calculateStartingArmiesPresentation());
+                player.giveArmies(calculateStartingArmies());
             }
         }
     }
-    public int calculateStartingArmies()
-    {
+    public int calculateStartingArmies() {
         return (50 - (5 * riskModel.getPlayers().length));
     }
-    public int calculateStartingArmiesPresentation()
-    {
-        return 3;
+    public int calculateStartingArmiesPresentation() {
+        //for use when presenting
+        return 26;
     }
 
     public void setArmiesToPlace(Player player) {

@@ -242,7 +242,8 @@ public class MainActivity extends AppCompatActivity
         if (riskNetworkManager == null || !riskNetworkManager.isConnected()) {
             switchToScreen(R.id.screen_sign_in);
         } else {
-            switchToScreen(R.id.screen_wait);
+            // TODO: 2016-05-29 fix later, removed to prevent freezing 
+            //switchToScreen(R.id.screen_wait);
         }
         super.onStop();
     }
