@@ -21,8 +21,8 @@ import com.sonsofhesslow.games.risk.graphics.GLTouchListener;
 import com.sonsofhesslow.games.risk.graphics.geometry.Vector2;
 import com.sonsofhesslow.games.risk.graphics.geometry.Vector3;
 import com.sonsofhesslow.games.risk.graphics.Camera;
-import com.sonsofhesslow.games.risk.graphics.MyGLRenderer;
-import com.sonsofhesslow.games.risk.graphics.MyGLSurfaceView;
+import com.sonsofhesslow.games.risk.graphics.GLRenderer;
+import com.sonsofhesslow.games.risk.graphics.RiskGLSurfaceView;
 import com.sonsofhesslow.games.risk.model.Player;
 import com.sonsofhesslow.games.risk.model.Risk;
 import com.sonsofhesslow.games.risk.model.Territory;
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity
     public static Resources resources;
     public static Context context;
     static Overlay overlayController;
-    MyGLSurfaceView graphicsView;
+    RiskGLSurfaceView graphicsView;
 
     final static String TAG = "Risk";
 
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
-        graphicsView = new MyGLSurfaceView(this, getResources());
+        graphicsView = new RiskGLSurfaceView(this, getResources());
         overlayController = new Overlay(this);
         graphicsView.addListener(this);
 
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity
             //sq.setPos(event.worldPosition);
             Vector2 delta;
             if (!event.isZooming) {
-                delta = Vector2.sub(MyGLRenderer.screenToWorldCoords(prevPos, 0), event.worldPosition);
+                delta = Vector2.sub(GLRenderer.screenToWorldCoords(prevPos, 0), event.worldPosition);
             } else {
                 delta = new Vector2(0, 0);
             }
@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity
             setContentView(R.layout.activity_main);
             context = this;
             overlayController = new Overlay(this);
-            graphicsView = new MyGLSurfaceView(this, getResources());
+            graphicsView = new RiskGLSurfaceView(this, getResources());
             graphicsView.addListener(this);
 
         }

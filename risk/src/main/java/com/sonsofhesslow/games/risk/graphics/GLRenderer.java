@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
+public class GLRenderer implements GLSurfaceView.Renderer, Renderer {
 
     private static final List<GLObject> gameObjects = new ArrayList<>();
     private static final ConcurrentLinkedQueue<GLObject> objectsToBeAdded = new ConcurrentLinkedQueue<>();
@@ -181,7 +181,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer, Renderer {
 
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
-        MyGLRenderer.width = width;     // the screen can only ever be of one size
-        MyGLRenderer.height = height;   // statics are fine.
+        GLRenderer.width = width;     // the screen can only ever be of one size
+        GLRenderer.height = height;   // statics are fine.
     }
 }

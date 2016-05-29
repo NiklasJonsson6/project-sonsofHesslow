@@ -31,13 +31,13 @@ public class GraphicsManager {
     private Integer[] beizContinents;
     private Number[] numbers;
     private Renderer renderer;
-    MyGLSurfaceView surfaceView;
+    RiskGLSurfaceView surfaceView;
     public static GraphicsManager getInstance() {
         if (instance == null) instance = new GraphicsManager(); //@multithread unsafe
         return instance;
     }
 
-    public void init(Resources resources, Renderer renderer, final MyGLSurfaceView surfaceView) {
+    public void init(Resources resources, Renderer renderer, final RiskGLSurfaceView surfaceView) {
         this.renderer = renderer;
         this.surfaceView = surfaceView;
 

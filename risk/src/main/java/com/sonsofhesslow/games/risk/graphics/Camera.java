@@ -31,11 +31,11 @@ public class Camera {
 
     private void setPos(Vector3 newPos) {
 
-        float width = MyGLRenderer.viewPortToWorldCoord(new Vector2(-1, 0), 0).x
-                - MyGLRenderer.viewPortToWorldCoord(new Vector2(+1, 0), 0).x;
+        float width = GLRenderer.viewPortToWorldCoord(new Vector2(-1, 0), 0).x
+                - GLRenderer.viewPortToWorldCoord(new Vector2(+1, 0), 0).x;
 
-        float height = MyGLRenderer.viewPortToWorldCoord(new Vector2(0, -1), 0).y
-                - MyGLRenderer.viewPortToWorldCoord(new Vector2(0, 1), 0).y;
+        float height = GLRenderer.viewPortToWorldCoord(new Vector2(0, -1), 0).y
+                - GLRenderer.viewPortToWorldCoord(new Vector2(0, 1), 0).y;
 
 
         width = Math.abs(width);
@@ -70,8 +70,8 @@ public class Camera {
     }
 
     public Camera[] getStitchCams() {
-        float width = MyGLRenderer.viewPortToWorldCoord(new Vector2(-1, 0), 0).x
-                - MyGLRenderer.viewPortToWorldCoord(new Vector2(+1, 0), 0).x;
+        float width = GLRenderer.viewPortToWorldCoord(new Vector2(-1, 0), 0).x
+                - GLRenderer.viewPortToWorldCoord(new Vector2(+1, 0), 0).x;
         width = Math.abs(width);
 
         Camera left = new Camera();

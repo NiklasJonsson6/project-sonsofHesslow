@@ -31,9 +31,9 @@ import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 
-public class MyGLSurfaceView extends GLSurfaceView {
+public class RiskGLSurfaceView extends GLSurfaceView {
     private final ScaleGestureDetector SGD;
-    private final MyGLRenderer mRenderer;
+    private final GLRenderer mRenderer;
     private final ConcurrentLinkedQueue<GLTouchListener> listeners = new ConcurrentLinkedQueue<>();
     private float scale = -3.0f;
     private boolean isZooming = false;
@@ -41,14 +41,14 @@ public class MyGLSurfaceView extends GLSurfaceView {
     private float downX;
     private float downY;
 
-    public MyGLSurfaceView(Context context, Resources resources) {
+    public RiskGLSurfaceView(Context context, Resources resources) {
         super(context);
         // Create an OpenGL ES 2.0 context.
         setEGLContextClientVersion(2);
         super.setEGLConfigChooser(new MyConfigChooser());
         super.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         // Set the Renderer for drawing on the GLSurfaceView
-        mRenderer = new MyGLRenderer();
+        mRenderer = new GLRenderer();
         GraphicsManager.getInstance().init(resources, mRenderer,this);
         setRenderer(mRenderer);
         SGD = new ScaleGestureDetector(getContext(), new ScaleListener());
@@ -57,12 +57,12 @@ public class MyGLSurfaceView extends GLSurfaceView {
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
 
-    public MyGLSurfaceView(Context context, AttributeSet attrs) {
+    public RiskGLSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setEGLContextClientVersion(2);
         //super.setEGLConfigChooser(new MyConfigChooser());
         super.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        mRenderer = new MyGLRenderer();
+        mRenderer = new GLRenderer();
         setRenderer(mRenderer);
         SGD = new ScaleGestureDetector(getContext(), new ScaleListener());
 
