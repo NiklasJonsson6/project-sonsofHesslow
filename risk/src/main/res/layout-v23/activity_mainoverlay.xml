@@ -68,8 +68,6 @@
         <FrameLayout
             android:layout_width="280dp"
             android:layout_height="300dp"
-            android:layout_below="@+id/currentPhase"
-            android:layout_centerHorizontal="true"
             android:id="@+id/listFrame">
 
             <ListView
@@ -83,8 +81,6 @@
                 android:focusableInTouchMode="false"
                 android:focusable="false"
                 android:background="#929292"
-                android:layout_below="@+id/currentPhase"
-                android:layout_centerHorizontal="true"
                 android:visibility="gone"
                 android:scrollIndicators="none"
                 android:layout_marginBottom="50dp" />
@@ -96,8 +92,6 @@
                 android:id="@+id/hideList"
                 android:visibility="gone"
                 android:onClick="hideList"
-                android:layout_below="@+id/listFrame"
-                android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal|bottom" />
 
         </FrameLayout>
