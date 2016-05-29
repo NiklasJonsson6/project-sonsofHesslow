@@ -138,7 +138,7 @@ public class Controller implements GLTouchListener, NetworkListener {
                             touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
 
                             //for debugging only (picks more territories at once)
-                            final int EXTRA_TRIES = 20;
+                            final int EXTRA_TRIES = 40;
 
                             Random r = new Random();
                             for (int i = 0; i < EXTRA_TRIES; i++) {
@@ -380,6 +380,7 @@ public class Controller implements GLTouchListener, NetworkListener {
     }
 
     private void playerWon(Player player) {
+        overlayController.addView(R.layout.activity_won);
         System.out.println("player won");
         // TODO: 2016-05-29
     }

@@ -348,11 +348,16 @@ public class MainActivity extends AppCompatActivity
     int mCurScreen = -1;
 
     public void switchToScreen(int screenId) {
+        System.out.println("screenid: " + screenId);
         // make the requested screen visible; hide all others.
         for (int id : SCREENS) {
+            System.out.println("screen id in for: " + id);
             // TODO: 2016-05-24 fix for real?, not just null check
             if (findViewById(id) != null) {
+                System.out.println("view not null");
                 findViewById(id).setVisibility(screenId == id ? View.VISIBLE : View.GONE);
+            } else {
+                System.out.println("view is null");
             }
         }
         mCurScreen = screenId;
@@ -406,6 +411,10 @@ public class MainActivity extends AppCompatActivity
         overlayController.setNextTurnVisible(true);
     }
 
+    public void backToMainscreenPressed(View v) {
+        System.out.println("backtomainscreenbutton pressed");
+        showMainScreen();
+    }
 
     //MISC SECTION. Miscellaneous methods
 
@@ -460,7 +469,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     //setting up the callbacks for the network.
     @Override
     public void displayInvitation(String caller) {
@@ -494,6 +502,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void showMainScreen() {
+        System.out.println("showing main screen");
         switchToScreen(R.id.screen_main);
     }
 

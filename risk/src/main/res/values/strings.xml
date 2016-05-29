@@ -28,5 +28,6 @@
     <string name="nextTurnButtonText">Next Turn</string>
     <string name="showListButtonText">Show List</string>
     <string name="hideListButtonText">Hide List</string>
+    <string name="playerWonText">Player won!</string>
 
 </resources>
