@@ -137,7 +137,7 @@ public class Controller implements GLTouchListener, NetworkListener {
                             touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
 
                             //for debugging only (picks more territories at once)
-                            final int EXTRA_TRIES = 20;
+                            final int EXTRA_TRIES = 0;
 
                             Random r = new Random();
                             for (int i = 0; i < EXTRA_TRIES; i++) {
@@ -148,14 +148,14 @@ public class Controller implements GLTouchListener, NetworkListener {
                                     randomTerritory.setOccupier(riskModel.getCurrentPlayer());
                                     riskModel.getCurrentPlayer().decArmiesToPlace();
                                 } else{
-                                    int terrotoriesOccupied = 0;
+                                    int territoriesOccupied = 0;
                                     for (Territory territory : riskModel.getTerritories()) {
                                         if (territory.getOccupier() != null) {
-                                            terrotoriesOccupied++;
+                                            territoriesOccupied++;
                                         }
                                     }
                                     //if >20 prevent freeze
-                                    if (terrotoriesOccupied != 42) {
+                                    if (territoriesOccupied != 42) {
                                         i--;    //find a new territory to place
                                     }
                                 }
