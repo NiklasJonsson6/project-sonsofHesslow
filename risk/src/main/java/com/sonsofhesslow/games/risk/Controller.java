@@ -391,7 +391,7 @@ public class Controller implements GLTouchListener, NetworkListener {
 
     private void playerWon(Player player) {
         overlayController.addView(R.layout.activity_won);
-
+        overlayController.hideBottom();
         //to notify the rest of the players, hasnotified to prevent loop
         if(isOnline() && !hasNotifiedWin){
             hasNotifiedWin = true;
