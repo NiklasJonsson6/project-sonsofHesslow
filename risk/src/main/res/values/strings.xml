@@ -29,5 +29,14 @@
     <string name="showListButtonText">Show List</string>
     <string name="hideListButtonText">Hide List</string>
     <string name="playerWonText">Player won!</string>
+    <string name="card_image">Card image</string>
+    <string name="back">Back</string>
+    <string name="get_armies">Get armies</string>
+    <string name="game_started">Game started</string>
+    <string name="_0_0">0/0</string>
+    <string name="game_phase">Game Phase</string>
+    <string name="player_name">Player Name</string>
+    <string name="armies_to_place">Armies to place:</string>
+    <string name="player_image">player Image</string>
 
 </resources>

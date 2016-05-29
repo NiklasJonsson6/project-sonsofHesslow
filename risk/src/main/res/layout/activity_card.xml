@@ -28,7 +28,8 @@
                 android:layout_alignParentLeft="false"
                 android:layout_alignParentStart="false"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/card_image" />
 
             <TextView
                 android:layout_width="wrap_content"

@@ -1,6 +1,7 @@
 package com.sonsofhesslow.games.risk;
 
 import android.content.res.Resources;
+import android.widget.Toast;
 
 import com.sonsofhesslow.games.risk.graphics.GraphicsManager;
 import com.sonsofhesslow.games.risk.model.Card;
@@ -49,6 +50,7 @@ public class View implements Observer {
     public void update(Observable obs, Object arg) {
         if (obs instanceof Player) {
             overlayController.populateGridView((ArrayList<Card>) arg);
+            overlayController.toastMaker("Cards handed, extra armies:"  + Card.currentCardAmountToGet());
         } else if (obs instanceof Risk) {
             Risk risk = (Risk) obs;
             if (overlayController.getOverlay().getChildCount() > 1) {

@@ -12,13 +12,14 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:scaleType="fitCenter"
-        android:adjustViewBounds="true" />
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/player_image" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Player Name"
+        android:text="@string/player_name"
         android:id="@+id/playerName"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/playerImage"
@@ -31,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Armies to place:"
+        android:text="@string/armies_to_place"
         android:id="@+id/armiesToPlace"
         android:layout_below="@+id/playerName"
         android:layout_alignLeft="@+id/playerName"

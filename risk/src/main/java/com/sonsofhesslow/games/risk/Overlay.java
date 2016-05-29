@@ -14,6 +14,7 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sonsofhesslow.games.risk.model.Card;
 import com.sonsofhesslow.games.risk.model.Player;
@@ -279,6 +280,9 @@ public class Overlay {
                 ((GridView) tempGridView).setNumColumns(3);
             }
         }
+    }
+    public void toastMaker(String s){
+        Toast.makeText(context, s, Toast.LENGTH_LONG).show();
     }
 }
 

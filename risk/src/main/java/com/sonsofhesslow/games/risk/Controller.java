@@ -332,6 +332,13 @@ public class Controller implements GLTouchListener, NetworkListener {
     public void nextPlayer() {
         int newPlayerIndex = getNewPlayerIndex();
 
+        if(riskModel.getCurrentPlayer().getCards().size() == 5){
+            ArrayList<Card> cards = new ArrayList<Card>();
+            cards.addAll(riskModel.getCurrentPlayer().getCards());
+            Card.handInSet(cards);
+            riskModel.getCurrentPlayer().giveArmies(Card.cardAmountToGet());
+            riskModel.getCurrentPlayer().setCards(cards);
+        }
         if(newPlayerIndex == currentPlayerIndex) {
             //previous player won
             playerWon(riskModel.getPlayers()[currentPlayerIndex]);
@@ -555,6 +562,7 @@ public class Controller implements GLTouchListener, NetworkListener {
         temp.remove(selectedCards.get(1).intValue());
         temp.remove(selectedCards.get(0).intValue());
         riskModel.getCurrentPlayer().setCards(temp);
+        riskModel.getCurrentPlayer().giveArmies(Card.cardAmountToGet());
     }
 
     public void handleWaitingScreen() {

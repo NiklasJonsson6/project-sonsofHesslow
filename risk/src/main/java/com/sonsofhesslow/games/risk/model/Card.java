@@ -48,7 +48,6 @@ public class Card {
             cards.remove(INFANTRY_CARD);
             cards.remove(CAVALRY_CARD);
             cards.remove(ARTILLARY_CARD);
-            setsHandedIn++;
         } else {
             ArrayList<Card> testCards = new ArrayList<>();
             testCards.add(INFANTRY_CARD);
@@ -68,7 +67,6 @@ public class Card {
                 if (identicalFound == 3) {
                     for (int i = 0; i < 3; i++) {
                         cards.remove(testCard);
-                        setsHandedIn++;
                     }
                 }
             }
@@ -103,6 +101,17 @@ public class Card {
     }
 
     public static int cardAmountToGet() {
+        int amountToGet = 0;
+        if (setsHandedIn < 6) {
+            amountToGet = 4 + setsHandedIn * 2;
+        } else {
+            amountToGet = -15 + setsHandedIn * 5;
+        }
+        setsHandedIn++;
+        return amountToGet;
+    }
+
+    public static int currentCardAmountToGet() {
         int amountToGet = 0;
         if (setsHandedIn < 6) {
             amountToGet = 4 + setsHandedIn * 2;
