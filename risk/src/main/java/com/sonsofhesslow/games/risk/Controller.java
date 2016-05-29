@@ -101,8 +101,6 @@ public class Controller implements GLTouchListener, NetworkListener {
                 if (changedTerritory != null) {
                     changedTerritory.setArmyCount(event.getArmies());
 
-                } else {
-                    System.out.println("illegal region index");
                 }
             }
             break;
@@ -118,8 +116,6 @@ public class Controller implements GLTouchListener, NetworkListener {
                 }
                 if (changedTerritory != null) {
                     changedTerritory.setOccupier(newOccupier);
-                } else {
-                    System.out.println("illegal region index");
                 }
             }
             break;
@@ -132,13 +128,11 @@ public class Controller implements GLTouchListener, NetworkListener {
     }
 
     public void handle(GLTouchEvent event) {
-        System.out.println("handle gl event");
         if (event.touchedRegion) {
             Territory touchedTerritory = getTerritoryById(event.regionId);
             if (selfId == riskModel.getPlayers()[currentPlayerIndex].getParticipantId()) {
                 switch (riskModel.getGamePhase()) {
                     case PICK_TERRITORIES:
-                        System.out.println("pick territories phase");
                         if (touchedTerritory.getOccupier() == null) {
                             touchedTerritory.setOccupier(riskModel.getCurrentPlayer());
 
@@ -186,7 +180,6 @@ public class Controller implements GLTouchListener, NetworkListener {
                         break;
 
                     case PLACE_STARTING_ARMIES:
-                        System.out.println("place starting armies phase");
                         if (touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
                             touchedTerritory.changeArmyCount(1);
                             riskModel.getCurrentPlayer().decArmiesToPlace();
@@ -210,7 +203,6 @@ public class Controller implements GLTouchListener, NetworkListener {
                         break;
 
                     case PLACE_ARMIES:
-                        System.out.println("Place Phase");
                         if (touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()) {
                             // TODO: 2016-05-26 armies are placed with a slider, triggered by listener
                             riskModel.setSelectedTerritory(touchedTerritory);
@@ -218,7 +210,6 @@ public class Controller implements GLTouchListener, NetworkListener {
                         break;
 
                     case FIGHT:
-                        System.out.println("fight phase");
                         if (touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()
                                 && touchedTerritory.getArmyCount() > 1) {
                             //clear old possible defenders
@@ -240,7 +231,6 @@ public class Controller implements GLTouchListener, NetworkListener {
                         break;
 
                     case MOVEMENT:
-                        System.out.println("movement phase");
                         if (touchedTerritory.getOccupier() == riskModel.getCurrentPlayer()
                                 && touchedTerritory.getArmyCount() > 1
                                 && riskModel.getSelectedTerritory() == null) {
@@ -556,9 +546,6 @@ public class Controller implements GLTouchListener, NetworkListener {
 
     public void turnInCards(ArrayList<Integer> selectedCards) {
         Collections.sort(selectedCards);
-        for (Integer inte : selectedCards) {
-            System.out.println("Index value: " + inte.intValue());
-        }
         ArrayList<Card> temp = new ArrayList<Card>();
         temp.addAll(riskModel.getCurrentPlayer().getCards());
         temp.remove(selectedCards.get(2).intValue());

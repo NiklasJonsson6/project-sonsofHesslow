@@ -37,11 +37,8 @@ class LineShader {
 
         shaderID = GLES20.glCreateProgram();             // create empty OpenGL Program
         GLES20.glAttachShader(shaderID, vertexShader);   // add the vertex shader to program
-        //System.out.println(GLES20.glGetShaderInfoLog(vertexShader));
         GLES20.glAttachShader(shaderID, fragmentShader); // add the fragment shader to program
-        //System.out.println(GLES20.glGetShaderInfoLog(fragmentShader));
         GLES20.glLinkProgram(shaderID);                  // create OpenGL program executables
-        //System.out.println(GLES20.glGetProgramInfoLog(shaderID));
     }
 
     void use(Mesh mesh, float[] matrix, float[] color, FloatBuffer lineSide) {

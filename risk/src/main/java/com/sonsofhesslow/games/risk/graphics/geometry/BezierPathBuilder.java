@@ -55,9 +55,6 @@ public class BezierPathBuilder {
             addBeizPath(addition);
             return true;
         }
-        System.out.println("old " + Arrays.deepToString(get(false).points));
-        System.out.println("new " + Arrays.deepToString(addition.points));
-        System.out.println("appearently not equal: " + currentFirst + ", " + currentLast + ", " + addedFirst + ", " + addedLast);
         return false;
     }
 

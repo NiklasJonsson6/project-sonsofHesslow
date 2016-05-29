@@ -17,41 +17,43 @@ public class Die {
     }
 
     public static void fight(Territory attacker, Territory defender) {
-        if (!attacker.getOccupier().equals(defender.getOccupier()) && attacker.getArmyCount() > 1 && defender.getArmyCount() > 0) {
-            int diceAmountAttacker = Math.min(attacker.getArmyCount() - 1, 3);
-            int diceAmountDefender = Math.min(defender.getArmyCount(), 2);
+        if(attacker != null && defender != null && attacker.getOccupier() != null && defender.getOccupier() != null) {
+            if (!attacker.getOccupier().equals(defender.getOccupier()) && attacker.getArmyCount() > 1 && defender.getArmyCount() > 0) {
+                int diceAmountAttacker = Math.min(attacker.getArmyCount() - 1, 3);
+                int diceAmountDefender = Math.min(defender.getArmyCount(), 2);
 
-            ArrayList<Integer> attackDiceValues = new ArrayList<>();
-            ArrayList<Integer> defendDiceValues = new ArrayList<>();
+                ArrayList<Integer> attackDiceValues = new ArrayList<>();
+                ArrayList<Integer> defendDiceValues = new ArrayList<>();
 
-            for (int i = 0; i < diceAmountAttacker; i++) {
-                attackDiceValues.add(roll());
-            }
-            for (int i = 0; i < diceAmountDefender; i++) {
-                defendDiceValues.add(roll());
-            }
+                for (int i = 0; i < diceAmountAttacker; i++) {
+                    attackDiceValues.add(roll());
+                }
+                for (int i = 0; i < diceAmountDefender; i++) {
+                    defendDiceValues.add(roll());
+                }
 
-            Collections.sort(attackDiceValues);
-            Collections.sort(defendDiceValues);
+                Collections.sort(attackDiceValues);
+                Collections.sort(defendDiceValues);
 
-            //roll first die
-            if (attackDiceValues.get(diceAmountAttacker - 1) > defendDiceValues.get(diceAmountDefender - 1)) {
-                defender.changeArmyCount(-1);
-            } else {
-                attacker.changeArmyCount(-1);
-            }
-
-            //roll second die
-            if (attacker.getArmyCount() > 2 && defender.getArmyCount() > 1) {
-                if (attackDiceValues.get(diceAmountAttacker - 2) > defendDiceValues.get(diceAmountDefender - 2)) {
+                //roll first die
+                if (attackDiceValues.get(diceAmountAttacker - 1) > defendDiceValues.get(diceAmountDefender - 1)) {
                     defender.changeArmyCount(-1);
                 } else {
                     attacker.changeArmyCount(-1);
                 }
-            }
 
-            if (defender.getArmyCount() == 0) {
-                defender.setOccupier(attacker.getOccupier());
+                //roll second die
+                if (attacker.getArmyCount() > 2 && defender.getArmyCount() > 1) {
+                    if (attackDiceValues.get(diceAmountAttacker - 2) > defendDiceValues.get(diceAmountDefender - 2)) {
+                        defender.changeArmyCount(-1);
+                    } else {
+                        attacker.changeArmyCount(-1);
+                    }
+                }
+
+                if (defender.getArmyCount() == 0) {
+                    defender.setOccupier(attacker.getOccupier());
+                }
             }
         }
     }

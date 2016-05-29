@@ -276,8 +276,6 @@ public class Overlay {
     }
 
     public void changeGridLayout(boolean isLandscape) {
-        System.out.println("gridview: " + parent.findViewById(R.id.gridView));
-
         View tempGridView = parent.findViewById(R.id.gridView);
 
         // TODO: 2016-05-26 prevent crash in a better way 

@@ -73,7 +73,6 @@ public class CustomAdapter extends BaseAdapter {
             holder.tv.setBackgroundColor(Util.getIntFromColor(colours.get(position)));
         }
         if (imageId.get(position) != null) {
-            System.out.println("Image uri set");
             ImageManager mrg = ImageManager.create(context);
             mrg.loadImage(holder.img, imageId.get(position));
         } else {

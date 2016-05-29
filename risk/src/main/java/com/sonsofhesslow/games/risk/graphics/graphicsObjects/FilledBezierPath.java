@@ -12,11 +12,7 @@ import java.nio.FloatBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by daniel on 3/31/16.
- */
 public class FilledBezierPath extends GLObject implements Updatable {
-
 
     public Mesh fillMesh;
     public BezierPath path;
@@ -102,7 +98,6 @@ public class FilledBezierPath extends GLObject implements Updatable {
         }
         //triangulation by earclipping not perfect....
         while (remainingIndices.size() >= 3) {
-            System.out.println("earclipping " + remainingIndices.size() + " left");
             boolean removed = false;
             float acceptableConcavity = 0;
             for (int i = 0; i < remainingIndices.size(); i++) {
@@ -141,7 +136,6 @@ public class FilledBezierPath extends GLObject implements Updatable {
                 }
             }
             if (!removed) {
-                System.out.println("not all tris was drawn.. is it self intersecting or is the precision set very high?");
                 doRest = true;
             }
             if (remainingIndices.size() <= 2) break;
@@ -224,7 +218,6 @@ public class FilledBezierPath extends GLObject implements Updatable {
 
 
     public void draw(float[] projectionMatrix) {
-        //System.out.println("triangles: " + triangles);
         float[] mvpMatrix = new float[16];
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, modelMatrix, 0);
         flowShader.use(fillMesh, mvpMatrix, origin, len, toColor, fromColor);

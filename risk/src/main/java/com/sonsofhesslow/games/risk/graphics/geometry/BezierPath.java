@@ -33,7 +33,6 @@ public class BezierPath implements Iterable<Bezier> {
         } else {
             ret.addAll(approximatebezier(split[0].points, precision));
             ret.addAll(approximatebezier(split[1].points, precision));
-            //System.out.println("ret size:" + ret.size());
             return ret;
         }
     }

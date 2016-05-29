@@ -407,9 +407,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void backToMainscreenPressed(View v) {
-        System.out.println("backtomainscreenbutton pressed");
-        //showMainScreen();
-
         setContentView(R.layout.activity_main);
         mCurScreen = R.id.screen_main;
         leaveRoom();
@@ -500,7 +497,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void showMainScreen() {
-        System.out.println("showing main screen");
         switchToScreen(R.id.screen_main);
     }
 

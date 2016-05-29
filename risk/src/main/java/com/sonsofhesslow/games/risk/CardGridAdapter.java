@@ -74,7 +74,6 @@ public class CardGridAdapter extends BaseAdapter {
         isClicked.add(false);
         holder.tv = (TextView) rowView.get(position).findViewById(R.id.cardText);
         holder.img = (ImageView) rowView.get(position).findViewById(R.id.cardImage);
-        System.out.println("Card in pos added: " + position);
         holder.tv.setText(result.get(position));
         holder.img.setImageResource(imageId.get(position));
 
@@ -99,7 +98,6 @@ public class CardGridAdapter extends BaseAdapter {
                         }
                     }
 
-                    System.out.println("Tester size: " + tester + "Size^2: " + (selectedView.size() * selectedView.size() - selectedView.size()));
                     if ((selectedView.size() == 0 || tester == (selectedView.size() * selectedView.size() - selectedView.size()) || tester == 0) && selectedView.size() < 4) {
                         holder.rv = (RelativeLayout) rowView.get(position).findViewById(R.id.frameColour);
                         holder.rv.setBackgroundColor(Color.parseColor("#a58218"));

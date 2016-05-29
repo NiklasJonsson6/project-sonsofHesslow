@@ -4,9 +4,6 @@ import android.opengl.GLES20;
 
 import com.sonsofhesslow.games.risk.graphics.utils.ShaderUtils;
 
-/**
- * Created by Daniel on 06/05/2016.
- */
 class DefaultShader {
 
     private static final String vertexShaderCode =

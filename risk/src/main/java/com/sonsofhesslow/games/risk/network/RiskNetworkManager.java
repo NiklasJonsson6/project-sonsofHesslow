@@ -84,14 +84,12 @@ public class RiskNetworkManager implements Observer {
             /*
             PLAYER CHANGE EVENT LISTENER
              */
-            System.out.println("player change event@@@@@@@@@@@@@@@@");
             if (arg instanceof Player) {
                 Player event = (Player) arg;
                 if(!selfModified){
                     RiskNetworkMessage message = RiskNetworkMessage.turnChangedMessageBuilder(event);
 
                     try {
-                        System.out.println("risknetwork: " + riskNetwork);
                         riskNetwork.broadcast(message.serialize());
                     } catch (IOException e) {
                         e.printStackTrace();

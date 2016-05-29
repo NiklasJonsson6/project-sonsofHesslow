@@ -330,7 +330,6 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     // Broadcast to everybody else.
     public void broadcast(byte[] messageArray) {
         if(!selfModified && googlePlayNetwork != null) {
-            System.out.println("broadcast risknetwork");
             ArrayList<Participant> targetParticipants = new ArrayList<Participant>();
 
             for(Participant participant : mParticipants) {
