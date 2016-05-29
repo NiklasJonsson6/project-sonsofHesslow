@@ -215,7 +215,6 @@ public class Overlay {
         setPlaceArmiesVisible(false);
         setFightVisible(false);
         setInformation("", false);
-        setWaitingVisible(false);
     }
 
     public void populateListView(Player[] players, Collection<float[]> colours) {
