@@ -141,6 +141,13 @@ public class Overlay {
             parent.findViewById(R.id.hideList).setVisibility(View.GONE);
         }
     }
+    public void setWaitingVisible(boolean state) {
+        if (state == true) {
+            parent.findViewById(R.id.waitingForPlayer).setVisibility(View.VISIBLE);
+        } else {
+            parent.findViewById(R.id.waitingForPlayer).setVisibility(View.GONE);
+        }
+    }
 
     public void setFightVisible(boolean state) {
         if (state == true) {
@@ -206,6 +213,7 @@ public class Overlay {
         setPlaceArmiesVisible(false);
         setFightVisible(false);
         setInformation("", false);
+        setWaitingVisible(false);
     }
 
     public void populateListView(Player[] players, Collection<float[]> colours) {
