@@ -574,6 +574,7 @@ public class Controller implements GLTouchListener, NetworkListener {
             if(!activeWaitScreen) {
                 overlayController.addView(R.layout.activity_wait);
                 overlayController.setWaitingVisible(true);
+                overlayController.hideBottom();
                 activeWaitScreen = true;
             }
         } else {
