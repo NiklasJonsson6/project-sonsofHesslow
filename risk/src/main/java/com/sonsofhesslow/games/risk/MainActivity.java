@@ -358,7 +358,7 @@ public class MainActivity extends AppCompatActivity
         mCurScreen = screenId;
 
         if (findViewById(R.id.invitation_popup) != null) {
-            findViewById(R.id.invitation_popup).setVisibility(View.GONE);
+            findViewById(R.id.invitation_popup).setVisibility(showInvPopup ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -465,18 +465,22 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    boolean showInvPopup = false;
     //setting up the callbacks for the network.
     @Override
     public void displayInvitation(String caller) {
+        showInvPopup = true;
         //invitation to play a game, store it in mIncomingInvitationId and show popup on screen
         ((TextView) findViewById(R.id.incoming_invitation_text)).setText(
                 caller + " " +
                         getString(R.string.is_inviting_you));
         switchToScreen(getmCurScreen()); // This will show the invitation popup
+
     }
 
     @Override
     public void removeInvitation() {
+        showInvPopup = false;
         switchToScreen(getmCurScreen()); //hide the invitation popup
     }
 

@@ -100,7 +100,6 @@ public class Controller implements GLTouchListener, NetworkListener {
                 GraphicsManager.getInstance().moveCameraTowardsTerritory(changedTerritory.getId());
                 if (changedTerritory != null) {
                     changedTerritory.setArmyCount(event.getArmies());
-
                 }
             }
             break;
@@ -130,6 +129,7 @@ public class Controller implements GLTouchListener, NetworkListener {
     public void handle(GLTouchEvent event) {
         if (event.touchedRegion) {
             Territory touchedTerritory = getTerritoryById(event.regionId);
+            System.out.println(touchedTerritory.getContinent());
             if (selfId == riskModel.getPlayers()[currentPlayerIndex].getParticipantId()) {
                 switch (riskModel.getGamePhase()) {
                     case PICK_TERRITORIES:
@@ -425,12 +425,12 @@ public class Controller implements GLTouchListener, NetworkListener {
             }
         }
     }
-    public int calculateStartingArmies()
-    {
+
+    public int calculateStartingArmies() {
         return (50 - (5 * riskModel.getPlayers().length));
     }
-    public int calculateStartingArmiesPresentation()
-    {
+
+    public int calculateStartingArmiesPresentation(){
         return 3;
     }
 
@@ -469,7 +469,6 @@ public class Controller implements GLTouchListener, NetworkListener {
     public void placeButtonPressed(int seekBarValue) {
         if (riskModel.getGamePhase() == Risk.GamePhase.PLACE_ARMIES
                 && riskModel.getSelectedTerritory() != null) {
-            //riskModel.placeEvent();
             Territory territory = riskModel.getSelectedTerritory();
             territory.changeArmyCount(seekBarValue);
             riskModel.getCurrentPlayer().decArmiesToPlace(seekBarValue);
