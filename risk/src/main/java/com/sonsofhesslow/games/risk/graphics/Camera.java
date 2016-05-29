@@ -123,7 +123,7 @@ public class Camera implements Updatable{
         {
             currentTime+=dt;
             float lerpT=Math.min(currentTime/interpolationTime,1);
-            setPos(new Vector3(Vector2.lerp(startPos,endPos,lerpT),pos.z));
+            setPos_internal(new Vector3(Vector2.lerp(startPos,endPos,lerpT),pos.z));
             if(currentTime >=interpolationTime)
             {
                 startPos = null;
