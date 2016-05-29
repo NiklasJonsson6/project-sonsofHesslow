@@ -571,8 +571,8 @@ public class Controller implements GLTouchListener, NetworkListener {
     public void handleWaitingScreen() {
         if (isOnline() && riskModel.getCurrentPlayer().getParticipantId() != selfId) {
             //multiplayer & not users turn
-            overlayController.setWaitingVisible(true);
             overlayController.hideBottom();
+            overlayController.setWaitingVisible(true);
             if(!activeWaitScreen) {
                 overlayController.addView(R.layout.activity_wait);
                 activeWaitScreen = true;
