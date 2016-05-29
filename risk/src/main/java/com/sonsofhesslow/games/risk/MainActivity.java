@@ -491,7 +491,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void displayError() {
         BaseGameUtils.makeSimpleDialog(this, getString(R.string.game_problem));
-        switchToMainScreen();
     }
 
     @Override

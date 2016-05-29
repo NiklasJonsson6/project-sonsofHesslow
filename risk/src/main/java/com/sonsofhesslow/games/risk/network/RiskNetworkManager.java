@@ -50,7 +50,6 @@ public class RiskNetworkManager implements Observer {
     }
 
     public void update(Observable obs, Object arg) {
-        System.out.println("in update risknetworkmanager");
         if (obs instanceof Territory) {
             Territory territory = (Territory) obs;
             if (arg instanceof Integer) {

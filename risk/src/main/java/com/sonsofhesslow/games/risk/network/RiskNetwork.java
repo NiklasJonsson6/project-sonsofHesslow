@@ -190,7 +190,6 @@ public class RiskNetwork implements GooglePlayNetworkCompatible {
     // Show error message about game being cancelled and return to main screen.
     void showGameError() {
         uiUpdate.displayError();
-
     }
 
     // room has been created

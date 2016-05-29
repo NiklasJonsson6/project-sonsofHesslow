@@ -46,6 +46,9 @@ public class Controller implements GLTouchListener, NetworkListener {
     //to prevent adding multiple wait screens
     private boolean activeWaitScreen = false;
 
+    //to prevent loop when notifying others
+    private boolean hasNotifiedWin = false;
+
     public Controller(int[] playerIds, Overlay overlayController, Resources resources) {
         this.selfId = 0;
         this.overlayController = overlayController;
@@ -274,6 +277,13 @@ public class Controller implements GLTouchListener, NetworkListener {
             riskModel.setDefendingTerritory(null);
             riskModel.setGamePhase(Risk.GamePhase.FIGHT);
         }
+
+        //check if player won
+        if(getNewPlayerIndex() == currentPlayerIndex) {
+            //previous player won
+            playerWon(riskModel.getPlayers()[currentPlayerIndex]);
+        }
+
         GraphicsManager.getInstance().requestRender();
     }
 
@@ -381,8 +391,12 @@ public class Controller implements GLTouchListener, NetworkListener {
 
     private void playerWon(Player player) {
         overlayController.addView(R.layout.activity_won);
-        System.out.println("player won");
-        // TODO: 2016-05-29
+
+        //to notify the rest of the players, hasnotified to prevent loop
+        if(isOnline() && !hasNotifiedWin){
+            hasNotifiedWin = true;
+            nextPlayer();
+        }
     }
 
     @Nullable
