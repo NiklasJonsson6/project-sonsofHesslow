@@ -570,11 +570,13 @@ public class Controller implements GLTouchListener, NetworkListener {
             //multiplayer & not users turn
             if(!activeWaitScreen) {
                 overlayController.addView(R.layout.activity_wait);
+                overlayController.setWaitingVisible(true);
                 activeWaitScreen = true;
             }
         } else {
             if(activeWaitScreen){
                 overlayController.removeView(R.layout.activity_wait);
+                overlayController.setWaitingVisible(false);
                 activeWaitScreen = false;
             }
         }

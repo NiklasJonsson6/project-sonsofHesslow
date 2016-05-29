@@ -26,6 +26,19 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/waiting_for_player"
+        android:id="@+id/waitingForPlayer"
+        android:gravity="center_horizontal"
+        android:background="#999999"
+        android:layout_below="@+id/currentPlayer"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:visibility="gone" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -109,22 +122,30 @@
         android:visibility="gone"
         android:onClick="fightPressed" />
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/information"
-        android:textSize="20sp"
-        android:background="@android:color/holo_orange_light"
-        android:focusable="false"
-        android:visibility="visible"
-        android:textStyle="bold"
-        android:textColor="#2d2d2d"
-        android:textIsSelectable="false"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_centerHorizontal="true"
+        android:id="@+id/informationframe"
+        android:background="@android:color/holo_orange_light"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Large Text"
+            android:id="@+id/information"
+            android:textSize="20sp"
+            android:focusable="false"
+            android:visibility="visible"
+            android:textStyle="bold"
+            android:textColor="#2d2d2d"
+            android:textIsSelectable="false"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
