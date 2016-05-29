@@ -415,23 +415,22 @@ public class Controller implements GLTouchListener, NetworkListener {
         if (isOnline()) {
             for (Player player : riskModel.getPlayers()) {
                 if (player.getParticipantId() == selfId) {
-                    player.giveArmies(calculateStartingArmiesPresentation());
+                    player.giveArmies(calculateStartingArmies());
                 }
             }
         } else {
             //singleplayer
             for (Player player : riskModel.getPlayers()) {
-                player.giveArmies(calculateStartingArmiesPresentation());
+                player.giveArmies(calculateStartingArmies());
             }
         }
     }
-
     public int calculateStartingArmies() {
         return (50 - (5 * riskModel.getPlayers().length));
     }
-
-    public int calculateStartingArmiesPresentation(){
-        return 3;
+    public int calculateStartingArmiesPresentation() {
+        //for use when presenting
+        return 26;
     }
 
     public void setArmiesToPlace(Player player) {
