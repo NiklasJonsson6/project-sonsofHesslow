@@ -348,16 +348,11 @@ public class MainActivity extends AppCompatActivity
     int mCurScreen = -1;
 
     public void switchToScreen(int screenId) {
-        System.out.println("screenid: " + screenId);
         // make the requested screen visible; hide all others.
         for (int id : SCREENS) {
-            System.out.println("screen id in for: " + id);
             // TODO: 2016-05-24 fix for real?, not just null check
             if (findViewById(id) != null) {
-                System.out.println("view not null");
                 findViewById(id).setVisibility(screenId == id ? View.VISIBLE : View.GONE);
-            } else {
-                System.out.println("view is null");
             }
         }
         mCurScreen = screenId;
@@ -413,7 +408,11 @@ public class MainActivity extends AppCompatActivity
 
     public void backToMainscreenPressed(View v) {
         System.out.println("backtomainscreenbutton pressed");
-        showMainScreen();
+        //showMainScreen();
+
+        setContentView(R.layout.activity_main);
+        mCurScreen = R.id.screen_main;
+        leaveRoom();
     }
 
     //MISC SECTION. Miscellaneous methods
